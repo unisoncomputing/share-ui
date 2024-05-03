@@ -1,0 +1,59 @@
+.project-contributions-page {
+  & .page-title .submit-contribution-disabled .tooltip {
+    margin-top: 1rem;
+  }
+
+  & .contributions-empty-state_icon {
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    flex-direction: row;
+    place-content: center;
+    align-items: center;
+
+    & .icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+  }
+
+  & .project-contributions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    & .contribution-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      width: 100%;
+
+      & .contribution-row_header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        & .num-comments {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: var(--font-size-small);
+          color: var(--u-color_text_subdued);
+        }
+      }
+
+      & .contribution-row_ref {
+        color: var(--u-color_text_subdued);
+        margin-right: 0.25rem;
+      }
+
+      & .contribution-row_info {
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+        font-size: var(--font-size-medium);
+      }
+    }
+  }
+}

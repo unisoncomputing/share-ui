@@ -1,0 +1,22 @@
+.cloud-page {
+  text-align: center;
+}
+
+.cloud-page .card {
+  background: var(--color-blue-2);
+  align-self: center;
+  color: var(--color-gray-lighten-100);
+  align-items: center;
+  width: 32rem;
+  margin-bottom: 2rem;
+}
+
+.cloud-page h1 {
+  color: var(--color-gray-lighten-100);
+  font-size: 2rem;
+}
+
+.cloud-page p {
+  text-align: center;
+  margin-bottom: 0;
+}

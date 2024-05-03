@@ -1,0 +1,2 @@
+https://share.unison-lang.org/@unison/base
+https://share.unison-lang.org/@unison/cloud

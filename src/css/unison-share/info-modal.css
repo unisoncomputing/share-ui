@@ -1,0 +1,31 @@
+#info-modal {
+  width: 30rem;
+}
+
+#info-modal .info-modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+#info-modal .status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+#info-modal .status .status-banner {
+  margin: 0 1.5rem;
+}
+
+#info-modal .status p {
+  margin-left: 2.25rem;
+  padding: 0 1.5rem;
+  font-size: 12px;
+}
+
+#info-modal .button {
+  align-self: flex-end;
+  justify-self: flex-end;
+  margin-top: 1.5rem;
+}

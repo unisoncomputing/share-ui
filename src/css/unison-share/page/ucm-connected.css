@@ -1,0 +1,30 @@
+.ucm-connected .column {
+  max-width: 32rem;
+  place-items: center;
+  gap: 2rem;
+  margin: auto;
+  margin-top: 3rem;
+}
+
+.ucm-connected h1,
+.ucm-connected p {
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.ucm-connected .actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  .ucm-connected .column {
+    gap: 1rem;
+  }
+
+  .ucm-connected .actions {
+    flex-direction: column;
+  }
+}

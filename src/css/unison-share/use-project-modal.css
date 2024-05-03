@@ -1,0 +1,77 @@
+#use-project-modal {
+  width: 38rem;
+
+  & h3 {
+    font-size: var(--font-size-base);
+  }
+
+  & p {
+    margin-bottom: 0;
+  }
+
+  & .use-project-modal_content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  & .instruction {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  & .hint {
+    padding-left: calc(var(--border-radius-base) / 2);
+  }
+
+  & .upgrade-hint {
+    padding-left: calc(var(--border-radius-base) / 2);
+    margin-top: 0.5rem;
+    font-size: var(--font-size-small);
+    background: var(--u-color_container_subdued);
+    padding: 0.5rem;
+    border-radius: var(--border-radius-base);
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  & .upgrade-hint .upgrade-icon {
+    height: 1rem;
+    width: 1rem;
+    background: var(--u-color_element);
+    border: 1px solid var(--u-color_border_subdued);
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & .upgrade-hint .icon {
+    font-size: var(--font-size-small);
+    line-height: 1;
+  }
+
+  & .upgrade-hint .upgrade-hint_content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  & .upgrade-hint .monospace {
+    font-family: var(--font-monospace);
+  }
+
+  & .action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  #use-project-modal {
+    width: calc(100vw - 2rem);
+  }
+}

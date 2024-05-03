@@ -1,0 +1,135 @@
+#welcome-tour-modal {
+  width: 52rem;
+}
+
+#welcome-tour-modal h2 {
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+}
+
+#welcome-tour-modal hr {
+  margin-top: 0.5rem;
+}
+
+#welcome-tour-modal h2 .icon {
+  font-size: 1.125rem;
+  color: var(--u-color_icon_subdued);
+}
+
+#welcome-tour-modal ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#welcome-tour-modal ul li {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+#welcome-tour-modal ul li .icon {
+  color: var(--u-color_icon_subdued);
+}
+
+#welcome-tour-modal .welcome {
+  display: flex;
+  flex-direction: row;
+  font-size: var(--font-size-base);
+}
+
+#welcome-tour-modal .welcome p {
+  /* helps the text to be aligned with the button */
+  display: flex;
+  align-items: center;
+}
+
+#welcome-tour-modal .welcome .button {
+  margin-left: 0.5rem;
+}
+
+#welcome-tour-modal .welcome .avatar-container {
+  width: 8rem;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#welcome-tour-modal .welcome .avatar {
+  --avatar-size: 5.25rem;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: calc(var(--avatar-size) / 2);
+}
+
+#welcome-tour-modal .membership-tenets {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+#welcome-tour-modal .membership-tenets .tenets {
+  display: flex;
+  flex-direction: column;
+}
+
+#welcome-tour-modal .membership-tenets .tenets ul {
+  margin-left: 1rem;
+}
+
+#welcome-tour-modal .documents {
+  background: var(--u-color_container_subdued);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-base);
+  min-width: 14rem;
+  height: fit-content;
+}
+
+#welcome-tour-modal footer {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media only screen and (--u-viewport_max-lg) {
+  #welcome-tour-modal {
+    width: 48rem;
+    max-height: calc(100vh - 8rem);
+  }
+}
+
+@media only screen and (--u-viewport_max-md) {
+  #welcome-tour-modal {
+    overflow-y: auto;
+    width: calc(100vw - 2rem);
+  }
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  #welcome-tour-modal {
+    margin-top: 2rem;
+  }
+
+  #welcome-tour-modal .welcome {
+    font-size: var(--font-size-medium);
+  }
+
+  #welcome-tour-modal .welcome .avatar-container {
+    display: none;
+  }
+
+  #welcome-tour-modal .membership-tenets {
+    flex-direction: column;
+  }
+
+  #welcome-tour-modal footer {
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+}

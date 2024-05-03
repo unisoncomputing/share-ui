@@ -1,0 +1,99 @@
+.project-settings-page .settings-content .card {
+  position: relative;
+}
+
+.project-settings-page .settings-content h2 {
+  color: var(--u-color_text_subdued);
+  margin-bottom: 0.75rem;
+}
+
+.project-settings-page .actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.project-settings-page .actions .status-banner {
+  position: absolute;
+  left: 0;
+}
+
+.project-settings-page .actions .buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.project-settings-page .saving .card:after {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--border-radius-base);
+}
+
+#delete-project-modal {
+  width: 30rem;
+}
+
+#delete-project-modal .delete-project-modal_content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+#delete-project-modal p {
+  margin: 0;
+}
+
+#delete-project-modal .status-banner {
+  font-weight: bold;
+}
+
+#delete-project-modal .delete-project-modal_actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+#delete-project-modal .delete-project-modal_actions .status-banner {
+  position: absolute;
+  left: 0;
+  z-index: var(--layer-base);
+}
+
+#delete-project-modal .delete-project-modal_overlay-deleting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-modal-bg);
+  opacity: 0.85;
+  content: " ";
+}
+
+#delete-project-modal .delete-project-modal_overlay-success {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-modal-bg);
+  content: " ";
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}

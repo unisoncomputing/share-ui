@@ -1,0 +1,23 @@
+.project-release-page .project-release_page-title_description {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-content: center;
+}
+
+.project-release-page .project-release_page-title_description .hash,
+.project-release-page .project-release_page-title_description .by-at {
+  font-size: var(--font-size-medium);
+}
+
+.project-release-page .project-release_page-title_description .hash .icon {
+  font-size: var(--font-size-base);
+}
+
+.project-release-page .project-release_actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}

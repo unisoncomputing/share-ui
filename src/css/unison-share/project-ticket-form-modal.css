@@ -1,0 +1,24 @@
+#project-ticket-form-modal {
+  width: 40rem;
+  min-height: 20rem;
+
+  & .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    & .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    & label {
+      font-weight: bold;
+    }
+  }
+
+  & .saved {
+    padding: 5rem 0;
+  }
+}

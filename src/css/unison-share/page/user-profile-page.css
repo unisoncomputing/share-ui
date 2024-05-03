@@ -1,0 +1,156 @@
+.user-profile-page .user-profile_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-profile-page .user-profile_info-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-left: 1rem;
+  margin-top: 2rem;
+  font-size: var(--font-size-medium);
+}
+
+.user-profile-page .user-profile_info-field {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 1.5rem;
+}
+
+.user-profile-page .user-profile_info-fields .icon {
+  font-size: var(--font-size-medium);
+  color: var(--u-color_icon_subdued);
+}
+
+.user-profile-page .user-profile_main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.user-profile-empty-state_instructions-banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.75rem;
+  font-size: var(--font-size-small);
+  color: var(--u-color_text_subdued);
+  margin-top: 0.75rem;
+  border-radius: var(--border-radius-base);
+}
+
+.user-profile-page .readme-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-profile-empty-state_welcome-to {
+  text-align: center;
+}
+
+.user-profile-empty-state_welcome-to p {
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.user-profile-empty-state_welcome-to p:first-child {
+  margin-bottom: 0.875rem;
+}
+
+.user-profile_this-is-your-space {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  background: var(--u-color_info_container_subdued);
+  padding: 0.75rem;
+  padding-top: 1.5rem;
+  border-radius: var(--border-radius-base);
+}
+
+#user-profile-readme-instructions-modal {
+  width: 34.5rem;
+}
+#user-profile-readme-instructions-modal .steps {
+  margin-top: 1.5rem;
+}
+#user-profile-readme-instructions-modal .modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#user-profile-readme-instructions-modal .pull-hint {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  color: var(--u-color_text_subdued);
+}
+
+#user-profile-readme-instructions-modal .pull-hint p:last-child {
+  margin: 0;
+}
+
+#user-profile-readme-instructions-modal .pull-hint .icon {
+  color: var(--u-color_icon_subdued);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+#user-profile-readme-instructions-modal .pull-hint .inline-code {
+  background: var(--color-gray-lighten-60);
+  border-radius: var(--border-radius-base);
+  padding: 0 0.3rem;
+}
+
+.user-profile-page .projects {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.user-profile-page .project {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.user-profile-page .project .project-summary {
+  font-size: var(--font-size-medium);
+  margin-left: 2rem;
+}
+
+.user-profile-page .project .tags {
+  margin-left: 2rem;
+}
+
+#edit-user-profile-modal {
+  width: 32rem;
+}
+
+/* loading */
+
+.user-profile-page.user-page_loading .user-profile_info {
+  gap: 0.5rem;
+}
+
+@media only screen and (--u-viewport_max-lg) {
+  .user-profile-page .page-title .page-title_right-side {
+    display: none;
+  }
+}
+
+@media only screen and (--u-viewport_max-md) {
+  .user-profile-page .user-profile-page_page-content {
+    flex-direction: column;
+  }
+}

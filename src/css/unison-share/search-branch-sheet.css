@@ -1,0 +1,93 @@
+.search-branch-sheet {
+  width: 14rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-branch-sheet search {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* @color-todo @inverse */
+.search-branch-sheet .tag {
+  --c-color_tag_bg_hovered: var(--color-gray-darken-10);
+}
+
+.search-branch-sheet .search-branch-sheet_branches {
+  position: relative;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-branch-sheet
+  .search-branch-sheet_branches
+  .search-branch-sheet_suggestions {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-branch-sheet_recent-branches_loading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-branch-sheet_branches_loading-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-branch-sheet_branches_loading-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-branch-sheet_branch-list_items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-branch-sheet_error {
+  color: var(--u-color_critical_text);
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.search-branch-sheet .search-branch-sheet_error .icon {
+  color: var(--u-color_critical_icon);
+}
+
+.search-branch-sheet_searching {
+  position: absolute;
+  background: var(--c-color_anchored-overlay_sheet_bg);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.85;
+}
+
+.search-branch-sheet_no-results_message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--u-color_text);
+}
+
+.search-branch-sheet_no-results_message p {
+  margin: 0;
+}

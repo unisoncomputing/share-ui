@@ -1,0 +1,158 @@
+.project-contribution-changes-page {
+  & .card.changes {
+    gap: 1.5rem;
+  }
+
+  & a:hover * {
+    color: var(--u-color_interactive_hovered);
+  }
+
+  & .contribution-diff-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    font-size: var(--font-size-medium);
+
+    & .icon {
+      font-size: var(--font-size-medium);
+      line-height: 1;
+    }
+
+    & .diff-line {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1;
+      position: relative;
+
+      & .tooltip {
+        left: -0.55rem;
+      }
+
+      & .diff-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        border-radius: 0.5625rem;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      & .diff-icon.added {
+        background: var(--color-green-5);
+
+        & .icon {
+          color: var(--color-green-1);
+        }
+      }
+
+      & .diff-icon.updated {
+        background: var(--color-orange-5);
+
+        & .icon {
+          color: var(--color-orange-0);
+        }
+      }
+
+      & .diff-icon.removed {
+        background: var(--color-pink-5);
+
+        & .icon {
+          color: var(--color-pink-1);
+        }
+      }
+
+      & .diff-icon.renamed {
+        background: var(--color-blue-5);
+
+        & .icon {
+          color: var(--color-blue-2);
+        }
+      }
+
+      & .diff-icon.aliased {
+        background: var(--color-purple-5);
+
+        & .icon {
+          color: var(--color-purple-2);
+        }
+      }
+
+      & .def-icon-anchor {
+        position: relative;
+
+        & .def-icon {
+          width: 1.125rem;
+          height: 1.125rem;
+          border-radius: 0.5625rem;
+          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      & .icon.term,
+      & .icon.type,
+      & .icon.ability,
+      & .icon.ability-constructor,
+      & .icon.data-constructor,
+      & .icon.doc,
+      & .icon.test {
+        color: var(--u-color_icon_subdued);
+      }
+
+      & .diff-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--u-color_text);
+
+        & .prefix {
+          color: var(--u-color_text_subdued);
+          font-family: var(--font-monospace);
+        }
+
+        & .fully-qualified-name {
+          font-family: var(--font-monospace);
+          font-weight: normal;
+        }
+
+        & .extra-info {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.25rem;
+          color: var(--u-color_text_subdued);
+          font-size: var(--font-size-small);
+        }
+      }
+    }
+  }
+
+  & .diff-line.namespace {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0.875rem;
+    gap: 0.25rem;
+
+    & .namespace-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+
+      & .icon {
+        color: var(--u-color_icon_subdued);
+      }
+    }
+
+    & .contribution-diff-group {
+      padding-left: 1rem;
+    }
+  }
+}

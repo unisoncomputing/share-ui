@@ -1,0 +1,113 @@
+.project-branches-page .project-branches_list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+  margin-left: -0.25rem;
+}
+
+.project-branches-page .project-branches_branch-row {
+  height: 1.5rem;
+  font-size: var(--font-size-medium);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.25rem;
+  border-radius: var(--border-radius-base);
+}
+
+.project-branches-page .project-branches_branch-row:hover {
+  background: var(--u-color_container_hovered);
+}
+
+.project-branches-page .project-branches_branch-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.project-branches-page .project-branches_branch-info .branch-updated-at {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--u-color_text_subdued);
+  line-height: 1;
+}
+
+.project-branches-page
+  .project-branches_branch-info
+  .branch-updated-at_tooltip {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+#delete-branch-modal {
+  width: 30rem;
+}
+
+#delete-branch-modal .delete-branch-modal_content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+#delete-branch-modal p {
+  margin: 0;
+}
+
+#delete-project-modal .status-banner {
+  font-weight: bold;
+}
+
+#delete-branch-modal .delete-branch-modal_actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+#delete-branch-modal .delete-branch-modal_actions .status-banner {
+  position: absolute;
+  left: 0;
+  z-index: var(--layer-base);
+}
+
+#delete-branch-modal .delete-branch-modal_overlay-deleting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-modal-bg);
+  opacity: 0.85;
+  content: " ";
+}
+
+#delete-branch-modal:has(.delete-branch-modal_overlay-success) {
+  height: 18rem;
+}
+
+#delete-branch-modal .delete-branch-modal_overlay-success {
+  position: absolute;
+  top: -4rem;
+  left: -1rem;
+  right: -1rem;
+  bottom: 0;
+  background: var(--color-modal-bg);
+  content: " ";
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  padding-top: 6rem;
+}

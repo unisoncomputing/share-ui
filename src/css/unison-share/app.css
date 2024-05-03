@@ -1,0 +1,238 @@
+#app {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: auto auto auto 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "announcement"
+    "app-header"
+    "page-header"
+    "page-layout";
+
+  --c-height_announcement: 2rem; /* its 0 when there's no banner visible, 2rem otherwise */
+}
+
+/* TODO: move this be to the modal module in ui-core? */
+body:has(#modal-overlay) {
+  overflow: clip;
+}
+
+#announcement {
+  --c-color_announcement_background: var(--color-gray-darken-30);
+  --c-color_announcement_text: var(--color-gray-lighten-100);
+  --u-color_interactive: var(--color-blue-3);
+
+  display: flex;
+  grid-area: announcement;
+  font-size: var(--font-size-medium);
+  height: var(--c-height_announcement);
+  background: var(--c-color_announcement_background);
+  color: var(--c-color_announcement_text);
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+
+  & .announcement_content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: 1;
+    gap: 0.25rem;
+  }
+}
+
+/* -- App Error ------------------------------------------------------------ */
+
+.app-error {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8rem;
+  font-weight: 600;
+  color: var(--u-color_text);
+}
+
+.app-error .icon {
+  font-size: 4rem;
+  color: var(--u-color_critical_icon);
+}
+
+/* -- App header ----------------------------------------------------------- */
+
+#app-header .account-menu-trigger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2rem;
+  padding-left: 0.25rem;
+  padding-right: 0.375rem;
+  border-radius: 1rem;
+  transition: all 0.2s;
+}
+
+#app-header .account-menu .action-menu .action-menu_sheet {
+  width: 11.5rem;
+}
+
+#app-header .create-account-menu {
+  width: 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#app-header .create-account-menu .button {
+  width: 100%;
+  --color-button-emphasized-text: var(--color-gray-darken-30);
+  --color-button-emphasized-icon: var(--color-gray-lighten-20);
+  --color-button-emphasized-bg: var(--color-gray-lighten-60);
+  --color-button-emphasized-hover-text: var(--color-gray-darken-30);
+  --color-button-emphasized-hover-icon: var(--color-gray-lighten-20);
+  --color-button-emphasized-hover-bg: var(--color-gray-lighten-30);
+}
+
+#app-header .create-account-menu .terms-of-service {
+  font-size: var(--font-size-small);
+  color: var(--u-color_text_subdued);
+}
+
+#app-header .create-account-menu .terms-of-service a {
+  color: var(--color-blue-3);
+}
+
+#app-header .create-account-menu .terms-of-service a:hover {
+  color: var(--color-blue-4);
+  text-decoration: underline;
+}
+
+#app-header .sign-in-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#app-header .sign-in-nav_mobile {
+  display: none;
+}
+
+#app-header .nav-item .tooltip {
+  line-height: 1.4;
+  margin-top: -0.5rem;
+  margin-right: 0;
+  margin-left: 4.1rem;
+}
+
+#app-header .nav-item .tooltip .tooltip-bubble {
+  white-space: nowrap;
+}
+
+#app-header .action-menu > .nudge .nudge_circle {
+  box-shadow: 0 0 0 4px var(--color-app-header-bg);
+}
+
+#app-header .account-menu-trigger:hover,
+#app-header .account-menu-trigger.account-menu_is-open {
+  background: var(--u-color_c_navigation-item_selected);
+}
+
+#app-header .account-menu-trigger:hover .icon,
+#app-header .account-menu-trigger.account-menu_is-open .icon {
+  color: var(--u-color_c_text-on-navigation-item_selected);
+}
+
+#app-header .account-menu .icon {
+  color: var(--u-color_icon_subdued);
+}
+
+#app-header .tooltip-bubble {
+  margin-right: -3.9rem;
+  margin-top: 1rem;
+}
+
+/* -- App Footer ----------------------------------------------------------- */
+
+#app-footer {
+  grid-area: app-footer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--u-color_text_very-subdued);
+  font-size: var(--font-size-small);
+}
+
+#app-footer a {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--u-color_text);
+  font-size: var(--font-size-small);
+}
+
+#app-footer a:hover {
+  color: var(--u-color_interactive);
+}
+
+#app-footer .icon {
+  color: var(--u-color_icon);
+  font-size: var(--font-size-small);
+  line-height: 1;
+}
+
+@media only screen and (--u-viewport_max-lg) {
+  #announcement {
+    font-size: var(--font-size-small);
+  }
+}
+
+@media only screen and (--u-viewport_max-md) {
+  #app {
+    width: 100vw;
+    --app-header-height: 7rem;
+    --c-height_announcement: 0rem;
+  }
+
+  #announcement {
+    display: none;
+  }
+
+  #app-header {
+    padding: 1rem 0.25rem 0 0.5rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  #app-header .app-title {
+    margin-right: 0.25rem;
+    margin-left: 0.5rem;
+  }
+
+  #app-header .left-side {
+    display: none;
+  }
+
+  #app-header .navigation {
+    gap: 0;
+    margin-right: 1rem;
+  }
+
+  #app-header .right-side {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
+
+  #app-header .sign-in-nav {
+    display: none;
+  }
+
+  #app-header .sign-in-nav_mobile {
+    display: flex;
+  }
+}

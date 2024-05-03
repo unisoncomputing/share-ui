@@ -1,0 +1,27 @@
+.project-listing {
+  --c-color_project-name-listing_private-icon: var(
+    --u-color_info_icon-on-element_subdued
+  );
+  --c-color_project-name-listing_private-icon_background: var(
+    --u-color_info_element_subdued
+  );
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+
+  & .private-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.75rem;
+    background: var(--c-color_project-name-listing_private-icon_background);
+    display: inline-flex;
+    place-content: center;
+    place-items: center;
+  }
+
+  & .private-icon .icon {
+    color: var(--c-color_project-name-listing_private-icon);
+  }
+}

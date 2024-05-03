@@ -1,0 +1,29 @@
+.project-ref {
+  --c-color_project-ref_handle: var(--u-color_text_subdued);
+  --c-color_project-ref_separator: var(--u-color_text_very-subdued);
+  --c-color_project-ref_slug: var(--u-color_text);
+
+  font-weight: bold;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 0.25rem;
+}
+
+.project-ref .project-ref_handle {
+  color: var(--c-color_project-ref_handle);
+  white-space: nowrap;
+}
+
+.project-ref .project-ref_separator {
+  color: var(--c-color_project-ref_separator);
+}
+
+.project-ref .project-ref_slug {
+  color: var(--c-color_project-ref_slug);
+  white-space: nowrap;
+}
+
+.project-ref a.project-ref_handle:hover,
+.project-ref a.project-ref_slug:hover {
+  color: var(--u-color_interactive_hovered);
+}

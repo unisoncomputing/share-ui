@@ -1,0 +1,60 @@
+{
+  "name": "unison-share-ui",
+  "version": "1.0.0",
+  "description": "Unison Share UI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unisoncomputing/unison-share-ui.git"
+  },
+  "scripts": {
+    "build": "webpack --mode production --config webpack.prod.js",
+    "clean": "rm -rf dist",
+    "start": "webpack serve --mode development --port 1234 --config webpack.dev.js",
+    "test": "elm-test",
+    "check": "elm-test; elm-review; ui-core-check-css; npx prettier --check .",
+    "watch": "elm-watch hot",
+    "review": "elm-review",
+    "build-maintenance-mode": "rm -rf dist; mkdir -p dist/unisonShare; cp src/maintenance.html dist/unisonShare/index.html",
+    "repl": "elm repl",
+    "ui-core-check-css": "ui-core-check-css",
+    "ui-core-install": "ui-core-install",
+    "ui-core-update": "ui-core-update",
+    "postinstall": "ui-core-install"
+  },
+  "homepage": "https://share.unison-lang.org",
+  "devDependencies": {
+    "@octokit/core": "^4.0.5",
+    "@playwright/test": "^1.39.0",
+    "@types/node": "^20.9.0",
+    "@unison-lang/ui-core-scripts": "^1.1.9",
+    "archiver": "^5.3.0",
+    "copy-webpack-plugin": "^8.1.1",
+    "css-loader": "^5.2.4",
+    "elm": "^0.19.1-5",
+    "elm-asset-webpack-loader": "^1.1.2",
+    "elm-format": "^0.8.7",
+    "elm-git-install": "^0.1.4",
+    "elm-json": "^0.2.12",
+    "elm-review": "^2.5.5",
+    "elm-test": "^0.19.1-revision12",
+    "elm-webpack-loader": "^8.0.0",
+    "favicons": "^7.0.1",
+    "favicons-webpack-plugin": "^6.0.0-alpha.1",
+    "html-webpack-plugin": "^5.3.1",
+    "postcss": "^8.4.16",
+    "postcss-loader": "^7.0.1",
+    "postcss-preset-env": "^7.8.0",
+    "prettier": "^2.8.7",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.66.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@sentry/browser": "^7.26.0",
+    "@sentry/tracing": "^7.26.0"
+  }
+}

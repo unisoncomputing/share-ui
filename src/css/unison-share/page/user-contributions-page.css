@@ -1,0 +1,129 @@
+.user-contributions-page .column {
+  gap: 1rem;
+}
+
+.user-contributions-page .contributions-by-project {
+  margin-top: 0.75rem;
+}
+
+.user-contributions-page .user-contributions-page_sub-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 2.25rem;
+}
+
+.user-contributions-page .user-contributions-page_kpis {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-contributions-page .user-contributions-page_sub-header .text-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user-contributions-page .project-contributions {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.user-contributions-page .contributions-for-project {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-contributions-page .contribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-left: 2rem;
+}
+
+.user-contributions-page .contribution {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.project-contributions_loading {
+  display: flex;
+  flex-direction: column;
+  gap: 2.625rem;
+}
+
+.project-contributions_loading_project {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.project-contributions_loading_contributions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.user-contributions-page .disabled-search-field {
+  position: relative;
+  opacity: 0.35;
+}
+
+.user-contributions-page .disabled-search-field::after {
+  position: absolute;
+  content: " ";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.user-contributions-page .no-contribs {
+  text-align: center;
+  width: 12rem;
+}
+
+/* @todo :has */
+/*.user-contributions-page .empty-state:has(.empty-state_search) { */
+.user-contributions-page .empty-state.has_empty-state_search {
+  margin-top: 2.625rem;
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  .user-contributions-page .user-contributions-page_sub-header {
+    height: auto;
+    width: 100%;
+  }
+
+  .user-contributions-page
+    .user-contributions-page_sub-header
+    .disabled-search-field {
+    width: 100%;
+  }
+
+  .user-contributions-page .user-contributions-page_sub-header .text-field {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .user-contributions-page
+    .user-contributions-page_sub-header
+    .text-field
+    .text-field_input {
+    width: 100%;
+  }
+
+  .user-contributions-page
+    .user-contributions-page_sub-header
+    .text-field
+    .help-text {
+    margin-left: 0.5rem;
+  }
+}

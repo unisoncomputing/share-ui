@@ -1,0 +1,89 @@
+.code-page .sidebar .namespace-header {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.code-page .sidebar .namespace-header .icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.code-page .sidebar .is-overflowing .namespace-header .icon:after {
+  position: absolute;
+  top: 0;
+  right: -1.5rem;
+  bottom: 0;
+  content: "";
+  width: 1.5rem;
+  background: linear-gradient(
+    90deg,
+    var(--color-sidebar-bg),
+    var(--color-sidebar-bg),
+    var(--color-sidebar-bg-transparent)
+  );
+}
+
+.code-page .sidebar .namespace-header .namespace {
+  display: inline-flex;
+  color: var(--color-sidebar-fg-em);
+  font-size: 1rem;
+  font-weight: 500;
+  height: 1.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+.code-page .sidebar .sidebar_collapsed .namespace-header {
+  gap: 0.25rem;
+}
+
+.code-page .sidebar .sidebar_collapsed .namespace-header .icon {
+  font-size: var(--font-size-base);
+}
+
+.code-page .sidebar .sidebar_collapsed .namespace-header .namespace {
+  font-size: var(--font-size-small);
+}
+
+.code-page .sidebar .perspective-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.375rem;
+  flex-grow: 1;
+}
+
+.code-page .sidebar .perspective-actions .download,
+.code-page .sidebar .perspective-actions .download .button {
+  flex-grow: 1;
+}
+
+.code-page .sidebar .perspective-actions .download .button .icon {
+  flex-grow: 0;
+}
+
+.code-page .sidebar .perspective-actions .tooltip {
+  margin-left: -0.3rem;
+  margin-top: 0.5rem;
+}
+
+.code-page .sidebar .perspective-actions .tooltip-bubble {
+  min-width: auto;
+  font-weight: bold;
+  font-size: var(--font-size-small);
+}
+
+.code-page .sidebar .perspective-actions .tooltip .fully-qualified-name {
+  padding: 0;
+  height: initial;
+}
+
+.code-page .perspective-tree-divider {
+  display: flex;
+  flex-grow: 1;
+}

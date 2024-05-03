@@ -1,0 +1,227 @@
+.project-releases-page .project-releases_releases {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.project-releases-page .release-draft {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  font-size: var(--font-size-small);
+  padding-left: 0.375rem;
+}
+
+.project-releases-page .release-draft_meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-releases-page .project-release-details {
+  gap: 0;
+  padding: 0;
+}
+
+.project-releases-page .project-release-details header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--u-color_border_subdued);
+  padding: 1.5rem;
+}
+
+.project-releases-page .project-release-details_version-hash {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.project-releases-page .project-release-details_version-hash .version:hover {
+  color: var(--u-color_interactive);
+}
+
+.project-releases-page .project-release-details_release-notes {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-bottom: 1px solid var(--u-color_border_subdued);
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.project-releases-page
+  .project-release-details_release-notes
+  #release-notes_container {
+  max-height: 20rem;
+  overflow: hidden;
+}
+
+.project-releases-page
+  .project-release-details_release-notes.shown-in-full
+  #release-notes_container {
+  overflow: visible;
+  max-height: -moz-fit-content;
+  max-height: fit-content;
+}
+
+.project-releases-page
+  .project-release-details_release-notes
+  .show-full-release-notes {
+  position: relative;
+  background: var(--u-color_container);
+}
+
+/* overlapping gradient for the content to peek out behind, indicating more is
+ * below the fold */
+.project-releases-page
+  .project-release-details_release-notes
+  .show-full-release-notes:before {
+  position: absolute;
+  top: -4.5rem;
+  left: 0;
+  right: 0;
+  content: "";
+  margin: 0;
+  height: 4.5rem;
+  background: linear-gradient(
+    0deg,
+    var(--u-color_container) 20%,
+    var(--u-color_container_faded) 80%,
+    var(--color-transparent)
+  );
+}
+
+/* @todo: feels like this should be using 
+ *   --readable-column-width: 43rem —  50rem is pretty wide */
+.project-releases-page .project-release-details_release-notes .definition-doc {
+  --c-width_doc_outer: 50rem;
+  --c-width_doc_inner-content: 50rem;
+}
+
+.project-releases-page
+  .project-release-details_release-notes
+  .definition-doc
+  .doc-table {
+  max-width: var(--c-width_doc_outer);
+}
+
+.project-releases-page .project-release-details footer {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1.5rem;
+  justify-content: flex-end;
+}
+
+.project-releases-page .project-releases_loading_past-releases {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-releases-page .project-releases_loading_past-releases_group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-releases-page .project-releases_loading_past-releases_group header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-releases-page .project-releases_past-releases {
+  font-size: var(--font-size-medium);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.625rem;
+}
+
+.project-releases-page .project-releases_past-releases_release {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.project-releases-page .project-releases_past-releases_release .version {
+  width: 3.5rem;
+}
+
+.project-releases-page .project-releases_past-releases_release_version-and-hash,
+.project-releases-page
+  .project-releases_past-releases_release_status-and-by-at {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.project-releases-page
+  .project-releases_past-releases_release_version-and-hash
+  .version:hover {
+  color: var(--u-color_interactive);
+}
+
+.project-releases-page .project-releases_error {
+  align-items: center;
+  padding: 2rem;
+}
+
+.project-releases-page .browsable-branch-hash {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  align-items: center;
+}
+.project-releases-page .browsable-branch-hash * {
+  transition: none;
+}
+
+.project-releases-page .browsable-branch-hash .icon.browse {
+  margin-bottom: 1px;
+}
+
+.project-releases-page .browsable-branch-hash:hover,
+.project-releases-page .browsable-branch-hash:hover .hash,
+.project-releases-page .browsable-branch-hash:hover .icon {
+  color: var(--u-color_interactive_hovered);
+}
+
+.project-releases-page .browsable-branch-hash:active,
+.project-releases-page .browsable-branch-hash:active .hash,
+.project-releases-page .browsable-branch-hash:active .icon {
+  color: var(--u-color_interactive_pressed);
+}
+
+@media only screen and (--u-viewport_max-md) {
+  .project-releases-page
+    .project-releases_past-releases_release_version-and-hash,
+  .project-releases-page
+    .project-releases_past-releases_release_status-and-by-at {
+    gap: 0.5rem;
+  }
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  .project-releases-page .project-releases_past-releases_release {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .project-releases-page
+    .project-releases_past-releases_release_version-and-hash,
+  .project-releases-page
+    .project-releases_past-releases_release_status-and-by-at {
+    gap: 0.5rem;
+  }
+}

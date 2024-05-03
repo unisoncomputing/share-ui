@@ -1,0 +1,306 @@
+#publish-project-release-modal {
+  width: 53rem;
+}
+
+#publish-project-release-modal .modal-content {
+  height: 30rem;
+  position: relative;
+}
+
+#publish-project-release-modal .help {
+  color: var(--u-color_text_subdued);
+}
+
+#publish-project-release-modal .publish-project-release_content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+#publish-project-release-modal .publish-project-release_content_disabled:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-modal-bg);
+  opacity: 0.85;
+  content: " ";
+}
+
+#publish-project-release-modal .publish-project-release_form-and-release-notes {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  height: 100%;
+}
+
+#publish-project-release-modal .publish-project-release_form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 17rem;
+  flex-shrink: 0;
+}
+
+#publish-project-release-modal .publish-project-release_form > section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#publish-project-release-modal .publish-project-release_release-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 2rem;
+  border-left: 1px solid var(--u-color_border_subdued);
+  width: 31rem;
+}
+
+#publish-project-release-modal .publish-project-release_footer {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#publish-project-release-modal .publish-project-release_footer .status-banner {
+  position: absolute;
+  left: 0;
+  z-index: var(--layer-base);
+}
+
+/* Success State */
+
+#publish-project-release-modal .publish-project-release_publish-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+  gap: 1rem;
+  font-size: var(--font-size-base);
+  line-height: 1;
+  margin-top: 2.625rem;
+  padding-top: 8rem;
+  height: 18rem;
+  background: url("assets/confetti.svg") top center no-repeat;
+}
+
+#publish-project-release-modal .publish-project-release_publish-success_emoji {
+  font-size: 2.625rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 2.25rem;
+  background: var(--color-purple-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#publish-project-release-modal .publish-project-release_publish-success h1 {
+  font-size: var(--font-size-large);
+  font-weight: 900;
+}
+
+#publish-project-release-modal .release-notes-preview {
+  position: relative;
+  background: var(--color-modal-bg);
+  border: 1px solid var(--u-color_border_subdued);
+  border-radius: var(--border-radius-base);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 19rem;
+  gap: 1.5rem;
+  overflow: hidden;
+}
+
+#publish-project-release-modal .release-notes-preview:has(.definition-doc) {
+  height: 100%;
+}
+
+#publish-project-release-modal
+  .publish-project-release_release-notes-preview-maximized
+  .release-notes-preview {
+  position: absolute;
+  max-height: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#publish-project-release-modal
+  .publish-project-release_release-notes-preview-maximized
+  .release-notes-preview {
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .release-notes-preview_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  z-index: var(--layer-base);
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .release-notes-preview_title {
+  color: var(--u-color_text_subdued);
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .release-notes-preview_title
+  .icon {
+  color: var(--u-color_icon_subdued);
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .release-notes-preview_loading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .release-notes-preview_loading_items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#publish-project-release-modal .release-notes-preview .definition-doc {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--font-size-medium);
+  --c-width_doc_outer: 28rem;
+  --c-width_doc_inner-content: 28rem;
+}
+
+/* resizing the result indicator to better fit with the smaller preview padding */
+#publish-project-release-modal
+  .release-notes-preview
+  .definition-doc
+  .result-indicator {
+  width: 1rem;
+  height: 1rem;
+  left: -0.25rem;
+  top: -0.5rem;
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .definition-doc
+  .result-indicator
+  .icon {
+  font-size: var(--font-size-small);
+}
+
+#publish-project-release-modal .release-notes-preview:before {
+  content: " ";
+  width: 2rem;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    270deg,
+    var(--color-modal-bg) 20%,
+    var(--color-modal-bg-faded) 80%,
+    var(--color-transparent)
+  );
+}
+
+#publish-project-release-modal .release-notes-preview:after {
+  content: " ";
+  height: 2rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    0deg,
+    var(--color-modal-bg) 20%,
+    var(--color-modal-bg-faded) 80%,
+    var(--color-transparent)
+  );
+}
+
+#publish-project-release-modal
+  .publish-project-release_release-notes-preview-maximized
+  .release-notes-preview:after,
+#publish-project-release-modal
+  .publish-project-release_release-notes-preview-maximized
+  .release-notes-preview:before {
+  display: none;
+}
+
+/* @todo: feels like this should be using 
+ *   --readable-column-width: 43rem —  50rem is pretty wide */
+#publish-project-release-modal
+  .publish-project-release_release-notes-preview-maximized
+  .release-notes-preview
+  .definition-doc {
+  --c-width_doc_outer: 50rem;
+  --c-width_doc_inner-content: 50rem;
+}
+
+#publish-project-release-modal .release-notes-preview .definition-doc aside {
+  position: relative;
+  right: auto;
+  width: auto;
+  margin: 1rem;
+}
+
+#publish-project-release-modal
+  .release-notes-preview
+  .definition-doc
+  .doc-table {
+  max-width: var(--c-width_doc_outer);
+}
+
+/* Loading State */
+
+#publish-project-release-modal .publish-project-release_loading {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#publish-project-release-modal .publish-project-release_loading_group {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Error State */
+
+#publish-project-release-modal .publish-project-release_error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

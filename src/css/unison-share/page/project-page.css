@@ -1,0 +1,94 @@
+.project-page .page-header .page-header_right-side .kpis {
+  display: flex;
+  flex-direction: row;
+  margin-right: 0.75rem;
+  align-items: center;
+  position: relative;
+}
+
+.project-page .page-header .page-header_right-side .kpi {
+  display: flex;
+  position: relative;
+}
+
+.project-page .page-header .page-header_right-side .kpi .tooltip {
+  margin-top: 2px;
+  left: -0.5rem;
+  pointer-events: none;
+}
+
+.project-page .page-header .page-header_right-side .kpi-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: var(--font-size-medium);
+  padding: 0.325rem;
+}
+
+.project-page .page-header .page-header_right-side .kpi:hover .kpi-content {
+  /* @color-todo */
+  background: var(--color-gray-darken-30);
+  border-radius: var(--border-radius-base);
+}
+
+.project-page .page-header .page-header_right-side .kpi .kpi-num {
+  margin-top: 1px;
+  font-size: var(--font-size-medium);
+  font-family: var(--font-monospace);
+  color: var(--c-color_page-header_text_subdued);
+  font-weight: bold;
+}
+
+.project-page .page-header .page-header_right-side .kpi .icon {
+  font-size: 1.25rem;
+  color: var(--c-color_page-header_icon_subdued);
+}
+
+.project-page .page-header .page-header_right-side a .kpi,
+.project-page .page-header .page-header_right-side a .kpi .icon,
+.project-page .page-header .page-header_right-side a .kpi .kpi-num,
+.project-page .page-header .page-header_right-side a .kpi .kpi-label {
+  cursor: pointer;
+}
+
+.project-page .page-header .page-header_right-side a.is-faved .icon {
+  color: var(--color-pink-1);
+}
+
+.project-page .page-header .page-header_right-side a.just-faved .icon {
+  animation: 0.4s pulsate-size;
+}
+
+.project-page .project-page_login-tip {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-page .project-page_login-tip .status-banner {
+  width: fit-content;
+}
+
+.project-page .empty-state-content {
+  padding: 0 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-page .empty-state-content code {
+  background: var(--color-gray-lighten-55);
+  border-radius: var(--border-radius-base);
+  padding: 0 0.25rem;
+  text-align: left;
+}
+
+.project-page .empty-state-content .delete-project {
+  margin-top: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

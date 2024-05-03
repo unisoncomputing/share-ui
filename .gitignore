@@ -1,0 +1,15 @@
+elm-stuff
+.DS_Store
+public/bundle.js
+node_modules
+dist
+.unisonHistory
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Local Netlify folder
+.netlify

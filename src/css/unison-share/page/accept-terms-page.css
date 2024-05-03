@@ -1,0 +1,16 @@
+.accept-terms-page {
+  padding-bottom: 4.5rem;
+  & .accept {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0rem;
+    background: var(--color-gray-lighten-100);
+    border-top: 1px solid var(--u-color_border);
+  }
+}

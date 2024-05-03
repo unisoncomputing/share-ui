@@ -1,0 +1,198 @@
+.project-overview-page.project-page-loading .page-title {
+  opacity: 0.25;
+}
+
+.project-overview-page .page-title .kpis {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.project-overview-page .page-title .kpis .is-faved .icon {
+  color: var(--color-pink-1);
+}
+
+.project-overview-page .column {
+  gap: 2rem;
+}
+
+.project-overview-page_layout {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.project-overview-page_content {
+  flex: 1;
+}
+
+.project-overview-page_sidebar {
+  display: flex;
+  width: 12.25rem; /* @todo should match the user sidebar width or similar */
+  flex-direction: column;
+}
+
+.project-overview-page_sidebar_loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.project-overview-page_sidebar .project-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: var(--font-size-medium);
+}
+
+.project-overview-page .empty-state .project-ref {
+  font-size: 1.125rem;
+}
+
+.project-overview-page .project-overview-page_empty-state_center-piece {
+  display: flex;
+  border-radius: calc(var(--border-radius-base) + 0.25rem);
+  border: 0.25rem solid var(--u-color_element_emphasized);
+}
+
+.project-overview-page
+  .project-overview-page_empty-state_center-piece
+  .hashvatar {
+  width: 4rem;
+  height: 4rem;
+}
+
+.project-overview-page .project-description {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-overview-page .project-description-empty-state {
+  border: 1px dashed var(--u-color_border_subdued);
+  padding: 1rem;
+  text-align: center;
+  border-radius: var(--border-radius-base);
+  font-size: var(--font-size-medium);
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  color: var(--u-color_text_subdued);
+}
+
+#edit-project-description-modal {
+  width: 24rem;
+}
+
+#edit-project-description-modal .edit-project-description-modal_content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#edit-project-description-modal .edit-project-description-modal_content p {
+  margin: 0;
+}
+
+#edit-project-description-modal .description-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#edit-project-description-modal .actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  position: relative;
+}
+
+#edit-project-description-modal .actions .status-banner {
+  position: absolute;
+  left: 0;
+}
+
+#edit-project-description-modal .actions .buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+#edit-project-description-modal .saving .description-form:after {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--border-radius-base);
+}
+
+#edit-project-description-modal .save-success {
+  display: flex;
+  flex: 1;
+  place-items: center;
+  place-content: center;
+  height: 21.5rem;
+}
+
+.project-overview-page .project-dependencies {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* @todo @color-todo */
+.project-overview-page .project-dependencies .tag {
+  background: var(--u-color_element);
+  border: 1px solid var(--u-color_border);
+}
+
+#project-readme-instructions-modal {
+  width: 34.5rem;
+}
+
+#project-readme-instructions-modal .steps {
+  margin-top: 1.5rem;
+}
+
+#project-readme-instructions-modal .modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#project-readme-instructions-modal .pull-hint {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  color: var(--u-color_text_subdued);
+}
+
+#project-readme-instructions-modal .pull-hint p:last-child {
+  margin: 0;
+}
+
+#project-readme-instructions-modal .pull-hint .icon {
+  color: var(--u-color_icon_subdued);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+#project-readme-instructions-modal .pull-hint .inline-code {
+  background: var(--color-gray-lighten-60);
+  border-radius: var(--border-radius-base);
+  padding: 0 0.3rem;
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  .project-overview-page .page-title .page-title_right-side {
+    display: none;
+  }
+}

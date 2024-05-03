@@ -1,0 +1,111 @@
+.timeline {
+  overflow: hidden;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  & .timeline-event {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: var(--font-size-medium);
+
+    & .timeline-event_header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1;
+
+      & .timeline-event_header_description {
+        display: flex;
+        flex-direction: row;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      & .timeline-event_icon {
+        background: var(--color-gray-lighten-45);
+        height: 1.5rem;
+        width: 1.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        & .icon {
+          position: relative;
+          z-index: 2;
+          color: var(--color-gray-darken-20);
+        }
+      }
+
+      & .timeline-event_icon::before {
+        position: absolute;
+        content: " ";
+        background: var(--color-gray-lighten-45);
+        width: 1px;
+        height: 500px;
+        bottom: 1.5rem;
+        left: calc(50% - 1px);
+        z-index: 0;
+      }
+
+      & .timeline-event_icon::after {
+        position: absolute;
+        content: " ";
+        z-index: 1;
+        top: 0;
+        left: 0;
+        height: 1.5rem;
+        width: 1.5rem;
+        border-radius: 1.5rem;
+        padding: 0;
+        box-shadow: 0 0 0 4px var(--u-color_background_subdued);
+      }
+
+      & .timeline-event_description {
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+      }
+
+      & .event-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+        align-items: center;
+      }
+    }
+
+    & .card {
+      background: var(--u-color_element);
+      padding: 0.5rem 0.75rem;
+
+      &.comment-event_content {
+        margin-top: 0.5rem;
+        margin-left: 2rem;
+      }
+
+      & .definition-doc {
+        --color-doc-bg: var(--u-color_element);
+      }
+    }
+
+    & .comment-event_edit {
+      margin-top: 0.5rem;
+      margin-left: 2rem;
+    }
+  }
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  .timeline {
+    & .timeline-event {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+}

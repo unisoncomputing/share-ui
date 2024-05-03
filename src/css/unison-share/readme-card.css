@@ -1,0 +1,29 @@
+.readme-card .definition-doc {
+  --c-width_doc_outer: 44.265rem;
+  --c-width_doc_inner-content: 44.265rem;
+}
+
+/* @todo: feels like this should be using 
+ *   --readable-column-width: 43rem —  50rem is pretty wide */
+.page-content :not(.with-page-aside) .readme-card .definition-doc {
+  --c-width_doc_outer: 50rem;
+  --c-width_doc_inner-content: 50rem;
+}
+
+.readme-card .definition-doc aside {
+  width: 14rem;
+  right: -16rem;
+}
+
+.readme-card .definition-doc .doc-table {
+  max-width: var(--c-width_doc_outer);
+}
+
+@media only screen and (--u-viewport_max-xl) {
+  .readme-card .definition-doc aside {
+    position: relative;
+    right: auto;
+    width: auto;
+    margin: 1.5rem;
+  }
+}
