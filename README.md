@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/unisoncomputing/unison-share-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/unisoncomputing/unison-share-ui/actions/workflows/ci.yml)
 
+This repository contains the implementation of the Unison Share front end. It talks to the [`@unisoncomputing/share-api`](https://github.com/unisoncomputing/share-api) API server backend.
+
 ## Running Development Server
 
 Prerequisites: `node v20` or higher.
