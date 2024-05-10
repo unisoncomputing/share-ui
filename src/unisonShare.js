@@ -13,6 +13,7 @@ import detectOs from "ui-core/Lib/detectOs";
 import preventDefaultGlobalKeyboardEvents from "ui-core/Lib/preventDefaultGlobalKeyboardEvents";
 import * as Sentry from "@sentry/browser";
 import { BrowserTracing } from "@sentry/tracing";
+import * as Metrics from "./metrics";
 
 import "./UnisonShare/SupportChatWidget";
 import { getCookie } from "./util";
@@ -32,6 +33,8 @@ console.log(`
 // ----------------------------------------------------------------------------
 
 preventDefaultGlobalKeyboardEvents();
+
+Metrics.init();
 
 if (APP_ENV === "production") {
   Sentry.init({
