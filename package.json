@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^7.26.0",
-    "@sentry/tracing": "^7.26.0"
+    "@sentry/tracing": "^7.26.0",
+    "plausible-tracker": "^0.3.8"
   }
 }
