@@ -12,6 +12,7 @@ import Html.Attributes exposing (class, classList, id)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi
+import Lib.UserHandle as UserHandle
 import Lib.Util as Util
 import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
@@ -46,6 +47,7 @@ import UnisonShare.Project.Release as Release exposing (Release)
 import UnisonShare.PublishProjectReleaseModal as PublishProjectReleaseModal
 import UnisonShare.Route as Route
 import UnisonShare.Session as Session
+import UnisonShare.UcmCommand as UcmCommand
 
 
 
@@ -798,33 +800,30 @@ viewInstallModal projectRef version =
             ProjectRef.toString projectRef
 
         libVersion =
-            "lib."
+            UserHandle.toString (ProjectRef.handle projectRef)
+                ++ "_"
                 ++ ProjectSlug.toNamespaceString (ProjectRef.slug projectRef)
                 ++ "_"
                 ++ Version.toNamespaceString version
 
-        pullCommand =
-            "pull "
-                ++ projectRef_
-                ++ "/releases/"
-                ++ Version.toString version
-                ++ " lib."
-                ++ libVersion
+        installCommand =
+            UcmCommand.Install projectRef (Just (BranchRef.releaseBranchRef version))
+                |> UcmCommand.toString
 
         content =
             Modal.Content
                 (div [ class "instruction" ]
                     [ p []
                         [ text "From within your project in UCM, run the "
-                        , strong [] [ text "pull" ]
+                        , strong [] [ text "lib.install" ]
                         , text " command:"
                         ]
-                    , CopyField.copyField (\_ -> NoOp) pullCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
+                    , CopyField.copyField (\_ -> NoOp) installCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
                     , div [ class "hint" ] [ text "Copy and paste this command into UCM." ]
                     , div [ class "upgrade-hint" ]
                         [ div [ class "upgrade-icon" ] [ Icon.view Icon.arrowUp ]
                         , div [ class "upgrade-hint_content" ]
-                            [ div [] [ text "Upgrading from a previous version? Pull using the above and then run:" ]
+                            [ div [] [ text "Upgrading from a previous version? Install using the above and then run:" ]
                             , div [ class "monospace" ] [ text ("myProject/main> upgrade <old_version> " ++ libVersion) ]
                             ]
                         ]

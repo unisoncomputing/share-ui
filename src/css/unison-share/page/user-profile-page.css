@@ -45,13 +45,6 @@
   border-radius: var(--border-radius-base);
 }
 
-.user-profile-page .readme-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
 .user-profile-empty-state_welcome-to {
   text-align: center;
 }
@@ -74,42 +67,6 @@
   padding: 0.75rem;
   padding-top: 1.5rem;
   border-radius: var(--border-radius-base);
-}
-
-#user-profile-readme-instructions-modal {
-  width: 34.5rem;
-}
-#user-profile-readme-instructions-modal .steps {
-  margin-top: 1.5rem;
-}
-#user-profile-readme-instructions-modal .modal-actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
-#user-profile-readme-instructions-modal .pull-hint {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  color: var(--u-color_text_subdued);
-}
-
-#user-profile-readme-instructions-modal .pull-hint p:last-child {
-  margin: 0;
-}
-
-#user-profile-readme-instructions-modal .pull-hint .icon {
-  color: var(--u-color_icon_subdued);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-#user-profile-readme-instructions-modal .pull-hint .inline-code {
-  background: var(--color-gray-lighten-60);
-  border-radius: var(--border-radius-base);
-  padding: 0 0.3rem;
 }
 
 .user-profile-page .projects {

@@ -8,6 +8,7 @@ import Html exposing (Html, br, div, footer, form, h1, h3, p, span, strong, text
 import Html.Attributes exposing (class)
 import Http exposing (Error(..))
 import Lib.HttpApi as HttpApi exposing (HttpResult)
+import Lib.UserHandle as UserHandle
 import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
@@ -54,6 +55,7 @@ import UnisonShare.Route as Route exposing (CodeRoute, ProjectRoute(..))
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.SwitchBranch as SwitchBranch
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
+import UnisonShare.UcmCommand as UcmCommand
 
 
 
@@ -908,81 +910,76 @@ viewUseProjectModal project branchRef =
             ProjectRef.toString project.ref
 
         libVersion v =
-            ProjectSlug.toNamespaceString (ProjectRef.slug project.ref)
+            UserHandle.toString (ProjectRef.handle project.ref)
+                ++ "_"
+                ++ ProjectSlug.toNamespaceString (ProjectRef.slug project.ref)
                 ++ "_"
                 ++ Version.toNamespaceString v
 
-        pullCommand_ br =
-            case br of
-                BranchRef.ReleaseBranchRef v ->
-                    "pull "
-                        ++ projectRef_
-                        ++ "/releases/"
-                        ++ Version.toString v
-                        ++ " lib."
-                        ++ libVersion v
+        installCommand_ br =
+            let
+                cmd =
+                    if project.latestVersion == BranchRef.version br then
+                        UcmCommand.Install project.ref Nothing
 
-                _ ->
-                    "pull "
-                        ++ projectRef_
-                        ++ "/"
-                        ++ BranchRef.toString br
-                        ++ " lib."
-                        ++ ProjectSlug.toNamespaceString (ProjectRef.slug project.ref)
+                    else
+                        UcmCommand.Install project.ref (Just br)
+            in
+            UcmCommand.toString cmd
 
-        pullHint_ source =
-            [ text "UCM will clone the ", strong [] [ text source ], text " into the lib namespace." ]
+        installHint_ source =
+            [ text "UCM will install the ", strong [] [ text source ], text " into the lib namespace." ]
 
         upgradeHint_ v =
             div [ class "upgrade-hint" ]
                 [ div [ class "upgrade-icon" ] [ Icon.view Icon.arrowUp ]
                 , div [ class "upgrade-hint_content" ]
-                    [ div [] [ text "Upgrading from a previous version? Pull using the above and then run:" ]
+                    [ div [] [ text "Upgrading from a previous version? Install using the above and then run:" ]
                     , div [ class "monospace" ] [ text ("myProject/main> upgrade <old_version> " ++ libVersion v) ]
                     ]
                 ]
 
-        { activeBranchRef, modalTitle, pullCommand, pullHint, upgradeHint } =
+        { activeBranchRef, modalTitle, installCommand, installHint, upgradeHint } =
             case ( branchRef, project.latestVersion, project.defaultBranch ) of
                 ( Just b, _, _ ) ->
                     case b of
                         BranchRef.ReleaseBranchRef v ->
                             { activeBranchRef = b
                             , modalTitle = "/" ++ BranchRef.toString b
-                            , pullCommand = pullCommand_ b
-                            , pullHint = pullHint_ (BranchRef.toString b ++ " release")
+                            , installCommand = installCommand_ b
+                            , installHint = installHint_ (BranchRef.toString b ++ " release")
                             , upgradeHint = Just (upgradeHint_ v)
                             }
 
                         _ ->
                             { activeBranchRef = b
                             , modalTitle = "/" ++ BranchRef.toString b
-                            , pullCommand = pullCommand_ b
-                            , pullHint = pullHint_ (BranchRef.toString b ++ " branch")
+                            , installCommand = installCommand_ b
+                            , installHint = installHint_ (BranchRef.toString b ++ " branch")
                             , upgradeHint = Nothing
                             }
 
                 ( Nothing, Just v, _ ) ->
                     { activeBranchRef = BranchRef.ReleaseBranchRef v
                     , modalTitle = ""
-                    , pullCommand = pullCommand_ (BranchRef.releaseBranchRef v)
-                    , pullHint = pullHint_ "latest release"
+                    , installCommand = installCommand_ (BranchRef.releaseBranchRef v)
+                    , installHint = installHint_ "latest release"
                     , upgradeHint = Just (upgradeHint_ v)
                     }
 
                 ( Nothing, Nothing, Just b ) ->
                     { activeBranchRef = b
                     , modalTitle = "/" ++ BranchRef.toString b
-                    , pullCommand = pullCommand_ b
-                    , pullHint = pullHint_ (BranchRef.toString b ++ " branch")
+                    , installCommand = installCommand_ b
+                    , installHint = installHint_ (BranchRef.toString b ++ " branch")
                     , upgradeHint = Nothing
                     }
 
                 _ ->
                     { activeBranchRef = BranchRef.main_
                     , modalTitle = "/main"
-                    , pullCommand = pullCommand_ BranchRef.main_
-                    , pullHint = pullHint_ "main branch"
+                    , installCommand = installCommand_ BranchRef.main_
+                    , installHint = installHint_ "main branch"
                     , upgradeHint = Nothing
                     }
 
@@ -1033,11 +1030,11 @@ viewUseProjectModal project branchRef =
                         [ h3 [] [ text "As a dependency" ]
                         , p []
                             [ text "From within your project in UCM, run the "
-                            , strong [] [ text "pull" ]
+                            , strong [] [ text "lib.install" ]
                             , text " command:"
                             ]
-                        , CopyField.copyField (\_ -> NoOp) pullCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
-                        , div [ class "hint" ] pullHint
+                        , CopyField.copyField (\_ -> NoOp) installCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
+                        , div [ class "hint" ] installHint
                         , Maybe.withDefault UI.nothing upgradeHint
                         ]
                     , Divider.divider |> Divider.small |> Divider.withoutMargin |> Divider.view

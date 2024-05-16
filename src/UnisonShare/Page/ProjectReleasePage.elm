@@ -1,10 +1,10 @@
 module UnisonShare.Page.ProjectReleasePage exposing (..)
 
 import Browser.Dom as Dom
+import Code.BranchRef as BranchRef
 import Code.Definition.Doc as Doc exposing (Doc)
 import Code.Hash as Hash
 import Code.Perspective as Perspective
-import Code.ProjectSlug as ProjectSlug
 import Code.Version as Version exposing (Version)
 import Html exposing (Html, div, p, section, span, strong, text)
 import Html.Attributes exposing (class, classList, id)
@@ -35,6 +35,7 @@ import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Project.Release as Release exposing (Release)
 import UnisonShare.Route as Route
+import UnisonShare.UcmCommand as UcmCommand
 
 
 
@@ -367,25 +368,19 @@ viewInstallModal projectRef version =
         projectRef_ =
             ProjectRef.toString projectRef
 
-        pullCommand =
-            "pull "
-                ++ projectRef_
-                ++ "/releases/"
-                ++ Version.toString version
-                ++ " lib."
-                ++ ProjectSlug.toNamespaceString (ProjectRef.slug projectRef)
-                ++ "_"
-                ++ Version.toNamespaceString version
+        installCommand =
+            UcmCommand.Install projectRef (Just (BranchRef.releaseBranchRef version))
+                |> UcmCommand.toString
 
         content =
             Modal.Content
                 (div [ class "use-project-modal-content" ]
                     [ p []
                         [ text "From within your project in UCM, run the "
-                        , strong [] [ text "pull" ]
+                        , strong [] [ text "lib.install" ]
                         , text " command:"
                         ]
-                    , CopyField.copyField (\_ -> NoOp) pullCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
+                    , CopyField.copyField (\_ -> NoOp) installCommand |> CopyField.withPrefix "myProject/main>" |> CopyField.view
                     , div [ class "hint" ] [ text "Copy and paste this command into UCM." ]
                     , Divider.divider |> Divider.small |> Divider.view
                     , div [ class "action" ] [ Button.iconThenLabel CloseModal Icon.thumbsUp "Got it!" |> Button.emphasized |> Button.view ]
