@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "jsx": "react",
+    "allowImportingTsExtensions": true
+  }
+}
