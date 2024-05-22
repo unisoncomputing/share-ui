@@ -119,6 +119,30 @@ const unisonShareCfg = {
           to: "unison-cloud-splash.svg",
         },
         {
+          from: "src/assets/edge-functions/social-image-background.svg",
+          to: "social-image-background.svg",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Regular.ttf",
+          to: "Inter-Regular.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Bold.ttf",
+          to: "Inter-Bold.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Black.ttf",
+          to: "Inter-Black.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/FiraCode-Regular.ttf",
+          to: "FiraCode-Regular.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/FiraCode-Bold.ttf",
+          to: "FiraCode-Bold.ttf",
+        },
+        {
           from: "src/robots.txt",
           to: path.resolve(__dirname, "dist/unisonShare/robots.txt"),
         },

@@ -1,4 +1,5 @@
 const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const postcssPresetEnv = require("postcss-preset-env");
@@ -98,6 +99,71 @@ module.exports = {
         background: "#C6A8EC",
         theme_color: "#C6A8EC",
       },
+    }),
+
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "src/assets/unison-share-social.png",
+          to: "unison-share-social.png",
+        },
+        {
+          from: "src/assets/unison-logo-circle.png",
+          to: "unison-logo-circle.png",
+        },
+        {
+          from: "src/assets/unison-logo-square.png",
+          to: "unison-logo-square.png",
+        },
+        {
+          from: "src/assets/unison-cloud-splash.svg",
+          to: "unison-cloud-splash.svg",
+        },
+        {
+          from: "src/assets/edge-functions/social-image-background.svg",
+          to: "social-image-background.svg",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Regular.ttf",
+          to: "Inter-Regular.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Bold.ttf",
+          to: "Inter-Bold.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/Inter-Black.ttf",
+          to: "Inter-Black.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/FiraCode-Regular.ttf",
+          to: "FiraCode-Regular.ttf",
+        },
+        {
+          from: "src/assets/edge-functions/FiraCode-Bold.ttf",
+          to: "FiraCode-Bold.ttf",
+        },
+        {
+          from: "src/robots.txt",
+          to: path.resolve(__dirname, "dist/unisonShare/robots.txt"),
+        },
+        {
+          from: "src/sitemap.txt",
+          to: path.resolve(__dirname, "dist/unisonShare/sitemap.txt"),
+        },
+        {
+          from: "src/404.html",
+          to: path.resolve(__dirname, "dist/unisonShare/404.html"),
+        },
+        {
+          from: "src/500.html",
+          to: path.resolve(__dirname, "dist/unisonShare/500.html"),
+        },
+        {
+          from: "src/maintenance.html",
+          to: path.resolve(__dirname, "dist/unisonShare/maintenance.html"),
+        },
+      ],
     }),
 
     new webpack.DefinePlugin({
