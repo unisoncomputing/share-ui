@@ -120,12 +120,12 @@ const unisonShareCfg = {
         },
         // These are for social images in netlify/edge-functions
         {
-          from: "src/assets/edge-functions/social-image-background.svg",
-          to: "social-image-background.svg",
-        },
-        {
           from: "src/assets/edge-functions/social-image-background.png",
           to: "social-image-background.png",
+        },
+        {
+          from: "src/assets/edge-functions/no-avatar.png",
+          to: "no-avatar.png",
         },
         {
           from: "src/assets/edge-functions/Inter-Regular.ttf",
