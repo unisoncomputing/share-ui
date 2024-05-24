@@ -397,10 +397,6 @@ viewHowToReviewModal contribution =
                     , CopyField.copyField (always NoOp) ("switch " ++ target)
                         |> CopyField.withPrefix (projectRef ++ source ++ ">")
                         |> CopyField.view
-                    , p [] [ text "See a preview with the changes:" ]
-                    , CopyField.copyField (always NoOp) ("merge.preview " ++ source)
-                        |> CopyField.withPrefix (projectRef ++ target ++ ">")
-                        |> CopyField.view
                     , p [] [ text "Merge the changes to accept the contribution:" ]
                     , CopyField.copyField (always NoOp) ("merge " ++ source)
                         |> CopyField.withPrefix (projectRef ++ target ++ ">")
