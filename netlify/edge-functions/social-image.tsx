@@ -6,13 +6,13 @@ import * as Route from "./common/share-route.ts";
 import { DEFAULT_SOCIAL_CONTENT } from "./common/social-content.ts";
 import Colors from "./common/colors.ts";
 import * as Sizing from "./common/sizing.ts";
-import loadFonts from "./common/fonts.ts";
+import * as Fonts from "./common/fonts.ts";
 
 const DEFAULT_SOCIAL_IMAGE = DEFAULT_SOCIAL_CONTENT.imageUrl;
 
 const MAX_LENGTH = {
-  at4: 35,
-  at3: 35,
+  at4: 30,
+  at3: 45,
 };
 
 const STYLES = {
@@ -23,18 +23,17 @@ const STYLES = {
     fontFamily: "Inter",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
     backgroundImage:
       "url(https://share.unison-lang.org/static/social-image-background.png)",
     backgroundRepeat: "no-repeat",
-    color: Colors.gray.lighten100,
+    color: Colors.gray.darken30,
   },
 };
 
 async function socialImageResponse(
   content: React.Element
 ): Promise<ImageResponse> {
-  const fonts = await loadFonts();
+  const fonts = await Fonts.load();
 
   return new ImageResponse(content, {
     width: 1200,
@@ -47,9 +46,16 @@ async function defaultSocialImage(): Promise<React.Element> {
   return <img src={DEFAULT_SOCIAL_IMAGE} width="1200" height="630" />;
 }
 
+function truncate(maxLength: number, str: string): string {
+  if (str.length > maxLength) {
+    return str.slice(0, maxLength - 3) + "...";
+  } else {
+    return str;
+  }
+}
+
 async function userSocialImage(handle: string): Promise<React.Element> {
   console.log("[UserSocialImage]", "Fetching user", handle);
-
 
   const user = await ShareAPI.getUser(handle);
 
@@ -58,14 +64,21 @@ async function userSocialImage(handle: string): Promise<React.Element> {
     return await defaultSocialImage();
   }
 
-  const title = "thisisiaveryveroijasdoijasdijfoidjoijsiosdyyy"; // user.name || user.handle;
-  let titleFontSize = Sizing.toPx(3);
+  let title = user.name || user.handle;
+  let titleFontSize = Sizing.toPx(4);
 
-  if (title.length > MAX_LENGTH.at4) {
+  if (title.length > MAX_LENGTH.at3) {
+    title = truncate(MAX_LENGTH.at3, title);
+  } else if (title.length > MAX_LENGTH.at4) {
     titleFontSize = Sizing.toPx(3);
   }
-  else if (title.length > 35) {
-    titleFontSize = Sizing.toPx(3);
+
+  let subTitle = `share.unison-lang.org/${handle}`;
+
+  if (handle.length > MAX_LENGTH.at3) {
+    subTitle = truncate(MAX_LENGTH.at3, handle);
+  } else if (subTitle.length > MAX_LENGTH.at3) {
+    subTitle = handle;
   }
 
   console.log("[UserSocialImage]", "Share API Response:", JSON.stringify(user));
@@ -77,20 +90,20 @@ async function userSocialImage(handle: string): Promise<React.Element> {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          marginTop: Sizing.toPx(6),
           gap: Sizing.toPx(3),
         }}
       >
         <img
-          width="256"
-          height="256"
+          width={Sizing.toPx(12.25)}
+          height={Sizing.toPx(12.25)}
           src={
             user.avatarUrl ||
             "https://share.unison-lang.org/static/no-avatar.png"
           }
           style={{
             boxModel: "border-box",
-            borderRadius: 128,
+            borderRadius: Sizing.toPx(8),
             boxShadow: `inset 0 0 0 ${Sizing.toPx(
               0.25
             )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
@@ -109,9 +122,9 @@ async function userSocialImage(handle: string): Promise<React.Element> {
         >
           <h1
             style={{
-              color: Colors.gray.lighten100,
+              color: Colors.gray.darken30,
               fontSize: titleFontSize,
-              fontWeight: 900,
+              fontWeight: Fonts.Weights.bold,
               margin: 0,
               textShadow: `0 0 ${Sizing.toPx(0.5)}px ${Colors.gray.darken10}`,
             }}
@@ -120,14 +133,14 @@ async function userSocialImage(handle: string): Promise<React.Element> {
           </h1>
           <p
             style={{
-              color: Colors.gray.lighten30,
+              color: Colors.gray.lighten20,
               fontSize: Sizing.toPx(3),
-              fontWeight: 700,
+              fontWeight: Fonts.Weights.semiBold,
               margin: 0,
               textShadow: `0 0 ${Sizing.toPx(0.5)}px ${Colors.gray.darken10}`,
             }}
           >
-            share.unison-lang.org/{handle}
+            {subTitle}
           </p>
         </div>
       </div>

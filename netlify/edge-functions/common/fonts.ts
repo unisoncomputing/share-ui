@@ -32,8 +32,15 @@ const FONTS = [
   },
 ];
 
+const Weights = {
+  black: 900,
+  bold: 700,
+  semiBold: 600,
+  regular: 500,
+};
+
 // Function to load font data
-async function loadFonts() {
+async function load() {
   return await Promise.all(
     FONTS.map(async (font) => {
       const { name, weight, style, filePath } = font;
@@ -45,4 +52,4 @@ async function loadFonts() {
   );
 }
 
-export default loadFonts;
+export { load, Weights };

@@ -31,7 +31,8 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         if (!user) return DEFAULT_SOCIAL_CONTENT;
 
         const nameAndHandle = user.name
-          ? `${user.name} @${user.handle}` : `@${user.handle}`;
+          ? `${user.name} @${user.handle}`
+          : `@${user.handle}`;
 
         return {
           title: `${nameAndHandle} | Unison Share`,
