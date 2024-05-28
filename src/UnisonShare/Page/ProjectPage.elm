@@ -908,8 +908,7 @@ viewUseProjectModal project branchRef =
             ProjectRef.toString project.ref
 
         libVersion v =
-            "lib."
-                ++ ProjectSlug.toNamespaceString (ProjectRef.slug project.ref)
+            ProjectSlug.toNamespaceString (ProjectRef.slug project.ref)
                 ++ "_"
                 ++ Version.toNamespaceString v
 
