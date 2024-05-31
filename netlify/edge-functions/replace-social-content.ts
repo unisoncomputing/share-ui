@@ -79,7 +79,7 @@ async function replaceSocialContent(
   const response = await context.next();
   const page = await response.text();
 
-  const regex = /<meta name="social" content="content"\/>/i;
+  const regex = /<title>Unison Share<\/title>/i;
   const newContent = template
     .replaceAll("{{TITLE}}", content.title)
     .replaceAll("{{DESCRIPTION}}", content.description)
