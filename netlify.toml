@@ -1,12 +1,13 @@
 [[redirects]]
-  from = "/static/*"
-  to = "/static/:splat"
-  status = 200
-  force = true
-    
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
+
+[[edge_functions]]
+  function = "social-image"
+  path = "/social-image"
+
+[[edge_functions]]
+  function = "replace-social-content"
+  path = "/*"
+  excludedPath = "/static/*"
