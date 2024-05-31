@@ -1,12 +1,4 @@
-[[edge_functions]]
-  function = "social-image"
-  path = "/social-image"
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[[edge_functions]]
-  function = "replace-social-content"
-  path = "/*"
