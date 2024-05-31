@@ -1,4 +1,4 @@
-import type { Config, Context } from "@netlify/edge-functions";
+import type { Context } from "@netlify/edge-functions";
 import { ImageResponse } from "https://deno.land/x/og_edge/mod.ts";
 import React from "https://esm.sh/react@18.2.0";
 import ShareAPI from "./common/share-api.ts";
@@ -203,8 +203,4 @@ export default async (request: Request, _context: Context) => {
     console.error("[SocialImage]", "Error", ex);
     return new Response("Internal Server Error", { status: 500 });
   }
-};
-
-export const config: Config = {
-  path: "/social-image",
 };
