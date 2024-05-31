@@ -126,7 +126,6 @@ async function userSocialImage(handle: string): Promise<React.Element> {
               fontSize: titleFontSize,
               fontWeight: Fonts.Weights.bold,
               margin: 0,
-              textShadow: `0 0 ${Sizing.toPx(0.5)}px ${Colors.gray.darken10}`,
             }}
           >
             {title}
@@ -137,7 +136,6 @@ async function userSocialImage(handle: string): Promise<React.Element> {
               fontSize: Sizing.toPx(3),
               fontWeight: Fonts.Weights.semiBold,
               margin: 0,
-              textShadow: `0 0 ${Sizing.toPx(0.5)}px ${Colors.gray.darken10}`,
             }}
           >
             {subTitle}
