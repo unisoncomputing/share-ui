@@ -808,7 +808,7 @@ viewInstallModal projectRef version =
                 ++ projectRef_
                 ++ "/releases/"
                 ++ Version.toString version
-                ++ " "
+                ++ " lib."
                 ++ libVersion
 
         content =

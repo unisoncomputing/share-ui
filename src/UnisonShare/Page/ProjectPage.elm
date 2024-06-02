@@ -919,7 +919,7 @@ viewUseProjectModal project branchRef =
                         ++ projectRef_
                         ++ "/releases/"
                         ++ Version.toString v
-                        ++ " "
+                        ++ " lib."
                         ++ libVersion v
 
                 _ ->
