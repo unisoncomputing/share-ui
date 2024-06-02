@@ -1,3 +1,4 @@
+// TODO this should live in ui-core, and be generated
 export default {
   gray: {
     lighten100: "#ffffff",
@@ -8,4 +9,6 @@ export default {
     darken25: "#22232A",
     darken30: "#18181c",
   },
+  blue4: "#CBE0FF",
+  purple5: "#E2CCFD",
 };
