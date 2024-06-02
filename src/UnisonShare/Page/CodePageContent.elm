@@ -29,6 +29,7 @@ import UI.Sidebar as Sidebar exposing (Sidebar)
 import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext)
 
 
 
