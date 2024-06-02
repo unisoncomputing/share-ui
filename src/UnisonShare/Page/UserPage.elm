@@ -452,9 +452,6 @@ view appContext handle model =
 
                 Code viewMode_ codeSubPage ->
                     let
-                        codeBrowsingContext =
-                            CodeBrowsingContext.UserCode handle
-
                         pageTitle =
                             handle_ ++ " | Code"
 
@@ -476,7 +473,6 @@ view appContext handle model =
                                     CodePage.view appContext
                                         CodePageMsg
                                         viewMode_
-                                        codeBrowsingContext
                                         CodebaseStatus.Empty
                                         codeSubPage
                             in
@@ -499,7 +495,6 @@ view appContext handle model =
                                     CodePage.view appContext
                                         CodePageMsg
                                         viewMode_
-                                        codeBrowsingContext
                                         CodebaseStatus.NotEmpty
                                         codeSubPage
                             in

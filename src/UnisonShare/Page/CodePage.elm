@@ -35,7 +35,6 @@ import UnisonShare.Route as Route exposing (CodeRoute(..))
 type PageModal
     = NoModal
     | FinderModal Finder.Model
-    | DownloadModal FQN
 
 
 type CodeContent
@@ -115,7 +114,6 @@ init appContext context codeRoute =
 
 type Msg
     = ShowFinderModal
-    | ShowDownloadModal FQN
     | CloseModal
     | UpOneLevel
     | ChangePerspectiveToNamespace FQN
@@ -147,9 +145,6 @@ update appContext context viewMode codeRoute msg model_ =
                     Finder.init model.config (SearchOptions.init model.config.perspective Nothing)
             in
             ( { model | modal = FinderModal fm }, Cmd.batch [ cmd, Cmd.map FinderMsg fCmd ] )
-
-        ( _, ShowDownloadModal fqn ) ->
-            ( { model | modal = DownloadModal fqn }, cmd )
 
         ( _, CloseModal ) ->
             ( { model | modal = NoModal }, cmd )
@@ -540,7 +535,6 @@ viewSidebar codebaseStatus model =
             CodePageContent.viewSidebar
                 model.config.perspective
                 { upOneLevelMsg = UpOneLevel
-                , showDownloadModalMsg = ShowDownloadModal
                 , showFinderModalMsg = ShowFinderModal
                 , changePerspectiveToNamespaceMsg = ChangePerspectiveToNamespace
                 }
@@ -552,8 +546,8 @@ viewSidebar codebaseStatus model =
             Sidebar.empty "main-sidebar"
 
 
-view : AppContext -> (Msg -> msg) -> ViewMode -> CodeBrowsingContext -> CodebaseStatus -> Model -> ( PageLayout msg, Maybe (Html msg) )
-view appContext toMsg viewMode context codebaseStatus model =
+view : AppContext -> (Msg -> msg) -> ViewMode -> CodebaseStatus -> Model -> ( PageLayout msg, Maybe (Html msg) )
+view appContext toMsg viewMode codebaseStatus model =
     let
         content =
             PageContent.map toMsg (viewContent viewMode model.config.perspective model.content)
@@ -565,9 +559,6 @@ view appContext toMsg viewMode context codebaseStatus model =
 
                 FinderModal fm ->
                     Just (Html.map toMsg (Html.map FinderMsg (Finder.view fm)))
-
-                DownloadModal fqn ->
-                    Just (Html.map toMsg (CodePageContent.viewDownloadModal CloseModal context fqn))
     in
     case ( model.content, viewMode ) of
         ( PerspectivePage _, ViewMode.Regular ) ->

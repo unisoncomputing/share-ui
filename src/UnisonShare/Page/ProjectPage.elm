@@ -1399,14 +1399,10 @@ view appContext projectRef model =
 
                         Code branchRef viewMode_ codePage ->
                             let
-                                codeBrowsingContext =
-                                    CodeBrowsingContext.project projectRef branchRef
-
                                 ( codePage_, modal_ ) =
                                     CodePage.view appContext
                                         CodePageMsg
                                         viewMode_
-                                        codeBrowsingContext
                                         CodebaseStatus.NotEmpty
                                         codePage
                             in

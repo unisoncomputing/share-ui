@@ -10,31 +10,26 @@ import Code.Config exposing (Config)
 import Code.Definition.Readme exposing (Readme)
 import Code.EmptyState as EmptyState
 import Code.FullyQualifiedName as FQN exposing (FQN)
-import Code.Hash as Hash
 import Code.Namespace as Namespace exposing (NamespaceDetails)
 import Code.Perspective as Perspective exposing (Perspective)
 import Code.ReadmeCard as ReadmeCard
-import Html exposing (Html, div, h3, p, section, text)
+import Html exposing (Html, div, h3, text)
 import Html.Attributes exposing (class, classList)
 import Http
 import Lib.HttpApi as HttpApi
-import Lib.UserHandle as UserHandle
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
 import UI.Card as Card
 import UI.Click as Click
-import UI.CopyField as CopyField
 import UI.ErrorCard as ErrorCard
 import UI.Icon as Icon
-import UI.Modal as Modal
 import UI.Placeholder as Placeholder
 import UI.Sidebar as Sidebar exposing (Sidebar)
 import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
-import UnisonShare.Project.ProjectRef as ProjectRef
 
 
 
@@ -129,51 +124,6 @@ viewReadme readmeCardMsg readmeCard readme emptyState =
         |> Maybe.withDefault emptyState
 
 
-viewDownloadModal : msg -> CodeBrowsingContext -> FQN -> Html msg
-viewDownloadModal closeMsg context fqn =
-    let
-        prettyName =
-            FQN.toString fqn
-
-        unqualified =
-            FQN.unqualifiedName fqn
-
-        local =
-            -- It's likely a project, so suggest the name 1 level before "latest"
-            if unqualified == "latest" && FQN.numSegments fqn > 2 then
-                "lib." ++ FQN.unqualifiedName (FQN.dropLast fqn)
-
-            else
-                "lib." ++ unqualified
-
-        remote =
-            case context of
-                ProjectBranch ps _ ->
-                    -- TODO: is this what we want?
-                    -- TODO: include BranchRef
-                    ProjectRef.toString ps ++ "." ++ prettyName
-
-                UserCode handle ->
-                    UserHandle.toUnprefixedString handle ++ "." ++ prettyName
-
-        pullCommand =
-            "pull " ++ remote ++ " " ++ local
-
-        content =
-            Modal.Content
-                (section
-                    []
-                    [ p [] [ text "Download ", UI.bold prettyName, text " by pulling the namespace from Unison Share into a namespace in your local codebase:" ]
-                    , CopyField.copyField (\_ -> closeMsg) pullCommand |> CopyField.withPrefix ".>" |> CopyField.view
-                    , div [ class "hint" ] [ text "Copy and paste this command into UCM." ]
-                    ]
-                )
-    in
-    Modal.modal "download-modal" closeMsg content
-        |> Modal.withHeader ("Download " ++ prettyName)
-        |> Modal.view
-
-
 viewNamespacePerspectiveHeader : (FQN -> msg) -> { a | fqn : FQN, details : WebData NamespaceDetails } -> Html msg
 viewNamespacePerspectiveHeader changePerspectiveToNamespaceMsg { fqn } =
     let
@@ -196,24 +146,15 @@ viewNamespacePerspectiveHeader changePerspectiveToNamespaceMsg { fqn } =
 viewPerspectiveHeader :
     (FQN -> msg)
     -> msg
-    -> (FQN -> msg)
     -> Perspective
     -> Maybe (Sidebar.SidebarHeader msg)
-viewPerspectiveHeader changePerspectiveToNamespaceMsg upOneLevelMsg showDownloadModalMsg perspective =
+viewPerspectiveHeader changePerspectiveToNamespaceMsg upOneLevelMsg perspective =
     case perspective of
         Perspective.Root _ ->
             Nothing
 
         Perspective.Namespace ns ->
             let
-                downloadButtonLabel =
-                    case ns.details of
-                        Success d ->
-                            "Download—" ++ Hash.toShortString (Namespace.hash d)
-
-                        _ ->
-                            "Download"
-
                 upToDestination =
                     if FQN.numSegments ns.fqn == 1 then
                         text "Overview"
@@ -232,14 +173,6 @@ viewPerspectiveHeader changePerspectiveToNamespaceMsg upOneLevelMsg showDownload
                             |> Button.small
                             |> Button.view
                         )
-                , div [ class "download" ]
-                    [ Button.iconThenLabel
-                        (showDownloadModalMsg ns.fqn)
-                        Icon.download
-                        downloadButtonLabel
-                        |> Button.small
-                        |> Button.view
-                    ]
                 ]
             , UI.divider
             ]
@@ -251,7 +184,6 @@ viewSidebar :
     Perspective
     ->
         { upOneLevelMsg : msg
-        , showDownloadModalMsg : FQN -> msg
         , showFinderModalMsg : msg
         , changePerspectiveToNamespaceMsg : FQN -> msg
         }
@@ -263,7 +195,6 @@ viewSidebar perspective cfg codebaseTree =
             viewPerspectiveHeader
                 cfg.changePerspectiveToNamespaceMsg
                 cfg.upOneLevelMsg
-                cfg.showDownloadModalMsg
                 perspective
 
         codeSection =
