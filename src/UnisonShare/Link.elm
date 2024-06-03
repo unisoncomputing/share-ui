@@ -38,6 +38,11 @@ unisonCloudWebsite =
     Click.externalHref "https://unison.cloud"
 
 
+unisonCloudWebsiteLearn : Click msg
+unisonCloudWebsiteLearn =
+    Click.externalHref "https://unison.cloud/learn"
+
+
 website : Click msg
 website =
     Click.externalHref "https://unison-lang.org"
