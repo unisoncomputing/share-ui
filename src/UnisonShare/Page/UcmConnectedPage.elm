@@ -28,7 +28,7 @@ view account =
                 ]
             , footer [ class "actions" ]
                 [ Button.iconThenLabel_ Link.catalog Icon.window "Project Catalog" |> Button.medium |> Button.view
-                , Button.iconThenLabel_ (Link.userCodeRoot account.handle) Icon.chest "Your Codebase" |> Button.medium |> Button.view
+                , Button.iconThenLabel_ (Link.userProfile account.handle) Icon.user "Your Profile" |> Button.medium |> Button.view
                 , Button.iconThenLabel_ Link.unisonShareDocs Icon.graduationCap "Code Hosting Guide" |> Button.medium |> Button.view
                 ]
             ]
