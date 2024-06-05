@@ -37,7 +37,7 @@ async function projectSocialImage(
 
   const summary = project.summary;
   let summaryFontSize = Sizing.toPx(3);
-  if (summary.length > MaxLength.at3 * 2) {
+  if (summary.length > MaxLength.at3 * 1.5) {
     summaryFontSize = Sizing.toPx(2.5);
   }
 
@@ -78,8 +78,8 @@ async function projectSocialImage(
               fontSize: summaryFontSize,
               fontWeight: Fonts.Weights.semiBold,
               margin: 0,
-              marginLeft: Sizing.toPx(1.5),
-              marginRight: Sizing.toPx(1.5),
+              marginLeft: Sizing.toPx(2),
+              marginRight: Sizing.toPx(2),
               textAlign: "center",
               maxWidth: "100%",
             }}
