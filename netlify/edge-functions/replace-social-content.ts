@@ -23,9 +23,9 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
   const url = new URL(rawUrl);
   const route = Route.parse(rawUrl);
 
-  try {
-    return Route.match(route, {
-      async UserOverview(handle) {
+  return Route.match(route, {
+    async UserOverview(handle) {
+      try {
         const user = await ShareAPI.getUser(handle);
 
         if (!user) return DefaultSocialContent;
@@ -41,9 +41,14 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
             url.hostname
           }/social-image?path=${encodeURI(url.pathname)}`,
         };
-      },
+      } catch (ex) {
+        console.error(ex);
+        return DefaultSocialContent;
+      }
+    },
 
-      async ProjectOverview(handle, projectSlug) {
+    async ProjectOverview(handle, projectSlug) {
+      try {
         const project = await ShareAPI.getProject(handle, projectSlug);
 
         if (!project) return DefaultSocialContent;
@@ -55,16 +60,16 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
             url.hostname
           }/social-image?path=${encodeURI(url.pathname)}`,
         };
-      },
-
-      async NotFound(_) {
+      } catch (ex) {
+        console.error(ex);
         return DefaultSocialContent;
-      },
-    });
-  } catch (ex) {
-    console.error(ex);
-    return DefaultSocialContent;
-  }
+      }
+    },
+
+    async NotFound(_) {
+      return DefaultSocialContent;
+    },
+  });
 }
 
 async function replaceSocialContent(
