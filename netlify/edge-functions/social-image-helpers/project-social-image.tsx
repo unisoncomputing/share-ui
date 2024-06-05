@@ -80,6 +80,7 @@ async function projectSocialImage(
               margin: 0,
               marginLeft: Sizing.toPx(2),
               marginRight: Sizing.toPx(2),
+              lineHeight: 1.4,
               textAlign: "center",
               maxWidth: "100%",
             }}
