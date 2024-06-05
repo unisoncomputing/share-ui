@@ -2,8 +2,8 @@ import { Context } from "@netlify/edge-functions";
 import ShareAPI from "./common/share-api.ts";
 import {
   SocialContent,
-  DEFAULT_SOCIAL_CONTENT,
-} from "./common/social-content.ts";
+  DefaultSocialContent,
+} from "./social-image-helpers/social-content.tsx";
 import * as Route from "./common/share-route.ts";
 
 /*
@@ -28,7 +28,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       async UserOverview(handle) {
         const user = await ShareAPI.getUser(handle);
 
-        if (!user) return DEFAULT_SOCIAL_CONTENT;
+        if (!user) return DefaultSocialContent;
 
         const nameAndHandle = user.name
           ? `${user.name} @${user.handle}`
@@ -36,7 +36,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
 
         return {
           title: `${nameAndHandle} | Unison Share`,
-          description: user.bio || DEFAULT_SOCIAL_CONTENT.description,
+          description: user.bio || DefaultSocialContent.description,
           imageUrl: `${url.protocol}//${
             url.hostname
           }/social-image?path=${encodeURI(url.pathname)}`,
@@ -44,29 +44,26 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       },
 
       async ProjectOverview(handle, projectSlug) {
-        return DEFAULT_SOCIAL_CONTENT;
-        /*
         const project = await ShareAPI.getProject(handle, projectSlug);
 
-        if (!project) return DEFAULT_SOCIAL_CONTENT;
+        if (!project) return DefaultSocialContent;
 
         return {
           title: `${handle}/${projectSlug} | Unison Share`,
-          description: project.summary || DEFAULT_SOCIAL_CONTENT.description,
+          description: project.summary || DefaultSocialContent.description,
           imageUrl: `${url.protocol}//${
             url.hostname
           }/social-image?path=${encodeURI(url.pathname)}`,
         };
-        */
       },
 
       async NotFound(_) {
-        return DEFAULT_SOCIAL_CONTENT;
+        return DefaultSocialContent;
       },
     });
   } catch (ex) {
     console.error(ex);
-    return DEFAULT_SOCIAL_CONTENT;
+    return DefaultSocialContent;
   }
 }
 
