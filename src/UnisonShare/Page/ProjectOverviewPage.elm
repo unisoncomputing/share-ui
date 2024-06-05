@@ -54,6 +54,7 @@ import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
 import UnisonShare.Session as Session exposing (Session)
+import UnisonShare.UcmCommand as UcmCommand
 
 
 
@@ -509,10 +510,10 @@ viewReadmeInstructionsModal projectRef =
                 ]
 
         pushCommand =
-            "push " ++ ProjectRef.toString projectRef
+            UcmCommand.Push projectRef Nothing |> UcmCommand.toString
 
         pullCommand =
-            "pull " ++ ProjectRef.toString projectRef
+            UcmCommand.Pull projectRef Nothing |> UcmCommand.toString
 
         step2 =
             Steps.step "Push the README to Unison Share"
