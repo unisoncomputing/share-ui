@@ -219,7 +219,7 @@ update appContext projectRef account msg model =
                                     Closed
 
                                 Closed ->
-                                    OpenForTarget { sheet = SearchBranchSheet.init ShareApi.ProjectBranches }
+                                    OpenForTarget { sheet = SearchBranchSheet.init (ShareApi.AllBranches Nothing) }
                     in
                     { form | selectBranchSheet = selectBranchSheet }
             in
