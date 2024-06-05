@@ -800,7 +800,7 @@ viewInstallModal projectRef version =
             ProjectRef.toString projectRef
 
         libVersion =
-            UserHandle.toString (ProjectRef.handle projectRef)
+            UserHandle.toUnprefixedString (ProjectRef.handle projectRef)
                 ++ "_"
                 ++ ProjectSlug.toNamespaceString (ProjectRef.slug projectRef)
                 ++ "_"
