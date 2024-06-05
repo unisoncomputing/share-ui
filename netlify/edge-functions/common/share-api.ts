@@ -3,6 +3,11 @@ type APIProject = {
   slug: string;
   summary: string;
   tags: Array<string>;
+  numActiveContributions: number;
+  numOpenTickets: number;
+  numFavs: number;
+  latestRelease?: string;
+  defaultBranch?: string;
 };
 
 type APIUser = {
