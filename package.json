@@ -57,6 +57,7 @@
     "@netlify/edge-functions": "^2.7.0",
     "@sentry/browser": "^7.26.0",
     "@sentry/tracing": "^7.26.0",
-    "plausible-tracker": "^0.3.8"
+    "plausible-tracker": "^0.3.8",
+    "sums-up": "^2.2.0"
   }
 }
