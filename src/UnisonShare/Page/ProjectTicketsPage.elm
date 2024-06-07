@@ -158,7 +158,7 @@ viewPageTitle session project =
     if canSubmit then
         pt
             |> PageTitle.withRightSide
-                [ Button.iconThenLabel ShowSubmitTicketModal Icon.merge "New ticket"
+                [ Button.iconThenLabel ShowSubmitTicketModal Icon.bug "New ticket"
                     |> Button.emphasized
                     |> Button.view
                 ]
