@@ -25,45 +25,77 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
 
   return Route.match(route, {
     async UserOverview(handle) {
-      try {
-        const user = await ShareAPI.getUser(handle);
+      const user = await ShareAPI.getUser(handle);
 
-        if (!user) return DefaultSocialContent;
+      if (!user) return DefaultSocialContent;
 
-        const nameAndHandle = user.name
-          ? `${user.name} @${user.handle}`
-          : `@${user.handle}`;
+      const nameAndHandle = user.name
+        ? `${user.name} @${user.handle}`
+        : `@${user.handle}`;
 
-        return {
-          title: `${nameAndHandle} | Unison Share`,
-          description: user.bio || DefaultSocialContent.description,
-          imageUrl: `${url.protocol}//${
-            url.hostname
-          }/social-image?path=${encodeURI(url.pathname)}`,
-        };
-      } catch (ex) {
-        console.error(ex);
-        return DefaultSocialContent;
-      }
+      return {
+        title: `${nameAndHandle} | Unison Share`,
+        description: user.bio || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
     },
 
     async ProjectOverview(handle, projectSlug) {
-      try {
-        const project = await ShareAPI.getProject(handle, projectSlug);
+      const project = await ShareAPI.getProject(handle, projectSlug);
 
-        if (!project) return DefaultSocialContent;
+      if (!project) return DefaultSocialContent;
 
-        return {
-          title: `${handle}/${projectSlug} | Unison Share`,
-          description: project.summary || DefaultSocialContent.description,
-          imageUrl: `${url.protocol}//${
-            url.hostname
-          }/social-image?path=${encodeURI(url.pathname)}`,
-        };
-      } catch (ex) {
-        console.error(ex);
-        return DefaultSocialContent;
-      }
+      return {
+        title: `${handle}/${projectSlug} | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
+    },
+
+    async ProjectCode(handle, projectSlug) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `${handle}/${projectSlug} Code | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
+    },
+
+    async ProjectTickets(handle, projectSlug) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `${handle}/${projectSlug} Tickets | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
+    },
+
+    async ProjectContributions(handle, projectSlug) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `${handle}/${projectSlug} Contributions | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
     },
 
     async NotFound(_) {
@@ -76,7 +108,17 @@ async function replaceSocialContent(
   request: Request,
   context: Context
 ): Promise<Response> {
-  const content = await getContent(request.url);
+  if (request.url.includes("social-image")) {
+    return;
+  }
+
+  let content = DefaultSocialContent;
+  try {
+    content = await getContent(request.url);
+  } catch (ex) {
+    console.error(ex);
+    content = DefaultSocialContent;
+  }
 
   const response = await context.next();
   const page = await response.text();
