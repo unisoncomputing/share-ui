@@ -98,6 +98,34 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       };
     },
 
+    async ProjectReleases(handle, projectSlug) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `${handle}/${projectSlug} Releases | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
+    },
+
+    async ProjectBranches(handle, projectSlug) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `${handle}/${projectSlug} Branches | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl: `${url.protocol}//${
+          url.hostname
+        }/social-image?path=${encodeURI(url.pathname)}`,
+      };
+    },
+
     async NotFound(_) {
       return DefaultSocialContent;
     },

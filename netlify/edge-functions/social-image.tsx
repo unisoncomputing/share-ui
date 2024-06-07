@@ -9,6 +9,8 @@ import projectSocialImage from "./social-image-helpers/project-social-image.tsx"
 import projectTicketsSocialImage from "./social-image-helpers/project-tickets-social-image.tsx";
 import projectContributionsSocialImage from "./social-image-helpers/project-contributions-social-image.tsx";
 import projectCodeSocialImage from "./social-image-helpers/project-code-social-image.tsx";
+import projectReleasesSocialImage from "./social-image-helpers/project-releases-social-image.tsx";
+import projectBranchesSocialImage from "./social-image-helpers/project-branches-social-image.tsx";
 
 async function socialImageResponse(
   content: React.Element
@@ -68,6 +70,20 @@ function generateSocialImage(url: URL) {
         handle,
         projectSlug
       );
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
+    async ProjectReleases(handle, projectSlug) {
+      console.log("MatchedRoute: ProjectReleases", handle, projectSlug);
+      const content = await projectReleasesSocialImage(handle, projectSlug);
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
+    async ProjectBranches(handle, projectSlug) {
+      console.log("MatchedRoute: ProjectBranches", handle, projectSlug);
+      const content = await projectBranchesSocialImage(handle, projectSlug);
       const resp = await socialImageResponse(content);
       return resp;
     },

@@ -6,6 +6,8 @@ class Route extends SumType<{
   ProjectCode: [string, string, string | undefined];
   ProjectTickets: [string, string];
   ProjectContributions: [string, string];
+  ProjectReleases: [string, string];
+  ProjectBranches: [string, string];
   NotFound: [string];
 }> {}
 
@@ -31,6 +33,14 @@ function ProjectTickets(handle: string, projectSlug: string): Route {
 
 function ProjectContributions(handle: string, projectSlug: string): Route {
   return new Route("ProjectContributions", handle, projectSlug);
+}
+
+function ProjectReleases(handle: string, projectSlug: string): Route {
+  return new Route("ProjectReleases", handle, projectSlug);
+}
+
+function ProjectBranches(handle: string, projectSlug: string): Route {
+  return new Route("ProjectBranches", handle, projectSlug);
 }
 
 function NotFound(path: string): Route {
@@ -70,6 +80,10 @@ function fromPathname(rawPath: string): Route {
       return ProjectTickets(handle, projectSlug);
     } else if (projectPage === "contributions") {
       return ProjectContributions(handle, projectSlug);
+    } else if (projectPage === "releases") {
+      return ProjectReleases(handle, projectSlug);
+    } else if (projectPage === "branches") {
+      return ProjectBranches(handle, projectSlug);
     } else {
       return ProjectOverview(handle, projectSlug);
     }
@@ -78,4 +92,15 @@ function fromPathname(rawPath: string): Route {
   }
 }
 
-export { UserOverview, ProjectOverview, NotFound, Route, parse, fromPathname };
+export {
+  UserOverview,
+  ProjectOverview,
+  ProjectCode,
+  ProjectContributions,
+  ProjectTickets,
+  ProjectReleases,
+  NotFound,
+  Route,
+  parse,
+  fromPathname,
+};
