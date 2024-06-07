@@ -23,7 +23,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
   const url = new URL(rawUrl);
   const route = Route.parse(rawUrl);
 
-  return Route.match(route, {
+  return route.caseOf({
     async UserOverview(handle) {
       const user = await ShareAPI.getUser(handle);
 

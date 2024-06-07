@@ -1,65 +1,41 @@
-type UserOverview = { tag: "UserOverview"; handle: string };
-type ProjectOverview = {
-  tag: "ProjectOverview";
-  handle: string;
-  projectSlug: string;
-};
-type ProjectCode = {
-  tag: "ProjectCode";
-  handle: string;
-  projectSlug: string;
-  branchRef?: string;
-};
-type ProjectTickets = {
-  tag: "ProjectTickets";
-  handle: string;
-  projectSlug: string;
-};
-type ProjectContributions = {
-  tag: "ProjectContributions";
-  handle: string;
-  projectSlug: string;
-};
-type NotFound = { tag: "NotFound"; path: string };
+import SumType from "sums-up";
 
-function UserOverview(handle: string): UserOverview {
-  return { tag: "UserOverview", handle };
+class Route extends SumType<{
+  UserOverview: [string];
+  ProjectOverview: [string, string];
+  ProjectCode: [string, string, string | undefined];
+  ProjectTickets: [string, string];
+  ProjectContributions: [string, string];
+  NotFound: [string];
+}> {}
+
+function UserOverview(handle: string): Route {
+  return new Route("UserOverview", handle);
 }
 
-function ProjectOverview(handle: string, projectSlug: string): ProjectOverview {
-  return { tag: "ProjectOverview", handle, projectSlug };
+function ProjectOverview(handle: string, projectSlug: string): Route {
+  return new Route("ProjectOverview", handle, projectSlug);
 }
 
 function ProjectCode(
   handle: string,
   projectSlug: string,
   branchRef?: string
-): ProjectCode {
-  return { tag: "ProjectCode", handle, projectSlug, branchRef };
+): Route {
+  return new Route("ProjectCode", handle, projectSlug, branchRef);
 }
 
-function ProjectTickets(handle: string, projectSlug: string): ProjectTickets {
-  return { tag: "ProjectTickets", handle, projectSlug };
+function ProjectTickets(handle: string, projectSlug: string): Route {
+  return new Route("ProjectTickets", handle, projectSlug);
 }
 
-function ProjectContributions(
-  handle: string,
-  projectSlug: string
-): ProjectContributions {
-  return { tag: "ProjectContributions", handle, projectSlug };
+function ProjectContributions(handle: string, projectSlug: string): Route {
+  return new Route("ProjectContributions", handle, projectSlug);
 }
 
-function NotFound(path: string): NotFound {
-  return { tag: "NotFound", path };
+function NotFound(path: string): Route {
+  return new Route("NotFound", path);
 }
-
-type Route =
-  | UserOverview
-  | ProjectOverview
-  | ProjectCode
-  | ProjectTickets
-  | ProjectContributions
-  | NotFound;
 
 function parse(rawUrl: string): Route {
   const url = new URL(rawUrl);
@@ -102,42 +78,4 @@ function fromPathname(rawPath: string): Route {
   }
 }
 
-type RoutePattern<T> = {
-  UserOverview(handle: string): T;
-  ProjectOverview(handle: string, projectSlug: string): T;
-  ProjectCode(handle: string, projectSlug: string, branchRef?: string): T;
-  ProjectTickets(handle: string, projectSlug: string): T;
-  ProjectContributions(handle: string, projectSlug: string): T;
-  NotFound(url: string): T;
-};
-
-function match<T>(route: Route, pattern: RoutePattern<T>): T {
-  switch (route.tag) {
-    case "UserOverview":
-      return pattern.UserOverview(route.handle);
-    case "ProjectOverview":
-      return pattern.ProjectOverview(route.handle, route.projectSlug);
-    case "ProjectCode":
-      return pattern.ProjectCode(
-        route.handle,
-        route.projectSlug,
-        route.branchRef
-      );
-    case "ProjectTickets":
-      return pattern.ProjectTickets(route.handle, route.projectSlug);
-    case "ProjectContributions":
-      return pattern.ProjectContributions(route.handle, route.projectSlug);
-    case "NotFound":
-      return pattern.NotFound(route.path);
-  }
-}
-
-export {
-  UserOverview,
-  ProjectOverview,
-  NotFound,
-  Route,
-  parse,
-  match,
-  fromPathname,
-};
+export { UserOverview, ProjectOverview, NotFound, Route, parse, fromPathname };

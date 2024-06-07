@@ -28,7 +28,7 @@ function generateSocialImage(url: URL) {
 
   console.log("URL Route matching", path, route);
 
-  return Route.match(route, {
+  return route.caseOf({
     async UserOverview(handle) {
       console.log("MatchedRoute: UserOverview", handle);
       const content = await userSocialImage(handle);
