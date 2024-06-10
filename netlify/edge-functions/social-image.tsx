@@ -7,9 +7,12 @@ import * as Fonts from "./common/fonts.ts";
 import userSocialImage from "./social-image-helpers/user-social-image.tsx";
 import projectSocialImage from "./social-image-helpers/project-social-image.tsx";
 import projectTicketsSocialImage from "./social-image-helpers/project-tickets-social-image.tsx";
+import projectTicketSocialImage from "./social-image-helpers/project-ticket-social-image.tsx";
 import projectContributionsSocialImage from "./social-image-helpers/project-contributions-social-image.tsx";
+import projectContributionSocialImage from "./social-image-helpers/project-contribution-social-image.tsx";
 import projectCodeSocialImage from "./social-image-helpers/project-code-social-image.tsx";
 import projectReleasesSocialImage from "./social-image-helpers/project-releases-social-image.tsx";
+import projectReleaseSocialImage from "./social-image-helpers/project-release-social-image.tsx";
 import projectBranchesSocialImage from "./social-image-helpers/project-branches-social-image.tsx";
 
 async function socialImageResponse(
@@ -64,6 +67,22 @@ function generateSocialImage(url: URL) {
       return resp;
     },
 
+    async ProjectTicket(handle, projectSlug, ticketRef) {
+      console.log(
+        "MatchedRoute: ProjectTicket",
+        handle,
+        projectSlug,
+        ticketRef
+      );
+      const content = await projectTicketSocialImage(
+        handle,
+        projectSlug,
+        ticketRef
+      );
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
     async ProjectContributions(handle, projectSlug) {
       console.log("MatchedRoute: ProjectContributions", handle, projectSlug);
       const content = await projectContributionsSocialImage(
@@ -74,9 +93,36 @@ function generateSocialImage(url: URL) {
       return resp;
     },
 
+    async ProjectContribution(handle, projectSlug, contribRef) {
+      console.log(
+        "MatchedRoute: ProjectContribution",
+        handle,
+        projectSlug,
+        contribRef
+      );
+      const content = await projectContributionSocialImage(
+        handle,
+        projectSlug,
+        contribRef
+      );
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
     async ProjectReleases(handle, projectSlug) {
       console.log("MatchedRoute: ProjectReleases", handle, projectSlug);
       const content = await projectReleasesSocialImage(handle, projectSlug);
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
+    async ProjectRelease(handle, projectSlug, version) {
+      console.log("MatchedRoute: ProjectRelease", handle, projectSlug, version);
+      const content = await projectReleaseSocialImage(
+        handle,
+        projectSlug,
+        version
+      );
       const resp = await socialImageResponse(content);
       return resp;
     },
@@ -99,7 +145,6 @@ function generateSocialImage(url: URL) {
 export default async (request: Request, _context: Context) => {
   try {
     const resp = await generateSocialImage(new URL(request.url));
-    console.log("got resp", resp);
     return resp;
   } catch (ex) {
     console.error("Error", ex);

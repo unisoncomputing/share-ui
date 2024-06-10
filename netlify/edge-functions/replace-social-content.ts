@@ -19,9 +19,16 @@ const template = `
   <meta property="og:image" content="{{IMAGE_URL}}" />
 `;
 
+function urlToImageUrl(url: URL): string {
+  return `${url.protocol}//${url.hostname}/social-image?path=${encodeURI(
+    url.pathname
+  )}`;
+}
+
 async function getContent(rawUrl: string): Promise<SocialContent> {
   const url = new URL(rawUrl);
   const route = Route.parse(rawUrl);
+  const imageUrl = urlToImageUrl(url);
 
   return route.caseOf({
     async UserOverview(handle) {
@@ -36,9 +43,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       return {
         title: `${nameAndHandle} | Unison Share`,
         description: user.bio || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
       };
     },
 
@@ -50,23 +55,21 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       return {
         title: `${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
       };
     },
 
-    async ProjectCode(handle, projectSlug) {
+    async ProjectCode(handle, projectSlug, branchRef) {
       const project = await ShareAPI.getProject(handle, projectSlug);
 
       if (!project) return DefaultSocialContent;
 
+      const title = `Branch: ${branchRef}` || "Code";
+
       return {
-        title: `${handle}/${projectSlug} Code | Unison Share`,
+        title: `${title} · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
       };
     },
 
@@ -76,11 +79,22 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       if (!project) return DefaultSocialContent;
 
       return {
-        title: `${handle}/${projectSlug} Tickets | Unison Share`,
+        title: `Tickets · ${handle}/${projectSlug} Tickets | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
+      };
+    },
+
+    async ProjectTicket(handle, projectSlug, ticketRef) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+      const ticket = await ShareAPI.getTicket(handle, projectSlug, ticketRef);
+
+      if (!project || !ticket) return DefaultSocialContent;
+
+      return {
+        title: `#${ticketRef}: ${ticket.title} · ${handle}/${projectSlug} | Unison Share`,
+        description: ticket.description,
+        imageUrl,
       };
     },
 
@@ -90,11 +104,29 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       if (!project) return DefaultSocialContent;
 
       return {
-        title: `${handle}/${projectSlug} Contributions | Unison Share`,
+        title: `Contributions · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
+      };
+    },
+
+    async ProjectContribution(handle, projectSlug, contribRef) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+      const contrib = await ShareAPI.getContribution(
+        handle,
+        projectSlug,
+        contribRef
+      );
+
+      if (!project || !contrib) return DefaultSocialContent;
+
+      return {
+        title: `#${contribRef}: ${contrib.title} · ${handle}/${projectSlug} | Unison Share`,
+        description:
+          contrib.description ||
+          project.summary ||
+          DefaultSocialContent.description,
+        imageUrl,
       };
     },
 
@@ -104,11 +136,21 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       if (!project) return DefaultSocialContent;
 
       return {
-        title: `${handle}/${projectSlug} Releases | Unison Share`,
+        title: `Releases · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
+      };
+    },
+
+    async ProjectRelease(handle, projectSlug, version) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+
+      if (!project) return DefaultSocialContent;
+
+      return {
+        title: `Release ${version} · ${handle}/${projectSlug} | Unison Share`,
+        description: project.summary || DefaultSocialContent.description,
+        imageUrl,
       };
     },
 
@@ -118,11 +160,9 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       if (!project) return DefaultSocialContent;
 
       return {
-        title: `${handle}/${projectSlug} Branches | Unison Share`,
+        title: `Branches · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
-        imageUrl: `${url.protocol}//${
-          url.hostname
-        }/social-image?path=${encodeURI(url.pathname)}`,
+        imageUrl,
       };
     },
 
