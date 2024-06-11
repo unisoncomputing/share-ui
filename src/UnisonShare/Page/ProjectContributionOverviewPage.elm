@@ -391,7 +391,11 @@ viewHowToReviewModal contribution =
             div []
                 [ p [] [ text "Reviewing and merging contribution code is a manual process for now. Follow the steps below." ]
                 , div [ class "instructions" ]
-                    [ p [] [ text "From within the project clone the source branch:" ]
+                    [ p [] [ text "From within the project pull the target branch (usually /main):" ]
+                    , CopyField.copyField (always NoOp) "pull"
+                        |> CopyField.withPrefix (projectRef ++ "/main>")
+                        |> CopyField.view
+                    , p [] [ text "Then clone the source branch:" ]
                     , CopyField.copyField (always NoOp) ("clone " ++ source)
                         |> CopyField.withPrefix (projectRef ++ "/main>")
                         |> CopyField.view
