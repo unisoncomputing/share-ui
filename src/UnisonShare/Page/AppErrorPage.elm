@@ -52,7 +52,7 @@ view appContext appError =
                             , text " so that we can help prevent it in the future."
                             ]
                         ]
-                        |> StatusMessage.withCta (Button.iconThenLabel_ Link.reportBug Icon.bug "Report a Bug" |> Button.medium)
+                        |> StatusMessage.withCta (Button.iconThenLabel_ Link.reportShareBug Icon.bug "Report a Share Bug" |> Button.medium)
                         |> StatusMessage.asCard
 
         page =
