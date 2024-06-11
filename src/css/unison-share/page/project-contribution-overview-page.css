@@ -53,20 +53,6 @@
     }
   }
 
-  & #project-contribution-how-to-review-modal .instructions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    & .copy-field {
-      margin-bottom: 1rem;
-    }
-
-    & p {
-      margin-bottom: 0;
-    }
-  }
-
   & .new-comment_form {
     position: relative;
     margin-top: 1rem;
@@ -104,5 +90,19 @@
     bottom: 0;
     right: 0;
     z-index: 0;
+  }
+}
+
+#project-contribution-how-to-review-modal .instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  & .copy-field {
+    margin-bottom: 1rem;
+  }
+
+  & p {
+    margin-bottom: 0;
   }
 }
