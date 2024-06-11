@@ -260,7 +260,9 @@ viewContribution session projectRef updateStatus contribution =
                     ]
 
                 Merged ->
-                    [ browseButton ]
+                    [ browseButton
+                    , div [ class "right-actions" ] [ reopenButton ]
+                    ]
 
                 Archived ->
                     [ browseButton
