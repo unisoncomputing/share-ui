@@ -73,9 +73,14 @@ githubRelease releaseTag =
     Click.externalHref ("https://github.com/unisonweb/unison/releases/tag/" ++ releaseTag)
 
 
-reportBug : Click msg
-reportBug =
-    Click.externalHref "https://github.com/unisonweb/unison/issues/new?%5B%5Dlabels=unison-share"
+reportUnisonBug : Click msg
+reportUnisonBug =
+    Click.externalHref "https://github.com/unisonweb/unison/issues/new"
+
+
+reportShareBug : Click msg
+reportShareBug =
+    Click.externalHref "https://github.com/unisoncomputing/share-ui/issues/new"
 
 
 docs : Click msg

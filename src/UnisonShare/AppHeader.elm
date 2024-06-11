@@ -197,7 +197,8 @@ view ctx appHeader_ =
                         (whatsNewItems
                             ++ [ ActionMenu.dividerItem
                                , ActionMenu.optionItem Icon.docs "Docs" Link.docs
-                               , ActionMenu.optionItem Icon.bug "Report a Bug" Link.reportBug
+                               , ActionMenu.optionItem Icon.bug "Report a Unison Bug" Link.reportUnisonBug
+                               , ActionMenu.optionItem Icon.bug "Report a Share Bug" Link.reportShareBug
                                , ActionMenu.optionItem Icon.keyboardKey "Keyboard Shortcuts" (Click.onClick ctx.showKeyboardShortcutsModalMsg)
                                , ActionMenu.optionItem Icon.unfoldedMap "Code of Conduct" Link.codeOfConduct
                                , ActionMenu.optionItem Icon.unisonMark "Unison Website" Link.website
