@@ -27,3 +27,12 @@
     margin: 1.5rem;
   }
 }
+
+@media only screen and (--u-viewport_max-md) {
+  /* 3rem is tthe padding of a card times 2 */
+  .readme-card .definition-doc {
+    --total-card-padding: calc(var(--c-card_padding) + var(--c-card_padding));
+    --c-width_doc_outer: calc(100% - var(--total-card-padding));
+    --c-width_doc_inner-content: calc(100% - var(--total-card-padding));
+  }
+}
