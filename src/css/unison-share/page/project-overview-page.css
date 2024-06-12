@@ -192,7 +192,7 @@
 }
 
 @media only screen and (--u-viewport_max-sm) {
-  .project-overview-page .page-title,
+  .project-overview-page .page-content .page-title,
   .project-overview-page .project-dependencies {
     display: none;
   }
