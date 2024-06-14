@@ -10,6 +10,7 @@ type SocialContent = {
 const MaxLength = {
   at4: 30,
   at3: 45,
+  at2point5: 52,
 };
 
 const DefaultSocialContent = {
@@ -18,29 +19,8 @@ const DefaultSocialContent = {
   imageUrl: "https://share.unison-lang.org/static/unison-share-social.png",
 };
 
-const SocialImageStyles = {
-  base: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    fontFamily: "Inter",
-    flexDirection: "column",
-    alignItems: "center",
-    backgroundImage:
-      "url(https://share.unison-lang.org/static/social-image-background.png)",
-    backgroundRepeat: "no-repeat",
-    color: Colors.gray.darken30,
-  },
-};
-
 async function defaultSocialImage(): Promise<React.Element> {
   return <img src={DefaultSocialContent.imageUrl} width="1200" height="630" />;
 }
 
-export {
-  SocialContent,
-  SocialImageStyles,
-  DefaultSocialContent,
-  MaxLength,
-  defaultSocialImage,
-};
+export { SocialContent, DefaultSocialContent, MaxLength, defaultSocialImage };

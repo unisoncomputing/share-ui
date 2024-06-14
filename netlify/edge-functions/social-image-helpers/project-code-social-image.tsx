@@ -3,7 +3,7 @@ import ShareAPI from "../common/share-api.ts";
 import { MaxLength, defaultSocialImage } from "./social-content.tsx";
 import { truncate } from "../common/utils.ts";
 import * as Sizing from "../common/sizing.ts";
-import ProjectSocialImageBase from "./project-social-image-base.tsx";
+import SocialImageWithIcon from "./social-image-with-icon.tsx";
 
 async function projectCodeSocialImage(
   handle: string,
@@ -38,7 +38,7 @@ async function projectCodeSocialImage(
   }
 
   return (
-    <ProjectSocialImageBase
+    <SocialImageWithIcon
       title="Code"
       summary={summary}
       summaryFontSize={Sizing.toPx(3)}

@@ -17,11 +17,46 @@ type APIUser = {
   bio?: string;
 };
 
+type APITicket = {
+  author?: string;
+  title: string;
+  description: string;
+  numComments: 0;
+  status: "open" | "closed";
+  createdAt: string;
+  updatedAt: string;
+};
+
+type APIContribution = {
+  author?: string;
+  title: string;
+  description?: string;
+  numComments: number;
+  sourceBranchRef: string;
+  status: "draft" | "in_review" | "merged" | "closed";
+  targetBranchRef: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type APIRelease = {
+  causalHashSquashed: string;
+  causalHashUnsquashed: string;
+  createdAt: string;
+  createdBy?: string;
+  updatedAt: string;
+  version: string;
+};
+
+function apiHandle(handle: string): string {
+  return handle.replace("@", "");
+}
+
 const ShareAPI = {
   baseURL: "https://api.unison-lang.org",
 
   getUser: async (handle: string): Promise<APIUser> => {
-    return fetch(`${ShareAPI.baseURL}/users/${handle.replace("@", "")}`).then(
+    return fetch(`${ShareAPI.baseURL}/users/${apiHandle(handle)}`).then(
       (resp) => {
         if (!resp.ok) {
           throw new Error(resp.statusText);
@@ -37,13 +72,8 @@ const ShareAPI = {
     projectSlug: string
   ): Promise<APIProject> => {
     return fetch(
-      `${ShareAPI.baseURL}/users/${handle.replace(
-        "@",
-        ""
-      )}/projects/${projectSlug}`
+      `${ShareAPI.baseURL}/users/${apiHandle(handle)}/projects/${projectSlug}`
     ).then((resp) => {
-      console.log(resp);
-
       if (!resp.ok) {
         throw new Error(resp.statusText);
       }
@@ -53,11 +83,58 @@ const ShareAPI = {
   },
 
   getContribution: async (
-    _handle: string,
-    _projectSlug: string,
-    _contribRef: string
-  ) => {},
+    handle: string,
+    projectSlug: string,
+    contribRef: number
+  ): Promise<APIContribution> => {
+    return fetch(
+      `${ShareAPI.baseURL}/users/${apiHandle(
+        handle
+      )}/projects/${projectSlug}/contributions/${contribRef}`
+    ).then((resp) => {
+      if (!resp.ok) {
+        throw new Error(resp.statusText);
+      }
 
+      return resp.json() as Promise<APIContribution>;
+    });
+  },
+
+  getTicket: async (
+    handle: string,
+    projectSlug: string,
+    ticketRef: number
+  ): Promise<APITicket> => {
+    return fetch(
+      `${ShareAPI.baseURL}/users/${apiHandle(
+        handle
+      )}/projects/${projectSlug}/tickets/${ticketRef}`
+    ).then((resp) => {
+      if (!resp.ok) {
+        throw new Error(resp.statusText);
+      }
+
+      return resp.json() as Promise<APITicket>;
+    });
+  },
+
+  getRelease: async (
+    handle: string,
+    projectSlug: string,
+    version: string
+  ): Promise<APIRelease> => {
+    return fetch(
+      `${ShareAPI.baseURL}/users/${apiHandle(
+        handle
+      )}/projects/${projectSlug}/releases/${version}`
+    ).then((resp) => {
+      if (!resp.ok) {
+        throw new Error(resp.statusText);
+      }
+
+      return resp.json() as Promise<APIRelease>;
+    });
+  },
   getDefinition: async (
     _handle: string,
     _projectSlug: string,

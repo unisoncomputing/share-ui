@@ -5,8 +5,11 @@ class Route extends SumType<{
   ProjectOverview: [string, string];
   ProjectCode: [string, string, string | undefined];
   ProjectTickets: [string, string];
+  ProjectTicket: [string, string, number];
   ProjectContributions: [string, string];
+  ProjectContribution: [string, string, number];
   ProjectReleases: [string, string];
+  ProjectRelease: [string, string, string];
   ProjectBranches: [string, string];
   NotFound: [string];
 }> {}
@@ -31,12 +34,36 @@ function ProjectTickets(handle: string, projectSlug: string): Route {
   return new Route("ProjectTickets", handle, projectSlug);
 }
 
+function ProjectTicket(
+  handle: string,
+  projectSlug: string,
+  ticketRef: number
+): Route {
+  return new Route("ProjectTicket", handle, projectSlug, ticketRef);
+}
+
 function ProjectContributions(handle: string, projectSlug: string): Route {
   return new Route("ProjectContributions", handle, projectSlug);
 }
 
+function ProjectContribution(
+  handle: string,
+  projectSlug: string,
+  contributionRef: number
+): Route {
+  return new Route("ProjectContribution", handle, projectSlug, contributionRef);
+}
+
 function ProjectReleases(handle: string, projectSlug: string): Route {
   return new Route("ProjectReleases", handle, projectSlug);
+}
+
+function ProjectRelease(
+  handle: string,
+  projectSlug: string,
+  version: string
+): Route {
+  return new Route("ProjectRelease", handle, projectSlug, version);
 }
 
 function ProjectBranches(handle: string, projectSlug: string): Route {
@@ -77,11 +104,29 @@ function fromPathname(rawPath: string): Route {
 
       return ProjectCode(handle, projectSlug, branchRef);
     } else if (projectPage === "tickets") {
-      return ProjectTickets(handle, projectSlug);
+      const [_, ticketRef] = rest;
+
+      if (!isNaN(parseInt(ticketRef))) {
+        return ProjectTicket(handle, projectSlug, parseInt(ticketRef));
+      } else {
+        return ProjectTickets(handle, projectSlug);
+      }
     } else if (projectPage === "contributions") {
-      return ProjectContributions(handle, projectSlug);
+      const [_, contribRef] = rest;
+
+      if (!isNaN(parseInt(contribRef))) {
+        return ProjectContribution(handle, projectSlug, parseInt(contribRef));
+      } else {
+        return ProjectContributions(handle, projectSlug);
+      }
     } else if (projectPage === "releases") {
-      return ProjectReleases(handle, projectSlug);
+      const [_, version] = rest;
+
+      if (version) {
+        return ProjectRelease(handle, projectSlug, version);
+      } else {
+        return ProjectReleases(handle, projectSlug);
+      }
     } else if (projectPage === "branches") {
       return ProjectBranches(handle, projectSlug);
     } else {
@@ -97,7 +142,9 @@ export {
   ProjectOverview,
   ProjectCode,
   ProjectContributions,
+  ProjectContribution,
   ProjectTickets,
+  ProjectTicket,
   ProjectReleases,
   NotFound,
   Route,
