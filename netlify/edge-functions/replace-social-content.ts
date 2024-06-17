@@ -73,6 +73,49 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       };
     },
 
+    async ProjectDefinition(
+      handle,
+      projectSlug,
+      branchRef,
+      definitionType,
+      ref
+    ) {
+      const project = await ShareAPI.getProject(handle, projectSlug);
+      const definitions = await ShareAPI.getDefinition(
+        handle,
+        projectSlug,
+        branchRef,
+        ref
+      );
+
+      if (!project) return DefaultSocialContent;
+      if (!definitions) return DefaultSocialContent;
+
+      let definition = null;
+      if (definitionType === "term") {
+        const [hash] = Object.keys(definitions.termDefinitions);
+        const raw = definitions.termDefinitions[hash];
+        if (hash) {
+          definition = { name: raw.bestTermName };
+        }
+      } else {
+        const [hash] = Object.keys(definitions.typeDefinitions);
+        const raw = definitions.typeDefinitions[hash];
+        if (hash) {
+          definition = { name: raw.bestTypeName };
+        }
+      }
+
+      if (!definition) return DefaultSocialContent;
+      const title = definition.name;
+
+      return {
+        title: `${title} · ${handle}/${projectSlug}/${branchRef} | Unison Share`,
+        description: project.summary,
+        imageUrl,
+      };
+    },
+
     async ProjectTickets(handle, projectSlug) {
       const project = await ShareAPI.getProject(handle, projectSlug);
 

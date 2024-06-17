@@ -29,7 +29,12 @@ function userHandle(handle?: string): string {
 }
 
 function hash(h: string): string {
-  return h.replace("#", "").slice(0, 8);
+  // builtins starts with 2 ## and we shouldn't shorten them
+  if (h.startsWith("##")) {
+    return h.replaceAll("#", "");
+  } else {
+    return h.replaceAll("#", "").slice(0, 8);
+  }
 }
 
 export { truncate, titleize, intersperse, userHandle, hash };
