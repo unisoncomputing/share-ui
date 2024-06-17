@@ -31,7 +31,7 @@ async function projectSocialImage(
 
   const summary = project.summary;
   let summaryFontSize = Sizing.toPx(3);
-  if (summary.length > MaxLength.at3 * 1.5) {
+  if (summary && summary.length > MaxLength.at3 * 1.5) {
     summaryFontSize = Sizing.toPx(2.5);
   }
 
