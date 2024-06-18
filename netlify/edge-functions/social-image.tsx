@@ -14,6 +14,7 @@ import projectCodeSocialImage from "./social-image-helpers/project-code-social-i
 import projectReleasesSocialImage from "./social-image-helpers/project-releases-social-image.tsx";
 import projectReleaseSocialImage from "./social-image-helpers/project-release-social-image.tsx";
 import projectBranchesSocialImage from "./social-image-helpers/project-branches-social-image.tsx";
+import projectDefinitionSocialImage from "./social-image-helpers/project-definition-social-image.tsx";
 
 async function socialImageResponse(
   content: React.Element
@@ -55,6 +56,31 @@ function generateSocialImage(url: URL) {
         handle,
         projectSlug,
         branchRef
+      );
+      const resp = await socialImageResponse(content);
+      return resp;
+    },
+
+    async ProjectDefinition(
+      handle,
+      projectSlug,
+      branchRef,
+      definitionType,
+      fqn
+    ) {
+      console.log(
+        "MatchedRoute: ProjectDefinition",
+        handle,
+        projectSlug,
+        definitionType,
+        fqn
+      );
+      const content = await projectDefinitionSocialImage(
+        handle,
+        projectSlug,
+        branchRef,
+        definitionType,
+        fqn
       );
       const resp = await socialImageResponse(content);
       return resp;

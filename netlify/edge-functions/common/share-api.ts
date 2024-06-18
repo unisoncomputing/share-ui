@@ -1,3 +1,5 @@
+import { APIDefinition } from "./definition.ts";
+
 type APIProject = {
   owner: { handle: string };
   slug: string;
@@ -55,6 +57,12 @@ function apiHandle(handle: string): string {
 const ShareAPI = {
   baseURL: "https://api.unison-lang.org",
 
+  projectBaseUrl: (handle: string, projectSlug: string, path?: string) => {
+    return `${ShareAPI.baseURL}/users/${apiHandle(
+      handle
+    )}/projects/${projectSlug}${path || ""}`;
+  },
+
   getUser: async (handle: string): Promise<APIUser> => {
     return fetch(`${ShareAPI.baseURL}/users/${apiHandle(handle)}`).then(
       (resp) => {
@@ -71,9 +79,7 @@ const ShareAPI = {
     handle: string,
     projectSlug: string
   ): Promise<APIProject> => {
-    return fetch(
-      `${ShareAPI.baseURL}/users/${apiHandle(handle)}/projects/${projectSlug}`
-    ).then((resp) => {
+    return fetch(ShareAPI.projectBaseUrl(handle, projectSlug)).then((resp) => {
       if (!resp.ok) {
         throw new Error(resp.statusText);
       }
@@ -88,9 +94,11 @@ const ShareAPI = {
     contribRef: number
   ): Promise<APIContribution> => {
     return fetch(
-      `${ShareAPI.baseURL}/users/${apiHandle(
-        handle
-      )}/projects/${projectSlug}/contributions/${contribRef}`
+      ShareAPI.projectBaseUrl(
+        handle,
+        projectSlug,
+        `/contributions/${contribRef}`
+      )
     ).then((resp) => {
       if (!resp.ok) {
         throw new Error(resp.statusText);
@@ -106,9 +114,7 @@ const ShareAPI = {
     ticketRef: number
   ): Promise<APITicket> => {
     return fetch(
-      `${ShareAPI.baseURL}/users/${apiHandle(
-        handle
-      )}/projects/${projectSlug}/tickets/${ticketRef}`
+      ShareAPI.projectBaseUrl(handle, projectSlug, `/tickets/${ticketRef}`)
     ).then((resp) => {
       if (!resp.ok) {
         throw new Error(resp.statusText);
@@ -124,9 +130,7 @@ const ShareAPI = {
     version: string
   ): Promise<APIRelease> => {
     return fetch(
-      `${ShareAPI.baseURL}/users/${apiHandle(
-        handle
-      )}/projects/${projectSlug}/releases/${version}`
+      ShareAPI.projectBaseUrl(handle, projectSlug, `/releases/${version}`)
     ).then((resp) => {
       if (!resp.ok) {
         throw new Error(resp.statusText);
@@ -135,11 +139,35 @@ const ShareAPI = {
       return resp.json() as Promise<APIRelease>;
     });
   },
+
   getDefinition: async (
-    _handle: string,
-    _projectSlug: string,
-    _fqn: Array<string>
-  ) => {},
+    handle: string,
+    projectSlug: string,
+    branchRef: string,
+    fqn: Array<string>
+  ): Promise<APIDefinitions> => {
+    function mkUrl(branchPart: string): string {
+      return ShareAPI.projectBaseUrl(
+        handle,
+        projectSlug,
+        `/${branchPart}/definitions/by-name/${fqn.join(".")}`
+      );
+    }
+
+    let url = mkUrl(`branches/${branchRef.replace("/", "%2F")}`);
+    if (branchRef.startsWith("releases")) {
+      url = mkUrl(branchRef);
+    }
+
+    return fetch(url).then((resp) => {
+      if (!resp.ok) {
+        throw new Error(resp.statusText);
+      }
+
+      return resp.json() as Promise<APIDefinitions>;
+    });
+  },
 };
 
 export default ShareAPI;
+export { ShareAPI };

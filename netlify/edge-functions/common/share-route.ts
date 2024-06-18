@@ -4,6 +4,7 @@ class Route extends SumType<{
   UserOverview: [string];
   ProjectOverview: [string, string];
   ProjectCode: [string, string, string | undefined];
+  ProjectDefinition: [string, string, string, string, Array<string>];
   ProjectTickets: [string, string];
   ProjectTicket: [string, string, number];
   ProjectContributions: [string, string];
@@ -28,6 +29,23 @@ function ProjectCode(
   branchRef?: string
 ): Route {
   return new Route("ProjectCode", handle, projectSlug, branchRef);
+}
+
+function ProjectDefinition(
+  handle: string,
+  projectSlug: string,
+  branchRef: string,
+  definitionType: string,
+  fqn: Array<string>
+): Route {
+  return new Route(
+    "ProjectDefinition",
+    handle,
+    projectSlug,
+    branchRef,
+    definitionType,
+    fqn
+  );
 }
 
 function ProjectTickets(handle: string, projectSlug: string): Route {
@@ -79,10 +97,12 @@ function parse(rawUrl: string): Route {
   return fromPathname(url.pathname);
 }
 
+function isContributorBranchOrRelease(s: string): boolean {
+  return s.startsWith("@") || s.startsWith("releases");
+}
+
 function fromPathname(rawPath: string): Route {
   const parts = rawPath.split("/").filter((s) => s.length);
-
-  console.log("route parts", parts);
 
   const [handle, projectSlug, ...rest] = parts;
 
@@ -92,17 +112,41 @@ function fromPathname(rawPath: string): Route {
     const [projectPage] = rest;
 
     if (projectPage === "code") {
-      const [_, branchPart1, branchPart2] = rest;
+      const [
+        _,
+        branchPart1,
+        branchPart2,
+        namespaceHashOrDefinitionType,
+        definitionTypeOrNameSegment,
+        ...nameSegments
+      ] = rest;
 
       let branchRef = branchPart1;
-      if (
-        branchPart1 &&
-        (branchPart1.startsWith("@") || branchPart1.startsWith("releases"))
-      ) {
+      let fqn = nameSegments || [];
+      let definitionType = definitionTypeOrNameSegment;
+      if (branchPart1 && isContributorBranchOrRelease(branchPart1)) {
         branchRef = `${branchRef}/${branchPart2}`;
+      } else if (branchPart2) {
+        // if the branchPart1 contributor branch a release, then branch2 is a namespaceHash,
+        // which means the namespaceHashOrDefinitionType is a definition type, and definitionTypeOrNameSegment
+        // is the first part of the FQN
+        fqn = [definitionTypeOrNameSegment, ...nameSegments];
+        definitionType = namespaceHashOrDefinitionType;
       }
 
-      return ProjectCode(handle, projectSlug, branchRef);
+      // Gotta have an FQN to be a definition Route
+      if (fqn.length && definitionType) {
+        return ProjectDefinition(
+          handle,
+          projectSlug,
+          branchRef,
+          // remove the trailing 's' from the definition type
+          definitionType.substring(0, definitionType.length - 1),
+          fqn
+        );
+      } else {
+        return ProjectCode(handle, projectSlug, branchRef);
+      }
     } else if (projectPage === "tickets") {
       const [_, ticketRef] = rest;
 
@@ -141,6 +185,7 @@ export {
   UserOverview,
   ProjectOverview,
   ProjectCode,
+  ProjectDefinition,
   ProjectContributions,
   ProjectContribution,
   ProjectTickets,

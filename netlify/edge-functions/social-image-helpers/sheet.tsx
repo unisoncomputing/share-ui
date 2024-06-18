@@ -20,7 +20,7 @@ function renderRow(row: React.ReactNode): React.ReactNode {
   const row_ = React.Children.toArray(row);
 
   return intersperse(
-    row_.filter((e) => !!e),
+    row_.filter((e: unknown) => !!e),
     rowSep
   );
 }
@@ -102,7 +102,7 @@ const STYLES = {
   },
   title: {
     color: Colors.gray.darken30,
-    lineHeight: 1.15,
+    lineHeight: 1.2,
     fontSize: Sizing.toPx(4.5),
     margin: 0,
   },

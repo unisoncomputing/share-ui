@@ -8,25 +8,37 @@ type TagColor = "green" | "pink" | "blue" | "orange" | "purple" | "gray";
 type TagProps = {
   color: TagColor;
   text: string;
+  size?: "default" | "small";
 };
 
 function Tag(props: TagProps): React.Element {
-  return <span style={STYLES.base(props.color)}>{props.text}</span>;
+  const size = props.size || "default";
+
+  return <span style={STYLES.base(props.color, size)}>{props.text}</span>;
 }
 
 const STYLES = {
-  base(color: TagColor) {
+  base(color: TagColor, size: "default" | "small") {
     return {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: Sizing.toPx(1.5),
-      padding: `${Sizing.toPx(0.5)}px ${Sizing.toPx(1.5)}px`,
-      fontWeight: Fonts.Weights.semiBold,
-      borderRadius: Sizing.toPx(3),
       lineHeight: 1,
       ...STYLES[color],
+      ...STYLES[size],
     };
+  },
+  default: {
+    fontSize: Sizing.toPx(1.5),
+    padding: `${Sizing.toPx(0.5)}px ${Sizing.toPx(1.5)}px`,
+    fontWeight: Fonts.Weights.semiBold,
+    borderRadius: Sizing.toPx(3),
+  },
+  small: {
+    fontSize: Sizing.toPx(1),
+    padding: `${Sizing.toPx(0.25)}px ${Sizing.toPx(1)}px`,
+    fontWeight: Fonts.Weights.semiBold,
+    borderRadius: Sizing.toPx(2),
   },
   green: {
     color: Colors.green1,
@@ -54,9 +66,9 @@ const STYLES = {
     border: `2px solid ${Colors.purple2}`,
   },
   gray: {
-    color: Colors.gray.darken30,
-    backgroundColor: Colors.gray.lighten45,
-    border: `2px solid ${Colors.gray.lighten20}`,
+    color: Colors.gray.base,
+    backgroundColor: Colors.gray.lighten55,
+    border: `2px solid ${Colors.gray.lighten40}`,
   },
 };
 
