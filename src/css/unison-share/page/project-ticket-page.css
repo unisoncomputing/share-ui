@@ -1,4 +1,8 @@
 .project-ticket-page {
+  & pre {
+    overflow: auto;
+  }
+
   & .page-title .description {
     margin: 0;
   }

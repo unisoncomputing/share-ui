@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: 1.5rem;
 
+  & pre {
+    overflow: auto;
+  }
+
   & .contribution-description {
     z-index: 1;
 
