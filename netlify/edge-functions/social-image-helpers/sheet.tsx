@@ -16,13 +16,8 @@ type SheetProps = {
 
 function renderRow(row: React.ReactNode): React.ReactNode {
   const rowSep = <span style={STYLES.rowSeparator}>|</span>;
-
-  const row_ = React.Children.toArray(row);
-
-  return intersperse(
-    row_.filter((e: unknown) => !!e),
-    rowSep
-  );
+  const row_ = React.Children.toArray(row).filter((e: unknown) => !!e);
+  return intersperse(row_, rowSep);
 }
 
 function Sheet(props: SheetProps) {
@@ -78,9 +73,12 @@ const STYLES = {
     display: "flex",
     flexDirection: "column",
     gap: Sizing.toPx(1.25),
+    flex: 1,
   },
   rowSeparator: {
     color: Colors.gray.lighten40,
+    paddingLeft: Sizing.toPx(1),
+    paddingRight: Sizing.toPx(1),
     fontSize: Sizing.toPx(2),
     fontWeight: Fonts.Weights.regular,
   },
@@ -92,19 +90,21 @@ const STYLES = {
     color: Colors.gray.lighten20,
     fontSize: Sizing.toPx(2),
     lineHeight: 1,
+    flex: 1,
   },
   topRowInner: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: Sizing.toPx(1),
     lineHeight: 1,
+    padding: 0,
   },
   title: {
     color: Colors.gray.darken30,
     lineHeight: 1.2,
     fontSize: Sizing.toPx(4.5),
     margin: 0,
+    flex: 1,
   },
   bottomRow: {
     display: "flex",
@@ -113,7 +113,10 @@ const STYLES = {
     justifyContent: "space-between",
     color: Colors.gray.lighten20,
     fontSize: Sizing.toPx(1.5),
-    lineHeight: 1,
+    background: "yellow",
+    height: Sizing.toPx(12),
+    border: "1px solid red",
+    flex: 1,
   },
   bottomRowInner: {
     display: "flex",
