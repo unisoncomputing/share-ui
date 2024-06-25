@@ -1,4 +1,4 @@
-import { APIDefinition } from "./definition.ts";
+import { APIDefinitions } from "./definition.ts";
 
 type APIProject = {
   owner: { handle: string };
@@ -50,6 +50,11 @@ type APIRelease = {
   version: string;
 };
 
+async function error(url: string, resp: Response): Promise<Error> {
+  const body = await resp.text();
+  return Error(`GET ${url}: ${resp.statusText} | ${body}`);
+}
+
 function apiHandle(handle: string): string {
   return handle.replace("@", "");
 }
@@ -64,24 +69,26 @@ const ShareAPI = {
   },
 
   getUser: async (handle: string): Promise<APIUser> => {
-    return fetch(`${ShareAPI.baseURL}/users/${apiHandle(handle)}`).then(
-      (resp) => {
-        if (!resp.ok) {
-          throw new Error(resp.statusText);
-        }
+    const url = `${ShareAPI.baseURL}/users/${apiHandle(handle)}`;
 
-        return resp.json() as Promise<APIUser>;
+    return fetch(url).then(async (resp) => {
+      if (!resp.ok) {
+        throw await error(url, resp);
       }
-    );
+
+      return resp.json() as Promise<APIUser>;
+    });
   },
 
   getProject: async (
     handle: string,
     projectSlug: string
   ): Promise<APIProject> => {
-    return fetch(ShareAPI.projectBaseUrl(handle, projectSlug)).then((resp) => {
+    const url = ShareAPI.projectBaseUrl(handle, projectSlug);
+
+    return fetch(url).then(async (resp) => {
       if (!resp.ok) {
-        throw new Error(resp.statusText);
+        throw await error(url, resp);
       }
 
       return resp.json() as Promise<APIProject>;
@@ -93,15 +100,14 @@ const ShareAPI = {
     projectSlug: string,
     contribRef: number
   ): Promise<APIContribution> => {
-    return fetch(
-      ShareAPI.projectBaseUrl(
-        handle,
-        projectSlug,
-        `/contributions/${contribRef}`
-      )
-    ).then((resp) => {
+    const url = ShareAPI.projectBaseUrl(
+      handle,
+      projectSlug,
+      `/contributions/${contribRef}`
+    );
+    return fetch(url).then(async (resp) => {
       if (!resp.ok) {
-        throw new Error(resp.statusText);
+        throw await error(url, resp);
       }
 
       return resp.json() as Promise<APIContribution>;
@@ -113,11 +119,14 @@ const ShareAPI = {
     projectSlug: string,
     ticketRef: number
   ): Promise<APITicket> => {
-    return fetch(
-      ShareAPI.projectBaseUrl(handle, projectSlug, `/tickets/${ticketRef}`)
-    ).then((resp) => {
+    const url = ShareAPI.projectBaseUrl(
+      handle,
+      projectSlug,
+      `/tickets/${ticketRef}`
+    );
+    return fetch(url).then(async (resp) => {
       if (!resp.ok) {
-        throw new Error(resp.statusText);
+        throw await error(url, resp);
       }
 
       return resp.json() as Promise<APITicket>;
@@ -129,11 +138,15 @@ const ShareAPI = {
     projectSlug: string,
     version: string
   ): Promise<APIRelease> => {
-    return fetch(
-      ShareAPI.projectBaseUrl(handle, projectSlug, `/releases/${version}`)
-    ).then((resp) => {
+    const url = ShareAPI.projectBaseUrl(
+      handle,
+      projectSlug,
+      `/releases/${version}`
+    );
+
+    return fetch(url).then(async (resp) => {
       if (!resp.ok) {
-        throw new Error(resp.statusText);
+        throw await error(url, resp);
       }
 
       return resp.json() as Promise<APIRelease>;
@@ -159,9 +172,9 @@ const ShareAPI = {
       url = mkUrl(branchRef);
     }
 
-    return fetch(url).then((resp) => {
+    return fetch(url).then(async (resp) => {
       if (!resp.ok) {
-        throw new Error(resp.statusText);
+        throw await error(url, resp);
       }
 
       return resp.json() as Promise<APIDefinitions>;
