@@ -62,7 +62,7 @@ fromString raw =
 
 toString : ProjectDependency -> String
 toString { name, version } =
-    name ++ MaybeE.unwrap "" (\v -> "@" ++ Version.toString v) version
+    name ++ MaybeE.unwrap "" (\v -> " v" ++ Version.toString v) version
 
 
 toTag : ProjectDependency -> Tag msg
@@ -70,4 +70,4 @@ toTag { name, version } =
     name
         |> Tag.tag
         |> Tag.large
-        |> Tag.withRightText (MaybeE.unwrap "" (\v -> "@" ++ Version.toString v) version)
+        |> Tag.withRightText (MaybeE.unwrap "" (\v -> " v" ++ Version.toString v) version)

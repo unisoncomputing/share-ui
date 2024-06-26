@@ -26,16 +26,16 @@ fromString =
         , test "parses 'base_1_2_3'" <|
             \_ ->
                 Expect.equal
-                    "base@1.2.3"
+                    "base v1.2.3"
                     (ProjectDependency.toString (ProjectDependency.fromString "base_1_2_3"))
         , test "parses 'unison_base_1_2_3'" <|
             \_ ->
                 Expect.equal
-                    "@unison/base@1.2.3"
+                    "@unison/base v1.2.3"
                     (ProjectDependency.toString (ProjectDependency.fromString "unison_base_1_2_3"))
         , test "parses 'unison_base_with_underscore_1_2_3'" <|
             \_ ->
                 Expect.equal
-                    "unison_base_with_underscore@1.2.3"
+                    "unison_base_with_underscore v1.2.3"
                     (ProjectDependency.toString (ProjectDependency.fromString "unison_base_with_underscore_1_2_3"))
         ]
