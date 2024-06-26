@@ -111,7 +111,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
 
       return {
         title: `${title} · ${handle}/${projectSlug}/${branchRef} | Unison Share`,
-        description: project.summary,
+        description: project.summary || DefaultSocialContent.description,
         imageUrl,
       };
     },
