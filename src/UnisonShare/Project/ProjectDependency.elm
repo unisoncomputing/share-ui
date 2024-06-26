@@ -1,4 +1,4 @@
-module UnisonShare.Project.ProjectDependency exposing (ProjectDependency, fromString, toTag)
+module UnisonShare.Project.ProjectDependency exposing (ProjectDependency, fromString, toString, toTag)
 
 import Code.Version as Version exposing (Version)
 import Maybe.Extra as MaybeE
@@ -10,17 +10,59 @@ type alias ProjectDependency =
 
 
 fromString : String -> ProjectDependency
-fromString nameWithVersion =
+fromString raw =
     let
+        parts =
+            String.split "_" raw
+
         ( name, version ) =
-            case String.split "_" nameWithVersion of
-                n :: v ->
-                    ( n, Version.fromString (String.join "." v) )
+            case parts of
+                [ user, project, major, minor, patch ] ->
+                    ( "@" ++ user ++ "/" ++ project, Version.fromString (String.join "." [ major, minor, patch ]) )
+
+                [ n, major, minor, patch ] ->
+                    let
+                        version_ =
+                            Version.fromString (String.join "." [ major, minor, patch ])
+                    in
+                    case version_ of
+                        Just v ->
+                            ( n, Just v )
+
+                        -- It wasn't a version after all, so we give up trying to parse it
+                        Nothing ->
+                            ( raw, Nothing )
+
+                [ user, project ] ->
+                    ( "@" ++ user ++ "/" ++ project, Nothing )
+
+                [ n ] ->
+                    ( n, Nothing )
 
                 _ ->
-                    ( nameWithVersion, Nothing )
+                    case List.reverse parts of
+                        patch :: minor :: major :: n ->
+                            let
+                                version_ =
+                                    Version.fromString (String.join "." [ major, minor, patch ])
+                            in
+                            case version_ of
+                                Just v ->
+                                    ( String.join "_" (List.reverse n), Just v )
+
+                                -- It wasn't a version after all, so we give up trying to parse it
+                                Nothing ->
+                                    ( raw, Nothing )
+
+                        _ ->
+                            ( raw, Nothing )
     in
     ProjectDependency name version
+
+
+toString : ProjectDependency -> String
+toString { name, version } =
+    name ++ MaybeE.unwrap "" (\v -> "@" ++ Version.toString v) version
 
 
 toTag : ProjectDependency -> Tag msg
