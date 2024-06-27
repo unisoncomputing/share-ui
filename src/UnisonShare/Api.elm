@@ -24,6 +24,7 @@ module UnisonShare.Api exposing
     , namespace
     , project
     , projectBranch
+    , projectBranchDefinitionDiff
     , projectBranchDiff
     , projectBranchReleaseNotes
     , projectBranches
@@ -512,6 +513,33 @@ projectContributionDiff projectRef contribRef =
     GET
         { path = [ "users", handle, "projects", slug, "contributions", ContributionRef.toApiString contribRef, "diff" ]
         , queryParams = []
+        }
+
+
+projectBranchDefinitionDiff : ProjectRef -> BranchRef -> BranchRef -> Reference -> Reference -> Endpoint
+projectBranchDefinitionDiff projectRef branchA branchB defA defB =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+
+        type_ =
+            case defA of
+                Reference.TermReference _ ->
+                    "Term"
+
+                _ ->
+                    "Type"
+
+        queryParams =
+            [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
+            , string "newBranchRef" (BranchRef.toApiUrlString branchB)
+            , string ("old" ++ type_) (Reference.toApiUrlString defA)
+            , string ("new" ++ type_) (Reference.toApiUrlString defB)
+            ]
+    in
+    GET
+        { path = [ "users", handle, "projects", slug, "diff", "terms" ]
+        , queryParams = queryParams
         }
 
 
