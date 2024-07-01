@@ -231,7 +231,8 @@ viewTicket : Session -> ProjectRef -> UpdateStatus -> Ticket -> Html Msg
 viewTicket session projectRef updateStatus ticket =
     let
         isContributor =
-            ticket.authorHandle
+            ticket.author
+                |> Maybe.map .handle
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
@@ -354,7 +355,8 @@ detailedPageTitle : AppContext -> Ticket -> PageTitle Msg
 detailedPageTitle appContext ticket =
     let
         isContributor =
-            ticket.authorHandle
+            ticket.author
+                |> Maybe.map .handle
                 |> Maybe.map (\h -> Session.isHandle h appContext.session)
                 |> Maybe.withDefault False
 
@@ -370,9 +372,9 @@ detailedPageTitle appContext ticket =
                 []
 
         author =
-            case ticket.authorHandle of
-                Just h ->
-                    strong [] [ text (Userhandle.toString h) ]
+            case ticket.author of
+                Just { handle } ->
+                    strong [] [ text (Userhandle.toString handle) ]
 
                 Nothing ->
                     em [] [ text "Unknown user" ]

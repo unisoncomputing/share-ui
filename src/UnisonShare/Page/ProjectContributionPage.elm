@@ -289,7 +289,8 @@ detailedPageTitle : AppContext -> Contribution -> PageTitle Msg
 detailedPageTitle appContext contribution =
     let
         isContributor =
-            contribution.authorHandle
+            contribution.author
+                |> Maybe.map .handle
                 |> Maybe.map (\h -> Session.isHandle h appContext.session)
                 |> Maybe.withDefault False
 
@@ -304,7 +305,8 @@ detailedPageTitle appContext contribution =
                 UI.nothing
 
         byAt =
-            contribution.authorHandle
+            contribution.author
+                |> Maybe.map .handle
                 |> Maybe.map (\h -> ByAt.handleOnly h contribution.createdAt)
                 |> Maybe.withDefault (ByAt.byUnknown contribution.createdAt)
                 |> ByAt.view appContext.timeZone appContext.now

@@ -197,9 +197,9 @@ viewTicketRow : AppContext -> ProjectRef -> Ticket -> Html Msg
 viewTicketRow appContext projectRef ticket =
     let
         byAt =
-            case ticket.authorHandle of
-                Just h ->
-                    ByAt.handleOnly h ticket.createdAt
+            case ticket.author of
+                Just { handle } ->
+                    ByAt.handleOnly handle ticket.createdAt
 
                 Nothing ->
                     ByAt.byUnknown ticket.createdAt

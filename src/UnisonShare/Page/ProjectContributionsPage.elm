@@ -289,9 +289,9 @@ viewContributionRow : AppContext -> ProjectRef -> Contribution -> Html Msg
 viewContributionRow appContext projectRef contribution =
     let
         byAt =
-            case contribution.authorHandle of
-                Just h ->
-                    ByAt.handleOnly h contribution.createdAt
+            case contribution.author of
+                Just { handle } ->
+                    ByAt.handleOnly handle contribution.createdAt
 
                 Nothing ->
                     ByAt.byUnknown contribution.createdAt

@@ -173,7 +173,8 @@ viewContribution : Session -> ProjectRef -> UpdateStatus -> Contribution -> Html
 viewContribution session projectRef updateStatus contribution =
     let
         isContributor =
-            contribution.authorHandle
+            contribution.author
+                |> Maybe.map .handle
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
