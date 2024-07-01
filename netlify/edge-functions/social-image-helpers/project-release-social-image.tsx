@@ -36,9 +36,14 @@ async function projectReleaseSocialImage(
     latestRelease = <Tag color="blue" text="Latest Release" />;
   }
 
+  const h =
+    typeof release.createdBy === "string"
+      ? release.createdBy
+      : release.createdBy.handle;
+
   const author = (
     <div style={STYLES.author}>
-      <span style={STYLES.authorHandle}>{userHandle(release.createdBy)}</span>
+      <span style={STYLES.authorHandle}>{userHandle(h)}</span>
       <span style={STYLES.createdAt}>
         {format(parseISO(release.createdAt), "MMM d, y")}
       </span>

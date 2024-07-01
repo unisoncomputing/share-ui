@@ -86,9 +86,12 @@ async function projectContributionSocialImage(
     );
   }
 
+  const h =
+    typeof contrib.author === "string" ? contrib.author : contrib.author.handle;
+
   const author = (
     <div style={STYLES.author}>
-      <span style={STYLES.authorHandle}>{userHandle(contrib.author)}</span>
+      <span style={STYLES.authorHandle}>{userHandle(h)}</span>
       <span style={STYLES.createdAt}>
         {format(parseISO(contrib.createdAt), "MMM d, y")}
       </span>

@@ -52,9 +52,12 @@ async function projectTicketSocialImage(
     );
   }
 
+  const h =
+    typeof ticket.author === "string" ? ticket.author : ticket.author.handle;
+
   const author = (
     <div style={STYLES.author}>
-      <span style={STYLES.authorHandle}>{userHandle(ticket.author)}</span>
+      <span style={STYLES.authorHandle}>{userHandle(h)}</span>
       <span style={STYLES.createdAt}>
         {format(parseISO(ticket.createdAt), "MMM d, y")}
       </span>

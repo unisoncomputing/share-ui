@@ -19,8 +19,14 @@ type APIUser = {
   bio?: string;
 };
 
+type Author = {
+  handle: string;
+  name?: string;
+  avatarUrl?: string;
+};
+
 type APITicket = {
-  author?: string;
+  author?: Author | string;
   title: string;
   description: string;
   numComments: 0;
@@ -30,7 +36,7 @@ type APITicket = {
 };
 
 type APIContribution = {
-  author?: string;
+  author?: Author | string;
   title: string;
   description?: string;
   numComments: number;
@@ -45,7 +51,7 @@ type APIRelease = {
   causalHashSquashed: string;
   causalHashUnsquashed: string;
   createdAt: string;
-  createdBy?: string;
+  createdBy?: Author | string;
   updatedAt: string;
   version: string;
 };
