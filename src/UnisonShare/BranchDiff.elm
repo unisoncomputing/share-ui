@@ -1,4 +1,4 @@
-module UnisonShare.Diff exposing (..)
+module UnisonShare.BranchDiff exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN exposing (FQN)
@@ -10,7 +10,7 @@ import Lib.Util exposing (decodeNonEmptyList, decodeTag)
 import List.Nonempty as NEL
 
 
-type DefinitionDiff
+type DiffLineItem
     = Added { hash : Hash, shortName : FQN, fullName : FQN }
     | Removed { hash : Hash, shortName : FQN, fullName : FQN }
     | Updated { oldHash : Hash, newHash : Hash, shortName : FQN, fullName : FQN }
@@ -19,13 +19,13 @@ type DefinitionDiff
 
 
 type DiffLine
-    = TermDiffLine DefinitionDiff
-    | TypeDiffLine DefinitionDiff
-    | AbilityDiffLine DefinitionDiff
-    | DocDiffLine DefinitionDiff
-    | TestDiffLine DefinitionDiff
-    | DataConstructorDiffLine DefinitionDiff
-    | AbilityConstructorDiffLine DefinitionDiff
+    = TermDiffLine DiffLineItem
+    | TypeDiffLine DiffLineItem
+    | AbilityDiffLine DiffLineItem
+    | DocDiffLine DiffLineItem
+    | TestDiffLine DiffLineItem
+    | DataConstructorDiffLine DiffLineItem
+    | AbilityConstructorDiffLine DiffLineItem
     | NamespaceDiffLine { name : FQN, lines : List DiffLine }
 
 
@@ -33,7 +33,7 @@ type alias DiffBranchRef =
     { ref : BranchRef, hash : Hash }
 
 
-type alias Diff =
+type alias BranchDiff =
     { lines : List DiffLine
     , oldBranch : DiffBranchRef
     , newBranch : DiffBranchRef
@@ -118,8 +118,8 @@ sortDiffLines lines =
 -- DECODE
 
 
-decodeDefinitionDiff : Decoder DefinitionDiff
-decodeDefinitionDiff =
+decodeDiffLineItem : Decoder DiffLineItem
+decodeDiffLineItem =
     let
         added_ hash shortName fullName =
             Added { hash = hash, shortName = shortName, fullName = fullName }
@@ -181,13 +181,13 @@ decodeDefinitionDiff =
 decodeDiffLine : Decoder DiffLine
 decodeDiffLine =
     oneOf
-        [ when decodeTag ((==) "Plain") (Decode.map TermDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "Data") (Decode.map TypeDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "Ability") (Decode.map AbilityDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "Doc") (Decode.map DocDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "Test") (Decode.map TestDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "DataConstructor") (Decode.map DataConstructorDiffLine (field "contents" decodeDefinitionDiff))
-        , when decodeTag ((==) "AbilityConstructor") (Decode.map AbilityConstructorDiffLine (field "contents" decodeDefinitionDiff))
+        [ when decodeTag ((==) "Plain") (Decode.map TermDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "Data") (Decode.map TypeDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "Ability") (Decode.map AbilityDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "Doc") (Decode.map DocDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "Test") (Decode.map TestDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "DataConstructor") (Decode.map DataConstructorDiffLine (field "contents" decodeDiffLineItem))
+        , when decodeTag ((==) "AbilityConstructor") (Decode.map AbilityConstructorDiffLine (field "contents" decodeDiffLineItem))
         ]
 
 
@@ -204,7 +204,7 @@ decodeNamespace =
         |> requiredAt [ "contents", "children" ] (Decode.list (Decode.lazy (\_ -> decodeNamespace)))
 
 
-decode : Decoder Diff
+decode : Decoder BranchDiff
 decode =
     let
         mk oldRef oldRefHash newRef newRefHash changes children =
