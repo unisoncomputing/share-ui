@@ -34,7 +34,7 @@ import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 
 
 type alias Model =
-    { diff : WebData BranchDiff
+    { branchDiff : WebData BranchDiff
     }
 
 
@@ -46,7 +46,7 @@ type alias DiffBranches =
 
 init : AppContext -> ProjectRef -> ContributionRef -> ( Model, Cmd Msg )
 init appContext projectRef contribRef =
-    ( { diff = Loading }, fetchDiff appContext projectRef contribRef )
+    ( { branchDiff = Loading }, fetchBranchDiff appContext projectRef contribRef )
 
 
 
@@ -54,24 +54,31 @@ init appContext projectRef contribRef =
 
 
 type Msg
-    = FetchDiffFinished (WebData BranchDiff)
+    = FetchBranchDiffFinished (WebData BranchDiff)
 
 
 update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model, Cmd Msg )
 update _ _ _ msg model =
     case msg of
-        FetchDiffFinished contribDiff ->
-            ( { model | diff = contribDiff }, Cmd.none )
+        FetchBranchDiffFinished branchDiff ->
+            ( { model | branchDiff = branchDiff }, Cmd.none )
 
 
 
 -- EFFECTS
 
 
-fetchDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
-fetchDiff appContext projectRef contributionRef =
+fetchBranchDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
+fetchBranchDiff appContext projectRef contributionRef =
     ShareApi.projectContributionDiff projectRef contributionRef
-        |> HttpApi.toRequest BranchDiff.decode (RemoteData.fromResult >> FetchDiffFinished)
+        |> HttpApi.toRequest BranchDiff.decode (RemoteData.fromResult >> FetchBranchDiffFinished)
+        |> HttpApi.perform appContext.api
+
+
+fetchDefinitionDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
+fetchDefinitionDiff appContext projectRef contributionRef =
+    ShareApi.projectContributionDiff projectRef contributionRef
+        |> HttpApi.toRequest BranchDiff.decode (RemoteData.fromResult >> FetchBranchDiffFinished)
         |> HttpApi.perform appContext.api
 
 
@@ -343,7 +350,7 @@ viewErrorPage _ _ =
 
 view : AppContext -> ProjectRef -> Contribution -> Model -> PageContent Msg
 view appContext projectRef contribution model =
-    case model.diff of
+    case model.branchDiff of
         NotAsked ->
             viewLoadingPage
 
