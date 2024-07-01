@@ -611,7 +611,7 @@ viewLatestRelease appContext projectRef release releaseNotes =
                     ByAt.view
                         appContext.timeZone
                         appContext.now
-                        (ByAt.handleOnly p.by p.at)
+                        (ByAt.byAt p.by p.at)
 
                 _ ->
                     UI.nothing
@@ -669,13 +669,13 @@ viewPastReleases appContext projectRef releases =
                     ByAt.view
                         appContext.timeZone
                         appContext.now
-                        (ByAt.handleOnly p.by p.at)
+                        (ByAt.byAt p.by p.at)
 
                 Release.Unpublished p ->
                     ByAt.view
                         appContext.timeZone
                         appContext.now
-                        (ByAt.handleOnly p.by p.at)
+                        (ByAt.byAt p.by p.at)
 
                 _ ->
                     UI.nothing

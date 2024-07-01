@@ -10,10 +10,11 @@ import Json.Decode.Pipeline exposing (required)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.DateTime as DateTime exposing (DateTime)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
+import UnisonShare.User as User exposing (UserSummary)
 
 
 type alias StatusMeta =
-    { at : DateTime, by : UserHandle }
+    { at : DateTime, by : UserSummary }
 
 
 type ReleaseStatus
@@ -87,6 +88,15 @@ decode =
         unpublished at by =
             Unpublished { at = at, by = by }
 
+        toEmptyUser handle =
+            { handle = handle, name = Nothing, avatarUrl = Nothing, pronouns = Nothing }
+
+        decodeBy =
+            Decode.oneOf
+                [ Decode.map toEmptyUser UserHandle.decode
+                , User.decodeSummary
+                ]
+
         decodeStatus =
             Decode.oneOf
                 [ when (field "status" string)
@@ -96,13 +106,13 @@ decode =
                     ((==) "published")
                     (Decode.map2 published
                         (field "publishedAt" DateTime.decode)
-                        (field "publishedBy" UserHandle.decode)
+                        (field "publishedBy" decodeBy)
                     )
                 , when (field "status" string)
                     ((==) "deprecated")
                     (Decode.map2 unpublished
                         (field "deprecatedAt" DateTime.decode)
-                        (field "deprecatedBy" UserHandle.decode)
+                        (field "deprecatedBy" decodeBy)
                     )
                 ]
 

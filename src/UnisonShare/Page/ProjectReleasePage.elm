@@ -236,7 +236,7 @@ detailedPageTitle appContext release =
                     ByAt.view
                         appContext.timeZone
                         appContext.now
-                        (ByAt.handleOnly p.by p.at)
+                        (ByAt.byAt p.by p.at)
 
                 _ ->
                     UI.nothing
