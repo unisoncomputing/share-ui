@@ -290,8 +290,8 @@ viewContributionRow appContext projectRef contribution =
     let
         byAt =
             case contribution.author of
-                Just { handle } ->
-                    ByAt.handleOnly handle contribution.createdAt
+                Just a ->
+                    ByAt.byAt a contribution.createdAt
 
                 Nothing ->
                     ByAt.byUnknown contribution.createdAt

@@ -198,8 +198,8 @@ viewTicketRow appContext projectRef ticket =
     let
         byAt =
             case ticket.author of
-                Just { handle } ->
-                    ByAt.handleOnly handle ticket.createdAt
+                Just a ->
+                    ByAt.byAt a ticket.createdAt
 
                 Nothing ->
                     ByAt.byUnknown ticket.createdAt

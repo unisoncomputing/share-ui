@@ -306,8 +306,7 @@ detailedPageTitle appContext contribution =
 
         byAt =
             contribution.author
-                |> Maybe.map .handle
-                |> Maybe.map (\h -> ByAt.handleOnly h contribution.createdAt)
+                |> Maybe.map (\a -> ByAt.byAt a contribution.createdAt)
                 |> Maybe.withDefault (ByAt.byUnknown contribution.createdAt)
                 |> ByAt.view appContext.timeZone appContext.now
     in
