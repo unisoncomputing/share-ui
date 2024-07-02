@@ -13,6 +13,7 @@ import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra exposing (pluralize)
 import UI
 import UI.Card as Card
+import UI.Click as Click
 import UI.Divider as Divider
 import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
@@ -25,6 +26,9 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
 import UnisonShare.Contribution exposing (Contribution)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
+import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
+import UnisonShare.DefinitionDiffKey as DefinitionDiffKey exposing (DefinitionDiffKey)
+import UnisonShare.DefinitionDiffs as DefinitionDiffs exposing (DefinitionDiffs)
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 
@@ -35,6 +39,7 @@ import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 
 type alias Model =
     { branchDiff : WebData BranchDiff
+    , definitionDiffs : DefinitionDiffs
     }
 
 
@@ -46,7 +51,11 @@ type alias DiffBranches =
 
 init : AppContext -> ProjectRef -> ContributionRef -> ( Model, Cmd Msg )
 init appContext projectRef contribRef =
-    ( { branchDiff = Loading }, fetchBranchDiff appContext projectRef contribRef )
+    ( { branchDiff = Loading
+      , definitionDiffs = DefinitionDiffs.empty
+      }
+    , fetchBranchDiff appContext projectRef contribRef
+    )
 
 
 
@@ -55,13 +64,29 @@ init appContext projectRef contribRef =
 
 type Msg
     = FetchBranchDiffFinished (WebData BranchDiff)
+    | FetchDefinitionDiff DefinitionDiffKey
+    | FetchDefinitionDiffFinished DefinitionDiffKey (WebData DefinitionDiff)
 
 
 update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model, Cmd Msg )
-update _ _ _ msg model =
+update appContext projectRef _ msg model =
     case msg of
         FetchBranchDiffFinished branchDiff ->
             ( { model | branchDiff = branchDiff }, Cmd.none )
+
+        FetchDefinitionDiff key ->
+            let
+                definitionDiffs =
+                    DefinitionDiffs.set model.definitionDiffs key Loading
+            in
+            ( { model | definitionDiffs = definitionDiffs }, fetchDefinitionDiff appContext projectRef key )
+
+        FetchDefinitionDiffFinished key resp ->
+            let
+                definitionDiffs =
+                    DefinitionDiffs.set model.definitionDiffs key resp
+            in
+            ( { model | definitionDiffs = definitionDiffs }, Cmd.none )
 
 
 
@@ -75,10 +100,21 @@ fetchBranchDiff appContext projectRef contributionRef =
         |> HttpApi.perform appContext.api
 
 
-fetchDefinitionDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
-fetchDefinitionDiff appContext projectRef contributionRef =
-    ShareApi.projectContributionDiff projectRef contributionRef
-        |> HttpApi.toRequest BranchDiff.decode (RemoteData.fromResult >> FetchBranchDiffFinished)
+fetchDefinitionDiff : AppContext -> ProjectRef -> DefinitionDiffKey -> Cmd Msg
+fetchDefinitionDiff appContext projectRef key =
+    let
+        definitionType =
+            case key of
+                DefinitionDiffKey.Term _ ->
+                    DefinitionDiff.Term
+
+                DefinitionDiffKey.Type _ ->
+                    DefinitionDiff.Type
+    in
+    ShareApi.projectBranchDefinitionDiff projectRef key
+        |> HttpApi.toRequest
+            (DefinitionDiff.decode definitionType)
+            (RemoteData.fromResult >> FetchDefinitionDiffFinished key)
         |> HttpApi.perform appContext.api
 
 
@@ -159,8 +195,8 @@ viewDiffLineDefinitionIcon diffLine =
         ]
 
 
-viewDiffLine : ProjectRef -> DiffBranches -> BranchDiff.DiffLine -> Html Msg
-viewDiffLine projectRef diffBranches diffLine =
+viewDiffLine : ProjectRef -> DefinitionDiffs -> DiffBranches -> BranchDiff.DiffLine -> Html Msg
+viewDiffLine projectRef definitionDiffs diffBranches diffLine =
     let
         sourceBranchLink_ ref label =
             branchLink projectRef diffBranches.newBranch ref label
@@ -168,7 +204,23 @@ viewDiffLine projectRef diffBranches diffLine =
         targetBranchLink_ ref label =
             branchLink projectRef diffBranches.oldBranch ref label
 
-        viewDiffLineItem refCtor prefix defDiff =
+        termKey defA defB =
+            DefinitionDiffKey.Term
+                { branchA = diffBranches.newBranch.ref
+                , branchB = diffBranches.oldBranch.ref
+                , definitionA = defA
+                , definitionB = defB
+                }
+
+        typeKey defA defB =
+            DefinitionDiffKey.Type
+                { branchA = diffBranches.newBranch.ref
+                , branchB = diffBranches.oldBranch.ref
+                , definitionA = defA
+                , definitionB = defB
+                }
+
+        viewDiffLineItem refCtor mkKey prefix lineItem =
             let
                 prefix_ =
                     if String.isEmpty prefix then
@@ -177,7 +229,7 @@ viewDiffLine projectRef diffBranches diffLine =
                     else
                         span [ class "prefix" ] [ text prefix ]
             in
-            case defDiff of
+            case lineItem of
                 BranchDiff.Added { hash, shortName, fullName } ->
                     span
                         [ class "diff-info" ]
@@ -195,16 +247,28 @@ viewDiffLine projectRef diffBranches diffLine =
                         ]
 
                 BranchDiff.Updated { oldHash, newHash, shortName, fullName } ->
-                    span
-                        [ class "diff-info" ]
-                        [ prefix_
-                        , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (FQN.view shortName)
-                        , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view newHash)
-                        , span [ class "extra-info" ]
-                            [ text " (updated from "
-                            , targetBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view oldHash)
-                            , text ")"
+                    let
+                        key : DefinitionDiffKey
+                        key =
+                            mkKey fullName fullName
+                    in
+                    div []
+                        [ Click.view
+                            [ class "diff-info" ]
+                            [ prefix_
+                            , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (FQN.view shortName)
+                            , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view newHash)
+                            , span [ class "extra-info" ]
+                                [ text " (updated from "
+                                , targetBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view oldHash)
+                                , text ")"
+                                ]
                             ]
+                            (Click.onClick (FetchDefinitionDiff key))
+                        , DefinitionDiffs.get definitionDiffs key
+                            |> Maybe.andThen RemoteData.toMaybe
+                            |> Maybe.map DefinitionDiff.view
+                            |> Maybe.withDefault UI.nothing
                         ]
 
                 BranchDiff.RenamedFrom { hash, oldNames, newShortName, newFullName } ->
@@ -245,56 +309,53 @@ viewDiffLine projectRef diffBranches diffLine =
             viewDiffLineDefinitionIcon diffLine
 
         viewDiffLine_ diffIcon diffContent =
-            [ diffIcon
-            , defIcon
-            , diffContent
-            ]
+            [ diffIcon, defIcon, diffContent ]
 
         ( diffLineClass, content ) =
             case diffLine of
                 BranchDiff.TermDiffLine d ->
-                    ( "term", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference "" d) )
+                    ( "term", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference termKey "" d) )
 
                 BranchDiff.TypeDiffLine d ->
-                    ( "type", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TypeReference "type" d) )
+                    ( "type", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TypeReference typeKey "type" d) )
 
                 BranchDiff.DocDiffLine d ->
-                    ( "doc", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference "" d) )
+                    ( "doc", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference termKey "" d) )
 
                 BranchDiff.AbilityDiffLine d ->
-                    ( "ability", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TypeReference "ability" d) )
+                    ( "ability", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TypeReference typeKey "ability" d) )
 
                 BranchDiff.AbilityConstructorDiffLine d ->
-                    ( "ability-constructor", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem AbilityConstructorReference "" d) )
+                    ( "ability-constructor", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem AbilityConstructorReference termKey "" d) )
 
                 BranchDiff.DataConstructorDiffLine d ->
-                    ( "data-constructor", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem DataConstructorReference "" d) )
+                    ( "data-constructor", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem DataConstructorReference termKey "" d) )
 
                 BranchDiff.TestDiffLine d ->
-                    ( "test", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference "" d) )
+                    ( "test", viewDiffLine_ (viewDiffIcon d) (viewDiffLineItem TermReference termKey "" d) )
 
                 BranchDiff.NamespaceDiffLine ns ->
-                    viewNamespaceLine projectRef diffBranches ns
+                    viewNamespaceLine projectRef definitionDiffs diffBranches ns
     in
     div [ class "diff-line", class diffLineClass ] content
 
 
-viewContributionDiffGroup : ProjectRef -> DiffBranches -> List BranchDiff.DiffLine -> Html Msg
-viewContributionDiffGroup projectRef diffBranches lines =
-    div [ class "contribution-diff-group" ] (List.map (viewDiffLine projectRef diffBranches) lines)
+viewContributionDiffGroup : ProjectRef -> DefinitionDiffs -> DiffBranches -> List BranchDiff.DiffLine -> Html Msg
+viewContributionDiffGroup projectRef definitionDiffs diffBranches lines =
+    div [ class "contribution-diff-group" ] (List.map (viewDiffLine projectRef definitionDiffs diffBranches) lines)
 
 
-viewNamespaceLine : ProjectRef -> DiffBranches -> { name : FQN.FQN, lines : List BranchDiff.DiffLine } -> ( String, List (Html Msg) )
-viewNamespaceLine projectRef diffBranches { name, lines } =
+viewNamespaceLine : ProjectRef -> DefinitionDiffs -> DiffBranches -> { name : FQN.FQN, lines : List BranchDiff.DiffLine } -> ( String, List (Html Msg) )
+viewNamespaceLine projectRef definitionDiffs diffBranches { name, lines } =
     ( "namespace"
     , [ div [ class "namespace-info" ] [ Icon.view Icon.folder, FQN.view name ]
-      , viewContributionDiffGroup projectRef diffBranches lines
+      , viewContributionDiffGroup projectRef definitionDiffs diffBranches lines
       ]
     )
 
 
-viewBranchDiff : AppContext -> ProjectRef -> BranchDiff -> Html Msg
-viewBranchDiff _ projectRef diff =
+viewBranchDiff : AppContext -> ProjectRef -> DefinitionDiffs -> BranchDiff -> Html Msg
+viewBranchDiff _ projectRef definitionDiffs diff =
     let
         summary =
             BranchDiff.summary diff.lines
@@ -311,7 +372,7 @@ viewBranchDiff _ projectRef diff =
             , text (pluralize "namespace" "namespaces" summary.numNamespaceChanges)
             ]
         , Divider.divider |> Divider.small |> Divider.withoutMargin |> Divider.view
-        , viewContributionDiffGroup projectRef diffBranches diff.lines
+        , viewContributionDiffGroup projectRef definitionDiffs diffBranches diff.lines
         ]
         |> Card.withClassName "changes"
         |> Card.asContained
@@ -365,7 +426,12 @@ view appContext projectRef contribution model =
                     (TabList.tab "Changes" (Link.projectContributionChanges projectRef contribution.ref))
                     []
                     |> TabList.view
-                , div [ class "project-contribution-changes-page" ] [ viewBranchDiff appContext projectRef diff ]
+                , div [ class "project-contribution-changes-page" ]
+                    [ viewBranchDiff appContext
+                        projectRef
+                        model.definitionDiffs
+                        diff
+                    ]
                 ]
 
         Failure e ->
