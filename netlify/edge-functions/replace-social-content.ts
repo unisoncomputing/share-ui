@@ -17,6 +17,7 @@ const template = `
   <meta property="og:title" content="{{TITLE}}" />
   <meta property="og:description" content="{{DESCRIPTION}}" />
   <meta property="og:image" content="{{IMAGE_URL}}" />
+  <meta property="og:url" content="{{URL}}" />
 `;
 
 function urlToImageUrl(url: URL): string {
@@ -44,6 +45,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `${nameAndHandle} | Unison Share`,
         description: user.bio || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -56,6 +58,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -70,6 +73,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `${title} · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -113,6 +117,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `${title} · ${handle}/${projectSlug}/${branchRef} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -125,6 +130,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `Tickets · ${handle}/${projectSlug} Tickets | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -138,6 +144,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `#${ticketRef}: ${ticket.title} · ${handle}/${projectSlug} | Unison Share`,
         description: ticket.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -150,6 +157,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `Contributions · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -170,6 +178,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
           project.summary ||
           DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -182,6 +191,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `Releases · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -194,6 +204,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `Release ${version} · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -206,6 +217,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
         title: `Branches · ${handle}/${projectSlug} | Unison Share`,
         description: project.summary || DefaultSocialContent.description,
         imageUrl,
+        url: rawUrl,
       };
     },
 
@@ -238,7 +250,8 @@ async function replaceSocialContent(
   const newContent = template
     .replaceAll("{{TITLE}}", content.title)
     .replaceAll("{{DESCRIPTION}}", content.description)
-    .replaceAll("{{IMAGE_URL}}", content.imageUrl);
+    .replaceAll("{{IMAGE_URL}}", content.imageUrl)
+    .replaceAll("{{URL}}", content.url);
 
   const updatedPage = page.replace(regex, newContent);
   return new Response(updatedPage, response);

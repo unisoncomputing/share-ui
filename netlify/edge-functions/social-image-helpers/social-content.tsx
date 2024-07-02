@@ -1,10 +1,10 @@
 import React from "https://esm.sh/react@18.2.0";
-import Colors from "../common/colors.ts";
 
 type SocialContent = {
   title: string;
   description: string;
   imageUrl: string;
+  url: string;
 };
 
 const MaxLength = {
@@ -17,6 +17,7 @@ const DefaultSocialContent = {
   title: "Unison Share",
   description: "Explore, read docs about, and share Unison libraries",
   imageUrl: "https://share.unison-lang.org/static/unison-share-social.png",
+  url: "https://share.unison-lang.org"
 };
 
 async function defaultSocialImage(): Promise<React.Element> {
