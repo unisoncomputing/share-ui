@@ -1,10 +1,9 @@
 module UnisonShare.Page.ProjectTicketPage exposing (..)
 
-import Html exposing (Html, div, em, header, span, strong, text)
+import Html exposing (Html, div, header)
 import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.UserHandle as Userhandle
 import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
@@ -360,6 +359,14 @@ detailedPageTitle appContext ticket =
                 |> Maybe.map (\h -> Session.isHandle h appContext.session)
                 |> Maybe.withDefault False
 
+        byAt =
+            case ticket.author of
+                Just a ->
+                    ByAt.byAt a ticket.createdAt
+
+                Nothing ->
+                    ByAt.byUnknown ticket.createdAt
+
         rightSide =
             if isContributor then
                 [ Button.iconThenLabel ShowEditModal Icon.writingPad "Edit"
@@ -370,25 +377,11 @@ detailedPageTitle appContext ticket =
 
             else
                 []
-
-        author =
-            case ticket.author of
-                Just { handle } ->
-                    strong [] [ text (Userhandle.toString handle) ]
-
-                Nothing ->
-                    em [] [ text "Unknown user" ]
     in
     PageTitle.title ticket.title
         |> PageTitle.withLeftTitleText (TicketRef.toString ticket.ref)
         |> PageTitle.withDescription_
-            (div []
-                [ text "by "
-                , author
-                , text " "
-                , span [ class "time-ago" ] [ timeAgo appContext ticket.createdAt ]
-                ]
-            )
+            (ByAt.view appContext.timeZone appContext.now byAt)
         |> PageTitle.withRightSide rightSide
 
 
