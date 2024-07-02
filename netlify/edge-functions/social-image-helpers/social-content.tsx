@@ -17,7 +17,7 @@ const DefaultSocialContent = {
   title: "Unison Share",
   description: "Explore, read docs about, and share Unison libraries",
   imageUrl: "https://share.unison-lang.org/static/unison-share-social.png",
-  url: "https://share.unison-lang.org"
+  url: "https://share.unison-lang.org",
 };
 
 async function defaultSocialImage(): Promise<React.Element> {
