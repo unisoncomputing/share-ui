@@ -526,14 +526,14 @@ projectBranchDefinitionDiff projectRef params =
         queryParams =
             case params of
                 Term { branchA, branchB, definitionA, definitionB } ->
-                    [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
-                    , string "newBranchRef" (BranchRef.toApiUrlString branchB)
+                    [ string "oldBranchRef" (BranchRef.toString branchA)
+                    , string "newBranchRef" (BranchRef.toString branchB)
                     , string "oldTerm" (FQN.toApiUrlString definitionA)
                     , string "newTerm" (FQN.toApiUrlString definitionB)
                     ]
 
                 Type { branchA, branchB, definitionA, definitionB } ->
-                    [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
+                    [ string "oldBranchRef" (BranchRef.toString branchA)
                     , string "newBranchRef" (BranchRef.toApiUrlString branchB)
                     , string "oldType" (FQN.toApiUrlString definitionA)
                     , string "newType" (FQN.toApiUrlString definitionB)
