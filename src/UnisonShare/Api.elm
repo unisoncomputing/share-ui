@@ -77,6 +77,7 @@ import UI.KeyboardShortcut.Key exposing (Key(..))
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
+import UnisonShare.DefinitionDiffKey exposing (DefinitionDiffKey(..))
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
@@ -516,26 +517,27 @@ projectContributionDiff projectRef contribRef =
         }
 
 
-projectBranchDefinitionDiff : ProjectRef -> BranchRef -> BranchRef -> Reference -> Reference -> Endpoint
-projectBranchDefinitionDiff projectRef branchA branchB defA defB =
+projectBranchDefinitionDiff : ProjectRef -> DefinitionDiffKey -> Endpoint
+projectBranchDefinitionDiff projectRef params =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
 
-        type_ =
-            case defA of
-                Reference.TermReference _ ->
-                    "Term"
-
-                _ ->
-                    "Type"
-
         queryParams =
-            [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
-            , string "newBranchRef" (BranchRef.toApiUrlString branchB)
-            , string ("old" ++ type_) (Reference.toApiUrlString defA)
-            , string ("new" ++ type_) (Reference.toApiUrlString defB)
-            ]
+            case params of
+                Term { branchA, branchB, definitionA, definitionB } ->
+                    [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
+                    , string "newBranchRef" (BranchRef.toApiUrlString branchB)
+                    , string "oldTerm" (FQN.toApiUrlString definitionA)
+                    , string "newTerm" (FQN.toApiUrlString definitionB)
+                    ]
+
+                Type { branchA, branchB, definitionA, definitionB } ->
+                    [ string "oldBranchRef" (BranchRef.toApiUrlString branchA)
+                    , string "newBranchRef" (BranchRef.toApiUrlString branchB)
+                    , string "oldType" (FQN.toApiUrlString definitionA)
+                    , string "newType" (FQN.toApiUrlString definitionB)
+                    ]
     in
     GET
         { path = [ "users", handle, "projects", slug, "diff", "terms" ]
