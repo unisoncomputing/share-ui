@@ -4,7 +4,7 @@ import Code.Definition.Reference as Reference exposing (Reference(..))
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
-import Html exposing (Html, div, h2, span, text)
+import Html exposing (Html, code, div, h2, pre, span, text)
 import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi
@@ -267,7 +267,7 @@ viewDiffLine projectRef definitionDiffs diffBranches diffLine =
                             (Click.onClick (FetchDefinitionDiff key))
                         , DefinitionDiffs.get definitionDiffs key
                             |> Maybe.andThen RemoteData.toMaybe
-                            |> Maybe.map DefinitionDiff.view
+                            |> Maybe.map (\d -> pre [] [ code [] [ DefinitionDiff.view d ] ])
                             |> Maybe.withDefault UI.nothing
                         ]
 
