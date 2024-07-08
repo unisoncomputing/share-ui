@@ -247,15 +247,28 @@ viewDiffLine projectRef definitionDiffs diffBranches diffLine =
                         ]
 
                 BranchDiff.Updated { oldHash, newHash, shortName, fullName } ->
-                    span [ class "diff-info" ]
-                        [ prefix_
-                        , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (FQN.view shortName)
-                        , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view newHash)
-                        , span [ class "extra-info" ]
-                            [ text " (updated from "
-                            , targetBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view oldHash)
-                            , text ")"
+                    let
+                        key : DefinitionDiffKey
+                        key =
+                            mkKey fullName fullName
+                    in
+                    div []
+                        [ Click.view
+                            [ class "diff-info" ]
+                            [ prefix_
+                            , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (FQN.view shortName)
+                            , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view newHash)
+                            , span [ class "extra-info" ]
+                                [ text " (updated from "
+                                , targetBranchLink_ (Reference.fromFQN refCtor fullName) (Hash.view oldHash)
+                                , text ")"
+                                ]
                             ]
+                            (Click.onClick (FetchDefinitionDiff key))
+                        , DefinitionDiffs.get definitionDiffs key
+                            |> Maybe.andThen RemoteData.toMaybe
+                            |> Maybe.map DefinitionDiff.view
+                            |> Maybe.withDefault UI.nothing
                         ]
 
                 BranchDiff.RenamedFrom { hash, oldNames, newShortName, newFullName } ->
