@@ -7,6 +7,7 @@ import Json.Decode as Decode exposing (Decoder, field, oneOf)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Util exposing (decodeNonEmptyList, decodeTag)
+import List.Extra as ListE
 import List.Nonempty as NEL
 
 
@@ -64,9 +65,14 @@ summary diffLines =
     List.foldl f { numChanges = 0, numNamespaceChanges = 0 } diffLines
 
 
-type DiffLineType
-    = Def DiffLine
-    | NS DiffLine
+isNamespaceDiffLine : DiffLine -> Bool
+isNamespaceDiffLine diffLine =
+    case diffLine of
+        NamespaceDiffLine _ ->
+            True
+
+        _ ->
+            False
 
 
 condense : List DiffLine -> List DiffLine
@@ -92,56 +98,51 @@ condense diffLines =
         condense_ ns l =
             case l of
                 TermDiffLine item ->
-                    Def (TermDiffLine (mergeNames ns item))
+                    TermDiffLine (mergeNames ns item)
 
                 TypeDiffLine item ->
-                    Def (TypeDiffLine (mergeNames ns item))
+                    TypeDiffLine (mergeNames ns item)
 
                 AbilityDiffLine item ->
-                    Def (AbilityDiffLine (mergeNames ns item))
+                    AbilityDiffLine (mergeNames ns item)
 
                 DocDiffLine item ->
-                    Def (DocDiffLine (mergeNames ns item))
+                    DocDiffLine (mergeNames ns item)
 
                 TestDiffLine item ->
-                    Def (TestDiffLine (mergeNames ns item))
+                    TestDiffLine (mergeNames ns item)
 
                 DataConstructorDiffLine item ->
-                    Def (DataConstructorDiffLine (mergeNames ns item))
+                    DataConstructorDiffLine (mergeNames ns item)
 
                 AbilityConstructorDiffLine item ->
-                    Def (AbilityConstructorDiffLine (mergeNames ns item))
+                    AbilityConstructorDiffLine (mergeNames ns item)
 
                 NamespaceDiffLine { name, lines } ->
-                    NS
-                        (NamespaceDiffLine
-                            { name = FQN.append ns name
-                            , lines = condense lines
-                            }
-                        )
+                    NamespaceDiffLine
+                        { name = FQN.append ns name
+                        , lines = condense lines
+                        }
 
         f diffLine acc =
             case diffLine of
                 NamespaceDiffLine { name, lines } ->
                     case lines of
                         [ line ] ->
-                            case condense_ name line of
-                                Def condensedLine ->
-                                    {- let
-                                           f_ l ls =
-                                               case l of
-                                                   NamespaceDiffLine _ ->
-                                                       ls ++ [ condensedLine, l ]
+                            let
+                                condensedLine =
+                                    condense_ name line
+                            in
+                            if isNamespaceDiffLine condensedLine then
+                                acc ++ [ condensedLine ]
 
-                                                   _ ->
-                                                       ls ++ [ condensedLine ]
-                                       in
-                                       List.foldl f_ [] acc
-                                    -}
-                                    condensedLine :: acc
+                            else
+                                case ListE.splitWhen isNamespaceDiffLine acc of
+                                    Just ( definitions, namespaces ) ->
+                                        definitions ++ (condensedLine :: namespaces)
 
-                                NS condensedLine ->
-                                    acc ++ [ condensedLine ]
+                                    Nothing ->
+                                        acc ++ [ condensedLine ]
 
                         _ ->
                             acc
