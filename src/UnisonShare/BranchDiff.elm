@@ -128,7 +128,12 @@ condense diffLines =
                                     acc ++ [ diffLine ]
 
                         _ ->
-                            acc ++ [ diffLine ]
+                            acc
+                                ++ [ NamespaceDiffLine
+                                        { name = name
+                                        , lines = condense lines
+                                        }
+                                   ]
 
                 _ ->
                     acc ++ [ diffLine ]
