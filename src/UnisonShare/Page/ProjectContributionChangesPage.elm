@@ -72,7 +72,11 @@ update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model,
 update appContext projectRef _ msg model =
     case msg of
         FetchBranchDiffFinished branchDiff ->
-            ( { model | branchDiff = branchDiff }, Cmd.none )
+            let
+                branchDiff_ =
+                    RemoteData.map (\bd -> { bd | lines = BranchDiff.condense bd.lines }) branchDiff
+            in
+            ( { model | branchDiff = branchDiff_ }, Cmd.none )
 
         FetchDefinitionDiff key ->
             let
@@ -247,16 +251,13 @@ viewDiffLine projectRef definitionDiffs diffBranches diffLine =
                         ]
 
                 BranchDiff.Updated { oldHash, newHash, shortName, fullName } ->
-                    {-
-                       let
-                           key : DefinitionDiffKey
-                           key =
-                               mkKey fullName fullName
-                       in
-                    -}
+                    let
+                        key : DefinitionDiffKey
+                        key =
+                            mkKey fullName fullName
+                    in
                     div []
-                        [ -- Click.view
-                          span
+                        [ Click.view
                             [ class "diff-info" ]
                             [ prefix_
                             , sourceBranchLink_ (Reference.fromFQN refCtor fullName) (FQN.view shortName)
@@ -267,14 +268,11 @@ viewDiffLine projectRef definitionDiffs diffBranches diffLine =
                                 , text ")"
                                 ]
                             ]
-
-                        {-
-                               (Click.onClick (FetchDefinitionDiff key))
-                           , DefinitionDiffs.get definitionDiffs key
-                               |> Maybe.andThen RemoteData.toMaybe
-                               |> Maybe.map (\d -> pre [ class "code syntax" ] [ code [] [ DefinitionDiff.view d ] ])
-                               |> Maybe.withDefault UI.nothing
-                        -}
+                            (Click.onClick (FetchDefinitionDiff key))
+                        , DefinitionDiffs.get definitionDiffs key
+                            |> Maybe.andThen RemoteData.toMaybe
+                            |> Maybe.map (\d -> pre [ class "code syntax" ] [ code [] [ DefinitionDiff.view d ] ])
+                            |> Maybe.withDefault UI.nothing
                         ]
 
                 BranchDiff.RenamedFrom { hash, oldNames, newShortName, newFullName } ->

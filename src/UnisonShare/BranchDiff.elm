@@ -64,6 +64,78 @@ summary diffLines =
     List.foldl f { numChanges = 0, numNamespaceChanges = 0 } diffLines
 
 
+condense : List DiffLine -> List DiffLine
+condense diffLines =
+    let
+        mergeNames ns lineItem =
+            case lineItem of
+                Added ({ shortName } as details) ->
+                    Added { details | shortName = FQN.append ns shortName }
+
+                Removed ({ shortName } as details) ->
+                    Removed { details | shortName = FQN.append ns shortName }
+
+                Updated ({ shortName } as details) ->
+                    Updated { details | shortName = FQN.append ns shortName }
+
+                RenamedFrom ({ newShortName } as details) ->
+                    RenamedFrom { details | newShortName = FQN.append ns newShortName }
+
+                Aliased ({ aliasShortName } as details) ->
+                    Aliased { details | aliasShortName = FQN.append ns aliasShortName }
+
+        condense_ ns l =
+            case l of
+                TermDiffLine item ->
+                    Just (TermDiffLine (mergeNames ns item))
+
+                TypeDiffLine item ->
+                    Just (TypeDiffLine (mergeNames ns item))
+
+                AbilityDiffLine item ->
+                    Just (AbilityDiffLine (mergeNames ns item))
+
+                DocDiffLine item ->
+                    Just (DocDiffLine (mergeNames ns item))
+
+                TestDiffLine item ->
+                    Just (TestDiffLine (mergeNames ns item))
+
+                DataConstructorDiffLine item ->
+                    Just (DataConstructorDiffLine (mergeNames ns item))
+
+                AbilityConstructorDiffLine item ->
+                    Just (AbilityConstructorDiffLine (mergeNames ns item))
+
+                NamespaceDiffLine { name, lines } ->
+                    Just
+                        (NamespaceDiffLine
+                            { name = FQN.append ns name
+                            , lines = condense lines
+                            }
+                        )
+
+        f diffLine acc =
+            case diffLine of
+                NamespaceDiffLine { name, lines } ->
+                    case lines of
+                        [ line ] ->
+                            case condense_ name line of
+                                Just condensedLine ->
+                                    acc ++ [ condensedLine ]
+
+                                Nothing ->
+                                    acc ++ [ diffLine ]
+
+                        _ ->
+                            acc ++ [ diffLine ]
+
+                _ ->
+                    acc ++ [ diffLine ]
+    in
+    List.foldl f [] diffLines
+
+
 sortDiffLines : List DiffLine -> List DiffLine
 sortDiffLines lines =
     let
