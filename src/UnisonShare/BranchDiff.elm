@@ -127,7 +127,16 @@ condense diffLines =
                         [ line ] ->
                             case condense_ name line of
                                 Def condensedLine ->
-                                    condensedLine :: acc
+                                    let
+                                        f_ l ls =
+                                            case l of
+                                                NamespaceDiffLine _ ->
+                                                    ls ++ [ condensedLine, l ]
+
+                                                _ ->
+                                                    ls ++ [ condensedLine ]
+                                    in
+                                    List.foldl f_ [] acc
 
                                 NS condensedLine ->
                                     acc ++ [ condensedLine ]
