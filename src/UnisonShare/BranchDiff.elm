@@ -141,6 +141,8 @@ condense diffLines =
     List.foldl f [] diffLines
 
 
+{-| Not currently used, since we want leaves on top in the namespace content list
+-}
 sortDiffLines : List DiffLine -> List DiffLine
 sortDiffLines lines =
     let
@@ -186,7 +188,8 @@ sortDiffLines lines =
                     name_ defDiff
 
                 NamespaceDiffLine ns ->
-                    ns.name
+                    -- Namespaces should be below definitions
+                    FQN.cons "zzzzz" ns.name
     in
     List.sortBy (sortKey >> FQN.toString) lines
 
