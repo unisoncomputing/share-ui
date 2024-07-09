@@ -74,7 +74,13 @@ update appContext projectRef _ msg model =
         FetchBranchDiffFinished branchDiff ->
             let
                 branchDiff_ =
-                    RemoteData.map (\bd -> { bd | lines = BranchDiff.condense bd.lines }) branchDiff
+                    RemoteData.map
+                        (\bd ->
+                            { bd
+                                | lines = BranchDiff.sortDiffLines (BranchDiff.condense bd.lines)
+                            }
+                        )
+                        branchDiff
             in
             ( { model | branchDiff = branchDiff_ }, Cmd.none )
 
