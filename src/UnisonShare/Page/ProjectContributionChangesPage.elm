@@ -77,7 +77,7 @@ update appContext projectRef _ msg model =
                     RemoteData.map
                         (\bd ->
                             { bd
-                                | lines = BranchDiff.sortDiffLines (BranchDiff.condense bd.lines)
+                                | lines = BranchDiff.condense bd.lines
                             }
                         )
                         branchDiff
