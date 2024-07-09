@@ -64,6 +64,11 @@ summary diffLines =
     List.foldl f { numChanges = 0, numNamespaceChanges = 0 } diffLines
 
 
+type DiffLineType
+    = Def DiffLine
+    | NS DiffLine
+
+
 condense : List DiffLine -> List DiffLine
 condense diffLines =
     let
@@ -87,28 +92,28 @@ condense diffLines =
         condense_ ns l =
             case l of
                 TermDiffLine item ->
-                    Just (TermDiffLine (mergeNames ns item))
+                    Def (TermDiffLine (mergeNames ns item))
 
                 TypeDiffLine item ->
-                    Just (TypeDiffLine (mergeNames ns item))
+                    Def (TypeDiffLine (mergeNames ns item))
 
                 AbilityDiffLine item ->
-                    Just (AbilityDiffLine (mergeNames ns item))
+                    Def (AbilityDiffLine (mergeNames ns item))
 
                 DocDiffLine item ->
-                    Just (DocDiffLine (mergeNames ns item))
+                    Def (DocDiffLine (mergeNames ns item))
 
                 TestDiffLine item ->
-                    Just (TestDiffLine (mergeNames ns item))
+                    Def (TestDiffLine (mergeNames ns item))
 
                 DataConstructorDiffLine item ->
-                    Just (DataConstructorDiffLine (mergeNames ns item))
+                    Def (DataConstructorDiffLine (mergeNames ns item))
 
                 AbilityConstructorDiffLine item ->
-                    Just (AbilityConstructorDiffLine (mergeNames ns item))
+                    Def (AbilityConstructorDiffLine (mergeNames ns item))
 
                 NamespaceDiffLine { name, lines } ->
-                    Just
+                    NS
                         (NamespaceDiffLine
                             { name = FQN.append ns name
                             , lines = condense lines
@@ -121,11 +126,11 @@ condense diffLines =
                     case lines of
                         [ line ] ->
                             case condense_ name line of
-                                Just condensedLine ->
-                                    acc ++ [ condensedLine ]
+                                Def condensedLine ->
+                                    condensedLine :: acc
 
-                                Nothing ->
-                                    acc ++ [ diffLine ]
+                                NS condensedLine ->
+                                    acc ++ [ condensedLine ]
 
                         _ ->
                             acc
