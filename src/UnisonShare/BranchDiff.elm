@@ -141,59 +141,6 @@ condense diffLines =
     List.foldl f [] diffLines
 
 
-{-| Not currently used, since we want leaves on top in the namespace content list
--}
-sortDiffLines : List DiffLine -> List DiffLine
-sortDiffLines lines =
-    let
-        sortKey diffLine =
-            let
-                name_ defDiff =
-                    case defDiff of
-                        Added { shortName } ->
-                            shortName
-
-                        Removed { shortName } ->
-                            shortName
-
-                        Updated { shortName } ->
-                            shortName
-
-                        RenamedFrom { newShortName } ->
-                            newShortName
-
-                        Aliased { aliasShortName } ->
-                            aliasShortName
-            in
-            case diffLine of
-                TermDiffLine defDiff ->
-                    name_ defDiff
-
-                TypeDiffLine defDiff ->
-                    name_ defDiff
-
-                AbilityDiffLine defDiff ->
-                    name_ defDiff
-
-                DocDiffLine defDiff ->
-                    name_ defDiff
-
-                TestDiffLine defDiff ->
-                    name_ defDiff
-
-                DataConstructorDiffLine defDiff ->
-                    name_ defDiff
-
-                AbilityConstructorDiffLine defDiff ->
-                    name_ defDiff
-
-                NamespaceDiffLine ns ->
-                    -- Namespaces should be below definitions
-                    FQN.cons "zzzzz" ns.name
-    in
-    List.sortBy (sortKey >> FQN.toString) lines
-
-
 
 -- DECODE
 
