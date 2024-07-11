@@ -1,5 +1,6 @@
 module UnisonShare.Api exposing
-    ( NewProjectContribution
+    ( DefinitionDiffParams(..)
+    , NewProjectContribution
     , NewProjectTicket
     , ProjectBranchesKindFilter(..)
     , ProjectBranchesParams
@@ -24,6 +25,7 @@ module UnisonShare.Api exposing
     , namespace
     , project
     , projectBranch
+    , projectBranchDefinitionByName
     , projectBranchDefinitionDiff
     , projectBranchDiff
     , projectBranchReleaseNotes
@@ -77,7 +79,6 @@ import UI.KeyboardShortcut.Key exposing (Key(..))
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
-import UnisonShare.DefinitionDiffKey exposing (DefinitionDiffKey(..))
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
@@ -517,7 +518,12 @@ projectContributionDiff projectRef contribRef =
         }
 
 
-projectBranchDefinitionDiff : ProjectRef -> DefinitionDiffKey -> Endpoint
+type DefinitionDiffParams
+    = Term { oldBranchRef : BranchRef, newBranchRef : BranchRef, oldTerm : FQN, newTerm : FQN }
+    | Type { oldBranchRef : BranchRef, newBranchRef : BranchRef, oldType : FQN, newType : FQN }
+
+
+projectBranchDefinitionDiff : ProjectRef -> DefinitionDiffParams -> Endpoint
 projectBranchDefinitionDiff projectRef params =
     let
         ( handle, slug ) =
@@ -525,18 +531,18 @@ projectBranchDefinitionDiff projectRef params =
 
         queryParams =
             case params of
-                Term { branchA, branchB, definitionA, definitionB } ->
-                    [ string "oldBranchRef" (BranchRef.toString branchA)
-                    , string "newBranchRef" (BranchRef.toString branchB)
-                    , string "oldTerm" (FQN.toApiUrlString definitionA)
-                    , string "newTerm" (FQN.toApiUrlString definitionB)
+                Term { oldBranchRef, newBranchRef, oldTerm, newTerm } ->
+                    [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
+                    , string "newBranchRef" (BranchRef.toString newBranchRef)
+                    , string "oldTerm" (FQN.toApiUrlString oldTerm)
+                    , string "newTerm" (FQN.toApiUrlString newTerm)
                     ]
 
-                Type { branchA, branchB, definitionA, definitionB } ->
-                    [ string "oldBranchRef" (BranchRef.toString branchA)
-                    , string "newBranchRef" (BranchRef.toApiUrlString branchB)
-                    , string "oldType" (FQN.toApiUrlString definitionA)
-                    , string "newType" (FQN.toApiUrlString definitionB)
+                Type { oldBranchRef, newBranchRef, oldType, newType } ->
+                    [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
+                    , string "newBranchRef" (BranchRef.toApiUrlString newBranchRef)
+                    , string "oldType" (FQN.toApiUrlString oldType)
+                    , string "newType" (FQN.toApiUrlString newType)
                     ]
     in
     GET
@@ -559,6 +565,28 @@ projectBranchDiff projectRef branchA branchB =
     GET
         { path = [ "users", handle, "projects", slug, "diff", "branches" ]
         , queryParams = queryParams
+        }
+
+
+projectBranchDefinitionByName : ProjectRef -> BranchRef -> FQN -> Endpoint
+projectBranchDefinitionByName projectRef branchRef fqn =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    GET
+        { path =
+            [ "users"
+            , handle
+            , "projects"
+            , slug
+            , "branches"
+            , BranchRef.toApiUrlString branchRef
+            , "definitions"
+            , "by-name"
+            , FQN.toApiUrlString fqn
+            ]
+        , queryParams = []
         }
 
 
@@ -1050,6 +1078,7 @@ codebaseApiEndpointToEndpoint context cbEndpoint =
         CodebaseApi.Definition { perspective, ref } ->
             let
                 -- TODO: Temporarily disable constructor suffixes in hashes
+                -- July 16 2024. SH: I wish the above comment said why it was disabled...
                 constructorSuffixRegex =
                     Maybe.withDefault Regex.never (Regex.fromString "@[ad]\\d$")
 

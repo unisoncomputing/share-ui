@@ -1,19 +1,17 @@
 module UnisonShare.DefinitionDiff exposing (..)
 
+import Code.Hash as Hash exposing (Hash)
 import Code.Syntax.Linked as Linked
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
-import Html exposing (Html, div, span, text)
+import Html exposing (Html, code, div, pre, span, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Util exposing (decodeNonEmptyList)
 import List.Nonempty as NEL
-
-
-type DefinitionType
-    = Term
-    | Type
+import UI.Icon as Icon
+import UI.Tooltip as Tooltip
 
 
 type alias DiffSyntaxSegments =
@@ -21,10 +19,11 @@ type alias DiffSyntaxSegments =
 
 
 type DiffSegment
-    = Old DiffSyntaxSegments
+    = Replace { old : DiffSyntaxSegments, new : DiffSyntaxSegments }
+    | Old DiffSyntaxSegments
     | New DiffSyntaxSegments
     | Both DiffSyntaxSegments
-    | AnnotationChange { from : SyntaxSegment, to : SyntaxSegment }
+    | AnnotationChange { segment : SyntaxSegment, fromHash : Hash, toHash : Hash }
     | SegmentChange { from : SyntaxSegment, to : SyntaxSegment }
 
 
@@ -44,6 +43,11 @@ type DefinitionDiff
 -- Definition Type
 
 
+type DefinitionType
+    = Term
+    | Type
+
+
 definitionTypeToString : DefinitionType -> String
 definitionTypeToString type_ =
     case type_ of
@@ -55,51 +59,135 @@ definitionTypeToString type_ =
 
 
 
+-- HELPERS
+
+
+{-| condense the diff segments down to `Replace` when seeing an `Old` followed
+by a `New` (this means something was deleted and something else took its exact
+position in the syntax tree)
+-}
+addReplaceSegments : DefinitionDiff -> DefinitionDiff
+addReplaceSegments diff =
+    case diff of
+        Diff details originalSegments ->
+            let
+                f seg acc =
+                    case acc of
+                        last :: rest ->
+                            case ( last, seg ) of
+                                ( New new, Old old ) ->
+                                    Replace { old = old, new = new } :: rest
+
+                                _ ->
+                                    seg :: acc
+
+                        _ ->
+                            seg :: acc
+            in
+            originalSegments
+                |> NEL.toList
+                |> List.foldr f []
+                |> NEL.fromList
+                -- Note: it's impossible to not have a successful NEL, but NEL doesn't
+                -- have good foldr functions, so we go through List and have to do this
+                -- silly Maybe dance...
+                |> Maybe.withDefault originalSegments
+                |> Diff details
+
+        _ ->
+            diff
+
+
+
 -- VIEW
 
 
-viewDiffSegment : DiffSegment -> Html msg
-viewDiffSegment segment =
+viewDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
+viewDiffSegment linked segment =
     let
-        viewSegments : DiffSyntaxSegments -> List (Html msg)
+        viewSegment =
+            SyntaxSegment.view linked
+
         viewSegments segments =
             segments
-                |> NEL.map (SyntaxSegment.view Linked.NotLinked)
+                |> NEL.map viewSegment
                 |> NEL.toList
+
+        tooltip content =
+            Tooltip.rich content
+                |> Tooltip.tooltip
+                |> Tooltip.withArrow Tooltip.Start
     in
     case segment of
+        Replace { old, new } ->
+            tooltip
+                (div [ class "tooltip-changes-summary" ]
+                    [ pre [] [ code [ class "monochrome" ] (viewSegments old) ]
+                    , text "was replaced with "
+                    , pre [] [ code [ class "monochrome" ] (viewSegments new) ]
+                    ]
+                )
+                |> Tooltip.view
+                    (span [ class "diff-segment replace" ] (viewSegments new))
+
         Old segments ->
-            span [ class "old" ] (viewSegments segments)
+            tooltip
+                (div [ class "tooltip-changes-summary" ]
+                    [ pre [] [ code [ class "monochrome" ] (viewSegments segments) ]
+                    , text "was removed"
+                    ]
+                )
+                |> Tooltip.view
+                    (span [ class "diff-segment remove-marker" ] [ Icon.view Icon.x ])
 
         New segments ->
-            span [ class "new" ] (viewSegments segments)
+            span [ class "diff-segment new" ] (viewSegments segments)
 
         Both segments ->
             span [] (viewSegments segments)
 
-        AnnotationChange _ ->
-            span [] []
+        AnnotationChange change ->
+            tooltip
+                (div [ class "tooltip-changes-summary" ]
+                    [ div [ class "hash-changed" ]
+                        [ text "The hash changed"
+                        , text " from "
+                        , Hash.view change.fromHash
+                        , text " to "
+                        , Hash.view change.toHash
+                        ]
+                    ]
+                )
+                |> Tooltip.view
+                    (span [ class "diff-segment annotation-change" ] [ viewSegment change.segment ])
 
-        SegmentChange _ ->
-            span [] []
+        SegmentChange { from, to } ->
+            tooltip
+                (div [ class "tooltip-changes-summary" ]
+                    [ text "Changed from"
+                    , code [] [ viewSegment from ]
+                    ]
+                )
+                |> Tooltip.view
+                    (span [ class "diff-segment segment-change" ] [ viewSegment to ])
 
 
-viewDiff : NEL.Nonempty DiffSegment -> Html msg
-viewDiff segments =
+viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> Html msg
+viewDiff linked segments =
     let
         segments_ =
             segments
-                |> NEL.map viewDiffSegment
+                |> NEL.map (viewDiffSegment linked)
                 |> NEL.toList
     in
     div [] segments_
 
 
-view : DefinitionDiff -> Html msg
-view defDiff =
+view : Linked.Linked msg -> DefinitionDiff -> Html msg
+view linked defDiff =
     case defDiff of
         Diff _ diff ->
-            div [] [ viewDiff diff ]
+            div [] [ viewDiff linked diff ]
 
         Mismatched _ ->
             div [] [ text "TODO" ]
@@ -132,14 +220,19 @@ decodeSegment =
             Decode.succeed Both
                 |> required "elements" decodeDiffSyntaxSegments
 
-        mkAnnotationChange from to =
-            AnnotationChange { from = from, to = to }
+        mkAnnotationChange segment fromHash toHash =
+            AnnotationChange
+                { segment = segment
+                , fromHash = fromHash
+                , toHash = toHash
+                }
 
         decodeAnnotationChange =
-            Decode.map2
+            Decode.map3
                 mkAnnotationChange
                 (SyntaxSegment.decode_ { segmentField = "segment", annotationField = "fromAnnotation" })
-                (SyntaxSegment.decode_ { segmentField = "segment", annotationField = "toAnnotation" })
+                (Decode.at [ "fromAnnotation", "contents" ] Hash.decode)
+                (Decode.at [ "toAnnotation", "contents" ] Hash.decode)
 
         mkSegmentChange from to =
             SegmentChange { from = from, to = to }

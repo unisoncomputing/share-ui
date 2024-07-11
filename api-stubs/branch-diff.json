@@ -1,0 +1,2885 @@
+{
+  "diff": {
+    "changes": [
+      {
+        "contents": {
+          "contents": {
+            "fullName": "README",
+            "newHash": "#8lfs6hjm8hh91rne3lihgmoa2du3fi7q93l4upd6d8ojkpogie9a50qs5h4v6v5o3f5ekutorb97l5v10ejekii29qb6slrh7jdjvtg",
+            "newTag": "Doc",
+            "oldHash": "#s3aj8ofcqqqdg9o4ck4lca0tvqrp8npqo5qjea08529kuobehu4ij7c2d4okd2b7skj2vmgr80mflb8vo997h21h7j7dh46ps8al918",
+            "oldTag": "Doc",
+            "shortName": "README"
+          },
+          "tag": "Updated"
+        },
+        "tag": "Doc"
+      }
+    ],
+    "children": [
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.decodeBody",
+                  "hash": "#illiq002a2ok8663llh99cpp8s7l6fbpljgvmoq16a6csl2ub98cbl6t9t9tdboimrohmjd8qdvj0rvh04sud2u2uf803jgjrfdv6tg",
+                  "shortName": "decodeBody"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.decodeChunkedBody",
+                  "hash": "#t405c0tt0qu8qn0s80vi48n96mpaeu6qsieitet4e18c5202hju8gev8okffqbuog5ducouasq5me00innsa3rb51isqaf5kqdvei1o",
+                  "shortName": "decodeChunkedBody"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.decodeNonChunkedBody",
+                  "hash": "#fv1t1qeu2i5oea84a6gkabv4tbnfs8edricl3j8e6k20vfnojpuf83i5q0ml8ci78dntd4g0dj3208v97hibop4fbg1dmf8gg63uqb8",
+                  "shortName": "decodeNonChunkedBody"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.decompressBody",
+                  "newHash": "#6t4gm2138q0benf96gj4m70ogro4coc9tj6svn9gpdts3708rieriv4m2b8u74ofrsdm32u766iask94crgqqgrn56p5nc05lga94vg",
+                  "newTag": "Plain",
+                  "oldHash": "#30g5fbfnq4r2jh5on0e0f9na63h2f59umctjmfh4h6388lqhboj1lr2qff714deok02t9dhmvt8kjvq8nqln9v2u7lkuqia8r7gntkg",
+                  "oldTag": "Plain",
+                  "shortName": "decompressBody"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.parseBody",
+                  "hash": "#p44p7fetn1moltrclvsfmdrhu6cepph6uu7n02qia3m7j07rmqmmcfqvgu9f9b8hh52di2e4321rndiaac9q4c6d902g129bpgdt98g",
+                  "shortName": "parseBody"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.parseChunkedBody",
+                  "hash": "#5t2km2eq991nnm35plu5pl56dc3migv8a6b52a1og7k0hjl4q4mng5ootqh6eanhcegiecarb9rf0vums9fh6kk50m45j9t5cuorkfg",
+                  "shortName": "parseChunkedBody"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.parseNonChunkedBody",
+                  "hash": "#ffk8ab3km1bfr0rinli75e37r3v8bef2o1v0iodk6d9j4dvh0v91l159idb2cbh0ag5340d6mtfes0rodg92i0hg8v7e7grdtk1udlg",
+                  "shortName": "parseNonChunkedBody"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "Body.standardContentDecoders",
+                  "hash": "#srl5tfttohdbkmj3l7al9eivhqlfqhjcu24r5bl5kc7hpo76remu94akc85ecpabr98dl4nn3ecnbi9mdjlbln0enkrc8hfafs43150",
+                  "shortName": "standardContentDecoders"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": []
+        },
+        "path": "Body"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpRequest.decode",
+                  "hash": "#hjosbhca4h62rcka5gcbsf8gqteve6pfmsc95llodir1vlrr36b58nqmorns8a1fgves6idke0bdlo8i392s5o3o4i7sp3dfo0dd220",
+                  "shortName": "decode"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpRequest.decompressBody",
+                  "hash": "#3bt1nha2bbseonpqk2di9b5v2lpead7o850nr1sv3r5a3i9vpiljc8i3fs3goh9n9p1ngif2felrrm3b0tgacc9kptlnbgrmig9b8o0",
+                  "shortName": "decompressBody"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpRequest.fromBytes",
+                  "newHash": "#f74llagm35olbcnnoo4l2jgon0qp73k0t0t41tu18o8hj6jtt1jpevlidbf2oddnohpakfcafatd1krno651qiv91s8md21oj6ko7p8",
+                  "newTag": "Plain",
+                  "oldHash": "#r9eo3j8rfcvbe92lc39podtupsqc8melg8uvurgju6kosj1gkev1sfieb4vsna2lvls1nvag6m8ogesn8n3s0rels6ielgiipq6dckg",
+                  "oldTag": "Plain",
+                  "shortName": "fromBytes"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpRequest.fromStream",
+                  "newHash": "#70v8u31ak6codr0vp7urdjnhvn312c0ohj3mgq13qm3s9tqi1eag57i9ec9031e1jhlaq0mgofli3mq6t0b2duoleuv372tcvvmd5f0",
+                  "newTag": "Plain",
+                  "oldHash": "#5vvn0nfbik6d1f32dq5oiivn2vb07t03fcrdli40ur60qb6k6j861s10thlnidt9537ehakje1plhpi944hrbr19uqeg8rvto8f80mg",
+                  "oldTag": "Plain",
+                  "shortName": "fromStream"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpRequest.standardContentDecoders",
+                  "newHash": "#srl5tfttohdbkmj3l7al9eivhqlfqhjcu24r5bl5kc7hpo76remu94akc85ecpabr98dl4nn3ecnbi9mdjlbln0enkrc8hfafs43150",
+                  "newTag": "Plain",
+                  "oldHash": "#6kj1ooll8qcr1mo8e10a5tthagpfg9j9pjo115vb8piqmn142654uhbvaff89fjhatfno1frrvn1sk8rna7ut19dgdoi09c17couc68",
+                  "oldTag": "Plain",
+                  "shortName": "standardContentDecoders"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": []
+        },
+        "path": "HttpRequest"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpResponse.decode",
+                  "hash": "#mo2vsknrsjpla4k18gafti2r32dob80r90t8q5agkrj4lr6stnqg8he6at9ljau3oq7cm7fq80koqfivlckrmrfi07bfjs40vv4pej8",
+                  "shortName": "decode"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpResponse.fromBytes",
+                  "newHash": "#p2kcufnmv1leaig1t4pjl29837shuqbm3g1invnipv55hrdkbittu818gronppdif5g35gl7kc86qcmfnue62qlff2guvptfscjf2r8",
+                  "newTag": "Plain",
+                  "oldHash": "#m119dn9vbcbjs1m11ghe89b6c3vbldqqn7umeja1m7qu0ureqrl4a5ugeehobhp1h35tlhsuuuvv3upghak68tese6daambki63rblo",
+                  "oldTag": "Plain",
+                  "shortName": "fromBytes"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "HttpResponse.fromStream",
+                  "newHash": "#r6l1g8pj96fmmudhnv1grbbpiislbcvb3rb52das63r243lohd53muier96mddng4u6n2nrgk29h0dihl3khbi22p5m8luetasudg8g",
+                  "newTag": "Plain",
+                  "oldHash": "#c8j114mtsetkbsi5q5ch7tln85tvs9ntsmdj74jer7lnob7oj2seatuerofq5gc00umgovlgbuuid1jbu9uf7d5q0ev2ahtv1sk98kg",
+                  "oldTag": "Plain",
+                  "shortName": "fromStream"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": []
+        },
+        "path": "HttpResponse"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "client.HttpWebSocket",
+                  "newHash": "#u64thcscp2l1sqk16epr5qe4e9vjc9abir1c0egib5rnhdbjhknaq0h8g66o0cmfpnm0cfqpi9m6ncvhn2u98pr9he2161skr20dtc8",
+                  "newTag": "Ability",
+                  "oldHash": "#fl0gfcu85v2k3m8pb6b49pumfk2atgk5qs4qp17fgl72jp3rb4thgdojujaffbp48fkr69dq629prneluvhfnnoiu5ctb9mttdesvt8",
+                  "oldTag": "Ability",
+                  "shortName": "HttpWebSocket"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Ability"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "client.README",
+                  "newHash": "#ogrcudm2q92falk658kafgjtvvq4v9repgpnma7hbl6raqfq762bdjputi34c4dvnd0clkrgpf4losnbm9lfhnh184tu7c3mqeq3g78",
+                  "newTag": "Doc",
+                  "oldHash": "#jmgipm1j6k71kadon9nuh1t6jplplu8s8b0pr7voo6hat1shcaca559jg34jg1kabni6dndk36mqpch1vjbcva6jfhmgkdlbc2f3uf8",
+                  "oldTag": "Doc",
+                  "shortName": "README"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Doc"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "client.decompressBody",
+                  "hash": "#3bt1nha2bbseonpqk2di9b5v2lpead7o850nr1sv3r5a3i9vpiljc8i3fs3goh9n9p1ngif2felrrm3b0tgacc9kptlnbgrmig9b8o0",
+                  "shortName": "decompressBody"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "client.standardContentDecoders",
+                  "hash": "#6kj1ooll8qcr1mo8e10a5tthagpfg9j9pjo115vb8piqmn142654uhbvaff89fjhatfno1frrvn1sk8rna7ut19dgdoi09c17couc68",
+                  "shortName": "standardContentDecoders"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": [
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Connection.read",
+                        "hash": "#l1q5cjsn2glv318qslkn38erllg6prf0j16ivj5h5c62m6kr5iuv866kcska0cj0l9e93pdt9a5lcjen5093a893cl4qfpiqmjrrm2g#0",
+                        "shortName": "read"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "AbilityConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Connection.socket",
+                        "hash": "#ufglag6r27b5djf5cgqhvr5dnee0jq042ns0orbi88mouoblf827r63v3ds43c4mjr3kpu87lf68mgk4t7vlqa0b1ee1lqe4pom9gdg",
+                        "shortName": "socket"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Connection.stream",
+                        "hash": "#8eh4k365pr1oaf8823pfg18cp4g0flosfpromtdcmv13pjdojserh6poa4l4hb22cgjipdfcakeoec741hqhthth1cdnbd468iudms8",
+                        "shortName": "stream"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Connection.tls",
+                        "hash": "#knndh0o9dfi8oc77nhbtaab7ng9k3ckl2u2brm7t5k2meo3rdf1p181ol56fj32khsap30rq6i5jpinl1bfnudq8am74iu7sn9a0tko",
+                        "shortName": "tls"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Connection.write",
+                        "hash": "#l1q5cjsn2glv318qslkn38erllg6prf0j16ivj5h5c62m6kr5iuv866kcska0cj0l9e93pdt9a5lcjen5093a893cl4qfpiqmjrrm2g#1",
+                        "shortName": "write"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "AbilityConstructor"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Connection"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Http.configuredHandler",
+                        "newHash": "#6kvbup8tl02d1ejrqp5e86kod0er9dm8arse0doo4t2ga3fo8sjch09b20mhal9mghnh00aiusmi4mtl78m4psl8ovacqdmav3t6sdo",
+                        "newTag": "Plain",
+                        "oldHash": "#bn5dos0u8su80hohkm18jl669cgnfat73elgmnd3qu4tf8qsm5lm5tppnmt35mkmfebh19kdprmnl4512eoe4rhcave3cae8ejgeuto",
+                        "oldTag": "Plain",
+                        "shortName": "configuredHandler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Http.handler",
+                        "newHash": "#914fcub37uf97kkid3i70skmvb1jebjqqq9eeoint0pqa59c6bn5sdskcb8ls09e5nbrtl4i9feukj8jdl8f611tmqrgfomh2k9itdg",
+                        "newTag": "Plain",
+                        "oldHash": "#rvk6vgb0imh1a0fumndm4hvr33ufv8s5d4g2ni5mpt3vnpjpv6nldcd9cb7784aodph2jeb3isa0d8sthvhp71h5om2da89v4j8htk8",
+                        "oldTag": "Plain",
+                        "shortName": "handler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Http.run",
+                        "newHash": "#5896i7nv75klb6e902a1e4vk2mpsggqoo79i9pll0cbr4gtvivnevdf4crtd83ejlv0do8fpq4anifbk7ebela06u9u1kejlpd75pqo",
+                        "newTag": "Plain",
+                        "oldHash": "#tfophol4oacvsa17pvbb2c63lmalorv0ffe9kvfk6uos02mqb2bsm7eng2hr9eugb5vd62mlob2khb1918s54jnl3v7vm7phm31phkg",
+                        "oldTag": "Plain",
+                        "shortName": "run"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.Http.runConfigured",
+                        "newHash": "#ul9dptk4072a9c4kv0qd4t4dnne0a7rvgf0h89ru77hfuqrr40eunkd0mtllugp685bphl1v3eftks7udotta18tli330fob8he7470",
+                        "newTag": "Plain",
+                        "oldHash": "#4f81qakh997fh91qenelurjqisv83go4jbko987fuhjhr1oa46jie5vmn6ssk1fn7a9aui2b4c1rmjldtafaksrgvpq4h737plro198",
+                        "oldTag": "Plain",
+                        "shortName": "runConfigured"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.configuredHandler.connect",
+                              "newHash": "#douvipb0fm61omm70a5eo630j7n1g14f1c8vf1lliv6n0vhouobssbqh01hmmmj234bjb4g195ndha7vj4cgjpi6n29nbs4ojuuecs8",
+                              "newTag": "Plain",
+                              "oldHash": "#jbsordq7ura906kdmvopsl89vaugrad1b9ccajip2g5h1gvuuo8pc7sfs2j86ffim1efobkhema90vf18ml7046h5mtu715rm7s4q70",
+                              "oldTag": "Plain",
+                              "shortName": "connect"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.configuredHandler.connectViaProxy",
+                              "newHash": "#25q6jkail075k6so8dpudhtof9ikos980tq2e38urkq28pbvjj5b1nau4qfkeukrapcc0qsucgbfih7bqiea1khs6o3qn5un04nqpm8",
+                              "newTag": "Plain",
+                              "oldHash": "#2723loithrt4dd00oqquleto38go81u77ruf9pdudcp8rgrjih6ltbro0omec473j8cutsqqvgvcm2f92p06u0eplhk91ve6u12sgio",
+                              "oldTag": "Plain",
+                              "shortName": "connectViaProxy"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.configuredHandler.http",
+                              "newHash": "#fp0r4rtnp7n5k9t0qnick6gfr8ks5snde0gqvp7lrncut8kvhescrtpa0um3kllgp9eegi8h35nt7eog3u28lqvnsju789rnpbqnbjo",
+                              "newTag": "Plain",
+                              "oldHash": "#5du3qvtf6l5u254ufkafr92k1u0h3fepunm6j95ub1r76uvaj45bnu007cb1tg724hnve5q8tnmk2nssobe9365p4g1a58vei585b28",
+                              "oldTag": "Plain",
+                              "shortName": "http"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.configuredHandler.webSocket",
+                              "newHash": "#r86q6i4bope9v3879suiaam54fetas7st5qfmk7usfckmnggjlb96sakk4vo62lqa8rra7bvt6c8v968v76m1rge8ikpqioii5nffh8",
+                              "newTag": "Plain",
+                              "oldHash": "#pni59pk8l7aiejgp3ntqr2ln370l0jheled2vvbftbihsroshak8fedrmbhccip7equ9abt29doeb6bi9il1a9m2vbh1mjvp41meqso",
+                              "oldTag": "Plain",
+                              "shortName": "webSocket"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "configuredHandler"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.handler.doc",
+                              "newHash": "#dl8lbb057gp9ih5gpnq37kiugemkb4ml0uufn53llbj17p0dhklks4fdjbl0vp5317nhlt2p60o55384kj48gs79rc6n4th1guag87o",
+                              "newTag": "Doc",
+                              "oldHash": "#lr1v58q55341vl6k84c42fgqd967dac5sdqa7fpjqb9mmqqhnq26506v34no52refonq1ddjrp4n4bkg6gfkp0ttvodkf23a4c8la18",
+                              "oldTag": "Doc",
+                              "shortName": "doc"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Doc"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "handler"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.run.tests.testHttp",
+                              "newHash": "#hrb07km3363b049oa5k08utqgqr8cjfpng7qj1apsdj1rf6v51ihdk777rrbrp6mo1bvk96csgjh07klkdvr81rfc35vajbdmae9ho0",
+                              "newTag": "Plain",
+                              "oldHash": "#s6md14qdtcg5be8pebsa8u4a8e0gp50bu29dt2n4mu6oseof85o1tu1o2n0m420kndprbojjv6p74fhf9v0b9lqq1vrgoi9r38k9log",
+                              "oldTag": "Plain",
+                              "shortName": "testHttp"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.run.tests.testHttps",
+                              "newHash": "#34q9864pso2kuq6e9d9tu1h4bci0najdf25so16p8aj1ij5r9fnpasmc31qnlcvp3enr2ug8a9vjhjd00mdh4erbmjlmbvse79h3ggg",
+                              "newTag": "Plain",
+                              "oldHash": "#akknacirdcvgunfgfmbbib7ukkjk5m1keeiv95gcthpp4iq63fvucckm1gjobum312me6ecn73mc50v7k6kgua0clf4trh1olhfu0q0",
+                              "oldTag": "Plain",
+                              "shortName": "testHttps"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "run.tests"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.runConfigured.tests.testProxyHttp",
+                              "newHash": "#eg7cm7a7b1pgu81bqhli64o86lhd8kuduqrc4vkk62ojl3t2jurs9qtu35mhbtjtkovojilcnqndcv8arodfb4eqlsvgua6fum4a1r0",
+                              "newTag": "Plain",
+                              "oldHash": "#idd0hi33c0s3p71job5q9nv493indgt7rvh6di1ne99a5bf6529tvhrejk7ngpj7qumgoas4d8vbe7ulabg962plhlrm2dvlcqr1rlg",
+                              "oldTag": "Plain",
+                              "shortName": "testProxyHttp"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.Http.runConfigured.tests.testProxyHttps",
+                              "newHash": "#o6fq3ro42frvfo34a756kjdfhp3c9f4lqosf0bvdijboftromchksbcnkmqe2thls64ligdp6g05si8vhkjiavjn8gmt930n3lh1h10",
+                              "newTag": "Plain",
+                              "oldHash": "#2p798fifm14ljs5gkqu7itpn2m9noi61apqvgn58idr6f8v80jqh8k21oic60cft8rlapbd5hv31rqkc7m66fitr9hcvfmi3e9rfvcg",
+                              "oldTag": "Plain",
+                              "shortName": "testProxyHttps"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "runConfigured.tests"
+                  }
+                ]
+              },
+              "path": "Http"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.HttpWebSocket.configuredHandler",
+                        "newHash": "#7v456cmltg5or3kb7f5eo5ndv034n5cihjkumh2f0he74at4hn92gurhtkq347inpfr7cn1sme7bere398ukmk3ddisfkj7g2epoja8",
+                        "newTag": "Plain",
+                        "oldHash": "#kkksv1qdkrkc2cs9pfead0bi13sjg8dqe45516gr8f6kanr0kumn3pb9mptkfj0ifqng6qj6uqb5rh3907sb8mfmto2k5i59tbjsu90",
+                        "oldTag": "Plain",
+                        "shortName": "configuredHandler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.HttpWebSocket.handler",
+                        "newHash": "#t9nfdlg6fds25704eq0tk36pq8el3mfkka5r6fhnp174tsqlu2ur4umth0j87vnbthvb6djkl3gioe94aera5q92h6ciurui194sh20",
+                        "newTag": "Plain",
+                        "oldHash": "#0prg01ru5oc9ua6f82f0skvmru648rc23b20u50bhg545176fjoub0tq6nqk4h3ahe6somhltk02adtnfciiahus4j06rscr73lpn6o",
+                        "oldTag": "Plain",
+                        "shortName": "handler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.HttpWebSocket.tryWebSocket",
+                        "newHash": "#u64thcscp2l1sqk16epr5qe4e9vjc9abir1c0egib5rnhdbjhknaq0h8g66o0cmfpnm0cfqpi9m6ncvhn2u98pr9he2161skr20dtc8#0",
+                        "newTag": "AbilityConstructor",
+                        "oldHash": "#fl0gfcu85v2k3m8pb6b49pumfk2atgk5qs4qp17fgl72jp3rb4thgdojujaffbp48fkr69dq629prneluvhfnnoiu5ctb9mttdesvt8#0",
+                        "oldTag": "AbilityConstructor",
+                        "shortName": "tryWebSocket"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "AbilityConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.HttpWebSocket.webSocket",
+                        "newHash": "#hdta9iku7esmmh3okc9vkogn2ib7d1nopm81f7lsiiunhs8clfeuhfhukbq66el73ajt22346vh1j451ei9un3tdhgb367tpsa6l91g",
+                        "newTag": "Plain",
+                        "oldHash": "#iks1et7pjn1et8pdit55brg3ifv3af2i5o0fm253tjkh352lq2hq2ah23280fsefjdo77ek64sehmoi7mh1u9ihbmi2a5gs1jaua0e0",
+                        "oldTag": "Plain",
+                        "shortName": "webSocket"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "HttpWebSocket"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.examples.query",
+                        "newHash": "#766pf0ffg1l3lec14qnaa4cut78vdevk10eo4l0utn4v4vak88cs7k4dp7fudbhph7k5jfcsvt25qcbo1knvn96pm5rsdomcggptprg",
+                        "newTag": "Plain",
+                        "oldHash": "#dodpglciuact7afsn5p4f9abpm9o8e0goul90503f9kne336ednt46k0pn9kd88pqclhgcng1anlajtcaa6klcgq5eerbg5ve2ur2t8",
+                        "oldTag": "Plain",
+                        "shortName": "query"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.examples.simple",
+                        "newHash": "#6qejbu44ieqkg55phso77du2nqge0d4mdgbaa3vsq6v9snsk3qunheej4da0mgtt9hu1c9selbe2o57jckdpehfboisrib84cmn4vog",
+                        "newTag": "Plain",
+                        "oldHash": "#4m8h7b6u2ion83aupdspiqqvfsisnno99fc3km0r40ugt792lq034thdms573bmfuvn7ad3gkocdhv7uh8iu2abuo44kl3evd9aeqmo",
+                        "oldTag": "Plain",
+                        "shortName": "simple"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "examples"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.test.testGet",
+                        "newHash": "#gv6mabkm857h68p876rhl50vtt699uh1ecrj4ga59f8f2u0duvmn4m5dou6a8kt49no6ddgmsi3umq2184o0g6i3ii90341jln8nufo",
+                        "newTag": "Plain",
+                        "oldHash": "#mootp2prlrlr7d5k9uiehp0qrltmuoadmqgc5tuoafjlv3r21skvjkpsji8c8712ttbbsuqaefkql18luc8il2i2aj8td9l0qbalmog",
+                        "oldTag": "Plain",
+                        "shortName": "testGet"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "test"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.up.catchAll",
+                        "hash": "#55kfgmpa2el117h9slcaim7cq0b6hh405u7u2lda2t6abbhfkht0ge22lrehvhrda7sf820akttvak41fs96m6qfvq9qshtjqbmqno8",
+                        "shortName": "catchAll"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "client.up.tryEval",
+                        "hash": "#5mo8pmmf1lnl7smdd4lvjnev817r6cbok0im0g72vjjdnuhm9cbte3uar0148itgv24mb7gdn0m9gki4blvktqd8a9u8pkfbnuo8h5o",
+                        "shortName": "tryEval"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "client.up.List.foldDelimited",
+                              "hash": "#43khkp0a2jk1vqna0gpq9432ihonih579p8lut3soof45235h3ctjn5f01f7g9j1ksuo2pvdctbehncjqmucmbm8du6athscfbk6o60",
+                              "shortName": "foldDelimited"
+                            },
+                            "tag": "Removed"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "List"
+                  },
+                  {
+                    "contents": {
+                      "changes": [],
+                      "children": [
+                        {
+                          "contents": {
+                            "changes": [
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "client.up.base.Text.patterns.asciiLetter",
+                                    "hash": "#je739c5d9kkajtc9q7vc2gvltr6tvauhrc3f2bair88apsl6gqev5dl327i564fkbeod7a8fh5cc4qhm158ibcgms4oac7r8r3c7hj8",
+                                    "shortName": "asciiLetter"
+                                  },
+                                  "tag": "Removed"
+                                },
+                                "tag": "Plain"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "client.up.base.Text.patterns.hexDigit",
+                                    "hash": "#11ta5u7h112s9tk4f3bkcnj1q8s7no8pqlcdpbpka3thl2cqsnquaejh5kgqlmk634v7ib5spu68jr9l3pglar873ebriet7ai0u84o",
+                                    "shortName": "hexDigit"
+                                  },
+                                  "tag": "Removed"
+                                },
+                                "tag": "Plain"
+                              }
+                            ],
+                            "children": []
+                          },
+                          "path": "Text.patterns"
+                        },
+                        {
+                          "contents": {
+                            "changes": [
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "client.up.base.io.Tls.receiveStream",
+                                    "hash": "#3ch0cvka6uteg57knkmaespu2qg5p74frvoj86tmg42bfs8t626g5idbdc6v6oue0t49o3tcbetpul1v8gc36bi75cj7ltjlbgmgqp0",
+                                    "shortName": "receiveStream"
+                                  },
+                                  "tag": "Removed"
+                                },
+                                "tag": "Plain"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "client.up.base.io.Tls.sendStream",
+                                    "hash": "#d678amkrnc6u79kpn8ond8i9em0tnt0catshetjl0d7ddslt5le69m03gdm0m06a7seabv8rleovf4f3pd2jgvce1sb9d33r5k87kb8",
+                                    "shortName": "sendStream"
+                                  },
+                                  "tag": "Removed"
+                                },
+                                "tag": "Plain"
+                              }
+                            ],
+                            "children": []
+                          },
+                          "path": "io.Tls"
+                        }
+                      ]
+                    },
+                    "path": "base"
+                  }
+                ]
+              },
+              "path": "up"
+            }
+          ]
+        },
+        "path": "client"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.CHANGELOG",
+                  "newHash": "#7qigu4ntltdbbq5v63t1cp1b9kc2b1ncg9m1ikal2ipoe3frj1ijs2i5knnuk8m1s9n0ou5jslrp77hng9j7s5uqja387gn89sqmih8",
+                  "newTag": "Doc",
+                  "oldHash": "#oc5stf3snfo8ruqhfnccfsong5tvovcdr81d7cndv9cturg5s68o5qeh1voadfdv159rvvg1pri6diqjsq44lsd26eatlth33a9002g",
+                  "oldTag": "Doc",
+                  "shortName": "CHANGELOG"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Doc"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.Handler",
+                  "newHash": "#9sksukjdbeu05o99lech5kdj1u0kitu07shra8bvuv1jmo66iep5mehk10kh5ha435eh0vnjsqk827fffcft6l485rp8oq6sqrn5d3g",
+                  "newTag": "Data",
+                  "oldHash": "#k9ea84fe6hubb9v6j3rifg6fd31irn8j2onqebqsfan4dr3j29uiglso7s97eutt38prfn1bshu532ncb05e5l7p1pfg14v9pt6q36g",
+                  "oldTag": "Data",
+                  "shortName": "Handler"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.README",
+                  "newHash": "#af1majh1ilv3nm62ffgc13mtavsj3qaj3tggnfsj4kl9rh4rj91forf5mo289toc3ug09nk5hbbbq84aeep0tta6i32a1uomu6pn4do",
+                  "newTag": "Doc",
+                  "oldHash": "#pdleii0tpbc8vk4kg28rei3mm7mj7b8p770g0c7fqjjcn7qtumnv03ml3f203o91fa1rrc23vq3gg4dtibiajshpveoudsgthqjnsoo",
+                  "oldTag": "Doc",
+                  "shortName": "README"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Doc"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.Routes",
+                  "newHash": "#hpuvg03l16jifef382408qp0ghggfidp7d45pmi597rb59vs5g297enitqjlkfba8adtmmbfh6mhni2rh3tfp30q0m3i81gsab5kko8",
+                  "newTag": "Data",
+                  "oldHash": "#s4mlot60hcsnhpm5pcsoe98evpfhg7i40hppcc2tvnr4ipjh9ubq3tn4dfh6obg3kne3175m3gt25qop2j3k6odpb74tosoeqb7o800",
+                  "oldTag": "Data",
+                  "shortName": "Routes"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.State",
+                  "newHash": "#a7nkf1roorubhl73s2t8n0so09sjl6etbu6ogra8i3mghdss0iad2kibc3vrdj4qan7lmj2prom44fbccooc43k4ok79gomr0ura0oo",
+                  "newTag": "Data",
+                  "oldHash": "#gihi1elov5fpqfnjdonksgrq6vfsi3ekqml88c084e8fo8ptc00hd23t7p776iiqpap2drocpgalbkd9eag3no0qe3c5c6ds9n83g4o",
+                  "oldTag": "Data",
+                  "shortName": "State"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.WebSocketHandler",
+                  "newHash": "#q6jvm6h07jruur7bnjtrua4hnulmlmutc6op6no3bm1offs56voqd4if68nsjjmd6e3nakhcl84e0hj6atr16gcpvdt4dk2aqgd339g",
+                  "newTag": "Data",
+                  "oldHash": "#ri791ivhjtv68cp8ltkd2ad2ra929vad8b1a9gpg7fn67i8ql6qu2n6utnhidndgp8ergdgtgmkq93tvk3ohi9jnuvl98gm43gckh0g",
+                  "oldTag": "Data",
+                  "shortName": "WebSocketHandler"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.forkServer",
+                  "newHash": "#mci540ktm73c9v2e0k81hg9po57uu1tf4q2jle9hlvdck62hm93alhnrat24v2rddq3iarkkrv391akd6au5ru0h02hdu4ia0ko953o",
+                  "newTag": "Plain",
+                  "oldHash": "#tnhhbki1brp28dpn2hb95ivjvru2q7f4jt4s7kth96nt9059j5sai4an4ne5jhqmnfbrkt78s7iuqj1q8fbqu6uvttcq45g02rr7u0o",
+                  "oldTag": "Plain",
+                  "shortName": "forkServer"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "server.runServer",
+                  "newHash": "#4ojgu8qqbaq7njbners1l1uplgi6sg2ot5smut0rso4cv9hfs1gvoe38shqrkeq6o2a9k0bj6mnbet8ij6p4vcm9tmf5dd86uh02uh8",
+                  "newTag": "Plain",
+                  "oldHash": "#qqcs8ot95jfn0urpkk86q2g7t7gscon2lrrtclajvdmjeggeolem5pc7iks7v4vimuvk2qq6d88tbjgdens68egageqb8ick7mu9n40",
+                  "oldTag": "Plain",
+                  "shortName": "runServer"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": [
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Config.serve",
+                        "newHash": "#e992vc3cjf9frf6bd3me91e7j5iuv2c9pas69jj0cpd7vq1enfh4fgdgbhq7ueq12fq9s4g2f0vf3p28rkmf5sf2ce953gnvelhfbq8",
+                        "newTag": "Plain",
+                        "oldHash": "#0fhcsognm0b6iejmb3hvl166qig6vobvhi6qglldq1dej8oc41hu9hnj2dnv3hrh35m2itb6re5k11bog7rvntnqic51b9tafm80tho",
+                        "oldTag": "Plain",
+                        "shortName": "serve"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.Config.serve.doc",
+                              "newHash": "#8k3rmsmtcgtmh6r3o9nj2u7intgc303hgti58028n6o19bfo6b7g3eat4a6s2hd2dkh70hd2efgfs168uuorimnbrpj4m7rjahhqu4o",
+                              "newTag": "Doc",
+                              "oldHash": "#hqa3n2enteiaok4lkui2eu85sakvu6c28eebkgjkut4sgoqet6gu661rvtr9231vopcsvk0ks6bg471vjdgrpvuvujok39au694o350",
+                              "oldTag": "Doc",
+                              "shortName": "doc"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Doc"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "serve"
+                  }
+                ]
+              },
+              "path": "Config"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Handler.Handler",
+                        "newHash": "#9sksukjdbeu05o99lech5kdj1u0kitu07shra8bvuv1jmo66iep5mehk10kh5ha435eh0vnjsqk827fffcft6l485rp8oq6sqrn5d3g#1",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#k9ea84fe6hubb9v6j3rifg6fd31irn8j2onqebqsfan4dr3j29uiglso7s97eutt38prfn1bshu532ncb05e5l7p1pfg14v9pt6q36g#1",
+                        "oldTag": "DataConstructor",
+                        "shortName": "Handler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Handler.HandlerWebSocket",
+                        "newHash": "#9sksukjdbeu05o99lech5kdj1u0kitu07shra8bvuv1jmo66iep5mehk10kh5ha435eh0vnjsqk827fffcft6l485rp8oq6sqrn5d3g#0",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#k9ea84fe6hubb9v6j3rifg6fd31irn8j2onqebqsfan4dr3j29uiglso7s97eutt38prfn1bshu532ncb05e5l7p1pfg14v9pt6q36g#0",
+                        "oldTag": "DataConstructor",
+                        "shortName": "HandlerWebSocket"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Handler.doc",
+                        "newHash": "#aji9otk5lc9ak9kuiusqc32e9b65snk5kff21v9b61lva3v6knd8itm2qseqn2as6m9vhdlrcjm8e87uj4gogve46gpnb0sl6oel48g",
+                        "newTag": "Doc",
+                        "oldHash": "#s7n6egljhdqm9igghba6ggv4comu5453dmn1mulu1u52suc5489qgqk59033fn4gfs6bg5jca14vvt46fa6u0kurda1k8rkroati8no",
+                        "oldTag": "Doc",
+                        "shortName": "doc"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Doc"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Handler"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Http.webSocket",
+                        "newHash": "#hdta9iku7esmmh3okc9vkogn2ib7d1nopm81f7lsiiunhs8clfeuhfhukbq66el73ajt22346vh1j451ei9un3tdhgb367tpsa6l91g",
+                        "newTag": "Plain",
+                        "oldHash": "#iks1et7pjn1et8pdit55brg3ifv3af2i5o0fm253tjkh352lq2hq2ah23280fsefjdo77ek64sehmoi7mh1u9ihbmi2a5gs1jaua0e0",
+                        "oldTag": "Plain",
+                        "shortName": "webSocket"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Http"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.<<<",
+                        "newHash": "#tf92d9j4j94jnh9cj85cln380fe8est4k88q94arh5ib9up3ghji3ifua1h8arfb1o4939n7dbjrcqe8cmbc16bqvfub5h9qjkgdnb0",
+                        "newTag": "Plain",
+                        "oldHash": "#ftc7e29r6bsp19kf7hmmkbchhf9r6u99jcgqh1f4l5vi722pcokvuibfqea4tuoo2ta75c5ph0ga9c5k4v9t7e2q34uf5qnbgqdmn60",
+                        "oldTag": "Plain",
+                        "shortName": "<<<"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.>>>",
+                        "newHash": "#k3s2b77r7qrvi6bldd4vqka6njt777pq8p24j2n8h2kbf1uegj3976lsq35h5ufhgabmelhj0g3k0pph1gh0p95ml8k0mfguon8opoo",
+                        "newTag": "Plain",
+                        "oldHash": "#b317fk24gij4pjv928qusbmq3e8k20fqmb6brelsa117kdvre356ms3c6kcc6qf7tl2q2irj39leilmq1e26a4dh6tv0fils72jjgj8",
+                        "oldTag": "Plain",
+                        "shortName": ">>>"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.Routes",
+                        "newHash": "#hpuvg03l16jifef382408qp0ghggfidp7d45pmi597rb59vs5g297enitqjlkfba8adtmmbfh6mhni2rh3tfp30q0m3i81gsab5kko8#0",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#s4mlot60hcsnhpm5pcsoe98evpfhg7i40hppcc2tvnr4ipjh9ubq3tn4dfh6obg3kne3175m3gt25qop2j3k6odpb74tosoeqb7o800#0",
+                        "oldTag": "DataConstructor",
+                        "shortName": "Routes"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.default",
+                        "newHash": "#mp9tvj34j15a2m18rcv0h4q5nmm76g4ng119esd3utin4s4c7i8pjm9m4paq60d0vm8fq8pn94dgrt9im7d8lup362q42p7mg8tb680",
+                        "newTag": "Plain",
+                        "oldHash": "#glhe3q5gmk1vipucpkpfrd4fgqccs30s24a5qrf2nin4u1lt4m8ms752cjpnrklkrps59p0u4f6a0bl9ej9dpipmarga24pfmocspj8",
+                        "oldTag": "Plain",
+                        "shortName": "default"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.doc",
+                        "newHash": "#n7nom09unm26ca6hejkeqb8d2he0360q6gjbsqmflmi9aorlo78oqmpjijhmo2mq7reosuv675r26ead7rid6e6m8jbnp2q8g9gvp90",
+                        "newTag": "Doc",
+                        "oldHash": "#mrj13jilisa0npa1eehraa3gj254ml6i2dv8ie1bm8ss1pvf3a0ml164r620f75odn47t0dn3ss921oqt4u95ttv03m9p2fdugubcgg",
+                        "oldTag": "Doc",
+                        "shortName": "doc"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Doc"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.toFunction",
+                        "newHash": "#on1mtnd6d3atdla0pmi65gr7rt9vaogar9lkn4dd25n32gk8km66jlnil59s45m324ae8uf7r5ipjc8mh9evi6lcmsfl1h29e0euhb0",
+                        "newTag": "Plain",
+                        "oldHash": "#q5r851v3fq8o2ml0ie2ltf6ojh2ukqem4enquh4inr2p7gumv1unoflq6994psjjphv8fpm7plm7mnuf8e09upr3cjp5vioh6nou458",
+                        "oldTag": "Plain",
+                        "shortName": "toFunction"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.with404",
+                        "newHash": "#990i2s188gnfsiiuabis9hksm8t6qeup03j4d64hr8771i0ens4vg39qs108gak5qrjeb8tnus4jkb0o13ee170jbp708dvrhsdkcpg",
+                        "newTag": "Plain",
+                        "oldHash": "#fr0rn8moihd9mgv7cevhjfcob3m1tkok9l8v1gr90j5dake7hh2d0pp7rahtlrgbft1j8qlrfv3rlo2g5bv0pcalkk1t0hvut589jlg",
+                        "oldTag": "Plain",
+                        "shortName": "with404"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.Routes.with500",
+                        "newHash": "#ojbgjq5t8d3d58ghj3r0vq3un2fk1b9lmcamuduufnj2s8csj7es67l1g11e01tljte3eotoleqf01n6bid7h5rfc0kun0733v8p1h8",
+                        "newTag": "Plain",
+                        "oldHash": "#bdd7p5r13bao3rkof1gvf77c9gjb54ef1bb9mil2c22gkk167q4eloslalf1bedgfiiigllk7klga22rgvo65fhrt8iuna59f2qjtb8",
+                        "oldTag": "Plain",
+                        "shortName": "with500"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Routes"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.State",
+                        "newHash": "#a7nkf1roorubhl73s2t8n0so09sjl6etbu6ogra8i3mghdss0iad2kibc3vrdj4qan7lmj2prom44fbccooc43k4ok79gomr0ura0oo#0",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#gihi1elov5fpqfnjdonksgrq6vfsi3ekqml88c084e8fo8ptc00hd23t7p776iiqpap2drocpgalbkd9eag3no0qe3c5c6ds9n83g4o#0",
+                        "oldTag": "DataConstructor",
+                        "shortName": "State"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.connectionHandler",
+                        "hash": "#ncstce6hb8nkb0eqm7gh3us4j8jtivcr7mpfdm0d0kbj9rno4ulik71tilhpjkt65e07hqojb0trh575cj0qa54b2ptrh2c1di70omo",
+                        "shortName": "connectionHandler"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.error",
+                        "newHash": "#taf81mhctev0b37f15uk050jt3lk5h2ui0iihscg44rru0n1m5avqh34l3gnh6oiihugrdf5413hps86koleiivf38ldk724ohld1b0",
+                        "newTag": "Plain",
+                        "oldHash": "#avob8k53cdppefcqvdubtd83elel8skg3u2iq7g39o080blila4g74f2aao6882ksgv7264r9h3th5mjchon464m0hfp7694qfsfhho",
+                        "oldTag": "Plain",
+                        "shortName": "error"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.handleReq",
+                        "hash": "#a47fvp2s8pd4vnu65g9jejpt1q9ci5mnp1rkleo9qh6oakmh7hdaasa1j8qigaucc1subdehqrs9reli20r2o5i7sspoe6h5o0fji3g",
+                        "shortName": "handleReq"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.handlers",
+                        "newHash": "#gaaffrra61gk1ek2qevb76m5etrrsrh5ei37tq54kpkamjo39hp7vb9rv4erq4guml0gk81j3e16mcge0lpd0p2dfih5e2orp6ek428",
+                        "newTag": "Plain",
+                        "oldHash": "#qe6m8fph6e1euldphou2qps76omg3f1j94mc16ff1ipdginr7pm1i8i0a7n0aem2gv1beglhjhtk3n073v61iaj8gfvv92ogl6htdqo",
+                        "oldTag": "Plain",
+                        "shortName": "handlers"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.notFound",
+                        "newHash": "#8tcl6ortro3j89lh3fv0nh082r93jgn8j0r5oq117ut3tpfhrp6lnq5kcibn9p2d0danub22ebmls0oipgral92c5d69t3gmbopmr6o",
+                        "newTag": "Plain",
+                        "oldHash": "#76pb50gvugre50hljgfmao0eco3f0ma06elgrpa1amp4c7hovr6h7uci8rlnlh45rjri6d1iedjfr2rue991tpaf7q641qok9m2p2go",
+                        "oldTag": "Plain",
+                        "shortName": "notFound"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.State.semaphore",
+                        "newHash": "#1l8ikiuakc8nqobvjb4kara7deptddljomv9k8v4d3vcu2i99lq519uoq05u792qctrbfmc8chijadnja9o0l2otcc52jbvqf7bmaqg",
+                        "newTag": "Plain",
+                        "oldHash": "#5c6jeqsfgotke3nuao35ag1b1a1c94n1pvr0o3frtqrhi85hp8rk8mn8fhcc399dmbvofabseeakpd77cfotmeag4528ofkdjdl8q28",
+                        "oldTag": "Plain",
+                        "shortName": "semaphore"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.State.handleReq.handleWebSocket",
+                              "hash": "#pnap2nc9j2v3lq3o38fvncucjmr2ipq38c7390o14est2c4tsnr91begcojh81r4su8p7b0ucg565cg4rqqsst50dim1dcs22i8e4vg",
+                              "shortName": "handleWebSocket"
+                            },
+                            "tag": "Removed"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "handleReq"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.State.semaphore.set",
+                              "newHash": "#njeisgej0kb7qh31n9eu7onrb5lelieavistsqb3um0gm0bf4me90b8c2r1kkp0b31acmn6cs4pduqolpd1miehncgvt2khc9vlr8b8",
+                              "newTag": "Plain",
+                              "oldHash": "#6cihc7ibviojb0f5oprdd2ec21p1eoldrif406qjbo6r5ov5ohkjuotj4u9nhvlc3pfrj0hatcm2j9bb8n342gs6dls65tfd588ej5o",
+                              "oldTag": "Plain",
+                              "shortName": "set"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "semaphore"
+                  }
+                ]
+              },
+              "path": "State"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.WebSocketHandler.WebSocketHandler",
+                        "newHash": "#q6jvm6h07jruur7bnjtrua4hnulmlmutc6op6no3bm1offs56voqd4if68nsjjmd6e3nakhcl84e0hj6atr16gcpvdt4dk2aqgd339g#0",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#ri791ivhjtv68cp8ltkd2ad2ra929vad8b1a9gpg7fn67i8ql6qu2n6utnhidndgp8ergdgtgmkq93tvk3ohi9jnuvl98gm43gckh0g#0",
+                        "oldTag": "DataConstructor",
+                        "shortName": "WebSocketHandler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.WebSocketHandler.async",
+                        "newHash": "#jjddvk9mbbaq227gjq11gtqghjr1u32u78109hj0s2n63jpqdd06ddsbukfg610gop8b4jirep91khvji0bqj59dg8ccvoep12d2vio",
+                        "newTag": "Plain",
+                        "oldHash": "#vkr4fa2jjqhcdjucteqseeuol1irfsobmar36qfejj51gshpl0s2outghiihp7jnh4df38dqekfadj8u89ras3iuruqjdjpl7vf9ku8",
+                        "oldTag": "Plain",
+                        "shortName": "async"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.WebSocketHandler.doc",
+                        "newHash": "#o6qrdoofmdi82p302jin60jt1khjasactar60vpfdmiuh58n7cmjgdvl47vgg7kisr7p5hd7u8eb266015r8iq0mq177ldibma1ha8g",
+                        "newTag": "Doc",
+                        "oldHash": "#2veierr3s2kvbailt8u9ccnka8sch1jcuqombnimedn0jd3hjt09eticpbc2e8kpq3mhbfg4r9pmjdausvqbifgf0gal9ufil41nco0",
+                        "oldTag": "Doc",
+                        "shortName": "doc"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Doc"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.WebSocketHandler.sync",
+                        "newHash": "#jog546tfsebtjs1mce4s8k01gmg7j8s96c9kj1vsu476so59n3gr6vt8cfn1tcv588ga9d1usnj4fveh4d4vg5rdjo5ltjckk2li1g0",
+                        "newTag": "Plain",
+                        "oldHash": "#dsh9of2tv94f4vpm9sn40a85ig2gg6a7kfqr07n77rmo2fe47nav30dg7nsvpsmil5760mvbhda6f15k13gmqeimni9k9uo51g367r8",
+                        "oldTag": "Plain",
+                        "shortName": "sync"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.WebSocketHandler.async.doc",
+                              "newHash": "#dchcr3r8h8vbq67cqao328db2g7anvoevjtnmgq3bmnrrr8odjbi3qcishehfi4l6nmnkf0n4qb9nnov7ej75slq8od0lmljup8tue8",
+                              "newTag": "Doc",
+                              "oldHash": "#0ugnp7mo0s0t6t70mqkfjl0k7u94oo9rnauip1tqqnch9rq1ug74co8puf1mh1a6b42gj765r5nb0o2hdnr61mud6q0d6d0035h0pn0",
+                              "oldTag": "Doc",
+                              "shortName": "doc"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Doc"
+                        }
+                      ],
+                      "children": [
+                        {
+                          "contents": {
+                            "changes": [
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "server.WebSocketHandler.async.doc.example1",
+                                    "newHash": "#dd6lohajnpo55g73ulc53mfjpg2uonm9bapdhha5ilb7hriv8grt9v9svon1rldhq8jq6mral73m85ass9pm50bqo2ecmadg30tdao0",
+                                    "newTag": "Plain",
+                                    "oldHash": "#nvs87eejiumvn97042naspr2n53eggbkieu489t0k9lekhvqbj8f82dqq2341cl1212ru728bq71ohdpqead0gpcq5ek2v7c0vmpllg",
+                                    "oldTag": "Plain",
+                                    "shortName": "example1"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Plain"
+                              }
+                            ],
+                            "children": []
+                          },
+                          "path": "doc"
+                        }
+                      ]
+                    },
+                    "path": "async"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.WebSocketHandler.sync.doc",
+                              "newHash": "#bukrpil9ifg9u59vh3tce4mi6vnbcn5cvun6uat8u420h1rbl74m9ta7uegoifjkq6g0shn4kn36dr35so1mfg79a2qgt5tsfsoijr8",
+                              "newTag": "Doc",
+                              "oldHash": "#6nii2260ggv0cpri1bqgaqui2v9c3ga60vlcmhugt7r76tls3lfh8l24jv567fliqktcediivn4iek6t94g1h83ejkldo79bhrqh88g",
+                              "oldTag": "Doc",
+                              "shortName": "doc"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Doc"
+                        }
+                      ],
+                      "children": [
+                        {
+                          "contents": {
+                            "changes": [
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "server.WebSocketHandler.sync.doc.example1",
+                                    "newHash": "#uafsjbe4l6sjnvcu7gs2pvj7mm1pebhdtieftonmgbhacvj39fpb9j8r0q5dvr87pm1ur5924oj0on0bthulk8bqt4m8n78rahii1n0",
+                                    "newTag": "Plain",
+                                    "oldHash": "#u4g4mle04li24lrlq9jo9aoscrvm18jnuf0ob4o6ts15dvfsgbsrhf88j13vv33mhd9qvr1ofuis8eok3n6gkl042gjgeckmn3rhcgo",
+                                    "oldTag": "Plain",
+                                    "shortName": "example1"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Plain"
+                              }
+                            ],
+                            "children": []
+                          },
+                          "path": "doc"
+                        }
+                      ]
+                    },
+                    "path": "sync"
+                  }
+                ]
+              },
+              "path": "WebSocketHandler"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.changelogs.v7",
+                        "newHash": "#fevbbtocngqjhplta7t39r43oudoelq4s4sf15cffql1roken79or29nq4crg6csf23userkptb6kjndin5fkhlml2li10s21a8a00o",
+                        "newTag": "Doc",
+                        "oldHash": "#he7158bjhcp3h82i5b67ocq6mo3a8hd09l1i1vp6qcvd0uhl8idereafrbbprodhmeu5kctn6jckpisd3aigpqrmikdmcr2jjbcrfig",
+                        "oldTag": "Doc",
+                        "shortName": "v7"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Doc"
+                  }
+                ],
+                "children": []
+              },
+              "path": "changelogs"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.example.alohaHandler",
+                        "newHash": "#t23vq0aepejbbcsss1ptaq3du034mq3evt0losl6dtd0ral0ejugcndhlfvkvq3utepdhvnu4eln878s3p612nene6komvr5t6jpqgo",
+                        "newTag": "Plain",
+                        "oldHash": "#j8nho0gdvf8g0qaur2ucvvfa1242h6cmupa847i1579qrvtu3qhcmg4ljfkr2tdf6s6c4er69omqr1dkfikhes86b8hqtos7b1scnbg",
+                        "oldTag": "Plain",
+                        "shortName": "alohaHandler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.example.helloHandler",
+                        "newHash": "#vbmqhkjhluh1f68b8souu465rb0cuv77gl1blp2kkefjv2m55bh042akfib0i6nuhl8leqe576knkmijuvril67u153reu8c8qcb3u0",
+                        "newTag": "Plain",
+                        "oldHash": "#tl9mj9cqv7s5a4ekpraane0iel45a3f5fb81nu5njna4sbgnucrqe3mdj5ipmgj8p6dpkkflq7fjsp2q98mb7u2avdts4ocitackpio",
+                        "oldTag": "Plain",
+                        "shortName": "helloHandler"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.example.helloHandler2",
+                        "newHash": "#mne14emrbb35ersmfkviv9l41175s55bft1viih3itf6nnp65nqqful6mgt76ci7drta491ne0k556a2p9om3ette87ng2605prnulg",
+                        "newTag": "Plain",
+                        "oldHash": "#pe6s7t35m2d2jf8p64l8d1hl7tkc8pbe6ch44gv60pndd05ldlq5ml5fasibep3q4ap7cgoha1r40rstm6qauil7ib1gvsuo4qgn3mg",
+                        "oldTag": "Plain",
+                        "shortName": "helloHandler2"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.example.main",
+                        "newHash": "#mj71c6tebll7opcpuiql13prv9j7g56jhe6jodgepgf4p14s2cj30m8pdccm2eailkuei4j3q868vt34u5rvqe539sj7a395takvk3o",
+                        "newTag": "Plain",
+                        "oldHash": "#jrp6dvqcqu5287htgbe4j9nsm7497koi5n357hatf253rqelrjurtidkjlqab6vbabist23v1h5c0p31orfmdlrb4jfpe2qeefn4mko",
+                        "oldTag": "Plain",
+                        "shortName": "main"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "example"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.internal.handleConnection",
+                        "newHash": "#lt3ohss6s2tgskp5noe24nv5pp7kar4rlpq1n6oro4q6hdkcfco3kfe2norqu6jmd78fvg45mum9j8ur16ia0h0olsvujoq7js5kkh0",
+                        "newTag": "Plain",
+                        "oldHash": "#j56lduc510kgfnuemk0j86flonbsrc1qarhbrq7cug60kuk5n3bbd3tft31dr6aha20if969rmq3bu67c4b2qhqorfs6v38dkghfg8o",
+                        "oldTag": "Plain",
+                        "shortName": "handleConnection"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.internal.handleRequest",
+                        "newHash": "#ksdifek17ed4t3sv19g2jesfml0v6lufisimha84lpv5r3d8qej0k3elfqlbaf11n8qphb7ri91celhe7f3rip7n7nd1e5j7l1ot6j0",
+                        "newTag": "Plain",
+                        "oldHash": "#8beesl70n7q7h831optetdqqidjbq972rlkl8q3i0oeqv57dqk8s9cijjoirj8tlk0kfopbd5v2f75pbluu9thhvvor84bq69kdurco",
+                        "oldTag": "Plain",
+                        "shortName": "handleRequest"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.internal.socketListener",
+                        "newHash": "#01mt45seoujt3mfc5qr43rb4ut8u0496knqf5633bp1o4nfebv8i52ar0njomj54ldmmc2018sues1m5vv6sspmcothvrcbtn09a0s0",
+                        "newTag": "Plain",
+                        "oldHash": "#mibbtavrmcdntf3pkij9m9tg8c8qer8v3ko4tsiu671vb67ev5k6efqbs56quksj8nivuvq6nb3co4fe372l808blto1ioppu4datoo",
+                        "oldTag": "Plain",
+                        "shortName": "socketListener"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "internal"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.test.integration.all",
+                        "newHash": "#1s6arut71kaksfo847rd4ii9chpqofac47vqnbs1hpsljt87880jbmbccvlefkq83q2qpo37intit7s3u91efg5kjoon65kpuil6130",
+                        "newTag": "Plain",
+                        "oldHash": "#b0mjivpnvaa9hmrvhv38raf9o8j3edu4bjuiranfq2th3e60ptrseumbrgpebaumqlfgvlpm6nahsug6kulqmudgqjaaiquvg3qpjho",
+                        "oldTag": "Plain",
+                        "shortName": "all"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.test.integration.main",
+                        "newHash": "#87r5hno6f11albd3v0gkps6pl6v8865lsu70q9k5pc9bf95mmh1nh641jiduq0v5ah93b090hgd8sn29s2maqle3pf79lf87lju44no",
+                        "newTag": "Plain",
+                        "oldHash": "#r5ir02u3gmadfslm7gadvtuurptpld1t7c0ntggq30oe6m0c7h3vv09062ise86mra6f3h65flqdkre2bgul6gickk38ghiv2mn5oag",
+                        "oldTag": "Plain",
+                        "shortName": "main"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.test.integration.newServer",
+                        "newHash": "#fl3dj4gvegeplihis4dm1nsubrltea4bj60pes9nq4hdn41rd06kh9mnrhebf2ehvqdppvrqe3425dg2t8sd43t4otvlt6ofqi99sfo",
+                        "newTag": "Plain",
+                        "oldHash": "#486h7q07t2vtss5t3f0pdgeuo3tl2su385djjdl46gpn0vq2qebpbsobafh8pgut1omekp0tpfs0lnetov09n856fjmmevd0aoqbtro",
+                        "oldTag": "Plain",
+                        "shortName": "newServer"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "server.test.integration.server",
+                        "newHash": "#6h8ia4nkrp3if1khac5btmi9l6lvms1mcj2l95k1o47vmpf7atgcejnkdpb5ulke16cl1ghiegm88l1fljakm39kbrtgdsah4sj02to",
+                        "newTag": "Plain",
+                        "oldHash": "#ab50dt60mvqak8lmmos61r7r20928pfjs368n40rp2eqbfnuo0o246v0l2lpj6u5rm50ce87kqdj2h07ksu6rofgebl1jql5c9lfh68",
+                        "oldTag": "Plain",
+                        "shortName": "server"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.get",
+                              "newHash": "#8mif83ts1ugllii4u45b2tqcars074latrkp8gdo79ljrp9dei40ig4tnr4bh54fdm2iqt6djptndqio1mnn52it9q79aikoifs3abg",
+                              "newTag": "Plain",
+                              "oldHash": "#3n6uqi4inci8bt1a2s8ogllh3a26vi83jjvaumukkbto1cbr0but9h64df5s1icv1k3e3b5r4tkl34v8ij6gqurkef7je5sje8c0088",
+                              "oldTag": "Plain",
+                              "shortName": "get"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.handleClientException",
+                              "newHash": "#j5ocb7lqtnjreo9d0psbegcpd6gce3ba94imn9m5kgjt5q9vl3o3njgs6qqhe9m9enr85gu1jp5hu7r1gdulo5s65vdta0mb5jejh58",
+                              "newTag": "Plain",
+                              "oldHash": "#2v2hhoa2gtrt4tsde4m8vgo3fggdgvvo8p3sm10a5t9u45qoo9nt0p5lavlpp194np0f0fudncp3nruoik54oat3h0qp13rbc4st9ig",
+                              "oldTag": "Plain",
+                              "shortName": "handleClientException"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.handleWSClientException",
+                              "newHash": "#d6pdi69m5kenpcskcehsq3f9nrtrs2j551oqkdjbhtttlt447jbj76kasb1vg3rlv2rbi4nrum8s3rpph43abvu3srgjnuro3bin8n8",
+                              "newTag": "Plain",
+                              "oldHash": "#dqnv09q2rccivjeta2154pponeljqcln7vk09rn1vasihl41t93ckgcsifqvm2clg90htocjjfpn6u804gpq77k06gaskbvqkanf2lg",
+                              "oldTag": "Plain",
+                              "shortName": "handleWSClientException"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.manyRequests",
+                              "newHash": "#e5gpb3i4d4bcq2bgv03nkv4vhcmk5bnii722jl4pk8gtmttfqr85j6vfqqfvpllnitukift0247gnriqt0a6v8fs0562fj39q5356io",
+                              "newTag": "Plain",
+                              "oldHash": "#a1c6b3nhbs4hba4a88snvqhg6ngg8lofmp0cqm3jrp5u7q3m9n4pu70b9in5t2mnlrm21po2ofnj1st0jin7lhvofroqblebeqanpj0",
+                              "oldTag": "Plain",
+                              "shortName": "manyRequests"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.post",
+                              "newHash": "#rlk9ri10oll6lt6ftfpa7il8935j0i86skn7mgh3n0encnikil5j8uno1ojlngvt8sred1ng8nprt6g0mgmp5k8s5a2ujcpdito9bjo",
+                              "newTag": "Plain",
+                              "oldHash": "#epr1lac82t09ms04fhb4cqncr43hurbd0e0kv2oiri2kohuors7t8chapbmhqjsssa9cfpk2rjr9s3iujvnfp1kh8imdf0oivrteaf0",
+                              "oldTag": "Plain",
+                              "shortName": "post"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.client.webSocket",
+                              "newHash": "#t6rjllgnnpls3lrp4e1ci9p2asvubiesugb5kbegnrtaeb0jok6lsj0b9vucrdl7ov5lp8omempv0f3jq8vk5ifmvpfdufp8o1k71e0",
+                              "newTag": "Plain",
+                              "oldHash": "#r35puqjkuuu9s2nhgb2bvrh8gdjlbrilkhrl2hhf3r9qqa8ilbvfe0b1vb2i8nfjgkdhoqtod94f5p4ef54qban5j9hf92casnqlobo",
+                              "oldTag": "Plain",
+                              "shortName": "webSocket"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "client"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.server.getHandler",
+                              "newHash": "#plpe4o6on801ir0qnsc7ja4ihl9sn2tqn411ah0eitlhan573pk3ueeqsed2m800k0br4h2i8k5md2m7p7keqv1s933sfqog592jpao",
+                              "newTag": "Plain",
+                              "oldHash": "#b9lbbn0akc0bpeeuo38rgn6a2i40q6qg3612mah64fnpikplb5i897rl0vk75sflk6rmsfrer7553mqk49jhtmq9blk9vo0c9e249h0",
+                              "oldTag": "Plain",
+                              "shortName": "getHandler"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.server.postHandler",
+                              "newHash": "#au8hqc7i4uep2no43ambiq540038ige7v86sr3r03eqtuv6vbeq2p5n9l2f7oi680i06au258q45pf3a5qk631tg0c26lhvgmkhi2k0",
+                              "newTag": "Plain",
+                              "oldHash": "#g4u6fvlmjui5tqo1mmo22cortja0vb8opc93be0l0lq35bkocpj6hg8qek004i95ghacc0huep26s24ejhevglhv79p91sli6e7a16o",
+                              "oldTag": "Plain",
+                              "shortName": "postHandler"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.server.routes",
+                              "newHash": "#hvsf9fi10ch5voaim52h8m3i9ptvfitorscihkl89ft10c0kv302uta4ehhcujinllc10lk21mhkdunevehhel4rnebgsk68mvagmqg",
+                              "newTag": "Plain",
+                              "oldHash": "#div9rprhk8k0bv8g6llca019ndm1ur0icb10v73lbebo924umm0mrjg32g99k2esqmko2cick5evu54ub7tvam238pk9s2rrs08i5c8",
+                              "oldTag": "Plain",
+                              "shortName": "routes"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.test.integration.server.webSocketHandler",
+                              "newHash": "#g1ud0tjqd2t6agutrf19bvkbet69cqn4jlfh9lngoskg7tivf5b883q39qs3rc4f74gnrpghp2fmp7hi3rf8nun5d89esno7np7p50o",
+                              "newTag": "Plain",
+                              "oldHash": "#4uuc23v4m2vefuprjnpu3ivgfggt5c5pimnefhp2f0ojlt4bncbetjvpn9s7k1iv658hvapgabv16f2lj93rbel09fch6ko3kat0id8",
+                              "oldTag": "Plain",
+                              "shortName": "webSocketHandler"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "server"
+                  }
+                ]
+              },
+              "path": "test.integration"
+            },
+            {
+              "contents": {
+                "changes": [],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.up.base.IO.net.Connection.stream",
+                              "hash": "#no6v062mjovdoasvsndfm75jv0mf0td9oa1n6sfr55pm047kocaahinrb4h21pqd9b5aojtoet7h1bf27soleguc3btt8qo0lkff2i8",
+                              "shortName": "stream"
+                            },
+                            "tag": "Removed"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "base.IO.net.Connection"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.up.websocket_1_0_0.WebSocket.close",
+                              "hash": "#8mll240arktoujc4ee5j728s84cj0ufa956n74hjsbtd920upokc51qr0iabsbom0eib4qu49s3ngr5028o399nj9boo1lf69b7qabg",
+                              "shortName": "close"
+                            },
+                            "tag": "Removed"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "server.up.websocket_1_0_0.WebSocket.receive",
+                              "hash": "#4er7rtjc8a0fthovjoi946qul2pba17c8khs0daia78iqa7qliulcgat045q1qbos3upmd4jq1oi3gp9qe30o3jq5ihe92uvkjp51v8",
+                              "shortName": "receive"
+                            },
+                            "tag": "Removed"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "websocket_1_0_0.WebSocket"
+                  }
+                ]
+              },
+              "path": "up"
+            }
+          ]
+        },
+        "path": "server"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.checkHttpRequestRoundTrip",
+                  "newHash": "#bkj4panab5ec9830e4ca69hrqcnkt0h55nfp2l888uhojjivqnqh9pp7j738lqevqe25ipoon2ua7dke39n8ud3eqor13r8s8o3uu70",
+                  "newTag": "Plain",
+                  "oldHash": "#3gq091nips2beb3r3fdm3utlp8upnrc0nqvqphubqff90bjdjpefjpq4bqu50i3nmb4j9h4cg1b756a6jtnr4chvklt88brfoqkvuhg",
+                  "oldTag": "Plain",
+                  "shortName": "checkHttpRequestRoundTrip"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.chunkedWithTrailers",
+                  "newHash": "#j887m7imucmm1en9v9a5gl046610qcn21n01lt96nu0e9dv0aup0027a3k3kimd1g46jh5sue0qqtpmnqlondk9b20516g423nm2e3o",
+                  "newTag": "Test",
+                  "oldHash": "#t0d3g3nbos03hv9pqmsrcju6cc5tspfvihof66ofvkactnus339uj8ldo8trcdinulpsir96ir46vp44gj6femidihsn69dl01c38t8",
+                  "oldTag": "Test",
+                  "shortName": "chunkedWithTrailers"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.chunkedWithTrailersAreActuallyOptional",
+                  "newHash": "#3o1f63mhophovv3occgfpmnnf4n9p7e8ns9gr4pcr6fi047pujuueohnaia9a3tvt0n194mb3dsvrvajv3qsggh1dlkq97rpfhu49uo",
+                  "newTag": "Test",
+                  "oldHash": "#edsmvu4pj7lhau344keafqtoh3r7hav6nh5takurihu98te9cvcicp6vt75hqje4272r8opjg9al9eg00a5tvsc3qf3gflgusmqgo9o",
+                  "oldTag": "Test",
+                  "shortName": "chunkedWithTrailersAreActuallyOptional"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.chunkedWithoutTrailers",
+                  "newHash": "#6nd20gvgetvso14tvum790am8s9l6mn9dtmk6qr5n1kbafm682ooehg137aeabthddq76f4dtdafpqeqebtk03dit6a2ql1i4ptmk7g",
+                  "newTag": "Test",
+                  "oldHash": "#9317uoogll2hnrj0ja9oct99pr60v7g3qjb6673hmj6avcp1f6fblu5s0h45k00o0it6vuc114hhnvc6rg09o3gfd2okg45niae1o3g",
+                  "oldTag": "Test",
+                  "shortName": "chunkedWithoutTrailers"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testChunkedRequestRoundTrip",
+                  "newHash": "#tuhf7gesuf7kgb6akli3mp2ovpdl1erlurc42nn7caku7d2ah02cj808uk1fta8gptr19qnis63c5s8ut1rc50d577fn8ud4vhcthgo",
+                  "newTag": "Test",
+                  "oldHash": "#fvi7islp1nsjtffu6daihcn8uoc6h6h8r80u71n77vqk5a4hnkvgche04hvbgkghq5ktjqevtf8jp48fi145h4ises761h8ptpmd6ag",
+                  "oldTag": "Test",
+                  "shortName": "testChunkedRequestRoundTrip"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testChunkedRequestRoundTripNoTrailers",
+                  "newHash": "#a3o0061rk12e7ucnebe4ltlhelllo4s8784vgn01jl2mohmj220vplhc4aomo8hedik0dkbu8tmm5sughaf9h7ijtr63lu03hjeg150",
+                  "newTag": "Test",
+                  "oldHash": "#aitml361tqn2sknggg00opldhf6lv6lvm97tis7ap9bdnk2th22lqmncdrii32442881hlnljr3dc7r9qjfopdetekc6f9kcvp6hjs0",
+                  "oldTag": "Test",
+                  "shortName": "testChunkedRequestRoundTripNoTrailers"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testChunkedRequestRoundTripWithTrailers",
+                  "newHash": "#1sscudd06q3k5qgd58r4uuoq8sbbfld8lrtk9cntl36a2aemqoailo3lb25tfp8oigeok7reoiduhjk0ub176701r8mqo0mn4v4spfo",
+                  "newTag": "Test",
+                  "oldHash": "#hsc2b5c3e6tqr25b39skcp9rgg4ijs9a5ijdjei009v1fdk4q5ech9t4u185floeglcr7q9269c7am031l4ca7n8tm8gif8st35g9ng",
+                  "oldTag": "Test",
+                  "shortName": "testChunkedRequestRoundTripWithTrailers"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testChunkedResponseRoundTrip",
+                  "newHash": "#kkddf466qq3l4kenpovel7p21grc0817i2d0or8405elrn0hhelf8t21pn00rfl31uud32v7civ390fh1iaobn9m7ovvh9kedb23jlo",
+                  "newTag": "Test",
+                  "oldHash": "#uu62bms13vg32civ4gj5503cqlg2249blqajvt56qi6pvebi8lgqvr7e3uc4to94fnb2gh4bf72knb6vobvauus4c7fjv5mn346t16g",
+                  "oldTag": "Test",
+                  "shortName": "testChunkedResponseRoundTrip"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testFromStream",
+                  "newHash": "#hdkdpmfhfk0819u43m57h8gpa80e6qr94rqe1186dmokaphdih3689ibp4jemgp9urqp16r8d85qin091f94pv9lfpscl9qfe3duljg",
+                  "newTag": "Test",
+                  "oldHash": "#djtkjtqvr44097pcnhlip2g57vsroep74q2597gf1rpm2hssef0sugqk9fr63m6bsh1tipg1uj30uvf4u9ii4nht5kjqjqot7rp8rt8",
+                  "oldTag": "Test",
+                  "shortName": "testFromStream"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testHttpRequestRoundTrip",
+                  "newHash": "#ulrvil4f735o5pcflujgl591jvqslvd614n8vnon7ffgj51g40oei7bcjbfrn5jnemebnp2ei2fdcp74f35l7gfmohdgj5ekkt438oo",
+                  "newTag": "Test",
+                  "oldHash": "#71043sqnrv1afvasoqdf8gilnqcv1hkatth318j4tm2i31s6mner3d3od210lhu8lqhtcnfvg0394kirjjeam3m0gmg4h7iv4j58kg0",
+                  "oldTag": "Test",
+                  "shortName": "testHttpRequestRoundTrip"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testHttpResponseRoundTrip",
+                  "newHash": "#gm5nkhpk534evra7ddnl22duqb0om53r2d92hbsqlcji75m6in6c8iof72hjlijrtjvlblbi3vs0mg20oj79nl6rf48o8nst01htsbo",
+                  "newTag": "Test",
+                  "oldHash": "#454pntpoidj4f8s9qomatmfb8glj2ntlfh3lma4pmlqj8jrga7h14f9sffant8srv1et802qm8meteu89h8p48g4jm5lpamf0bbd270",
+                  "oldTag": "Test",
+                  "shortName": "testHttpResponseRoundTrip"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testParseRequest",
+                  "newHash": "#4bh5b4qd11i5c3jtsl279ecu9fo0orvu8tp4o2v5jlhftqh0l6543t404pvejt48416e8542aieph8m9442feubohmf2ave5a2k3380",
+                  "newTag": "Test",
+                  "oldHash": "#o7ce6lha93dbo01grjfk0kcu4cse5refokmn9skqnbdg35isd2jeobb8ct59p0s60ue36rdrug8gm0198lk2nr4rj21akunb5c2rrmo",
+                  "oldTag": "Test",
+                  "shortName": "testParseRequest"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "tests.testParseResponse",
+                  "newHash": "#qa4cnl84t05j45goadr5gn8lja67jbgdbbvvpovnia6t1uu9k8lc8c002kkoejc37vemneb93cnlr4njhacj7tg97klbkd8ufda9a18",
+                  "newTag": "Test",
+                  "oldHash": "#tic1p0nkibiu36cumg7dbrqug01o51901dgn7k0d69g04nfbka08e5iquatdeouli7lqqantji8acmigtsshl7dt86j8b062lh69j58",
+                  "oldTag": "Test",
+                  "shortName": "testParseResponse"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Test"
+            }
+          ],
+          "children": []
+        },
+        "path": "tests"
+      },
+      {
+        "contents": {
+          "changes": [],
+          "children": [
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "up.base.IO.net.Connection.sizedSocket",
+                        "hash": "#cvnsp8gejo7utrh70s20d4t4lj8g1ej6f6i99u5hrguhuddg75o8sbmng5ah9n4una632c9qnk9f9gcc6df0ragj0jlvvbifucih8e0",
+                        "shortName": "sizedSocket"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "IO.net.Connection"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "up.base.List.foldDelimited",
+                        "hash": "#43khkp0a2jk1vqna0gpq9432ihonih579p8lut3soof45235h3ctjn5f01f7g9j1ksuo2pvdctbehncjqmucmbm8du6athscfbk6o60",
+                        "shortName": "foldDelimited"
+                      },
+                      "tag": "Removed"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "List"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "hash": "#8fi6s59akr4q536336nhhscke0l46ep9f7utg7hvl0kvmf98k22kh460nopis68fo3209201lh8elorg2uf9ieb1jnehaq58daiqaoo",
+                        "newFullName": "up.base.test.ensureEqualBy",
+                        "newShortName": "ensureEqualBy",
+                        "oldNames": ["client.up.ensureEqualBy"]
+                      },
+                      "tag": "RenamedFrom"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "test"
+            }
+          ]
+        },
+        "path": "up.base"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "util.unconsNBytes",
+                  "hash": "#e2hl7k27l745tv178r22ri3cnqc654hql8b98vk63e3su61vfg4tvm37vpjo40e2jk5v2f27q0m7s6pvhnhjaar4sdo51lde1do0st0",
+                  "shortName": "unconsNBytes"
+                },
+                "tag": "Removed"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": []
+        },
+        "path": "util"
+      },
+      {
+        "contents": {
+          "changes": [
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.Endpoint",
+                  "hash": "#9ln1dutmv8894ee9kvrg2fm379ne6h71ccvqugt324em27p1hsj2sckkj8vjiijve25bl7dfkcn7f3cdl5db2ffqukv23s7em39lh1o",
+                  "shortName": "Endpoint"
+                },
+                "tag": "Added"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.README",
+                  "newHash": "#1bmt1mn2apt0d6r6ao7n3n240se27hmodl85ajcihp989f258jnieg0p2n0lh8b7njara595i3c9vd4mjr1b8lq1elec0jkpc11jqvg",
+                  "newTag": "Doc",
+                  "oldHash": "#999uktm9njkq6rl0agbh1tppachl66oe8034mo40k9p2nblvvlcj0i01k0c3ukg5mt563k1d0322ta27lifer2o2jdbq6icfflh8rp0",
+                  "oldTag": "Doc",
+                  "shortName": "README"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Doc"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.WebSocket",
+                  "newHash": "#t9020mk5a248pupm14ecg627cj4d2gvp8oh4d5p00umcseek5be2jjfnc4qfrfvv49q0oqi37sak7nguqghm0rdp4ge21lm3ra9kvlg",
+                  "newTag": "Data",
+                  "oldHash": "#dj7qt4pe48lsucv48dvnghpnmd0qsp48mbv1p4d3ht6ggga6qs1rtt8u67g1ovcdhk5kphbc1qp87tidvcjcd61t77og4mmu09qugb0",
+                  "oldTag": "Data",
+                  "shortName": "WebSocket"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Data"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.example",
+                  "newHash": "#7k69420dupashbg3et45f5uht4t3p35anhuh6uotg6e72f7iork877fdleo8v9hm0dj6ol1qmb4o2vur8cu9bopht2gbqsac3s6cjk8",
+                  "newTag": "Plain",
+                  "oldHash": "#nri0ogthlu8k5ep7he09lm8rsdt9cggujhtlmi29f622lcdr9sb5rji2ciijui5onkdgqa4frvk4b90aefsq0ffflv32dvsg6nh5asg",
+                  "oldTag": "Plain",
+                  "shortName": "example"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.handshake",
+                  "newHash": "#kmfoth2miu1qonrpe1f6on3cla672g8c087rqdj8uk9ui4u8vu72hvn8h6pln1g3fqtcrkfu6j8oefn5fs35cfqknljc3no8rcho38o",
+                  "newTag": "Plain",
+                  "oldHash": "#jql3f9g1pl2qok71bio87ghavfa8tmv505c47ipomtsgtrr5vfpocpdspjo06pdsftq2rtonq2rp8grvmumdjq7bo27fvje5l25lkho",
+                  "oldTag": "Plain",
+                  "shortName": "handshake"
+                },
+                "tag": "Updated"
+              },
+              "tag": "Plain"
+            },
+            {
+              "contents": {
+                "contents": {
+                  "fullName": "websockets.upgradeResponse",
+                  "hash": "#fng7dp38gq72sih074mqdg16sn4bp84t00t5tm4h9uthn47sc7roe1pkilfs02ll4r6quecbpud70pakid3ri35mq369b1dvsl7fo80",
+                  "shortName": "upgradeResponse"
+                },
+                "tag": "Added"
+              },
+              "tag": "Plain"
+            }
+          ],
+          "children": [
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Endpoint.Client",
+                        "hash": "#9ln1dutmv8894ee9kvrg2fm379ne6h71ccvqugt324em27p1hsj2sckkj8vjiijve25bl7dfkcn7f3cdl5db2ffqukv23s7em39lh1o#0",
+                        "shortName": "Client"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Endpoint.Server",
+                        "hash": "#9ln1dutmv8894ee9kvrg2fm379ne6h71ccvqugt324em27p1hsj2sckkj8vjiijve25bl7dfkcn7f3cdl5db2ffqukv23s7em39lh1o#1",
+                        "shortName": "Server"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Endpoint.isClient",
+                        "hash": "#793sjl51d0v17067da0tt0lonvhk0a069ohfqa3ethm68ovprmb23ait04140u4tnkonvm8rsiaklno14dbo9935e3qdk4hbguru220",
+                        "shortName": "isClient"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Endpoint"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Frame.decoder",
+                        "newHash": "#ceh76ld0pulo6tq4uahh0cjprpp8m083sqpfm6hvo7rg98u3t64h6vjlf6f66j5tgm8vtgc2mhhc087bark0fhrkntkc4b6j3vf2c3o",
+                        "newTag": "Plain",
+                        "oldHash": "#u5vl6edg2fu367meuhmjls34np28uo0i2cccck4amahqqnolee5j123unbquid590v7subl7odj7ramq72r6mnlq0i5ocbgqa5qaqs8",
+                        "oldTag": "Plain",
+                        "shortName": "decoder"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Frame.encoder",
+                        "newHash": "#erbf3rq0hk8i8ijcl176l5olpkfo8jmjmdc7ovj75p5tiuol7t6hhm51ag0equjbptbr8jr3ijdr3h0avos7gv2j0qrcb1v0979v9ao",
+                        "newTag": "Plain",
+                        "oldHash": "#ivjv9otggu5ltllda8bhnasc50m9ddp4bfhqsd2diep9lnbm5n2tjqe85ejktno3kll38onjp2psmndqkh94gub4jhmq6lg94i4gdvo",
+                        "oldTag": "Plain",
+                        "shortName": "encoder"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.decoder.decodeCloseReason",
+                              "newHash": "#vpi1m3veqbpkqv1kohsaa93t49bi402h4cu4sig9ulf76eu0ddfqtb5a71kmfgbc29b3umo5ko6rnl584pst3in43qigs2rm7tsu5bo",
+                              "newTag": "Plain",
+                              "oldHash": "#1b1iqvaiqbv230iiv8f1o5dq9sn6j4p0abk6hrtj3t96f4b7g2al0itmecetq83hg5nm96n0ih2irmi95gjle3ua0nvjpjo2n35hh9o",
+                              "oldTag": "Plain",
+                              "shortName": "decodeCloseReason"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.decoder.maskOrUnmask",
+                              "newHash": "#01v56i4hvcsthoct3400md1mjml0ecuplf0bkh2nt16ke2ne5hqhspd9g615rf2t7fearco480lvqevn50ism1fr6ums7u9m89p6rb0",
+                              "newTag": "Plain",
+                              "oldHash": "#um4ivd05uj910k7rqhbfu2n3j87gnp2qb3u7vrsjqbg0que72jocksfgb1ukr2fncpl3kmd3saihak6vbj5c77ova27dsclsd10ee4o",
+                              "oldTag": "Plain",
+                              "shortName": "maskOrUnmask"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": [
+                        {
+                          "contents": {
+                            "changes": [
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.fragmentedContinuation",
+                                    "newHash": "#omp8fmp5ub3vgl54p90bckgif3o37ok597gqobvd2mn7uc89pu6j741b0c9htd5m5r81a7l4ajfsv85rr29kikrm62vn5mfsknkscmg",
+                                    "newTag": "Test",
+                                    "oldHash": "#q9vlnorv3io4tueffg4bvtcensrjgh2gempege86uigjpffis4o1japotpd5nk1uh3sgjtagimgtb71moc5a22dt5293nivgc39h5cg",
+                                    "oldTag": "Test",
+                                    "shortName": "fragmentedContinuation"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.fragmentedTextUnmasked",
+                                    "newHash": "#eos45knec7rltn56lv46fvmt8hul4ucm2nf24vjcr6gsgfs4f94h83hp7sa8cgqsvjb46fi30t8f4i08ih75pbs8d899u8kvg2ffido",
+                                    "newTag": "Test",
+                                    "oldHash": "#jcafg4k5bkmsr3j10eij0kg0nkkgmupuj7hsse5r5jb5emlmpcf26j84thohn3vr4dlpnnvus58ci5sjq1qk13gmn068krts82qj1to",
+                                    "oldTag": "Test",
+                                    "shortName": "fragmentedTextUnmasked"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.ping",
+                                    "newHash": "#iebcrdso5l0oi1doegdsicekdeaj1ru7kf88c2ieoj5oegc6hq672vlvceqon6en8dpilggjsle34os1r0pflfliksqaudrb7m06dj0",
+                                    "newTag": "Test",
+                                    "oldHash": "#i2eot6surnrjpigpt0ecsg21iq9lq5sk3e5c4up8jc9k7lgjtbop7e1lhsftbgj9341t9ier5me5m947g62q7gbgj3vk95tf4604ei8",
+                                    "oldTag": "Test",
+                                    "shortName": "ping"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.pong",
+                                    "newHash": "#uqfi04ea3879ukviudluirp83fdkfilr9mhsec3b98v9sckuvnup9kqkooiq4t5rgplj75hcj4pkkeos820uqm4cei9umcshk9noqsg",
+                                    "newTag": "Test",
+                                    "oldHash": "#nhlkvqsr47jpos5h2ue9v90mvmn18vibid7t5t1h90nov4gs47l56a7ed4umo9o5kuef52a0okbvhsu7p8oonsk8rk8vu5sb7m6455o",
+                                    "oldTag": "Test",
+                                    "shortName": "pong"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.singleTextMasked",
+                                    "newHash": "#rfp54uuq0pl42j4vqbjmmr27matvgl2e9n3163pm4p6es6jeacc2ddnkdlevvgic18999tufjbqtm5stp6epiookribmjhjlm71iha0",
+                                    "newTag": "Test",
+                                    "oldHash": "#1bgkcag39lb4jmcrqsibhu4f5apv6d193lffhh1u8o0iu3l9cut7u56mu7gcd777ng4p0gonucg6ud6mpt9pd59mvpan6cf621tf3o0",
+                                    "oldTag": "Test",
+                                    "shortName": "singleTextMasked"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              },
+                              {
+                                "contents": {
+                                  "contents": {
+                                    "fullName": "websockets.Frame.decoder.tests.singleTextUnmasked",
+                                    "newHash": "#1ve2afpburnrkv761h732d6gfbng5lq6u179i7don4rbqcn1hk3gcuvoukmotq3cl5o03u1u54kj9gs9fu5cqk3ubkbe0n71hhmrbig",
+                                    "newTag": "Test",
+                                    "oldHash": "#l1h671gsiuitdb0m67ukn5rkgqrft3mud96ll6v114ji8slr0miqna4d3sfnn0bvmse62vnkp9pgphbhjesuopnmfug56ktl3aamedg",
+                                    "oldTag": "Test",
+                                    "shortName": "singleTextUnmasked"
+                                  },
+                                  "tag": "Updated"
+                                },
+                                "tag": "Test"
+                              }
+                            ],
+                            "children": []
+                          },
+                          "path": "tests"
+                        }
+                      ]
+                    },
+                    "path": "decoder"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.fragmentedContinuation",
+                              "newHash": "#akeoocc14u449rrhsfofpsrg26isg83mcp339a892k89jc17g7n423ldgoqts1i93pi39dlo7c0nbtfluajl0qhv0l7dii7jsnkneqo",
+                              "newTag": "Test",
+                              "oldHash": "#b99ba9qj4c6du15asmahn2nprm6iusn4ftra5b4i381cq0vphur3n792fvhcotctj9vhpnr1dgtuq5ln0i24dkihdfg4fs6r4fnh2n8",
+                              "oldTag": "Test",
+                              "shortName": "fragmentedContinuation"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.fragmentedTextUnasked",
+                              "newHash": "#jr3325abq6idsrkb9kblki5jkunbpifc32jffjsd987mpcl4ib5josf87ad9gnl7sv0f6gdikb9qlmtgntgidiva66mrd5o0c0c1358",
+                              "newTag": "Test",
+                              "oldHash": "#oc9uc55385ocr1l393c5oj7ppi21mie2esvgh49r16o4drl1v9j66nu9am55p50h155mn4s3imbco320s2d7bojuj8qf7elgofft59o",
+                              "oldTag": "Test",
+                              "shortName": "fragmentedTextUnasked"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.ping",
+                              "newHash": "#9omqafd3ibbsbba9k4bp6oucgeeasvkpsrged0fije74853343t7eaf7kc3mdretp5v5tbd2c0ahmsnsf23eb5ukq6r72sdf5r7p4lg",
+                              "newTag": "Test",
+                              "oldHash": "#0vi2g4dfjj5k5gdceb3sv0l56mvpvgt0rr11m97vv96heicjkmk7vgbq2niiejip6r09c3biej5e82keb73a90de4n2ugh398n5jdjg",
+                              "oldTag": "Test",
+                              "shortName": "ping"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.pong",
+                              "newHash": "#3cla13m8mrb39nl9lgdsp7mftbkca6f7o5smjc3uukjpbrsvlkbfbpvuhn03ekkc01ncm8pebrn06h698jgmnh34eg9gi214tu38jk0",
+                              "newTag": "Test",
+                              "oldHash": "#jtbv2o4lvj23tta7abgke04h61dapmvuqb2flgt3idq6h3l1grm1dd6qgu4ksrt4afr4pflhvhovuffgd4i0h9svbf4man2mcrv7k28",
+                              "oldTag": "Test",
+                              "shortName": "pong"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.singleTextMasked",
+                              "newHash": "#gntk26f5sjpicd61d79hk8pcfccruec6friql8do85dtckhrk1ri92sie3jhrirvt6it4a81ft56nbhho75iq5v91b7s9o7gvg5nsdo",
+                              "newTag": "Test",
+                              "oldHash": "#dv0p4ufcq5kfr1vhcuvg7u12r13g0uv2tqj3g1cvc3r30jejjtc6k6f2b4d3ukeatkiuisrgroai4hhlgijqptas7m4na9dbsgnppmg",
+                              "oldTag": "Test",
+                              "shortName": "singleTextMasked"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.Frame.encoder.tests.singleTextUnmasked",
+                              "newHash": "#dtiimd9utnpr99d3thaiuntrfbbv1ujlont9roh4jbe3cujaueqadd43kj96jvdmnmcdl4rs1h2l42ea0tb9q7gn6lm8hkr7mnqufo0",
+                              "newTag": "Test",
+                              "oldHash": "#ibd4o214bf2nq66hccftllfr9ib40dk5ipoulrd729me3bji8u3d71dead6cn6bmrq6ia44ft6qv76fa7ht00itie4dncaa878kto40",
+                              "oldTag": "Test",
+                              "shortName": "singleTextUnmasked"
+                            },
+                            "tag": "Updated"
+                          },
+                          "tag": "Test"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "encoder.tests"
+                  }
+                ]
+              },
+              "path": "Frame"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.Message.toFrames",
+                        "hash": "#r44mogn3j87p4onl00v8jhkap66v4jfd113lqflje55lrcv3qlk7n9slbmruo1j3gsuftv3lugv7354u31peu0u758nop80klm6gus8",
+                        "shortName": "toFrames"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "Message"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.WebSocket",
+                        "newHash": "#t9020mk5a248pupm14ecg627cj4d2gvp8oh4d5p00umcseek5be2jjfnc4qfrfvv49q0oqi37sak7nguqghm0rdp4ge21lm3ra9kvlg#0",
+                        "newTag": "DataConstructor",
+                        "oldHash": "#dj7qt4pe48lsucv48dvnghpnmd0qsp48mbv1p4d3ht6ggga6qs1rtt8u67g1ovcdhk5kphbc1qp87tidvcjcd61t77og4mmu09qugb0#0",
+                        "oldTag": "DataConstructor",
+                        "shortName": "WebSocket"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "DataConstructor"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.close",
+                        "newHash": "#rs70kuq2lsl60ajldgcnj4akk79rr4aiqj59lt87j80jg2drv3smrn07plf7312amijgt5dbishqokigna43llfbv73grqhbhmrkta0",
+                        "newTag": "Plain",
+                        "oldHash": "#8mll240arktoujc4ee5j728s84cj0ufa956n74hjsbtd920upokc51qr0iabsbom0eib4qu49s3ngr5028o399nj9boo1lf69b7qabg",
+                        "oldTag": "Plain",
+                        "shortName": "close"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.closer",
+                        "hash": "#5ljdbh5e2kctc4nijaioou13bls5rkk3m08remorb6384ptroicuq5gnko7n8s6ojmnrdi77hm9pj4pammd9mtb158tii6icpb4j5ng",
+                        "shortName": "closer"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.doc",
+                        "newHash": "#m0evd7e0u9ovi49s1h6mk1ii1523favh98o2ppvnra75gosg5ums60tmshkh9pl5t960cc44vocjeil8uh9a91ec2ssnfa5jl6l6kgo",
+                        "newTag": "Doc",
+                        "oldHash": "#u692iqj0pi0mc0lva7goisdkrka1pk9c2rvtp8eq3vv711c6or90gtik6ldo15rumm4u19afvob5o3agh9oh8geer7nqbngj86u1mk8",
+                        "oldTag": "Doc",
+                        "shortName": "doc"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Doc"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.receive",
+                        "newHash": "#oo4ovdll4noins8nhoj1m6vkppka7av3g5mvmj8mnodclh11gmj418sqhsde3g6cidghdfio2tq7fmadjnb9235as9h7burnqniihag",
+                        "newTag": "Plain",
+                        "oldHash": "#i7krlpm7q1vtde3i4m17q6a497en19r33df2dcvr4jt41n9j37r4gjjjg89pkqmv92ket8v9n47153v2t046vs20p3f0c6phbj3p78o",
+                        "oldTag": "Plain",
+                        "shortName": "receive"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.receiver",
+                        "hash": "#7kd83dovr1i2bedf3dg0kc0ht90p7atb7b186ul53188jqdd8k5btsl5scaoccb22no10mtte8euik9sm72ri78lts2c49ekn1qclj8",
+                        "shortName": "receiver"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.send",
+                        "newHash": "#1od7la008grqkgrbj5pakkfqgdljseql8avgpibs0bnj50m88v920rgp1astk7tjc36j3d8lrl5u4ij3jl1ueva4ink2ing8uohmke0",
+                        "newTag": "Plain",
+                        "oldHash": "#al7job8go0m7et5ic2d97lmrpv492nvlpif5l1keu610fjpp9mi82kasu80c9f2umf2rlm9lcbb4eeb2gag5k8geo7209pgn7fuflo0",
+                        "oldTag": "Plain",
+                        "shortName": "send"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  },
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.WebSocket.threadSafeWebSocket",
+                        "hash": "#lk7p93t4jq8mtkpt40a7g011eu6t3h8r5s6911fc7j90pmu0sr21t5hvfd9i8md59gr9gkdn4d9gia7lvne0hjtv46ofjc2qrsi8vpg",
+                        "shortName": "threadSafeWebSocket"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": [
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.closer.modify",
+                              "hash": "#5fu9hc6pgl2nv2bc9g39pp38jdanqph4q77ehucvad4bmpjvo8b245odndjr7cb3q1kr1hfo4ujkpgd669ht3f3he3n9ksoogqjr7tg",
+                              "shortName": "modify"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.closer.set",
+                              "hash": "#v4f2qb9g4bn2v814bilpvkipenkpgjk9nq07653l8v5f535ha9me0ljblnlhln37rjmampigtl4fnsblde7igepfgubotflkntqjd6o",
+                              "shortName": "set"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "closer"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.receiver.modify",
+                              "hash": "#url5oo11t05b3skurhvbpe1vqqrpojkiii3q75t76vtv50mgd0f0ufef07ph85ih2s64o0411t7f6mo5lnirft9dopa4na6u9khn650",
+                              "shortName": "modify"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.receiver.set",
+                              "hash": "#472qffphebripgbbkn9s4cnqtu7o05p3l92tj41k2ctg2nti8mfi5a9d44gokgujro5v8tg8nbd841tb0sfhf6a9ft7o3r1la1i8t60",
+                              "shortName": "set"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "receiver"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.send.modify",
+                              "hash": "#dh2rt03jglin80qks4866bbjupnn6ck934f35l4f0s5aadso79d1ng4j4h8q02vdimtnc2is49plbmh2829g49fvltf3u1i6qi9qpm0",
+                              "shortName": "modify"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        },
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.send.set",
+                              "hash": "#8k2t059ois188321scer3rooiafkclpa4q8u404n24bc02kkqqdf9dhi20vg0iptsr4prpj5s2ffl24soh1kn8l4034u5a3q0stic3g",
+                              "shortName": "set"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Plain"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "send"
+                  },
+                  {
+                    "contents": {
+                      "changes": [
+                        {
+                          "contents": {
+                            "contents": {
+                              "fullName": "websockets.WebSocket.threadSafeWebSocket.doc",
+                              "hash": "#3ml3egs87jitmht3403aorfp2n63rnfgdml0n8hff9m4igb1beb6ht4c284m8lpoijb04472um0k4ikprj5lais6dif4guu4lqdik4g",
+                              "shortName": "doc"
+                            },
+                            "tag": "Added"
+                          },
+                          "tag": "Doc"
+                        }
+                      ],
+                      "children": []
+                    },
+                    "path": "threadSafeWebSocket"
+                  }
+                ]
+              },
+              "path": "WebSocket"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "hash": "#gjmu037nuvb89r37cum2tso910lha2kihf1n0jacermsa4cd8qq528tut87v1sm5j990a89popn1ff0oc669sc20tsobmnmvkqmnn7o",
+                        "newFullName": "websockets.errors.WebSocketClosed",
+                        "newShortName": "WebSocketClosed",
+                        "oldNames": [
+                          "server.up.websocket_1_0_0.errors.WebSocketClosed"
+                        ]
+                      },
+                      "tag": "RenamedFrom"
+                    },
+                    "tag": "Data"
+                  }
+                ],
+                "children": []
+              },
+              "path": "errors"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.internal.readFrame",
+                        "newHash": "#mpfjp1uo7re46k6povd7tf118ssgb1s5l3m6gfmh4q3h3kcvufegn6b42sf27rs7ntl5008ude0juljug41ilspop93jome19sc19p0",
+                        "newTag": "Plain",
+                        "oldHash": "#hs6e5e0fjuc4f8574ksdi209ga9ikv01eeups8a1qj11ie2obker7hjnj0nhdu7klpjpn6rij109j6r83jv6hsplb5bfupufuclnubo",
+                        "oldTag": "Plain",
+                        "shortName": "readFrame"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "internal"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.protocol.receive",
+                        "hash": "#1pbdmtcglnlhme9i7a5kraf7b6jjr8tqpjfkm48n53fk625dovumsjjo71af8ltq03dr63i33dkpp55vd6bnitchgqsouobo38urbng",
+                        "shortName": "receive"
+                      },
+                      "tag": "Added"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "protocol"
+            },
+            {
+              "contents": {
+                "changes": [
+                  {
+                    "contents": {
+                      "contents": {
+                        "fullName": "websockets.util.handshakeRequestDecoder",
+                        "newHash": "#k4p9p0nkgiec8t8mchms4ogmf6443cqs39feef286qsk18ll41bm1dldrron0etsrhqr5a51e9gnj8u3ecnllesr39vdonhagjciu98",
+                        "newTag": "Plain",
+                        "oldHash": "#9m7od4c77gir00dgmd66fpj1vokho8bm97ufmp10no703t8qqu0e9g9qkd23appcuromus05af5v5l9lp72oqa0n31h7ptavcdjpq8o",
+                        "oldTag": "Plain",
+                        "shortName": "handshakeRequestDecoder"
+                      },
+                      "tag": "Updated"
+                    },
+                    "tag": "Plain"
+                  }
+                ],
+                "children": []
+              },
+              "path": "util"
+            }
+          ]
+        },
+        "path": "websockets"
+      }
+    ]
+  },
+  "newRef": "@ceedubs/websocket-race-condition-2",
+  "newRefHash": "#uiaioc0ai2i90vnka5aekeikgl2h1s7fs6hcdrsvbj3tac6v1ck1lirv8t98e8av3hnt2dun79ejrb68ijirjpicqvg3mck34jftajo",
+  "oldRef": "main",
+  "oldRefHash": "#6k3e3cl8h3uvtqk8q4i9ckgbdvkqf6dkglmlqfiupfrchjut1ftbtlqeg882ovg6t9m4igr2639ghsf3ingqagiilmdc0fqmupe5jpg",
+  "project": "@unison/http"
+}

@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const postcssPresetEnv = require("postcss-preset-env");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
+const branchDiffJson = require("./api-stubs/branch-diff.json");
+const definitionDiffJson = require("./api-stubs/definition-diff.json");
+const definitionsByNameJson = require("./api-stubs/definitions-by-name.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -193,6 +196,17 @@ module.exports = {
         target: API_URL,
         pathRewrite: { "^/api": "" },
         logLevel: "debug",
+        bypass: (req, res, _proxyOptions) => {
+          if (req.url.endsWith("/diff")) {
+            res.send(branchDiffJson);
+          }
+          if (req.url.includes("/diff/terms")) {
+            res.send(definitionDiffJson);
+          }
+          if (req.url.includes("/definitions/by-name")) {
+            res.send(definitionsByNameJson);
+          }
+        },
       },
       "/website": {
         target: WEBSITE_URL,

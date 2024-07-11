@@ -1,0 +1,878 @@
+{
+  "missingDefinitions": [],
+  "termDefinitions": {
+    "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g": {
+      "bestTermName": "List.map",
+      "defnTermTag": "Plain",
+      "signature": [
+        {
+          "annotation": null,
+          "segment": "("
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "a"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "TypeOperator"
+          },
+          "segment": "->"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "{"
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "𝕖"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "}"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "b"
+        },
+        {
+          "annotation": null,
+          "segment": ")"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "TypeOperator"
+          },
+          "segment": "->"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "DelimiterChar"
+          },
+          "segment": "["
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "a"
+        },
+        {
+          "annotation": {
+            "tag": "DelimiterChar"
+          },
+          "segment": "]"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "TypeOperator"
+          },
+          "segment": "->"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "{"
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "𝕖"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "}"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "DelimiterChar"
+          },
+          "segment": "["
+        },
+        {
+          "annotation": {
+            "tag": "Var"
+          },
+          "segment": "b"
+        },
+        {
+          "annotation": {
+            "tag": "DelimiterChar"
+          },
+          "segment": "]"
+        }
+      ],
+      "termDefinition": {
+        "contents": [
+          {
+            "annotation": {
+              "contents": "data.List.map",
+              "tag": "HashQualifier"
+            },
+            "segment": "data.List.map"
+          },
+          {
+            "annotation": {
+              "tag": "TypeAscriptionColon"
+            },
+            "segment": " :"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": null,
+            "segment": "("
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "a"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "TypeOperator"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "{"
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "𝕖"
+          },
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "}"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "b"
+          },
+          {
+            "annotation": null,
+            "segment": ")"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "TypeOperator"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "["
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "a"
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "]"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "TypeOperator"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "{"
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "𝕖"
+          },
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "}"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "["
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "b"
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "]"
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": {
+              "contents": "data.List.map",
+              "tag": "HashQualifier"
+            },
+            "segment": "data.List.map"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "f"
+          },
+          {
+            "annotation": {
+              "tag": "BindingEquals"
+            },
+            "segment": " ="
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": {
+              "tag": "UseKeyword"
+            },
+            "segment": "use "
+          },
+          {
+            "annotation": {
+              "tag": "UsePrefix"
+            },
+            "segment": "List"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "UseSuffix"
+            },
+            "segment": ":+"
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": {
+              "contents": "go",
+              "tag": "HashQualifier"
+            },
+            "segment": "go"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "acc"
+          },
+          {
+            "annotation": {
+              "tag": "BindingEquals"
+            },
+            "segment": " ="
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "ControlKeyword"
+            },
+            "segment": "cases"
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "a"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "contents": "Cons",
+              "tag": "Op"
+            },
+            "segment": "+:"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "as"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "ControlKeyword"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "go"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Parenthesis"
+            },
+            "segment": "("
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "acc"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "contents": "##List.snoc",
+              "tag": "TermReference"
+            },
+            "segment": ":+"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "f"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "a"
+          },
+          {
+            "annotation": {
+              "tag": "Parenthesis"
+            },
+            "segment": ")"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "as"
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "["
+          },
+          {
+            "annotation": {
+              "tag": "DelimiterChar"
+            },
+            "segment": "]"
+          },
+          {
+            "annotation": null,
+            "segment": "      "
+          },
+          {
+            "annotation": {
+              "tag": "ControlKeyword"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "acc"
+          },
+          {
+            "annotation": null,
+            "segment": "\n"
+          },
+          {
+            "annotation": null,
+            "segment": "  "
+          },
+          {
+            "annotation": {
+              "tag": "Var"
+            },
+            "segment": "go"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "contents": "##Sequence",
+              "tag": "TypeReference"
+            },
+            "segment": "["
+          },
+          {
+            "annotation": {
+              "contents": "##Sequence",
+              "tag": "TypeReference"
+            },
+            "segment": "]"
+          }
+        ],
+        "tag": "UserObject"
+      },
+      "termDocs": [
+        [
+          "List.map.doc",
+          "#hdch66tb9a6fs1s1mfqt4kjub3979fqct0h8qlvqvlisjt2l2jqdf8ms99b8aj4a42a0r3ov1bjf03taqll0mps88e5qosd0hgi3smg",
+          {
+            "contents": [
+              {
+                "contents": [
+                  {
+                    "contents": "Apply",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "a",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "function",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "to",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "each",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "element",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "of",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "a",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": {
+                      "contents": [
+                        {
+                          "contents": {
+                            "contents": [
+                              {
+                                "annotation": {
+                                  "contents": "##Sequence",
+                                  "tag": "TypeReference"
+                                },
+                                "segment": "List"
+                              }
+                            ],
+                            "tag": "Link"
+                          },
+                          "tag": "Special"
+                        },
+                        {
+                          "contents": ".",
+                          "tag": "Word"
+                        }
+                      ],
+                      "tag": "Join"
+                    },
+                    "tag": "Group"
+                  }
+                ],
+                "tag": "Paragraph"
+              },
+              {
+                "contents": [
+                  {
+                    "contents": [
+                      {
+                        "contents": "Examples",
+                        "tag": "Word"
+                      }
+                    ],
+                    "tag": "Paragraph"
+                  },
+                  [
+                    {
+                      "contents": {
+                        "contents": [
+                          [
+                            {
+                              "annotation": {
+                                "contents": "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g",
+                                "tag": "TermReference"
+                              },
+                              "segment": "List.map"
+                            },
+                            {
+                              "annotation": null,
+                              "segment": " "
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Nat.increment",
+                                "tag": "TermReference"
+                              },
+                              "segment": "Nat.increment"
+                            },
+                            {
+                              "annotation": null,
+                              "segment": " "
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "["
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "1"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": ", "
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "2"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": ", "
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "3"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "]"
+                            }
+                          ],
+                          [
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "["
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "2"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": ", "
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "3"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": ", "
+                            },
+                            {
+                              "annotation": {
+                                "tag": "NumericLiteral"
+                              },
+                              "segment": "4"
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "]"
+                            }
+                          ]
+                        ],
+                        "tag": "Eval"
+                      },
+                      "tag": "Special"
+                    },
+                    {
+                      "contents": {
+                        "contents": [
+                          [
+                            {
+                              "annotation": {
+                                "contents": "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g",
+                                "tag": "TermReference"
+                              },
+                              "segment": "List.map"
+                            },
+                            {
+                              "annotation": null,
+                              "segment": " "
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Nat.increment",
+                                "tag": "TermReference"
+                              },
+                              "segment": "Nat.increment"
+                            },
+                            {
+                              "annotation": null,
+                              "segment": " "
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "["
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "]"
+                            }
+                          ],
+                          [
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "["
+                            },
+                            {
+                              "annotation": {
+                                "contents": "##Sequence",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "]"
+                            }
+                          ]
+                        ],
+                        "tag": "Eval"
+                      },
+                      "tag": "Special"
+                    }
+                  ]
+                ],
+                "tag": "Section"
+              }
+            ],
+            "tag": "UntitledSection"
+          }
+        ]
+      ],
+      "termNames": ["data.List.map"]
+    }
+  },
+  "typeDefinitions": {}
+}

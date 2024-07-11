@@ -11,23 +11,27 @@ import List.Extra as ListE
 import List.Nonempty as NEL
 
 
-type DiffLineItem
-    = Added { hash : Hash, shortName : FQN, fullName : FQN }
-    | Removed { hash : Hash, shortName : FQN, fullName : FQN }
-    | Updated { oldHash : Hash, newHash : Hash, shortName : FQN, fullName : FQN }
-    | RenamedFrom { hash : Hash, oldNames : NEL.Nonempty FQN, newShortName : FQN, newFullName : FQN }
-    | Aliased { hash : Hash, aliasShortName : FQN, aliasFullName : FQN, otherNames : NEL.Nonempty FQN }
+type alias NamespaceLineItem =
+    { name : FQN, lines : List ChangeLine }
 
 
-type DiffLine
-    = TermDiffLine DiffLineItem
-    | TypeDiffLine DiffLineItem
-    | AbilityDiffLine DiffLineItem
-    | DocDiffLine DiffLineItem
-    | TestDiffLine DiffLineItem
-    | DataConstructorDiffLine DiffLineItem
-    | AbilityConstructorDiffLine DiffLineItem
-    | NamespaceDiffLine { name : FQN, lines : List DiffLine }
+type DefinitionType
+    = Term
+    | Type
+    | Ability
+    | Doc
+    | Test
+    | DataConstructor
+    | AbilityConstructor
+
+
+type ChangeLine
+    = Added DefinitionType { hash : Hash, shortName : FQN, fullName : FQN }
+    | Removed DefinitionType { hash : Hash, shortName : FQN, fullName : FQN }
+    | Updated DefinitionType { oldHash : Hash, newHash : Hash, shortName : FQN, fullName : FQN }
+    | RenamedFrom DefinitionType { hash : Hash, oldNames : NEL.Nonempty FQN, newShortName : FQN, newFullName : FQN }
+    | Aliased DefinitionType { hash : Hash, aliasShortName : FQN, aliasFullName : FQN, otherNames : NEL.Nonempty FQN }
+    | Namespace NamespaceLineItem
 
 
 type alias DiffBranchRef =
@@ -35,7 +39,7 @@ type alias DiffBranchRef =
 
 
 type alias BranchDiff =
-    { lines : List DiffLine
+    { lines : List ChangeLine
     , oldBranch : DiffBranchRef
     , newBranch : DiffBranchRef
     }
@@ -45,12 +49,148 @@ type alias BranchDiff =
 -- HELPERS
 
 
-summary : List DiffLine -> { numChanges : Int, numNamespaceChanges : Int }
-summary diffLines =
+isDefinitionTypeATerm : DefinitionType -> Bool
+isDefinitionTypeATerm dt =
+    case dt of
+        Term ->
+            True
+
+        Doc ->
+            True
+
+        Test ->
+            True
+
+        _ ->
+            False
+
+
+isDefinitionTypeAType : DefinitionType -> Bool
+isDefinitionTypeAType dt =
+    not (isDefinitionTypeATerm dt)
+
+
+changeLineDefinitionType : ChangeLine -> Maybe DefinitionType
+changeLineDefinitionType changeLine =
+    case changeLine of
+        Added dt _ ->
+            Just dt
+
+        Removed dt _ ->
+            Just dt
+
+        Updated dt _ ->
+            Just dt
+
+        RenamedFrom dt _ ->
+            Just dt
+
+        Aliased dt _ ->
+            Just dt
+
+        Namespace _ ->
+            Nothing
+
+
+changeLineFullName : ChangeLine -> FQN
+changeLineFullName changeLine =
+    case changeLine of
+        Added _ { fullName } ->
+            fullName
+
+        Removed _ { fullName } ->
+            fullName
+
+        Updated _ { fullName } ->
+            fullName
+
+        RenamedFrom _ { newFullName } ->
+            newFullName
+
+        Aliased _ { aliasFullName } ->
+            aliasFullName
+
+        Namespace { name } ->
+            name
+
+
+changeLineNameToString : ChangeLine -> String
+changeLineNameToString line =
+    case line of
+        Added _ _ ->
+            "Added"
+
+        Removed _ _ ->
+            "Removed"
+
+        Updated _ _ ->
+            "Updated"
+
+        RenamedFrom _ _ ->
+            "Renamed"
+
+        Aliased _ _ ->
+            "Aliased"
+
+        Namespace _ ->
+            "Namespace"
+
+
+changeLineToKey : ChangeLine -> String
+changeLineToKey line =
     let
-        f diffLine acc =
-            case diffLine of
-                NamespaceDiffLine { lines } ->
+        type_ dt =
+            case dt of
+                Term ->
+                    "term"
+
+                Type ->
+                    "type"
+
+                Doc ->
+                    "doc"
+
+                Ability ->
+                    "ability"
+
+                AbilityConstructor ->
+                    "ability-constructor"
+
+                DataConstructor ->
+                    "data-constructor"
+
+                Test ->
+                    "test"
+
+        key_ =
+            case line of
+                Added dt { fullName } ->
+                    [ "added", type_ dt, FQN.toString fullName ]
+
+                Removed dt { fullName } ->
+                    [ "removed", type_ dt, FQN.toString fullName ]
+
+                Updated dt { fullName } ->
+                    [ "updated", type_ dt, FQN.toString fullName ]
+
+                RenamedFrom dt { newFullName } ->
+                    [ "renamed", type_ dt, FQN.toString newFullName ]
+
+                Aliased dt { aliasFullName } ->
+                    [ "aliased", type_ dt, FQN.toString aliasFullName ]
+
+                Namespace { name } ->
+                    [ "namespace", FQN.toString name ]
+    in
+    String.join "_" key_
+
+
+summary : List ChangeLine -> { numChanges : Int, numNamespaceChanges : Int }
+summary changeLines =
+    let
+        f changeLine acc =
+            case changeLine of
+                Namespace { lines } ->
                     let
                         nested =
                             summary lines
@@ -62,82 +202,59 @@ summary diffLines =
                 _ ->
                     { acc | numChanges = acc.numChanges + 1 }
     in
-    List.foldl f { numChanges = 0, numNamespaceChanges = 0 } diffLines
+    List.foldl f { numChanges = 0, numNamespaceChanges = 0 } changeLines
 
 
-isNamespaceDiffLine : DiffLine -> Bool
-isNamespaceDiffLine diffLine =
-    case diffLine of
-        NamespaceDiffLine _ ->
+isNamespaceChangeLine : ChangeLine -> Bool
+isNamespaceChangeLine changeLine =
+    case changeLine of
+        Namespace _ ->
             True
 
         _ ->
             False
 
 
-condense : List DiffLine -> List DiffLine
-condense diffLines =
+condense : List ChangeLine -> List ChangeLine
+condense changeLines =
     let
-        mergeNames ns lineItem =
-            case lineItem of
-                Added ({ shortName } as details) ->
-                    Added { details | shortName = FQN.append ns shortName }
-
-                Removed ({ shortName } as details) ->
-                    Removed { details | shortName = FQN.append ns shortName }
-
-                Updated ({ shortName } as details) ->
-                    Updated { details | shortName = FQN.append ns shortName }
-
-                RenamedFrom ({ newShortName } as details) ->
-                    RenamedFrom { details | newShortName = FQN.append ns newShortName }
-
-                Aliased ({ aliasShortName } as details) ->
-                    Aliased { details | aliasShortName = FQN.append ns aliasShortName }
-
         condense_ ns l =
             case l of
-                TermDiffLine item ->
-                    TermDiffLine (mergeNames ns item)
+                Added type_ ({ shortName } as details) ->
+                    Added type_ { details | shortName = FQN.append ns shortName }
 
-                TypeDiffLine item ->
-                    TypeDiffLine (mergeNames ns item)
+                Removed type_ ({ shortName } as details) ->
+                    Removed type_ { details | shortName = FQN.append ns shortName }
 
-                AbilityDiffLine item ->
-                    AbilityDiffLine (mergeNames ns item)
+                Updated type_ ({ shortName } as details) ->
+                    Updated type_ { details | shortName = FQN.append ns shortName }
 
-                DocDiffLine item ->
-                    DocDiffLine (mergeNames ns item)
+                RenamedFrom type_ ({ newShortName } as details) ->
+                    RenamedFrom type_ { details | newShortName = FQN.append ns newShortName }
 
-                TestDiffLine item ->
-                    TestDiffLine (mergeNames ns item)
+                Aliased type_ ({ aliasShortName } as details) ->
+                    Aliased type_ { details | aliasShortName = FQN.append ns aliasShortName }
 
-                DataConstructorDiffLine item ->
-                    DataConstructorDiffLine (mergeNames ns item)
-
-                AbilityConstructorDiffLine item ->
-                    AbilityConstructorDiffLine (mergeNames ns item)
-
-                NamespaceDiffLine { name, lines } ->
-                    NamespaceDiffLine
+                Namespace { name, lines } ->
+                    Namespace
                         { name = FQN.append ns name
                         , lines = condense lines
                         }
 
-        f diffLine acc =
-            case diffLine of
-                NamespaceDiffLine { name, lines } ->
+        f changeLine acc =
+            case changeLine of
+                Namespace { name, lines } ->
                     case lines of
                         [ line ] ->
                             let
                                 condensedLine =
                                     condense_ name line
                             in
-                            if isNamespaceDiffLine condensedLine then
+                            if isNamespaceChangeLine condensedLine then
                                 acc ++ [ condensedLine ]
 
                             else
-                                case ListE.splitWhen isNamespaceDiffLine acc of
+                                case ListE.splitWhen isNamespaceChangeLine acc of
                                     Just ( definitions, namespaces ) ->
                                         definitions ++ (condensedLine :: namespaces)
 
@@ -145,40 +262,35 @@ condense diffLines =
                                         acc ++ [ condensedLine ]
 
                         _ ->
-                            acc
-                                ++ [ NamespaceDiffLine
-                                        { name = name
-                                        , lines = condense lines
-                                        }
-                                   ]
+                            acc ++ [ Namespace { name = name, lines = condense lines } ]
 
                 _ ->
-                    acc ++ [ diffLine ]
+                    acc ++ [ changeLine ]
     in
-    List.foldl f [] diffLines
+    List.foldl f [] changeLines
 
 
 
 -- DECODE
 
 
-decodeDiffLineItem : Decoder DiffLineItem
-decodeDiffLineItem =
+decodeChangeLineItem : DefinitionType -> Decoder ChangeLine
+decodeChangeLineItem type_ =
     let
         added_ hash shortName fullName =
-            Added { hash = hash, shortName = shortName, fullName = fullName }
+            Added type_ { hash = hash, shortName = shortName, fullName = fullName }
 
         removed_ hash shortName fullName =
-            Removed { hash = hash, shortName = shortName, fullName = fullName }
+            Removed type_ { hash = hash, shortName = shortName, fullName = fullName }
 
         updated_ oldHash newHash shortName fullName =
-            Updated { oldHash = oldHash, newHash = newHash, shortName = shortName, fullName = fullName }
+            Updated type_ { oldHash = oldHash, newHash = newHash, shortName = shortName, fullName = fullName }
 
         renamedFrom_ hash oldNames newShortName newFullName =
-            RenamedFrom { hash = hash, oldNames = oldNames, newShortName = newShortName, newFullName = newFullName }
+            RenamedFrom type_ { hash = hash, oldNames = oldNames, newShortName = newShortName, newFullName = newFullName }
 
         aliased_ hash aliasShortName aliasFullName otherNames =
-            Aliased { hash = hash, aliasShortName = aliasShortName, otherNames = otherNames, aliasFullName = aliasFullName }
+            Aliased type_ { hash = hash, aliasShortName = aliasShortName, otherNames = otherNames, aliasFullName = aliasFullName }
     in
     oneOf
         [ when decodeTag
@@ -222,29 +334,29 @@ decodeDiffLineItem =
         ]
 
 
-decodeDiffLine : Decoder DiffLine
-decodeDiffLine =
+decodeChangeLine : Decoder ChangeLine
+decodeChangeLine =
     oneOf
-        [ when decodeTag ((==) "Plain") (Decode.map TermDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "Data") (Decode.map TypeDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "Ability") (Decode.map AbilityDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "Doc") (Decode.map DocDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "Test") (Decode.map TestDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "DataConstructor") (Decode.map DataConstructorDiffLine (field "contents" decodeDiffLineItem))
-        , when decodeTag ((==) "AbilityConstructor") (Decode.map AbilityConstructorDiffLine (field "contents" decodeDiffLineItem))
+        [ when decodeTag ((==) "Plain") (field "contents" (decodeChangeLineItem Term))
+        , when decodeTag ((==) "Data") (field "contents" (decodeChangeLineItem Type))
+        , when decodeTag ((==) "Ability") (field "contents" (decodeChangeLineItem Ability))
+        , when decodeTag ((==) "Doc") (field "contents" (decodeChangeLineItem Doc))
+        , when decodeTag ((==) "Test") (field "contents" (decodeChangeLineItem Test))
+        , when decodeTag ((==) "DataConstructor") (field "contents" (decodeChangeLineItem DataConstructor))
+        , when decodeTag ((==) "AbilityConstructor") (field "contents" (decodeChangeLineItem AbilityConstructor))
         ]
 
 
-decodeNamespace : Decoder DiffLine
+decodeNamespace : Decoder ChangeLine
 decodeNamespace =
     let
         makeNamespace name changes children =
-            NamespaceDiffLine { name = name, lines = changes ++ children }
+            Namespace { name = name, lines = changes ++ children }
     in
     Decode.succeed
         makeNamespace
         |> requiredAt [ "path" ] FQN.decode
-        |> requiredAt [ "contents", "changes" ] (Decode.list decodeDiffLine)
+        |> requiredAt [ "contents", "changes" ] (Decode.list decodeChangeLine)
         |> requiredAt [ "contents", "children" ] (Decode.list (Decode.lazy (\_ -> decodeNamespace)))
 
 
@@ -262,5 +374,5 @@ decode =
         |> required "oldRefHash" Hash.decode
         |> required "newRef" BranchRef.decode
         |> required "newRefHash" Hash.decode
-        |> requiredAt [ "diff", "changes" ] (Decode.list decodeDiffLine)
+        |> requiredAt [ "diff", "changes" ] (Decode.list decodeChangeLine)
         |> requiredAt [ "diff", "children" ] (Decode.list decodeNamespace)

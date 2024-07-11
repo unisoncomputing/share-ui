@@ -12,7 +12,7 @@ import UI.ByAt as ByAt
 import UI.Card as Card
 import UI.DateTime as DateTime exposing (DateTime)
 import UI.Icon as Icon
-import UI.PageContent as PageContent exposing (PageContent)
+import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle exposing (PageTitle)
 import UI.Placeholder as Placeholder
@@ -252,7 +252,7 @@ viewPageContent :
     -> ProjectRef
     -> Contribution
     -> ProjectContributionSubPage
-    -> ( PageContent Msg, Maybe (Html Msg) )
+    -> ( PageLayout Msg, Maybe (Html Msg) )
 viewPageContent appContext projectRef contribution subPage =
     let
         pageTitle_ =
@@ -263,9 +263,15 @@ viewPageContent appContext projectRef contribution subPage =
             let
                 ( overviewPage, modal ) =
                     ProjectContributionOverviewPage.view appContext projectRef contribution overview
+
+                pageContent =
+                    PageContent.map ProjectContributionOverviewPageMsg overviewPage
+                        |> PageContent.withPageTitle pageTitle_
             in
-            ( PageContent.map ProjectContributionOverviewPageMsg overviewPage
-                |> PageContent.withPageTitle pageTitle_
+            ( PageLayout.centeredNarrowLayout
+                pageContent
+                PageFooter.pageFooter
+                |> PageLayout.withSubduedBackground
             , Maybe.map (Html.map ProjectContributionOverviewPageMsg) modal
             )
 
@@ -273,9 +279,15 @@ viewPageContent appContext projectRef contribution subPage =
             let
                 changesPage =
                     ProjectContributionChangesPage.view appContext projectRef contribution changes
+
+                pageContent =
+                    PageContent.map ProjectContributionChangesPageMsg changesPage
+                        |> PageContent.withPageTitle pageTitle_
             in
-            ( PageContent.map ProjectContributionChangesPageMsg changesPage
-                |> PageContent.withPageTitle pageTitle_
+            ( PageLayout.edgeToEdgeLayout
+                pageContent
+                PageFooter.pageFooter
+                |> PageLayout.withSubduedBackground
             , Nothing
             )
 
@@ -397,7 +409,7 @@ view appContext projectRef contribRef model =
 
         Success contribution ->
             let
-                ( pageContent, modal_ ) =
+                ( pageLayout, modal_ ) =
                     viewPageContent
                         appContext
                         projectRef
@@ -419,12 +431,7 @@ view appContext projectRef contribRef model =
                         _ ->
                             modal_
             in
-            ( PageLayout.centeredNarrowLayout
-                pageContent
-                PageFooter.pageFooter
-                |> PageLayout.withSubduedBackground
-            , modal
-            )
+            ( pageLayout, modal )
 
         Failure e ->
             ( viewErrorPage contribRef e, Nothing )
