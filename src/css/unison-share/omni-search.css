@@ -1,8 +1,9 @@
 .omni-search {
-  --search-width: 50rem;
+  --c-omni-search_width: 50rem;
+  --c-omni-search_match_background: var(--u-color_container);
 
   position: absolute;
-  top: calc(var(--page-hero-height) + 1.75rem);
+  top: calc(var(--page-hero-height) - 1.75rem);
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--layer-base);
@@ -12,11 +13,12 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  color: var(--u-color_text);
 
   .search-field {
     height: 3.5rem;
-    padding-right: 0.5rem;
-    width: var(--search-width);
+    padding-right: 1rem;
+    width: var(--c-omni-search_width);
     position: relative;
     display: flex;
     flex-direction: row;
@@ -29,6 +31,14 @@
         color: var(--u-color_icon_subdued);
         font-size: 1.5rem;
       }
+    }
+
+    & .button.subdued .icon {
+      color: var(--u-color_icon_subdued);
+    }
+
+    & .button.subdued:hover .icon {
+      color: var(--u-color_icon_emphasized);
     }
 
     & .tag {
@@ -50,6 +60,7 @@
         z-index: 2;
         font-weight: bold;
         font-size: 1.125rem;
+        font-variant-ligatures: none;
       }
 
       & input:focus {
@@ -63,6 +74,7 @@
         z-index: 1;
         font-weight: bold;
         font-size: 1.125rem;
+        display: none;
 
         .value {
           color: transparent;
@@ -76,37 +88,118 @@
   }
 
   .main-result-sheet {
+    position: relative;
     border-top: 1px solid var(--u-color_border_subdued);
-    width: var(--search-width);
-    background: var(-u-color_container);
+    width: var(--c-omni-search_width);
+    background: var(--u-color_container);
     border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
     padding: 0.75rem;
-    display: flex;
+    display: none;
     flex-direction: column;
-    gap: 0;
+    gap: 0.125rem;
 
     & .match {
+      position: relative;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      gap: 3rem;
       align-items: center;
       padding: 0.5rem;
       border-radius: var(--border-radius-base);
       font-size: var(--font-size-medium);
+      background: var(--c-omni-search_match_background);
+      overflow-x: hidden;
 
       & .keyboard-shortcuts {
+        position: relative;
+        z-index: var(--layer-floating-controls);
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
         align-items: center;
         font-size: var(--font-size-small);
         color: var(--u-color_text_subdued);
+
+        & .go-to,
+        & .filter-by {
+          display: flex;
+          flex-direction: row;
+          gap: 0.25rem;
+          align-items: center;
+        }
       }
     }
 
+    & .match::after {
+      position: absolute;
+      content: " ";
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 3rem;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--c-omni-search_match_background),
+        var(--c-omni-search_match_background),
+        var(--c-omni-search_match_background)
+      );
+      z-index: var(--layer-base);
+    }
+
     & .match.focused {
-      background: var(--u-color_element_emphasized);
+      --c-omni-search_match_background: var(--u-color_element_emphasized);
+    }
+
+    & .match:hover,
+    & .match.focused:hover {
+      --c-omni-search_match_background: var(--u-color_element_emphasized);
+    }
+
+    & .info-and-summary {
+      display: flex;
+      flex-direction: row;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    & .user-match .profile-snippet {
+      gap: 0.625rem;
+    }
+
+    & .user-match .profile-snippet_handle {
+      font-size: var(--font-size-base);
+    }
+
+    & .project-match .summary {
+      color: var(--u-color_text_subdued);
+      max-width: 19rem;
+      font-size: var(--font-size-small);
+    }
+
+    & .project-match .project-info {
+      width: 14rem;
+    }
+
+    & .definition-match .keyboard-shortcuts {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0 0.5rem 0 4rem;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--c-omni-search_match_background),
+        var(--c-omni-search_match_background),
+        var(--c-omni-search_match_background)
+      );
+    }
+
+    & .definition-match .definition-info-and-project {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
 
     & .definition-match .definition-info {
@@ -115,7 +208,70 @@
       gap: 0.5rem;
       align-items: center;
       line-height: 1;
+      width: 11rem;
     }
+
+    & .truncate-name .definition-name {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      flex-direction: row-reverse;
+      width: 9.5rem;
+      white-space: nowrap;
+    }
+
+    & .truncate-name .definition-name::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      content: "";
+      width: 1.5rem;
+      background: linear-gradient(
+        90deg,
+        var(--c-omni-search_match_background),
+        transparent
+      );
+    }
+
+    & .definition-match .project-and-release {
+      font-size: var(--font-size-extra-small);
+      margin-left: 1.5rem;
+
+      & .project {
+        color: var(--u-color_text_subdued);
+      }
+      & .release {
+        color: var(--u-color_text_very-subdued);
+      }
+    }
+
+    & .match.focused .project-and-release .project,
+    & .match:hover .project-and-release .project {
+      color: var(--u-color_text);
+    }
+
+    & .match.focused .project-and-release .release,
+    & .match:hover .project-and-release .release {
+      color: var(--u-color_text_subdued);
+    }
+
+    & .definition-match .syntax {
+      padding-top: 0.125rem;
+      color: var(--u-color_text);
+      font-size: var(--font-size-small);
+      overflow: hidden;
+      white-space: nowrap;
+      align-self: center;
+    }
+  }
+
+  .main-result-sheet.empty-state {
+    color: var(--u-color_text_very-subdued);
+    font-weight: bold;
+    text-align: center;
+    font-size: var(--font-size-base);
+    padding: 2rem;
   }
 }
 
@@ -124,8 +280,96 @@
   box-shadow: 0 0 0 2px var(--u-color_focus-outline);
 }
 
+/* only show results when the field has focus */
+.omni-search:focus-within .main-result-sheet {
+  display: flex;
+}
+
+.omni-search:focus-within .search-field .inner-field .name-suggestion {
+  display: inline !important;
+}
+
 /* For some reason this doesn't work with nested CSS */
 .omni-search input::placeholder {
   font-weight: normal;
   color: var(--u-color_text_very-subdued);
+}
+
+.omni-search.searching .main-result-sheet::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: " ";
+  background: var(--u-color_container);
+  opacity: 0.5;
+  z-index: var(--layer-floating-controls);
+}
+
+.omni-search.searching:focus-within {
+  border: 2px solid var(--u-color_focus-border);
+  box-shadow: 0 0 0 0.125rem var(--u-color_focus-outline);
+  animation: searching-shadow ease-in-out 0.7s;
+}
+
+#omni-search-help-modal {
+  width: 41rem;
+
+  & .help-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    color: var(--u-color_text_subdued);
+
+    & h2 {
+      margin-bottom: 0.5rem;
+      color: var(--u-color_text);
+    }
+
+    & table {
+      width: 100%;
+    }
+
+    & th {
+      text-align: left;
+      font-weight: normal;
+      color: var(--u-color_text_very-subdued);
+      padding: 0.25rem 0;
+    }
+
+    & td {
+      padding: 0.125rem 0;
+    }
+
+    & tr > th:first-child,
+    & tr > td:first-child {
+      width: 13rem;
+    }
+
+    & code {
+      color: var(--u-color_text);
+    }
+
+    & .keyboard-shortcut {
+      display: inline-flex;
+    }
+  }
+}
+
+@keyframes searching-shadow {
+  0% {
+    border: 2px solid var(--u-color_focus-border);
+    box-shadow: 0 0 0 0.125rem var(--u-color_focus-outline);
+  }
+  50% {
+    border: 2px solid var(--color-purple-3);
+    box-shadow: 0 0 0 0.125rem var(--color-purple-3-25pct),
+      0 0 0.5rem 0.25rem var(--color-purple-3-25pct);
+  }
+  100% {
+    border: 2px solid var(--u-color_focus-border);
+    box-shadow: 0 0 0 0.125rem var(--u-color_focus-outline);
+  }
 }

@@ -14,6 +14,7 @@
    * Can only be triggered by a query that isn't prefixed with an "@".
    * Triggers when a "Name Search" returns (by searching the first result of
      the names), and when a name is commited to with Tab or Space.
+   * Triggers if the value starts with a #, then we know its a hash based query
 
    ## Name Search
 
@@ -23,7 +24,6 @@
      isn't commited to (allowing the user to see the definitions that match
      without having to do an extra step).
    * Commiting to a name (with Tab or Space) uses that name to search a definition
-
 -}
 
 
@@ -31,32 +31,42 @@ module UnisonShare.OmniSearch exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.Definition.Reference as Reference
+import Code.Definition.Term as Term exposing (TermSignature)
+import Code.Definition.Type as Type exposing (TypeSource)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Perspective as Perspective
-import Html exposing (Html, div, input, span, text)
-import Html.Attributes exposing (class, classList, placeholder, spellcheck, type_, value)
-import Html.Events exposing (onBlur, onFocus, onInput)
+import Code.Syntax as Syntax
+import Code.Syntax.Linked as SyntaxLinked
+import Code.Version as Version
+import Html exposing (Html, code, div, h2, input, span, table, tbody, td, text, th, thead, tr)
+import Html.Attributes exposing (autofocus, class, classList, name, placeholder, spellcheck, type_, value)
+import Html.Events exposing (onInput)
 import Json.Decode as Decode exposing (nullable, string)
 import Json.Decode.Extra exposing (when)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Search as Search exposing (Search(..))
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Lib.Util as Util exposing (decodeTag)
 import List.Extra as ListE
-import Markdown
 import Maybe.Extra as MaybeE
+import Regex
+import String.Extra as StringE
 import UI
+import UI.Button as Button
 import UI.Click as Click
+import UI.Divider as Divider
 import UI.Icon as Icon
 import UI.KeyboardShortcut as KeyboardShortcut exposing (KeyboardShortcut(..))
 import UI.KeyboardShortcut.Key as Key exposing (Key(..))
 import UI.KeyboardShortcut.KeyboardEvent as KeyboardEvent exposing (KeyboardEvent)
+import UI.Modal as Modal
 import UI.ProfileSnippet as ProfileSnippet
 import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Link as Link
 import UnisonShare.Project as Project
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
@@ -74,14 +84,14 @@ type alias ProjectSearchMatch =
 
 type EntityMatch
     = ProjectMatch ProjectSearchMatch
-    | UserMatch User.UserDetails
+    | UserMatch User.UserSummary
 
 
 type DefinitionMatchType
-    = TermMatch
-    | TypeMatch
-    | DataConstructorMatch
-    | AbilityConstructorMatch
+    = TermMatch TermSignature
+    | TypeMatch TypeSource
+    | DataConstructorMatch TermSignature
+    | AbilityConstructorMatch TermSignature
 
 
 type alias DefinitionSearchMatch =
@@ -105,13 +115,18 @@ type Filter
     | UserFilter UserHandle
 
 
+type OmniSearchModal
+    = NoModal
+    | SearchHelpModal
+
+
 type alias Model =
     { fieldValue : String
     , filter : Filter
     , search : MainSearch
     , nameSearch : Search String
-    , hasFocus : Bool
     , keyboardShortcut : KeyboardShortcut.Model
+    , modal : OmniSearchModal
     }
 
 
@@ -121,8 +136,8 @@ init appContext =
     , filter = NoFilter
     , search = NoSearch
     , nameSearch = NotAsked ""
-    , hasFocus = False
     , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
+    , modal = NoModal
     }
 
 
@@ -133,11 +148,13 @@ init appContext =
 type Msg
     = UpdateFieldValue String
     | EntitySearchFinished { query : String, results : HttpResult (List EntityMatch) }
+    | SearchDefinitions Filter String
     | DefinitionSearchFinished { query : String, results : HttpResult (List DefinitionSearchMatch) }
     | NameSearchFinished { query : String, results : HttpResult (List String) }
     | ClearFilter
-    | UpdateFocus Bool
     | Keydown KeyboardEvent
+    | ShowSearchHelpModal
+    | CloseModal
     | KeyboardShortcutMsg KeyboardShortcut.Msg
 
 
@@ -148,26 +165,52 @@ update appContext msg model =
             updateForValue appContext model value
 
         EntitySearchFinished res ->
-            case ( model.search, res.results ) of
-                ( EntitySearch (Searching q _), Ok matches ) ->
-                    ( { model | search = EntitySearch (Success q (SearchResults.fromList matches)) }, Cmd.none )
+            -- Are we still searching for the same thing?
+            if res.query == model.fieldValue then
+                case ( model.search, res.results ) of
+                    ( EntitySearch (Searching q _), Ok matches ) ->
+                        ( { model | search = EntitySearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none )
 
-                ( EntitySearch (Searching q _), Err e ) ->
-                    ( { model | search = EntitySearch (Failure q e) }, Cmd.none )
+                    ( EntitySearch (Searching q _), Err e ) ->
+                        ( { model | search = EntitySearch (Failure q e) }, Cmd.none )
 
-                _ ->
-                    ( model, Cmd.none )
+                    _ ->
+                        ( model, Cmd.none )
+
+            else
+                ( model, Cmd.none )
+
+        SearchDefinitions filter query ->
+            ( { model
+                | search = toDefinitionSearchSearchingWithQuery model.search query
+              }
+            , searchDefinitions appContext filter query
+            )
 
         DefinitionSearchFinished res ->
-            case ( model.search, res.results ) of
-                ( DefinitionSearch (Searching q _), Ok matches ) ->
-                    ( { model | search = DefinitionSearch (Success q (SearchResults.fromList matches)) }, Cmd.none )
+            let
+                val =
+                    case model.nameSearch of
+                        Success _ results ->
+                            valueWithFocusedName model.fieldValue results
 
-                ( DefinitionSearch (Searching q _), Err e ) ->
-                    ( { model | search = DefinitionSearch (Failure q e) }, Cmd.none )
+                        _ ->
+                            model.fieldValue
+            in
+            -- Are we still searching for the same thing?
+            if res.query == val then
+                case ( model.search, res.results ) of
+                    ( DefinitionSearch (Searching q _), Ok matches ) ->
+                        ( { model | search = DefinitionSearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none )
 
-                _ ->
-                    ( model, Cmd.none )
+                    ( DefinitionSearch (Searching q _), Err e ) ->
+                        ( { model | search = DefinitionSearch (Failure q e) }, Cmd.none )
+
+                    _ ->
+                        ( model, Cmd.none )
+
+            else
+                ( model, Cmd.none )
 
         NameSearchFinished res ->
             if String.endsWith res.query model.fieldValue then
@@ -182,11 +225,14 @@ update appContext msg model =
                                     |> Maybe.map (\_ -> valueWithFocusedName model.fieldValue results)
                                     |> Maybe.map
                                         (\q_ ->
-                                            ( DefinitionSearch (Searching q_ Nothing)
+                                            ( toDefinitionSearchSearchingWithQuery model.search q_
                                             , searchDefinitions appContext model.filter q_
                                             )
                                         )
-                                    |> Maybe.withDefault ( model.search, Cmd.none )
+                                    |> Maybe.withDefault
+                                        ( toDefinitionSearchSearchingWithQuery model.search q
+                                        , searchDefinitions appContext model.filter q
+                                        )
                         in
                         ( { model | nameSearch = Success q results, search = search }, cmd )
 
@@ -201,9 +247,6 @@ update appContext msg model =
 
         ClearFilter ->
             updateForValue appContext { model | filter = NoFilter } model.fieldValue
-
-        UpdateFocus hasFocus ->
-            ( { model | hasFocus = hasFocus }, Cmd.none )
 
         Keydown event ->
             let
@@ -262,7 +305,6 @@ update appContext msg model =
                                             Cmd.none
 
                                 DefinitionSearch s ->
-                                    -- TODO, support terms vs types vs constructors
                                     case Maybe.andThen SearchResults.focus (Search.searchResults s) of
                                         Just d ->
                                             let
@@ -270,7 +312,7 @@ update appContext msg model =
                                                     Perspective.relativeRootPerspective
 
                                                 ref =
-                                                    Reference.fromFQN Reference.TermReference d.fqn
+                                                    definitionSearchMatchToReference d
                                             in
                                             Route.navigate appContext.navKey
                                                 (Route.projectBranchDefinition
@@ -294,16 +336,24 @@ update appContext msg model =
                             let
                                 val =
                                     valueWithFocusedName model.fieldValue results
+
+                                ( nameSearch, searchNamesCmd ) =
+                                    case searchNames appContext model.filter val of
+                                        Nothing ->
+                                            ( model.nameSearch, Cmd.none )
+
+                                        Just searchNamesCmd_ ->
+                                            ( Searching q Nothing, searchNamesCmd_ )
                             in
                             ( { model
                                 | fieldValue = val
-                                , nameSearch = Searching q Nothing
+                                , nameSearch = nameSearch
                                 , search =
                                     toDefinitionSearchSearchingWithQuery model.search val
                               }
                             , Cmd.batch
                                 [ searchDefinitions appContext model.filter val
-                                , searchNames appContext model.filter val
+                                , searchNamesCmd
                                 ]
                             )
 
@@ -352,6 +402,12 @@ update appContext msg model =
 
                 _ ->
                     ( newModel, cmd )
+
+        ShowSearchHelpModal ->
+            ( { model | modal = SearchHelpModal }, Cmd.none )
+
+        CloseModal ->
+            ( { model | modal = NoModal }, Cmd.none )
 
         KeyboardShortcutMsg kMsg ->
             let
@@ -421,6 +477,15 @@ updateForValue appContext model value =
         , searchEntities appContext model.filter value
         )
 
+    else if hasEnoughChars && String.startsWith "#" value then
+        -- "#" is used for hash based definition search
+        ( { model
+            | fieldValue = value
+            , nameSearch = NotAsked ""
+          }
+        , Search.debounce (SearchDefinitions model.filter value)
+        )
+
     else if hasEnoughChars && String.endsWith " " value then
         -- Space will just always clear name search and trigger a definition search.
         -- It might give no results (if the user didn't complete a name suggestion),
@@ -434,17 +499,28 @@ updateForValue appContext model value =
         )
 
     else if hasEnoughChars then
-        -- search for names by the last segment
-        ( { model
-            | fieldValue = value
-            , nameSearch = Searching value Nothing
-            , search = NoSearch
-          }
-        , searchNames appContext model.filter value
-        )
+        let
+            ( nameSearch, searchNamesCmd ) =
+                case searchNames appContext model.filter value of
+                    Nothing ->
+                        ( model.nameSearch, Cmd.none )
+
+                    Just searchNamesCmd_ ->
+                        ( Searching value Nothing, searchNamesCmd_ )
+        in
+        ( { model | fieldValue = value, nameSearch = nameSearch }, searchNamesCmd )
 
     else
         ( { model | fieldValue = value }, Cmd.none )
+
+
+isCapitalized : String -> Bool
+isCapitalized s =
+    s
+        |> String.toList
+        |> List.head
+        |> Maybe.map Char.isUpper
+        |> Maybe.withDefault False
 
 
 
@@ -465,7 +541,7 @@ searchEntities appContext _ query =
 
         decodeMatch =
             Decode.oneOf
-                [ when decodeTag ((==) "User") (Decode.map UserMatch User.decodeDetails)
+                [ when decodeTag ((==) "User") (Decode.map UserMatch User.decodeSummary)
                 , when decodeTag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
                 ]
     in
@@ -477,55 +553,100 @@ searchEntities appContext _ query =
 
 
 searchDefinitions : AppContext -> Filter -> String -> Cmd Msg
-searchDefinitions _ _ query =
-    Util.delayMsg 250
-        (DefinitionSearchFinished
-            { query = query
-            , results =
-                Ok
-                    [ { type_ = TypeMatch
-                      , displayName = FQN.fromString "List"
-                      , fqn = FQN.fromString "data.List"
-                      , projectRef = ProjectRef.unsafeFromString "unison" "base"
-                      , branchRef = BranchRef.main_
-                      }
-                    , { type_ = TermMatch
-                      , displayName = FQN.fromString "List.map"
-                      , fqn = FQN.fromString "data.List.map"
-                      , projectRef = ProjectRef.unsafeFromString "unison" "base"
-                      , branchRef = BranchRef.main_
-                      }
-                    , { type_ = TermMatch
-                      , displayName = FQN.fromString "List.foldLeft"
-                      , fqn = FQN.fromString "data.List.foldLeft"
-                      , projectRef = ProjectRef.unsafeFromString "unison" "base"
-                      , branchRef = BranchRef.main_
-                      }
-                    ]
-            }
-        )
-
-
-searchNames : AppContext -> Filter -> String -> Cmd Msg
-searchNames _ _ query =
+searchDefinitions appContext filter query =
     let
-        q =
-            query
-                |> String.trim
-                |> String.split " "
-                |> ListE.last
-                |> Maybe.withDefault query
+        filter_ =
+            case filter of
+                NoFilter ->
+                    Nothing
+
+                ProjectFilter projectRef ->
+                    Just ( "project-filter", ProjectRef.toString projectRef )
+
+                UserFilter userHandle ->
+                    Just ( "user-filter", UserHandle.toString userHandle )
+
+        decodeKind =
+            Decode.field "kind" Decode.string
+
+        decodeDefinition =
+            Decode.oneOf
+                [ when decodeKind
+                    ((==) "term")
+                    (Decode.succeed TermMatch
+                        |> required "definition" (Term.decodeSignature [ "summary", "contents" ])
+                    )
+                , when decodeKind
+                    ((==) "type")
+                    (Decode.succeed TypeMatch
+                        |> required "definition" (Type.decodeTypeSource [ "summary", "tag" ] [ "summary", "contents" ])
+                    )
+                ]
+
+        decode =
+            Decode.succeed DefinitionSearchMatch
+                |> requiredAt [] decodeDefinition
+                |> requiredAt [ "definition", "displayName" ] FQN.decode
+                |> required "fqn" FQN.decode
+                |> required "projectRef" ProjectRef.decode
+                |> required "branchRef" BranchRef.decode
     in
-    Util.delayMsg 250
-        (NameSearchFinished
-            { query = q
-            , results = Ok [ q ++ "omatic", q ++ "ally", q ++ "tional" ]
-            }
-        )
+    ShareApi.searchDefinitions filter_ query
+        |> HttpApi.toRequest
+            (Decode.field "results" (Decode.list decode))
+            (\r -> DefinitionSearchFinished { query = query, results = r })
+        |> HttpApi.perform appContext.api
+
+
+searchNames : AppContext -> Filter -> String -> Maybe (Cmd Msg)
+searchNames appContext filter query =
+    let
+        params =
+            case filter of
+                NoFilter ->
+                    []
+
+                ProjectFilter projectRef ->
+                    [ ( "project-filter", ProjectRef.toString projectRef ) ]
+
+                UserFilter userHandle ->
+                    [ ( "user-filter", UserHandle.toString userHandle ) ]
+
+        regex =
+            Maybe.withDefault Regex.never <|
+                Regex.fromString "[^a-zA-Z .]+"
+
+        perform q =
+            ShareApi.searchNames params q
+                |> HttpApi.toRequest
+                    (Decode.list (Decode.field "token" Decode.string))
+                    (\r -> NameSearchFinished { query = query, results = r })
+                |> HttpApi.perform appContext.api
+    in
+    query
+        |> StringE.clean
+        |> String.split " "
+        |> ListE.last
+        |> Maybe.map (Regex.replace regex (always ""))
+        |> Maybe.andThen StringE.nonEmpty
+        |> Maybe.map perform
 
 
 
 -- HELPERS
+
+
+isMainSearchSearching : MainSearch -> Bool
+isMainSearchSearching search =
+    case search of
+        EntitySearch s ->
+            Search.isSearching s
+
+        DefinitionSearch s ->
+            Search.isSearching s
+
+        _ ->
+            False
 
 
 toEntitySearchSearchingWithQuery : MainSearch -> String -> MainSearch
@@ -583,18 +704,14 @@ suggestedNamePart model =
 -- VIEW
 
 
-viewField : Model -> Html Msg
-viewField model =
+viewField : Model -> Bool -> Html Msg
+viewField model isSearching =
     let
         shadowValue =
-            if model.hasFocus then
-                span [ class "name-suggestion" ]
-                    [ span [ class "value" ] [ text model.fieldValue ]
-                    , span [ class "shadow-suggestion" ] [ text (suggestedNamePart model) ]
-                    ]
-
-            else
-                UI.nothing
+            span [ class "name-suggestion" ]
+                [ span [ class "value" ] [ text model.fieldValue ]
+                , span [ class "shadow-suggestion" ] [ text (suggestedNamePart model) ]
+                ]
 
         ( filterTag, placeholder_ ) =
             case model.filter of
@@ -602,21 +719,23 @@ viewField model =
                     ( Tag.tag (UserHandle.toString handle)
                         |> Tag.withIcon Icon.user
                         |> Just
-                    , "Search projects and definitions"
+                    , "Ex: \"@unison/base\" or \"Map Boolean\""
                     )
 
                 ProjectFilter ref ->
                     ( Tag.tag (ProjectRef.toString ref)
                         |> Tag.withIcon Icon.pencilRuler
                         |> Just
-                    , "Search definitions"
+                    , "Ex: \"List.map\" or \"Map Boolean\""
                     )
 
                 NoFilter ->
-                    ( Nothing, "Search users, projects, and definitions" )
+                    ( Nothing, "Ex: \"@unison\", \"@unison/base\", or \"Map Boolean\"" )
     in
     div [ class "search-field" ]
-        [ span [ class "search-icon" ] [ Icon.view Icon.search ]
+        [ span [ class "search-icon" ]
+            [ Icon.search |> Icon.withToggleAnimation isSearching |> Icon.view
+            ]
         , filterTag
             |> Maybe.map
                 (Tag.extraLarge
@@ -627,30 +746,45 @@ viewField model =
         , div [ class "inner-field" ]
             [ input
                 [ type_ "text"
+                , name "search"
                 , value model.fieldValue
                 , onInput UpdateFieldValue
-                , onBlur (UpdateFocus False)
-                , onFocus (UpdateFocus True)
                 , spellcheck False
                 , placeholder placeholder_
+                , autofocus True
                 ]
                 []
             , shadowValue
+            , Button.icon ShowSearchHelpModal Icon.questionmark
+                |> Button.subdued
+                |> Button.view
             ]
         ]
 
 
-viewMatchKeyboardShortcuts : KeyboardShortcut.Model -> Html msg
-viewMatchKeyboardShortcuts keyboardShortcut =
-    span [ class "keyboard-shortcuts" ]
-        [ text "Go to: "
-        , KeyboardShortcut.view
-            keyboardShortcut
-            (KeyboardShortcut.single Key.Enter)
-        , text "Filter by: "
-        , KeyboardShortcut.view
-            keyboardShortcut
-            (KeyboardShortcut.single Key.Tab)
+viewMatchKeyboardShortcuts : KeyboardShortcut.Model -> Bool -> Html msg
+viewMatchKeyboardShortcuts keyboardShortcut includeFilter =
+    let
+        filter =
+            if includeFilter then
+                span [ class "filter-by" ]
+                    [ text "Filter by "
+                    , KeyboardShortcut.view
+                        keyboardShortcut
+                        (KeyboardShortcut.single Key.Tab)
+                    ]
+
+            else
+                UI.nothing
+    in
+    div [ class "keyboard-shortcuts" ]
+        [ span [ class "go-to" ]
+            [ text "Go to "
+            , KeyboardShortcut.view
+                keyboardShortcut
+                (KeyboardShortcut.single Key.Enter)
+            ]
+        , filter
         ]
 
 
@@ -659,29 +793,22 @@ viewEntityMatch keyboardShortcut match isFocused =
     let
         keyboardShortcuts =
             if isFocused then
-                viewMatchKeyboardShortcuts keyboardShortcut
+                viewMatchKeyboardShortcuts keyboardShortcut True
 
             else
                 UI.nothing
     in
     case match of
         UserMatch u ->
-            let
-                bio =
-                    u.bio
-                        |> Maybe.map (Markdown.toHtml [])
-                        |> Maybe.map (\m -> span [ class "bio" ] [ m ])
-                        |> Maybe.withDefault UI.nothing
-            in
-            div
+            Click.view
                 [ class "match user-match"
                 , classList [ ( "focused", isFocused ) ]
                 ]
                 [ ProfileSnippet.profileSnippet u
                     |> ProfileSnippet.view
-                , bio
                 , keyboardShortcuts
                 ]
+                (Link.userProfile u.handle)
 
         ProjectMatch p ->
             let
@@ -690,16 +817,37 @@ viewEntityMatch keyboardShortcut match isFocused =
                         |> Maybe.map (\s -> span [ class "summary" ] [ text s ])
                         |> Maybe.withDefault UI.nothing
             in
-            div
+            Click.view
                 [ class "match project-match"
                 , classList [ ( "focused", isFocused ) ]
                 ]
-                [ ProjectListing.projectListing p
-                    |> ProjectListing.large
-                    |> ProjectListing.view
-                , summary
+                [ div [ class "info-and-summary" ]
+                    [ div [ class "project-info" ]
+                        [ ProjectListing.projectListing p
+                            |> ProjectListing.large
+                            |> ProjectListing.view
+                        ]
+                    , summary
+                    ]
                 , keyboardShortcuts
                 ]
+                (Link.projectOverview p.ref)
+
+
+definitionSearchMatchToReference : DefinitionSearchMatch -> Reference.Reference
+definitionSearchMatchToReference d =
+    case d.type_ of
+        TermMatch _ ->
+            Reference.fromFQN Reference.TermReference d.fqn
+
+        TypeMatch _ ->
+            Reference.fromFQN Reference.TypeReference d.fqn
+
+        DataConstructorMatch _ ->
+            Reference.fromFQN Reference.DataConstructorReference d.fqn
+
+        AbilityConstructorMatch _ ->
+            Reference.fromFQN Reference.AbilityConstructorReference d.fqn
 
 
 viewDefinitionMatch : KeyboardShortcut.Model -> DefinitionSearchMatch -> Bool -> Html Msg
@@ -707,38 +855,79 @@ viewDefinitionMatch keyboardShortcut def isFocused =
     let
         keyboardShortcuts =
             if isFocused then
-                viewMatchKeyboardShortcuts keyboardShortcut
+                viewMatchKeyboardShortcuts keyboardShortcut False
 
             else
                 UI.nothing
 
-        defIcon =
+        ( defIcon, summary ) =
             case def.type_ of
-                TermMatch ->
-                    Icon.term
+                TermMatch sig ->
+                    ( Icon.term, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
 
-                TypeMatch ->
-                    Icon.type_
+                TypeMatch sum ->
+                    ( Icon.type_
+                    , sum
+                        |> Type.typeSourceSyntax
+                        |> Maybe.map (Syntax.view SyntaxLinked.NotLinked)
+                        |> Maybe.withDefault UI.nothing
+                    )
 
-                DataConstructorMatch ->
-                    Icon.type_
+                DataConstructorMatch sig ->
+                    ( Icon.dataConstructor, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
 
-                AbilityConstructorMatch ->
-                    Icon.ability
+                AbilityConstructorMatch sig ->
+                    ( Icon.abilityConstructor, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
+
+        shouldTruncateName =
+            def.displayName
+                |> FQN.toString
+                |> String.length
+                |> (\len -> len > 19)
     in
-    div
+    Click.view
         [ class "match definition-match"
         , classList [ ( "focused", isFocused ) ]
         ]
-        [ span [ class "definition-info" ] [ Icon.view defIcon, FQN.view def.displayName ], keyboardShortcuts ]
+        [ div [ class "info-and-summary" ]
+            [ div [ class "definition-info-and-project" ]
+                [ span [ class "definition-info", classList [ ( "truncate-name", shouldTruncateName ) ] ]
+                    [ Icon.view defIcon
+                    , span [ class "definition-name" ] [ FQN.view def.displayName ]
+                    ]
+                , span [ class "project-and-release" ]
+                    [ span [ class "project" ]
+                        [ text (ProjectRef.toString def.projectRef) ]
+                    , def.branchRef
+                        |> BranchRef.version
+                        |> Maybe.map Version.toString
+                        |> Maybe.map (\v -> span [ class "release" ] [ text (" v" ++ v) ])
+                        |> Maybe.withDefault UI.nothing
+                    ]
+                ]
+            , code [ class "syntax monochrome" ] [ summary ]
+            ]
+        , keyboardShortcuts
+        ]
+        (Link.projectBranchDefinition
+            def.projectRef
+            def.branchRef
+            (definitionSearchMatchToReference def)
+        )
 
 
 viewSearchSheet : (a -> Bool -> Html Msg) -> Search a -> Html Msg
 viewSearchSheet viewMatch search =
     let
         viewSheet matches =
-            div [ class "main-result-sheet" ]
-                (SearchResults.mapToList viewMatch matches)
+            if SearchResults.isEmpty matches then
+                div
+                    [ class "main-result-sheet empty-state" ]
+                    [ text "No matches found" ]
+
+            else
+                div [ class "main-result-sheet" ]
+                    (SearchResults.mapToList viewMatch matches)
     in
     case search of
         NotAsked _ ->
@@ -752,8 +941,8 @@ viewSearchSheet viewMatch search =
         Success _ matches ->
             viewSheet matches
 
-        Failure _ _ ->
-            div [ class "main-result-sheet" ] [ text "Error..." ]
+        Failure _ err ->
+            div [ class "main-result-sheet" ] [ text (Util.httpErrorToString err) ]
 
 
 viewMainSearch : KeyboardShortcut.Model -> MainSearch -> Html Msg
@@ -769,9 +958,142 @@ viewMainSearch keyboardShortcut mainSearch =
             viewSearchSheet (viewDefinitionMatch keyboardShortcut) s
 
 
-view : Model -> Html Msg
-view model =
+viewSearchHelpModal : AppContext -> Html Msg
+viewSearchHelpModal appContext =
     let
+        inlineCode t =
+            UI.inlineCode [] (text t)
+
+        tabKey =
+            KeyboardShortcut.viewBase
+                [ KeyboardShortcut.viewKey appContext.operatingSystem Key.Tab False
+                ]
+
+        enterKey =
+            KeyboardShortcut.viewBase
+                [ KeyboardShortcut.viewKey appContext.operatingSystem
+                    Key.Enter
+                    False
+                ]
+
+        upKey =
+            KeyboardShortcut.viewBase
+                [ KeyboardShortcut.viewKey appContext.operatingSystem
+                    Key.ArrowUp
+                    False
+                ]
+
+        downKey =
+            KeyboardShortcut.viewBase
+                [ KeyboardShortcut.viewKey appContext.operatingSystem
+                    Key.ArrowDown
+                    False
+                ]
+
+        divider =
+            Divider.divider
+                |> Divider.small
+                |> Divider.withoutMargin
+                |> Divider.view
+
+        content =
+            Modal.Content
+                (div
+                    [ class "help-content" ]
+                    [ div []
+                        [ div [] [ text "Find users, projects, and definitions with the below syntax." ]
+                        , div [] [ text "Navigate the result with the ", downKey, text " and ", upKey, text " keys. Select a match with ", enterKey, text "." ]
+                        ]
+                    , divider
+                    , div []
+                        [ h2
+                            []
+                            [ text "Users and Projects with a ", inlineCode "@", text " prefix" ]
+                        , table []
+                            [ thead [] [ tr [] [ th [] [ text "Example query" ], th [] [ text "Result" ] ] ]
+                            , tbody []
+                                [ tr []
+                                    [ td [] [ inlineCode "@unison" ]
+                                    , td [] [ text "The Unison user." ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "@unison/base", text " or just ", inlineCode "@base" ]
+                                    , td [] [ text "The Unison base library." ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , div []
+                        [ h2 [] [ text "Definitions by name, type, or hash" ]
+                        , table []
+                            [ tbody []
+                                [ tr []
+                                    [ td [] [ inlineCode "List.map", text " or ", inlineCode "Optional" ]
+                                    , td [] [ text "Functions and types by name." ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "Map Nat Boolean" ]
+                                    , td [] [ text "Functions that mention the types ", inlineCode "Map", text ", ", inlineCode "Nat", text ", and ", inlineCode "Boolean", text "." ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "Map Text a -> a" ]
+                                    , td [] [ text "Functions by a mix of concrete and type variables." ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "[a] -> {Abort} a" ]
+                                    , td [] [ text "Functions by signature." ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "#asdf1234" ]
+                                    , td [] [ text "Definitions by hash." ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , div []
+                        [ h2 [] [ text "Filtering by user or project with the ", tabKey, text " key" ]
+                        , table []
+                            [ tbody []
+                                [ tr []
+                                    [ td [] [ inlineCode "@unison", text " + ", tabKey ]
+                                    , td []
+                                        [ text "Filter subsequent searches by the Unison user."
+                                        ]
+                                    ]
+                                , tr
+                                    []
+                                    [ td [] [ inlineCode "@unison/base", text " + ", tabKey ]
+                                    , td [] [ text "Filter subsequent searches by the Unison base project." ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , divider
+                    ]
+                )
+    in
+    Modal.modal "omni-search-help-modal" CloseModal content
+        |> Modal.withHeader "Searching across Unison Share"
+        |> Modal.withActions [ Button.iconThenLabel CloseModal Icon.thumbsUp "Got it!" ]
+        |> Modal.view
+
+
+view : AppContext -> Model -> ( Html Msg, Maybe (Html Msg) )
+view appContext model =
+    let
+        modal =
+            case model.modal of
+                SearchHelpModal ->
+                    Just (viewSearchHelpModal appContext)
+
+                _ ->
+                    Nothing
+
         keyboardEvent =
             KeyboardEvent.on KeyboardEvent.Keydown Keydown
                 |> KeyboardEvent.stopPropagation
@@ -788,15 +1110,13 @@ view model =
                     )
                 |> KeyboardEvent.attach
 
-        mainSearch =
-            if model.hasFocus then
-                viewMainSearch model.keyboardShortcut model.search
-
-            else
-                UI.nothing
+        isSearching =
+            isMainSearchSearching model.search || Search.isSearching model.nameSearch
     in
-    Html.node "search"
-        [ class "omni-search", keyboardEvent ]
-        [ viewField model
-        , mainSearch
+    ( Html.node "search"
+        [ class "omni-search", classList [ ( "searching", isSearching ) ], keyboardEvent ]
+        [ viewField model isSearching
+        , viewMainSearch model.keyboardShortcut model.search
         ]
+    , modal
+    )

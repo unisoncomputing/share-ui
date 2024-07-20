@@ -43,6 +43,8 @@ module UnisonShare.Api exposing
     , projectTickets
     , projects
     , search
+    , searchDefinitions
+    , searchNames
     , session
     , updateProject
     , updateProjectContribution
@@ -152,6 +154,33 @@ userProjects handle =
 search : String -> Endpoint
 search query =
     GET { path = [ "search" ], queryParams = [ string "query" query ] }
+
+
+searchNames : List ( String, String ) -> String -> Endpoint
+searchNames params query =
+    let
+        params_ =
+            params
+                |> List.map (\( k, v ) -> string k v)
+    in
+    GET
+        { path = [ "search-names" ]
+        , queryParams = string "query" query :: params_
+        }
+
+
+searchDefinitions : Maybe ( String, String ) -> String -> Endpoint
+searchDefinitions filter query =
+    let
+        filter_ =
+            filter
+                |> Maybe.map (\( k, v ) -> [ string k v ])
+                |> Maybe.withDefault []
+    in
+    GET
+        { path = [ "search-definitions" ]
+        , queryParams = string "query" query :: filter_
+        }
 
 
 completeTours : List Tour -> Endpoint
