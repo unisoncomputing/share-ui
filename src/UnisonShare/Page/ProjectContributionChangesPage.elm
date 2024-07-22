@@ -392,7 +392,7 @@ viewLoadingExpandedContent =
         [ placeholder Placeholder.Small
         , placeholder Placeholder.Medium
         , placeholder Placeholder.Huge
-        , placeholder Placeholder.Medium
+        , placeholder Placeholder.Small
         ]
 
 
@@ -552,7 +552,7 @@ viewLoadingPage =
                 |> Placeholder.view
     in
     PageContent.oneColumn
-        [ div []
+        [ div [ class "project-contribution-changes-page" ]
             [ Card.card
                 [ shape Placeholder.Large
                 , shape Placeholder.Small
@@ -567,8 +567,10 @@ viewLoadingPage =
 viewErrorPage : ContributionRef -> Http.Error -> PageContent Msg
 viewErrorPage _ _ =
     PageContent.oneColumn
-        [ StatusBanner.bad
-            "Something broke on our end and we couldn't show the contribution changes. Please try again."
+        [ div [ class "project-contribution-changes-page" ]
+            [ StatusBanner.bad
+                "Something broke on our end and we couldn't show the contribution changes. Please try again."
+            ]
         ]
 
 
