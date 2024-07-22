@@ -28,7 +28,7 @@
 
   & .change-tree {
     gap: 1.5rem;
-    max-width: 20rem;
+    width: 20rem;
     height: max-content;
     overflow: hidden;
     position: relative;
@@ -365,7 +365,7 @@
 @media only screen and (--u-viewport_max-xl) {
   .project-contribution-changes-page {
     & .change-tree {
-      max-width: 18rem;
+      width: 18rem;
     }
   }
 }
