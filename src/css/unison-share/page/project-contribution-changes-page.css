@@ -83,8 +83,13 @@
         width: 100%;
         border-top: 1px solid var(--u-color_border_subdued);
         padding: 1rem 1.5rem;
+        overflow: auto;
 
-        & .definition-change-details .loading-expanded-content {
+        & pre {
+          max-width: var(--readable-column-width);
+        }
+
+        & .loading-expanded-content {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
