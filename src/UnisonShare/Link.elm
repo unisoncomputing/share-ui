@@ -197,9 +197,14 @@ projectBranches projectRef_ =
     toClick (Route.projectBranches projectRef_)
 
 
-projectBranchDefinition : ProjectRef -> BranchRef -> Perspective -> Reference -> Click msg
-projectBranchDefinition projectRef_ branchRef pers ref =
+projectBranchDefinition_ : ProjectRef -> BranchRef -> Perspective -> Reference -> Click msg
+projectBranchDefinition_ projectRef_ branchRef pers ref =
     toClick (Route.projectBranchDefinition projectRef_ branchRef pers ref)
+
+
+projectBranchDefinition : ProjectRef -> BranchRef -> Reference -> Click msg
+projectBranchDefinition projectRef_ branchRef ref =
+    projectBranchDefinition_ projectRef_ branchRef Perspective.relativeRootPerspective ref
 
 
 projectBranchRoot : ProjectRef -> BranchRef -> Click msg
