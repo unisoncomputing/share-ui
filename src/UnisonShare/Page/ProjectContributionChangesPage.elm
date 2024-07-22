@@ -373,6 +373,27 @@ viewNamespaceLine projectRef changedDefinitions { name, lines } =
     ]
 
 
+viewFailedToLoadExpandedContent : Http.Error -> Html msg
+viewFailedToLoadExpandedContent _ =
+    div [] [ text "Error, couldn't load diff details" ]
+
+
+viewLoadingExpandedContent : Html msg
+viewLoadingExpandedContent =
+    let
+        placeholder size =
+            Placeholder.text
+                |> Placeholder.withSize size
+                |> Placeholder.view
+    in
+    div []
+        [ placeholder Placeholder.Small
+        , placeholder Placeholder.Small
+        , placeholder Placeholder.Small
+        , placeholder Placeholder.Small
+        ]
+
+
 viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> BranchDiff.ChangeLine -> BranchDiff.DefinitionType -> Html Msg -> Html Msg
 viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine type_ content =
     let
@@ -386,15 +407,23 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                     if isExpanded then
                         case data of
                             ChangedDefinitions.Diff diff ->
-                                ( Just
-                                    (diff
-                                        |> RemoteData.map
-                                            (DefinitionDiff.view (linked branchDiff.newBranch.ref))
-                                        |> RemoteData.map (\d -> pre [ class "monochrome" ] [ code [] [ d ] ])
-                                        |> RemoteData.withDefault UI.nothing
-                                    )
-                                , Icon.arrowsToLine
-                                )
+                                let
+                                    expandedContent =
+                                        case diff of
+                                            NotAsked ->
+                                                viewLoadingExpandedContent
+
+                                            Loading ->
+                                                viewLoadingExpandedContent
+
+                                            Success d ->
+                                                pre [ class "monochrome" ]
+                                                    [ code [] [ DefinitionDiff.view (linked branchDiff.newBranch.ref) d ] ]
+
+                                            Failure e ->
+                                                viewFailedToLoadExpandedContent e
+                                in
+                                ( Just expandedContent, Icon.arrowsToLine )
 
                             ChangedDefinitions.DefinitionSyntax syntax ->
                                 let
@@ -405,13 +434,23 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
 
                                             _ ->
                                                 branchDiff.newBranch.ref
+
+                                    expandedContent =
+                                        case syntax of
+                                            NotAsked ->
+                                                viewLoadingExpandedContent
+
+                                            Loading ->
+                                                viewLoadingExpandedContent
+
+                                            Success s ->
+                                                pre [ class "monochrome" ]
+                                                    [ code [] [ Syntax.view (linked branchRef) s ] ]
+
+                                            Failure e ->
+                                                viewFailedToLoadExpandedContent e
                                 in
-                                ( Just
-                                    (syntax
-                                        |> RemoteData.map (Syntax.view (linked branchRef))
-                                        |> RemoteData.map (\d -> pre [ class "monochrome" ] [ code [] [ d ] ])
-                                        |> RemoteData.withDefault UI.nothing
-                                    )
+                                ( Just expandedContent
                                 , Icon.arrowsToLine
                                 )
 
