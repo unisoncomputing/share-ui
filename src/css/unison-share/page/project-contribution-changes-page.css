@@ -86,7 +86,7 @@
         overflow: auto;
 
         & pre {
-          max-width: var(--readable-column-width);
+          max-width: var(--readable-column-width-base);
         }
 
         & .loading-expanded-content {

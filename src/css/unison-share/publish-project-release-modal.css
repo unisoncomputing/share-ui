@@ -257,7 +257,7 @@
 }
 
 /* @todo: feels like this should be using 
- *   --readable-column-width: 43rem —  50rem is pretty wide */
+ *   --readable-column-width is 43rem. 50rem is pretty wide */
 #publish-project-release-modal
   .publish-project-release_release-notes-preview-maximized
   .release-notes-preview
