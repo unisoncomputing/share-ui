@@ -386,11 +386,11 @@ viewLoadingExpandedContent =
                 |> Placeholder.withSize size
                 |> Placeholder.view
     in
-    div []
+    div [ class "loading-expanded-content" ]
         [ placeholder Placeholder.Small
-        , placeholder Placeholder.Small
-        , placeholder Placeholder.Small
-        , placeholder Placeholder.Small
+        , placeholder Placeholder.Medium
+        , placeholder Placeholder.Huge
+        , placeholder Placeholder.Medium
         ]
 
 
