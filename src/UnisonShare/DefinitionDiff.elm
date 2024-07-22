@@ -138,7 +138,7 @@ viewDiffSegment linked segment =
                     ]
                 )
                 |> Tooltip.view
-                    (span [ class "diff-segment remove-marker" ] [ Icon.view Icon.x ])
+                    (span [ class "diff-segment remove-marker" ] [ Icon.view Icon.textDelete ])
 
         New segments ->
             span [ class "diff-segment new" ] (viewSegments segments)

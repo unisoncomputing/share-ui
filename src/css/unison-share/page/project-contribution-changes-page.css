@@ -134,13 +134,11 @@
     }
 
     & .definition-change.card.updated .remove-marker {
-      background: var(--color-pink-1);
-      width: 1.5rem;
-      height: 1.5rem;
       line-height: 1;
-      border-radius: 0.75rem;
-      color: var(--color-gray-lighten-100);
       font-size: var(--font-size-medium);
+      & .icon {
+        color: var(--color-pink-1);
+      }
     }
 
     & .definition-change.card.updated .remove-marker:hover {
