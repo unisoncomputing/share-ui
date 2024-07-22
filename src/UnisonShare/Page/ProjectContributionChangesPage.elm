@@ -381,9 +381,11 @@ viewFailedToLoadExpandedContent _ =
 viewLoadingExpandedContent : Html msg
 viewLoadingExpandedContent =
     let
-        placeholder size =
+        placeholder length =
             Placeholder.text
-                |> Placeholder.withSize size
+                |> Placeholder.withLength length
+                |> Placeholder.subdued
+                |> Placeholder.tiny
                 |> Placeholder.view
     in
     div [ class "loading-expanded-content" ]
