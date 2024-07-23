@@ -69,6 +69,7 @@ init appContext projectRef contribRef =
 
 type Msg
     = FetchBranchDiffFinished (WebData BranchDiff)
+    | ExpandChangeDetails ChangeLine
     | ToggleChangeDetails ChangeLine
     | FetchDefinitionDiffFinished ChangeLine (WebData DefinitionDiff)
     | FetchDefinitionSyntaxFinished ChangeLine (WebData Syntax.Syntax)
@@ -91,6 +92,14 @@ update appContext projectRef _ msg model =
             in
             ( { model | branchDiff = branchDiff_ }, Cmd.none )
 
+        ExpandChangeDetails changeLine ->
+            case model.branchDiff of
+                Success branchDiff ->
+                    expandAndScrollTo appContext projectRef model branchDiff changeLine
+
+                _ ->
+                    ( model, Cmd.none )
+
         ToggleChangeDetails changeLine ->
             case model.branchDiff of
                 Success branchDiff ->
@@ -102,86 +111,8 @@ update appContext projectRef _ msg model =
                         , Cmd.none
                         )
 
-                    else if ChangedDefinitions.isLoaded model.changedDefinitions changeLine then
-                        ( { model
-                            | changedDefinitions =
-                                ChangedDefinitions.expand model.changedDefinitions changeLine
-                          }
-                        , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
-                        )
-
                     else
-                        let
-                            changedDefinitions =
-                                ChangedDefinitions.set model.changedDefinitions
-                                    changeLine
-                                    { isExpanded = True, data = ChangedDefinitions.Diff Loading }
-
-                            fetchTermSyntax_ branchRef name =
-                                fetchTermSyntax appContext projectRef branchRef changeLine name
-
-                            fetchTypeSyntax_ branchRef name =
-                                fetchTypeSyntax appContext projectRef branchRef changeLine name
-
-                            fetchTermDefinitionDiff name =
-                                fetchDefinitionDiff appContext
-                                    projectRef
-                                    DefinitionDiff.Term
-                                    changeLine
-                                    (ShareApi.Term
-                                        { oldBranchRef = branchDiff.oldBranch.ref
-                                        , newBranchRef = branchDiff.newBranch.ref
-                                        , oldTerm = name
-                                        , newTerm = name
-                                        }
-                                    )
-
-                            fetchTypeDefinitionDiff name =
-                                fetchDefinitionDiff appContext
-                                    projectRef
-                                    DefinitionDiff.Type
-                                    changeLine
-                                    (ShareApi.Type
-                                        { oldBranchRef = branchDiff.oldBranch.ref
-                                        , newBranchRef = branchDiff.newBranch.ref
-                                        , oldType = name
-                                        , newType = name
-                                        }
-                                    )
-
-                            fetchSyntax_ branchRef =
-                                case ChangeLine.definitionType changeLine of
-                                    Just dt ->
-                                        if DefinitionType.isTerm dt then
-                                            fetchTermSyntax_ branchRef (ChangeLine.fullName changeLine)
-
-                                        else
-                                            fetchTypeSyntax_ branchRef (ChangeLine.fullName changeLine)
-
-                                    Nothing ->
-                                        Cmd.none
-
-                            cmd =
-                                case changeLine of
-                                    ChangeLine.Updated dt { fullName } ->
-                                        if DefinitionType.isTerm dt then
-                                            fetchTermDefinitionDiff fullName
-
-                                        else
-                                            fetchTypeDefinitionDiff fullName
-
-                                    ChangeLine.Removed _ _ ->
-                                        fetchSyntax_ branchDiff.oldBranch.ref
-
-                                    _ ->
-                                        fetchSyntax_ branchDiff.newBranch.ref
-                        in
-                        ( { model | changedDefinitions = changedDefinitions }
-                        , Cmd.batch
-                            [ cmd
-                            , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
-                            ]
-                        )
+                        expandAndScrollTo appContext projectRef model branchDiff changeLine
 
                 _ ->
                     ( model, Cmd.none )
@@ -219,6 +150,94 @@ update appContext projectRef _ msg model =
 
         NoOp ->
             ( model, Cmd.none )
+
+
+
+-- UPDATE HELPERS
+
+
+expandAndScrollTo : AppContext -> ProjectRef -> Model -> BranchDiff -> ChangeLine -> ( Model, Cmd Msg )
+expandAndScrollTo appContext projectRef model branchDiff changeLine =
+    if ChangedDefinitions.isLoaded model.changedDefinitions changeLine then
+        ( { model
+            | changedDefinitions =
+                ChangedDefinitions.expand model.changedDefinitions changeLine
+          }
+        , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
+        )
+
+    else
+        let
+            changedDefinitions =
+                ChangedDefinitions.set model.changedDefinitions
+                    changeLine
+                    { isExpanded = True, data = ChangedDefinitions.Diff Loading }
+
+            fetchTermSyntax_ branchRef name =
+                fetchTermSyntax appContext projectRef branchRef changeLine name
+
+            fetchTypeSyntax_ branchRef name =
+                fetchTypeSyntax appContext projectRef branchRef changeLine name
+
+            fetchTermDefinitionDiff name =
+                fetchDefinitionDiff appContext
+                    projectRef
+                    DefinitionDiff.Term
+                    changeLine
+                    (ShareApi.Term
+                        { oldBranchRef = branchDiff.oldBranch.ref
+                        , newBranchRef = branchDiff.newBranch.ref
+                        , oldTerm = name
+                        , newTerm = name
+                        }
+                    )
+
+            fetchTypeDefinitionDiff name =
+                fetchDefinitionDiff appContext
+                    projectRef
+                    DefinitionDiff.Type
+                    changeLine
+                    (ShareApi.Type
+                        { oldBranchRef = branchDiff.oldBranch.ref
+                        , newBranchRef = branchDiff.newBranch.ref
+                        , oldType = name
+                        , newType = name
+                        }
+                    )
+
+            fetchSyntax_ branchRef =
+                case ChangeLine.definitionType changeLine of
+                    Just dt ->
+                        if DefinitionType.isTerm dt then
+                            fetchTermSyntax_ branchRef (ChangeLine.fullName changeLine)
+
+                        else
+                            fetchTypeSyntax_ branchRef (ChangeLine.fullName changeLine)
+
+                    Nothing ->
+                        Cmd.none
+
+            cmd =
+                case changeLine of
+                    ChangeLine.Updated dt { fullName } ->
+                        if DefinitionType.isTerm dt then
+                            fetchTermDefinitionDiff fullName
+
+                        else
+                            fetchTypeDefinitionDiff fullName
+
+                    ChangeLine.Removed _ _ ->
+                        fetchSyntax_ branchDiff.oldBranch.ref
+
+                    _ ->
+                        fetchSyntax_ branchDiff.newBranch.ref
+        in
+        ( { model | changedDefinitions = changedDefinitions }
+        , Cmd.batch
+            [ cmd
+            , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
+            ]
+        )
 
 
 
@@ -347,7 +366,7 @@ viewDiffTreeNode : ProjectRef -> ChangedDefinitions -> ChangeLine -> Html Msg
 viewDiffTreeNode projectRef changedDefinitions changeLine =
     let
         viewTitle fqn =
-            Click.onClick (ToggleChangeDetails changeLine)
+            Click.onClick (ExpandChangeDetails changeLine)
                 |> Click.view [ class "change-title" ] [ FQN.view fqn ]
 
         view_ type_ content =
