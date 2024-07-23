@@ -338,24 +338,28 @@ viewDefinitionIcon definitionType =
 viewDiffTreeNode : ProjectRef -> ChangedDefinitions -> BranchDiff.ChangeLine -> Html Msg
 viewDiffTreeNode projectRef changedDefinitions changeLine =
     let
+        viewTitle fqn =
+            Click.onClick (ToggleChangeDetails changeLine)
+                |> Click.view [ class "change-title" ] [ FQN.view fqn ]
+
         view_ type_ content =
             div [ class "change-line" ] [ viewChangeIcon changeLine, viewDefinitionIcon type_, content ]
     in
     case changeLine of
         BranchDiff.Added type_ { shortName } ->
-            view_ type_ (span [ class "change-title" ] [ FQN.view shortName ])
+            view_ type_ (viewTitle shortName)
 
         BranchDiff.Removed type_ { shortName } ->
-            view_ type_ (span [ class "change-title" ] [ FQN.view shortName ])
+            view_ type_ (viewTitle shortName)
 
         BranchDiff.Updated type_ { shortName } ->
-            view_ type_ (span [ class "change-title" ] [ FQN.view shortName ])
+            view_ type_ (viewTitle shortName)
 
         BranchDiff.RenamedFrom type_ { newShortName } ->
-            view_ type_ (span [ class "change-title" ] [ FQN.view newShortName ])
+            view_ type_ (viewTitle newShortName)
 
         BranchDiff.Aliased type_ { aliasShortName } ->
-            view_ type_ (span [ class "change-title" ] [ FQN.view aliasShortName ])
+            view_ type_ (viewTitle aliasShortName)
 
         BranchDiff.Namespace ns ->
             div [ class "change-line namespace" ]
@@ -493,24 +497,25 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
 
         f changeLine acc =
             let
-                toggleClick =
+                viewTitle fqn =
                     Click.onClick (ToggleChangeDetails changeLine)
+                        |> Click.view [ class "change-title" ] [ FQN.view fqn ]
             in
             case changeLine of
                 BranchDiff.Added type_ i ->
-                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (viewTitle i.fullName) :: acc
 
                 BranchDiff.Removed type_ i ->
-                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (viewTitle i.fullName) :: acc
 
                 BranchDiff.Updated type_ i ->
-                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (viewTitle i.fullName) :: acc
 
                 BranchDiff.RenamedFrom type_ i ->
-                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.newFullName ]) :: acc
+                    view_ changeLine type_ (viewTitle i.newFullName) :: acc
 
                 BranchDiff.Aliased type_ i ->
-                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.aliasFullName ]) :: acc
+                    view_ changeLine type_ (viewTitle i.aliasFullName) :: acc
 
                 BranchDiff.Namespace ns ->
                     go ns.lines ++ acc
