@@ -338,7 +338,7 @@
       padding-left: 1.5rem;
     }
 
-    & .change-line:not(.namespace)::after {
+    & .change-line:not(.namespace)::before {
       position: absolute;
       top: -0.25rem;
       left: calc(0.25rem + 1.5px);
@@ -349,7 +349,7 @@
       z-index: var(--layer-beneath);
     }
 
-    & .change-line:not(.namespace):last-child::after {
+    & .change-line:not(.namespace):last-child::before {
       bottom: 1.25rem;
     }
   }
