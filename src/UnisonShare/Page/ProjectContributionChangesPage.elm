@@ -7,10 +7,11 @@ import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.Linked as SyntaxLinked
 import Html exposing (Html, code, div, pre, span, strong, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, id)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi
+import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra exposing (pluralize)
@@ -106,7 +107,7 @@ update appContext projectRef _ msg model =
                             | changedDefinitions =
                                 ChangedDefinitions.expand model.changedDefinitions changeLine
                           }
-                        , Cmd.none
+                        , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
                         )
 
                     else
@@ -175,7 +176,12 @@ update appContext projectRef _ msg model =
                                     _ ->
                                         fetchSyntax_ branchDiff.newBranch.ref
                         in
-                        ( { model | changedDefinitions = changedDefinitions }, cmd )
+                        ( { model | changedDefinitions = changedDefinitions }
+                        , Cmd.batch
+                            [ cmd
+                            , ScrollTo.scrollTo NoOp "page-content" (ChangeLine.toKey changeLine)
+                            ]
+                        )
 
                 _ ->
                     ( model, Cmd.none )
@@ -487,6 +493,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
             |> Maybe.withDefault UI.nothing
         ]
         |> Card.withClassName ("definition-change " ++ String.toLower (ChangeLine.toString changeLine))
+        |> Card.withDomId (ChangeLine.toKey changeLine)
         |> Card.asContained
         |> Card.view
 
@@ -547,7 +554,7 @@ viewBranchDiff _ projectRef changedDefinitions diff =
                 |> Card.withClassName "change-tree"
                 |> Card.asContained
                 |> Card.view
-            , div [ class "definition-changes" ]
+            , div [ id "definition-changes", class "definition-changes" ]
                 (viewChangedDefinitionsCards projectRef changedDefinitions diff)
             ]
         ]

@@ -137,22 +137,26 @@ toKey line =
                 Test ->
                     "test"
 
+        -- We also use the key for dom ids, which doesn't support "."
+        fqnToKeyPart fqn =
+            fqn |> FQN.toString |> String.replace "." "__"
+
         key_ =
             case line of
                 Added dt d ->
-                    [ "added", type_ dt, FQN.toString d.fullName ]
+                    [ "added", type_ dt, fqnToKeyPart d.fullName ]
 
                 Removed dt d ->
-                    [ "removed", type_ dt, FQN.toString d.fullName ]
+                    [ "removed", type_ dt, fqnToKeyPart d.fullName ]
 
                 Updated dt d ->
-                    [ "updated", type_ dt, FQN.toString d.fullName ]
+                    [ "updated", type_ dt, fqnToKeyPart d.fullName ]
 
                 RenamedFrom dt d ->
-                    [ "renamed", type_ dt, FQN.toString d.newFullName ]
+                    [ "renamed", type_ dt, fqnToKeyPart d.newFullName ]
 
                 Aliased dt d ->
-                    [ "aliased", type_ dt, FQN.toString d.aliasFullName ]
+                    [ "aliased", type_ dt, fqnToKeyPart d.aliasFullName ]
 
                 Namespace d ->
                     [ "namespace", FQN.toString d.name ]
