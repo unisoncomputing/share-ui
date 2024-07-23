@@ -17,6 +17,7 @@ import String.Extra exposing (pluralize)
 import UI
 import UI.Button as Button
 import UI.Card as Card
+import UI.Click as Click
 import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.Placeholder as Placeholder
@@ -491,21 +492,25 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
             viewChangedDefinitionCard projectRef changedDefinitions branchDiff
 
         f changeLine acc =
+            let
+                toggleClick =
+                    Click.onClick (ToggleChangeDetails changeLine)
+            in
             case changeLine of
                 BranchDiff.Added type_ i ->
-                    view_ changeLine type_ (span [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
 
                 BranchDiff.Removed type_ i ->
-                    view_ changeLine type_ (span [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
 
                 BranchDiff.Updated type_ i ->
-                    view_ changeLine type_ (span [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
+                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.fullName ]) :: acc
 
                 BranchDiff.RenamedFrom type_ i ->
-                    view_ changeLine type_ (span [ class "change-title" ] [ FQN.view i.newFullName ]) :: acc
+                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.newFullName ]) :: acc
 
                 BranchDiff.Aliased type_ i ->
-                    view_ changeLine type_ (span [ class "change-title" ] [ FQN.view i.aliasFullName ]) :: acc
+                    view_ changeLine type_ (toggleClick |> Click.view [ class "change-title" ] [ FQN.view i.aliasFullName ]) :: acc
 
                 BranchDiff.Namespace ns ->
                     go ns.lines ++ acc

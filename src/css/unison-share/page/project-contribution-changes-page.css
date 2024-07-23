@@ -314,6 +314,10 @@
         font-weight: normal;
       }
     }
+
+    & .change-title:hover .fully-qualified-name_segment {
+      color: var(--u-color_interactive);
+    }
   }
 
   & .change-line.namespace {
