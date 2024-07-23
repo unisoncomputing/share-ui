@@ -54,7 +54,6 @@
       var(--u-color_container),
       var(--u-color_container)
     );
-    z-index: 100;
   }
 
   & .definition-changes {
@@ -222,11 +221,9 @@
     gap: 0.5rem;
     line-height: 1;
     position: relative;
-    z-index: 1;
 
     & .tooltip {
       left: -0.75rem;
-      z-index: 1000 !important;
     }
 
     & .change-icon {
@@ -238,6 +235,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 0 0 0.125rem var(--u-color_container);
+      z-index: var(--layer-base);
 
       & .icon {
         font-size: var(--font-size-extra-small);
@@ -340,7 +338,7 @@
       padding-left: 1.5rem;
     }
 
-    & .change-line:not(.namespace)::before {
+    & .change-line:not(.namespace)::after {
       position: absolute;
       top: -0.25rem;
       left: calc(0.25rem + 1.5px);
@@ -348,10 +346,10 @@
       content: " ";
       width: 1px;
       background: var(--u-color_border_subdued);
-      z-index: -100;
+      z-index: var(--layer-beneath);
     }
 
-    & .change-line:not(.namespace):last-child::before {
+    & .change-line:not(.namespace):last-child::after {
       bottom: 1.25rem;
     }
   }
