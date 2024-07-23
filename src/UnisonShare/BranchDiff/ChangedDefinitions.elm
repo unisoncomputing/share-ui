@@ -6,7 +6,7 @@ module UnisonShare.BranchDiff.ChangedDefinitions exposing (..)
 import Code.Syntax exposing (Syntax)
 import Dict exposing (Dict)
 import RemoteData exposing (WebData)
-import UnisonShare.BranchDiff as BranchDiff
+import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.DefinitionDiff exposing (DefinitionDiff)
 
 
@@ -32,41 +32,41 @@ empty =
     ChangedDefinitions Dict.empty
 
 
-set : ChangedDefinitions -> BranchDiff.ChangeLine -> ChangedDefinition -> ChangedDefinitions
+set : ChangedDefinitions -> ChangeLine -> ChangedDefinition -> ChangedDefinitions
 set (ChangedDefinitions changes) changeLine el =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     ChangedDefinitions
         (Dict.insert key el changes)
 
 
-member : ChangedDefinitions -> BranchDiff.ChangeLine -> Bool
+member : ChangedDefinitions -> ChangeLine -> Bool
 member (ChangedDefinitions changes) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     Dict.member key changes
 
 
-isExpanded : ChangedDefinitions -> BranchDiff.ChangeLine -> Bool
+isExpanded : ChangedDefinitions -> ChangeLine -> Bool
 isExpanded (ChangedDefinitions changes) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     Dict.get key changes
         |> Maybe.map .isExpanded
         |> Maybe.withDefault False
 
 
-isLoaded : ChangedDefinitions -> BranchDiff.ChangeLine -> Bool
+isLoaded : ChangedDefinitions -> ChangeLine -> Bool
 isLoaded (ChangedDefinitions changes) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
 
         isLoaded_ detail =
             case detail of
@@ -81,11 +81,11 @@ isLoaded (ChangedDefinitions changes) changeLine =
         |> Maybe.withDefault False
 
 
-collapse : ChangedDefinitions -> BranchDiff.ChangeLine -> ChangedDefinitions
+collapse : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 collapse ((ChangedDefinitions changes) as orig) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     Dict.get key changes
         |> Maybe.map (\cd -> { cd | isExpanded = False })
@@ -94,11 +94,11 @@ collapse ((ChangedDefinitions changes) as orig) changeLine =
         |> Maybe.withDefault orig
 
 
-expand : ChangedDefinitions -> BranchDiff.ChangeLine -> ChangedDefinitions
+expand : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 expand ((ChangedDefinitions changes) as orig) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     Dict.get key changes
         |> Maybe.map (\cd -> { cd | isExpanded = True })
@@ -107,7 +107,7 @@ expand ((ChangedDefinitions changes) as orig) changeLine =
         |> Maybe.withDefault orig
 
 
-toggle : ChangedDefinitions -> BranchDiff.ChangeLine -> ChangedDefinitions
+toggle : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 toggle changedDefinitions changeLine =
     if isExpanded changedDefinitions changeLine then
         collapse changedDefinitions changeLine
@@ -116,20 +116,20 @@ toggle changedDefinitions changeLine =
         expand changedDefinitions changeLine
 
 
-get : ChangedDefinitions -> BranchDiff.ChangeLine -> Maybe ChangedDefinition
+get : ChangedDefinitions -> ChangeLine -> Maybe ChangedDefinition
 get (ChangedDefinitions changes) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     Dict.get key changes
 
 
-remove : ChangedDefinitions -> BranchDiff.ChangeLine -> ChangedDefinitions
+remove : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 remove (ChangedDefinitions changes) changeLine =
     let
         key =
-            BranchDiff.changeLineToKey changeLine
+            ChangeLine.toKey changeLine
     in
     ChangedDefinitions
         (Dict.remove key changes)

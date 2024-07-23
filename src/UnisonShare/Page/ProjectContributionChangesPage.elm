@@ -27,7 +27,9 @@ import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
+import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
+import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
 import UnisonShare.Contribution exposing (Contribution)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
@@ -66,9 +68,9 @@ init appContext projectRef contribRef =
 
 type Msg
     = FetchBranchDiffFinished (WebData BranchDiff)
-    | ToggleChangeDetails BranchDiff.ChangeLine
-    | FetchDefinitionDiffFinished BranchDiff.ChangeLine (WebData DefinitionDiff)
-    | FetchDefinitionSyntaxFinished BranchDiff.ChangeLine (WebData Syntax.Syntax)
+    | ToggleChangeDetails ChangeLine
+    | FetchDefinitionDiffFinished ChangeLine (WebData DefinitionDiff)
+    | FetchDefinitionSyntaxFinished ChangeLine (WebData Syntax.Syntax)
     | NoOp
 
 
@@ -147,27 +149,27 @@ update appContext projectRef _ msg model =
                                     )
 
                             fetchSyntax_ branchRef =
-                                case BranchDiff.changeLineDefinitionType changeLine of
+                                case ChangeLine.definitionType changeLine of
                                     Just dt ->
-                                        if BranchDiff.isDefinitionTypeATerm dt then
-                                            fetchTermSyntax_ branchRef (BranchDiff.changeLineFullName changeLine)
+                                        if DefinitionType.isTerm dt then
+                                            fetchTermSyntax_ branchRef (ChangeLine.fullName changeLine)
 
                                         else
-                                            fetchTypeSyntax_ branchRef (BranchDiff.changeLineFullName changeLine)
+                                            fetchTypeSyntax_ branchRef (ChangeLine.fullName changeLine)
 
                                     Nothing ->
                                         Cmd.none
 
                             cmd =
                                 case changeLine of
-                                    BranchDiff.Updated dt { fullName } ->
-                                        if BranchDiff.isDefinitionTypeATerm dt then
+                                    ChangeLine.Updated dt { fullName } ->
+                                        if DefinitionType.isTerm dt then
                                             fetchTermDefinitionDiff fullName
 
                                         else
                                             fetchTypeDefinitionDiff fullName
 
-                                    BranchDiff.Removed _ _ ->
+                                    ChangeLine.Removed _ _ ->
                                         fetchSyntax_ branchDiff.oldBranch.ref
 
                                     _ ->
@@ -228,7 +230,7 @@ fetchDefinitionDiff :
     AppContext
     -> ProjectRef
     -> DefinitionDiff.DefinitionType
-    -> BranchDiff.ChangeLine
+    -> ChangeLine
     -> ShareApi.DefinitionDiffParams
     -> Cmd Msg
 fetchDefinitionDiff appContext projectRef definitionType changeLine params =
@@ -239,17 +241,17 @@ fetchDefinitionDiff appContext projectRef definitionType changeLine params =
         |> HttpApi.perform appContext.api
 
 
-fetchTermSyntax : AppContext -> ProjectRef -> BranchRef -> BranchDiff.ChangeLine -> FQN.FQN -> Cmd Msg
+fetchTermSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> FQN.FQN -> Cmd Msg
 fetchTermSyntax appContext projectRef branchRef changeLine name =
     fetchSyntax appContext projectRef branchRef changeLine "term" name
 
 
-fetchTypeSyntax : AppContext -> ProjectRef -> BranchRef -> BranchDiff.ChangeLine -> FQN.FQN -> Cmd Msg
+fetchTypeSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> FQN.FQN -> Cmd Msg
 fetchTypeSyntax appContext projectRef branchRef changeLine name =
     fetchSyntax appContext projectRef branchRef changeLine "type" name
 
 
-fetchSyntax : AppContext -> ProjectRef -> BranchRef -> BranchDiff.ChangeLine -> String -> FQN.FQN -> Cmd Msg
+fetchSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> String -> FQN.FQN -> Cmd Msg
 fetchSyntax appContext projectRef branchRef changeLine fieldPrefix name =
     let
         decode_ : Decode.Decoder Syntax.Syntax
@@ -283,11 +285,11 @@ branchLink projectRef diffBranchRef ref label =
         |> Link.view_ label
 
 
-viewChangeIcon : BranchDiff.ChangeLine -> Html Msg
+viewChangeIcon : ChangeLine -> Html Msg
 viewChangeIcon item =
     let
         type_ =
-            BranchDiff.changeLineNameToString item
+            ChangeLine.toString item
     in
     Tooltip.text type_
         |> Tooltip.tooltip
@@ -301,30 +303,30 @@ viewChangeIcon item =
             )
 
 
-viewDefinitionIcon : BranchDiff.DefinitionType -> Html msg
+viewDefinitionIcon : DefinitionType -> Html msg
 viewDefinitionIcon definitionType =
     let
         ( description, icon ) =
             case definitionType of
-                BranchDiff.Term ->
+                DefinitionType.Term ->
                     ( "Term", Icon.term )
 
-                BranchDiff.Type ->
+                DefinitionType.Type ->
                     ( "Type", Icon.type_ )
 
-                BranchDiff.Doc ->
+                DefinitionType.Doc ->
                     ( "Doc", Icon.doc )
 
-                BranchDiff.Ability ->
+                DefinitionType.Ability ->
                     ( "Ability", Icon.ability )
 
-                BranchDiff.AbilityConstructor ->
+                DefinitionType.AbilityConstructor ->
                     ( "Ability Constructor", Icon.abilityConstructor )
 
-                BranchDiff.DataConstructor ->
+                DefinitionType.DataConstructor ->
                     ( "Data Constructor", Icon.dataConstructor )
 
-                BranchDiff.Test ->
+                DefinitionType.Test ->
                     ( "Test", Icon.test )
     in
     div [ class "def-icon-anchor" ]
@@ -335,7 +337,7 @@ viewDefinitionIcon definitionType =
         ]
 
 
-viewDiffTreeNode : ProjectRef -> ChangedDefinitions -> BranchDiff.ChangeLine -> Html Msg
+viewDiffTreeNode : ProjectRef -> ChangedDefinitions -> ChangeLine -> Html Msg
 viewDiffTreeNode projectRef changedDefinitions changeLine =
     let
         viewTitle fqn =
@@ -346,32 +348,32 @@ viewDiffTreeNode projectRef changedDefinitions changeLine =
             div [ class "change-line" ] [ viewChangeIcon changeLine, viewDefinitionIcon type_, content ]
     in
     case changeLine of
-        BranchDiff.Added type_ { shortName } ->
+        ChangeLine.Added type_ { shortName } ->
             view_ type_ (viewTitle shortName)
 
-        BranchDiff.Removed type_ { shortName } ->
+        ChangeLine.Removed type_ { shortName } ->
             view_ type_ (viewTitle shortName)
 
-        BranchDiff.Updated type_ { shortName } ->
+        ChangeLine.Updated type_ { shortName } ->
             view_ type_ (viewTitle shortName)
 
-        BranchDiff.RenamedFrom type_ { newShortName } ->
+        ChangeLine.RenamedFrom type_ { newShortName } ->
             view_ type_ (viewTitle newShortName)
 
-        BranchDiff.Aliased type_ { aliasShortName } ->
+        ChangeLine.Aliased type_ { aliasShortName } ->
             view_ type_ (viewTitle aliasShortName)
 
-        BranchDiff.Namespace ns ->
+        ChangeLine.Namespace ns ->
             div [ class "change-line namespace" ]
                 (viewNamespaceLine projectRef changedDefinitions ns)
 
 
-viewContributionChangesGroup : ProjectRef -> ChangedDefinitions -> List BranchDiff.ChangeLine -> Html Msg
+viewContributionChangesGroup : ProjectRef -> ChangedDefinitions -> List ChangeLine -> Html Msg
 viewContributionChangesGroup projectRef changedDefinitions lines =
     div [ class "contribution-changes-group" ] (List.map (viewDiffTreeNode projectRef changedDefinitions) lines)
 
 
-viewNamespaceLine : ProjectRef -> ChangedDefinitions -> BranchDiff.NamespaceLineItem -> List (Html Msg)
+viewNamespaceLine : ProjectRef -> ChangedDefinitions -> ChangeLine.NamespaceLineItem -> List (Html Msg)
 viewNamespaceLine projectRef changedDefinitions { name, lines } =
     [ div [ class "namespace-info" ] [ Icon.view Icon.folder, FQN.view name ]
     , viewContributionChangesGroup projectRef changedDefinitions lines
@@ -401,7 +403,7 @@ viewLoadingExpandedContent =
         ]
 
 
-viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> BranchDiff.ChangeLine -> BranchDiff.DefinitionType -> Html Msg -> Html Msg
+viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
 viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine type_ content =
     let
         linked branchRef =
@@ -436,7 +438,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                                 let
                                     branchRef =
                                         case changeLine of
-                                            BranchDiff.Removed _ _ ->
+                                            ChangeLine.Removed _ _ ->
                                                 branchDiff.oldBranch.ref
 
                                             _ ->
@@ -484,7 +486,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
             |> Maybe.map (\details -> div [ class "definition-change-details" ] [ details ])
             |> Maybe.withDefault UI.nothing
         ]
-        |> Card.withClassName ("definition-change " ++ String.toLower (BranchDiff.changeLineNameToString changeLine))
+        |> Card.withClassName ("definition-change " ++ String.toLower (ChangeLine.toString changeLine))
         |> Card.asContained
         |> Card.view
 
@@ -502,22 +504,22 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
                         |> Click.view [ class "change-title" ] [ FQN.view fqn ]
             in
             case changeLine of
-                BranchDiff.Added type_ i ->
+                ChangeLine.Added type_ i ->
                     view_ changeLine type_ (viewTitle i.fullName) :: acc
 
-                BranchDiff.Removed type_ i ->
+                ChangeLine.Removed type_ i ->
                     view_ changeLine type_ (viewTitle i.fullName) :: acc
 
-                BranchDiff.Updated type_ i ->
+                ChangeLine.Updated type_ i ->
                     view_ changeLine type_ (viewTitle i.fullName) :: acc
 
-                BranchDiff.RenamedFrom type_ i ->
+                ChangeLine.RenamedFrom type_ i ->
                     view_ changeLine type_ (viewTitle i.newFullName) :: acc
 
-                BranchDiff.Aliased type_ i ->
+                ChangeLine.Aliased type_ i ->
                     view_ changeLine type_ (viewTitle i.aliasFullName) :: acc
 
-                BranchDiff.Namespace ns ->
+                ChangeLine.Namespace ns ->
                     go ns.lines ++ acc
 
         go lines =
