@@ -24,15 +24,23 @@ type alias BranchDiff =
 -- HELPERS
 
 
-summary : List ChangeLine -> { numChanges : Int, numNamespaceChanges : Int }
-summary changeLines =
+size : BranchDiff -> Int
+size branchDiff =
+    branchDiff |> summary |> .numChanges
+
+
+summary : BranchDiff -> { numChanges : Int, numNamespaceChanges : Int }
+summary branchDiff =
     let
+        go lines =
+            List.foldl f { numChanges = 0, numNamespaceChanges = 0 } lines
+
         f changeLine acc =
             case changeLine of
                 Namespace { lines } ->
                     let
                         nested =
-                            summary lines
+                            go lines
                     in
                     { numChanges = acc.numChanges + nested.numChanges
                     , numNamespaceChanges = acc.numNamespaceChanges + nested.numNamespaceChanges + 1
@@ -41,7 +49,7 @@ summary changeLines =
                 _ ->
                     { acc | numChanges = acc.numChanges + 1 }
     in
-    List.foldl f { numChanges = 0, numNamespaceChanges = 0 } changeLines
+    go branchDiff.lines
 
 
 condense : List ChangeLine -> List ChangeLine

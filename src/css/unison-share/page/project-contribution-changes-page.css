@@ -74,7 +74,35 @@
         align-items: center;
         justify-content: space-between;
         gap: 2rem;
-        width: 100%;
+        width: 101%;
+
+        & .change-info {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.25rem;
+
+          & .extra-info {
+            font-size: var(--font-size-small);
+            color: var(--u-color_text_subdued);
+            & a {
+              color: var(--u-color_text);
+            }
+          }
+
+          /* TODO: this is hacky.... */
+          .hash {
+            margin-top: 2px;
+            & .icon {
+              margin-top: -2px;
+            }
+          }
+
+          & a:hover,
+          & a:hover .hash {
+            color: var(--u-color_interactive);
+          }
+        }
       }
 
       & .definition-change-details {

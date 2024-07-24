@@ -1,5 +1,6 @@
 module UnisonShare.BranchDiff.ChangeLine exposing (..)
 
+import Code.Definition.Reference as Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode exposing (Decoder, field, oneOf)
@@ -7,7 +8,7 @@ import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
 import Lib.Util exposing (decodeNonEmptyList, decodeTag)
 import List.Nonempty as NEL
-import UnisonShare.BranchDiff.DefinitionType exposing (DefinitionType(..))
+import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType(..))
 
 
 type alias NamespaceLineItem =
@@ -15,11 +16,45 @@ type alias NamespaceLineItem =
 
 
 type ChangeLine
-    = Added DefinitionType { hash : Hash, shortName : FQN, fullName : FQN }
-    | Removed DefinitionType { hash : Hash, shortName : FQN, fullName : FQN }
-    | Updated DefinitionType { oldHash : Hash, newHash : Hash, shortName : FQN, fullName : FQN }
-    | RenamedFrom DefinitionType { hash : Hash, oldNames : NEL.Nonempty FQN, newShortName : FQN, newFullName : FQN }
-    | Aliased DefinitionType { hash : Hash, aliasShortName : FQN, aliasFullName : FQN, otherNames : NEL.Nonempty FQN }
+    = Added
+        DefinitionType
+        { hash : Hash
+        , shortName : FQN
+        , fullName : FQN
+        , ref : Reference
+        }
+    | Removed
+        DefinitionType
+        { hash : Hash
+        , shortName : FQN
+        , fullName : FQN
+        , ref : Reference
+        }
+    | Updated
+        DefinitionType
+        { oldHash : Hash
+        , newHash : Hash
+        , shortName : FQN
+        , fullName : FQN
+        , ref : Reference
+        }
+    | RenamedFrom
+        DefinitionType
+        { hash : Hash
+        , oldNames : NEL.Nonempty FQN
+        , newShortName : FQN
+        , newFullName : FQN
+        , newRef : Reference
+        , oldRef : Reference
+        }
+    | Aliased
+        DefinitionType
+        { hash : Hash
+        , aliasShortName : FQN
+        , aliasFullName : FQN
+        , otherNames : NEL.Nonempty FQN
+        , ref : Reference
+        }
     | Namespace NamespaceLineItem
 
 
@@ -87,6 +122,28 @@ shortName changeLine =
 
         Namespace d ->
             d.name
+
+
+reference : ChangeLine -> Maybe Reference
+reference changeLine =
+    case changeLine of
+        Added _ d ->
+            Just d.ref
+
+        Removed _ d ->
+            Just d.ref
+
+        Updated _ d ->
+            Just d.ref
+
+        RenamedFrom _ d ->
+            Just d.newRef
+
+        Aliased _ d ->
+            Just d.ref
+
+        Namespace _ ->
+            Nothing
 
 
 toString : ChangeLine -> String
@@ -195,19 +252,48 @@ decode_ : DefinitionType -> Decoder ChangeLine
 decode_ type_ =
     let
         added_ hash shortName_ fullName_ =
-            Added type_ { hash = hash, shortName = shortName_, fullName = fullName_ }
+            Added type_
+                { hash = hash
+                , shortName = shortName_
+                , fullName = fullName_
+                , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                }
 
         removed_ hash shortName_ fullName_ =
-            Removed type_ { hash = hash, shortName = shortName_, fullName = fullName_ }
+            Removed type_
+                { hash = hash
+                , shortName = shortName_
+                , fullName = fullName_
+                , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                }
 
         updated_ oldHash newHash shortName_ fullName_ =
-            Updated type_ { oldHash = oldHash, newHash = newHash, shortName = shortName_, fullName = fullName_ }
+            Updated type_
+                { oldHash = oldHash
+                , newHash = newHash
+                , shortName = shortName_
+                , fullName = fullName_
+                , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                }
 
         renamedFrom_ hash oldNames newShortName newFullName =
-            RenamedFrom type_ { hash = hash, oldNames = oldNames, newShortName = newShortName, newFullName = newFullName }
+            RenamedFrom type_
+                { hash = hash
+                , oldNames = oldNames
+                , newShortName = newShortName
+                , newFullName = newFullName
+                , oldRef = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) (NEL.head oldNames)
+                , newRef = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) newFullName
+                }
 
         aliased_ hash aliasShortName aliasFullName otherNames =
-            Aliased type_ { hash = hash, aliasShortName = aliasShortName, otherNames = otherNames, aliasFullName = aliasFullName }
+            Aliased type_
+                { hash = hash
+                , aliasShortName = aliasShortName
+                , otherNames = otherNames
+                , aliasFullName = aliasFullName
+                , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) aliasFullName
+                }
     in
     oneOf
         [ when decodeTag

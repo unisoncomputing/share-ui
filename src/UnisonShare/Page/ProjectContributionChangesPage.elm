@@ -3,6 +3,7 @@ module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 import Code.BranchRef exposing (BranchRef)
 import Code.Definition.Reference exposing (Reference(..))
 import Code.FullyQualifiedName as FQN
+import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.Linked as SyntaxLinked
@@ -13,6 +14,7 @@ import Json.Decode as Decode
 import Lib.HttpApi as HttpApi
 import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
+import List.Nonempty as NEL
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra exposing (pluralize)
 import UI
@@ -300,13 +302,18 @@ fetchSyntax appContext projectRef branchRef changeLine fieldPrefix name =
 -- VIEW
 
 
-branchLink : ProjectRef -> BranchDiff.DiffBranchRef -> Reference -> Html Msg -> Html Msg
-branchLink projectRef diffBranchRef ref label =
+branchLink_ : ProjectRef -> BranchDiff.DiffBranchRef -> Reference -> Click.Click Msg
+branchLink_ projectRef diffBranchRef ref =
     Link.projectBranchDefinition_
         projectRef
         diffBranchRef.ref
         (Perspective.absoluteRootPerspective diffBranchRef.hash)
         ref
+
+
+branchLink : ProjectRef -> BranchDiff.DiffBranchRef -> Reference -> Html Msg -> Html Msg
+branchLink projectRef diffBranchRef ref label =
+    branchLink_ projectRef diffBranchRef ref
         |> Link.view_ label
 
 
@@ -452,7 +459,12 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
 
                                             Success d ->
                                                 pre [ class "monochrome" ]
-                                                    [ code [] [ DefinitionDiff.view (linked branchDiff.newBranch.ref) d ] ]
+                                                    [ code []
+                                                        [ DefinitionDiff.view
+                                                            (linked branchDiff.newBranch.ref)
+                                                            d
+                                                        ]
+                                                    ]
 
                                             Failure e ->
                                                 viewFailedToLoadExpandedContent e
@@ -528,22 +540,88 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
                 viewTitle fqn =
                     Click.onClick (ToggleChangeDetails changeLine)
                         |> Click.view [ class "change-title" ] [ FQN.view fqn ]
+
+                clickableHash diffBranchRef ref hash =
+                    branchLink projectRef diffBranchRef ref (Hash.view hash)
+
+                viewInfo contents =
+                    div [ class "change-info" ] contents
             in
             case changeLine of
                 ChangeLine.Added type_ i ->
-                    view_ changeLine type_ (viewTitle i.fullName) :: acc
+                    view_ changeLine
+                        type_
+                        (viewInfo
+                            [ viewTitle i.fullName
+                            , clickableHash branchDiff.newBranch i.ref i.hash
+                            ]
+                        )
+                        :: acc
 
                 ChangeLine.Removed type_ i ->
-                    view_ changeLine type_ (viewTitle i.fullName) :: acc
+                    view_ changeLine
+                        type_
+                        (viewInfo
+                            [ viewTitle i.fullName
+                            , clickableHash branchDiff.oldBranch i.ref i.hash
+                            ]
+                        )
+                        :: acc
 
                 ChangeLine.Updated type_ i ->
-                    view_ changeLine type_ (viewTitle i.fullName) :: acc
+                    view_ changeLine
+                        type_
+                        (viewInfo
+                            [ viewTitle i.fullName
+                            , clickableHash branchDiff.oldBranch i.ref i.oldHash
+                            , Icon.view Icon.arrowRight
+                            , clickableHash branchDiff.newBranch i.ref i.newHash
+                            ]
+                        )
+                        :: acc
 
                 ChangeLine.RenamedFrom type_ i ->
-                    view_ changeLine type_ (viewTitle i.newFullName) :: acc
+                    view_ changeLine
+                        type_
+                        (viewInfo
+                            [ viewTitle i.newFullName
+                            , clickableHash branchDiff.oldBranch i.newRef i.hash
+                            , span [ class "extra-info" ]
+                                [ text "(was "
+                                , branchLink projectRef
+                                    branchDiff.oldBranch
+                                    -- TODO: should be oldRefs, plural...
+                                    i.oldRef
+                                    (i.oldNames
+                                        |> NEL.map FQN.toString
+                                        |> NEL.toList
+                                        |> String.join ", "
+                                        |> text
+                                    )
+                                , text ")"
+                                ]
+                            ]
+                        )
+                        :: acc
 
                 ChangeLine.Aliased type_ i ->
-                    view_ changeLine type_ (viewTitle i.aliasFullName) :: acc
+                    view_ changeLine
+                        type_
+                        (viewInfo
+                            [ viewTitle i.aliasFullName
+                            , clickableHash branchDiff.newBranch i.ref i.hash
+                            , span [ class "extra-info" ]
+                                [ text "(AKA "
+                                , i.otherNames
+                                    |> NEL.map FQN.toString
+                                    |> NEL.toList
+                                    |> String.join ", "
+                                    |> text
+                                , text ")"
+                                ]
+                            ]
+                        )
+                        :: acc
 
                 ChangeLine.Namespace ns ->
                     go ns.lines ++ acc
@@ -558,7 +636,20 @@ viewBranchDiff : AppContext -> ProjectRef -> ChangedDefinitions -> BranchDiff ->
 viewBranchDiff _ projectRef changedDefinitions diff =
     let
         summary =
-            BranchDiff.summary diff.lines
+            BranchDiff.summary diff
+
+        -- There's no reason to show a tree with a single element...
+        tree =
+            if BranchDiff.size diff > 1 then
+                Card.card
+                    [ viewContributionChangesGroup projectRef changedDefinitions diff.lines
+                    ]
+                    |> Card.withClassName "change-tree"
+                    |> Card.asContained
+                    |> Card.view
+
+            else
+                UI.nothing
     in
     div [ class "branch-diff-content" ]
         [ strong []
@@ -567,12 +658,7 @@ viewBranchDiff _ projectRef changedDefinitions diff =
             , text (pluralize "namespace" "namespaces" summary.numNamespaceChanges)
             ]
         , div [ class "branch-diff-content-cards" ]
-            [ Card.card
-                [ viewContributionChangesGroup projectRef changedDefinitions diff.lines
-                ]
-                |> Card.withClassName "change-tree"
-                |> Card.asContained
-                |> Card.view
+            [ tree
             , div [ id "definition-changes", class "definition-changes" ]
                 (viewChangedDefinitionsCards projectRef changedDefinitions diff)
             ]
