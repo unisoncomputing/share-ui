@@ -18,6 +18,7 @@ module UnisonShare.Route exposing
     , projectBranchRoot
     , projectBranches
     , projectContribution
+    , projectContributionChange
     , projectContributionChanges
     , projectContributions
     , projectOverview
@@ -51,6 +52,7 @@ import Code.UrlParsers
         ( b
         , branchRef
         , end
+        , fqn
         , perspectiveParams
         , projectSlug
         , reference
@@ -85,7 +87,7 @@ type UserRoute
 
 type ProjectContributionRoute
     = ProjectContributionOverview
-    | ProjectContributionChanges
+    | ProjectContributionChanges (Maybe FQN.FQN)
 
 
 type ProjectRoute
@@ -199,7 +201,12 @@ projectContribution projectRef_ contribRef =
 
 projectContributionChanges : ProjectRef -> ContributionRef -> Route
 projectContributionChanges projectRef_ contribRef =
-    Project projectRef_ (ProjectContribution contribRef ProjectContributionChanges)
+    Project projectRef_ (ProjectContribution contribRef (ProjectContributionChanges Nothing))
+
+
+projectContributionChange : ProjectRef -> ContributionRef -> FQN.FQN -> Route
+projectContributionChange projectRef_ contribRef fqn =
+    Project projectRef_ (ProjectContribution contribRef (ProjectContributionChanges (Just fqn)))
 
 
 projectContributions : ProjectRef -> Route
@@ -496,12 +503,19 @@ projectParser queryString =
             in
             Project ps (ProjectContribution ref ProjectContributionOverview)
 
+        projectContributionChange_ handle slug ref fqn =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectContribution ref (ProjectContributionChanges (Just fqn)))
+
         projectContributionChanges_ handle slug ref =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectContribution ref ProjectContributionChanges)
+            Project ps (ProjectContribution ref (ProjectContributionChanges Nothing))
 
         projectContributions_ handle slug =
             let
@@ -531,6 +545,7 @@ projectParser queryString =
         , b (succeed projectBranchRoot_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "code" |. slash |= branchRef |. end)
         , b (succeed projectRelease_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "releases" |. slash |= version |. end)
         , b (succeed projectReleases_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "releases" |. end)
+        , b (succeed projectContributionChange_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. slash |= fqn |. end)
         , b (succeed projectContributionChanges_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. end)
         , b (succeed projectContribution_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. end)
         , b (succeed projectContributions_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. end)
@@ -678,8 +693,11 @@ toUrlPattern r =
         Project _ (ProjectContribution _ ProjectContributionOverview) ->
             ":handle/:project-slug/contributions/:contribution-ref"
 
-        Project _ (ProjectContribution _ ProjectContributionChanges) ->
+        Project _ (ProjectContribution _ (ProjectContributionChanges Nothing)) ->
             ":handle/:project-slug/contributions/:contribution-ref/changes"
+
+        Project _ (ProjectContribution _ (ProjectContributionChanges (Just _))) ->
+            ":handle/:project-slug/contributions/:contribution-ref/changes/:definition-name"
 
         Project _ ProjectContributions ->
             ":handle/:project-slug/contributions"
@@ -837,8 +855,11 @@ toUrlString route =
                 Project projectRef_ (ProjectContribution r ProjectContributionOverview) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r ], [] )
 
-                Project projectRef_ (ProjectContribution r ProjectContributionChanges) ->
+                Project projectRef_ (ProjectContribution r (ProjectContributionChanges Nothing)) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "changes" ], [] )
+
+                Project projectRef_ (ProjectContribution r (ProjectContributionChanges (Just fqn))) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "changes" ] ++ NEL.toList (FQN.toUrlSegments fqn), [] )
 
                 Project projectRef_ ProjectContributions ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions" ], [] )

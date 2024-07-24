@@ -56,8 +56,8 @@ type alias DiffBranches =
     }
 
 
-init : AppContext -> ProjectRef -> ContributionRef -> ( Model, Cmd Msg )
-init appContext projectRef contribRef =
+init : AppContext -> ProjectRef -> ContributionRef -> Maybe FQN.FQN -> ( Model, Cmd Msg )
+init appContext projectRef contribRef _ =
     ( { branchDiff = Loading
       , changedDefinitions = ChangedDefinitions.empty
       }

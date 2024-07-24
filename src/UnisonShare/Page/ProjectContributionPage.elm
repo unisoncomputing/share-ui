@@ -66,10 +66,10 @@ init appContext projectRef contribRef route =
                     in
                     ( Overview overviewPage, Cmd.map ProjectContributionOverviewPageMsg overviewPageCmd )
 
-                ProjectContributionChanges ->
+                ProjectContributionChanges focus ->
                     let
                         ( changesPage, changesPageCmd ) =
-                            ProjectContributionChangesPage.init appContext projectRef contribRef
+                            ProjectContributionChangesPage.init appContext projectRef contribRef focus
                     in
                     ( Changes changesPage, Cmd.map ProjectContributionChangesPageMsg changesPageCmd )
     in
@@ -219,7 +219,7 @@ updateSubPage appContext projectRef contribRef contribRoute model =
                     in
                     ( { model | subPage = Overview overviewPage }, Cmd.map ProjectContributionOverviewPageMsg overviewPageCmd )
 
-        ProjectContributionChanges ->
+        ProjectContributionChanges focus ->
             case model.subPage of
                 Changes _ ->
                     ( model, Cmd.none )
@@ -227,7 +227,7 @@ updateSubPage appContext projectRef contribRef contribRoute model =
                 _ ->
                     let
                         ( changesPage, changesPageCmd ) =
-                            ProjectContributionChangesPage.init appContext projectRef contribRef
+                            ProjectContributionChangesPage.init appContext projectRef contribRef focus
                     in
                     ( { model | subPage = Changes changesPage }, Cmd.map ProjectContributionChangesPageMsg changesPageCmd )
 
