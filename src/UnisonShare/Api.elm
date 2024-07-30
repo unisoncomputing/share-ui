@@ -31,6 +31,7 @@ module UnisonShare.Api exposing
     , projectBranchReleaseNotes
     , projectBranches
     , projectContribution
+    , projectContributionDefinitionDiff
     , projectContributionDiff
     , projectContributionTimeline
     , projectContributions
@@ -79,6 +80,7 @@ import UI.KeyboardShortcut.Key exposing (Key(..))
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
+import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
@@ -518,6 +520,34 @@ projectContributionDiff projectRef contribRef =
         }
 
 
+projectContributionDefinitionDiff : ProjectRef -> ContributionRef -> DefinitionDiff.DefinitionType -> { old : FQN, new : FQN } -> Endpoint
+projectContributionDefinitionDiff projectRef contribRef defType { old, new } =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+
+        ( queryParams, endPoint ) =
+            case defType of
+                DefinitionDiff.Term ->
+                    ( [ string "oldTerm" (FQN.toApiUrlString old)
+                      , string "newTerm" (FQN.toApiUrlString new)
+                      ]
+                    , "terms"
+                    )
+
+                DefinitionDiff.Type ->
+                    ( [ string "oldType" (FQN.toApiUrlString old)
+                      , string "newType" (FQN.toApiUrlString new)
+                      ]
+                    , "types"
+                    )
+    in
+    GET
+        { path = [ "users", handle, "projects", slug, "contributions", ContributionRef.toApiString contribRef, "diff", endPoint ]
+        , queryParams = queryParams
+        }
+
+
 type DefinitionDiffParams
     = Term { oldBranchRef : BranchRef, newBranchRef : BranchRef, oldTerm : FQN, newTerm : FQN }
     | Type { oldBranchRef : BranchRef, newBranchRef : BranchRef, oldType : FQN, newType : FQN }
@@ -529,24 +559,28 @@ projectBranchDefinitionDiff projectRef params =
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
 
-        queryParams =
+        ( queryParams, endPoint ) =
             case params of
                 Term { oldBranchRef, newBranchRef, oldTerm, newTerm } ->
-                    [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
-                    , string "newBranchRef" (BranchRef.toString newBranchRef)
-                    , string "oldTerm" (FQN.toApiUrlString oldTerm)
-                    , string "newTerm" (FQN.toApiUrlString newTerm)
-                    ]
+                    ( [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
+                      , string "newBranchRef" (BranchRef.toString newBranchRef)
+                      , string "oldTerm" (FQN.toApiUrlString oldTerm)
+                      , string "newTerm" (FQN.toApiUrlString newTerm)
+                      ]
+                    , "terms"
+                    )
 
                 Type { oldBranchRef, newBranchRef, oldType, newType } ->
-                    [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
-                    , string "newBranchRef" (BranchRef.toApiUrlString newBranchRef)
-                    , string "oldType" (FQN.toApiUrlString oldType)
-                    , string "newType" (FQN.toApiUrlString newType)
-                    ]
+                    ( [ string "oldBranchRef" (BranchRef.toString oldBranchRef)
+                      , string "newBranchRef" (BranchRef.toApiUrlString newBranchRef)
+                      , string "oldType" (FQN.toApiUrlString oldType)
+                      , string "newType" (FQN.toApiUrlString newType)
+                      ]
+                    , "types"
+                    )
     in
     GET
-        { path = [ "users", handle, "projects", slug, "diff", "terms" ]
+        { path = [ "users", handle, "projects", slug, "diff", endPoint ]
         , queryParams = queryParams
         }
 

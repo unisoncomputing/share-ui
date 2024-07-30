@@ -79,7 +79,7 @@ type Msg
 
 
 update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext projectRef _ msg model =
+update appContext projectRef contribRef msg model =
     case msg of
         FetchBranchDiffFinished branchDiff ->
             let
@@ -97,7 +97,7 @@ update appContext projectRef _ msg model =
         ExpandChangeDetails changeLine ->
             case model.branchDiff of
                 Success branchDiff ->
-                    expandAndScrollTo appContext projectRef model branchDiff changeLine
+                    expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine
 
                 _ ->
                     ( model, Cmd.none )
@@ -114,7 +114,7 @@ update appContext projectRef _ msg model =
                         )
 
                     else
-                        expandAndScrollTo appContext projectRef model branchDiff changeLine
+                        expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine
 
                 _ ->
                     ( model, Cmd.none )
@@ -158,8 +158,8 @@ update appContext projectRef _ msg model =
 -- UPDATE HELPERS
 
 
-expandAndScrollTo : AppContext -> ProjectRef -> Model -> BranchDiff -> ChangeLine -> ( Model, Cmd Msg )
-expandAndScrollTo appContext projectRef model branchDiff changeLine =
+expandAndScrollTo : AppContext -> ProjectRef -> ContributionRef -> Model -> BranchDiff -> ChangeLine -> ( Model, Cmd Msg )
+expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
     if ChangedDefinitions.isLoaded model.changedDefinitions changeLine then
         ( { model
             | changedDefinitions =
@@ -184,28 +184,22 @@ expandAndScrollTo appContext projectRef model branchDiff changeLine =
             fetchTermDefinitionDiff name =
                 fetchDefinitionDiff appContext
                     projectRef
+                    contribRef
                     DefinitionDiff.Term
                     changeLine
-                    (ShareApi.Term
-                        { oldBranchRef = branchDiff.oldBranch.ref
-                        , newBranchRef = branchDiff.newBranch.ref
-                        , oldTerm = name
-                        , newTerm = name
-                        }
-                    )
+                    { old = name
+                    , new = name
+                    }
 
             fetchTypeDefinitionDiff name =
                 fetchDefinitionDiff appContext
                     projectRef
+                    contribRef
                     DefinitionDiff.Type
                     changeLine
-                    (ShareApi.Type
-                        { oldBranchRef = branchDiff.oldBranch.ref
-                        , newBranchRef = branchDiff.newBranch.ref
-                        , oldType = name
-                        , newType = name
-                        }
-                    )
+                    { old = name
+                    , new = name
+                    }
 
             fetchSyntax_ branchRef =
                 case ChangeLine.definitionType changeLine of
@@ -256,12 +250,13 @@ fetchBranchDiff appContext projectRef contributionRef =
 fetchDefinitionDiff :
     AppContext
     -> ProjectRef
+    -> ContributionRef
     -> DefinitionDiff.DefinitionType
     -> ChangeLine
-    -> ShareApi.DefinitionDiffParams
+    -> { old : FQN.FQN, new : FQN.FQN }
     -> Cmd Msg
-fetchDefinitionDiff appContext projectRef definitionType changeLine params =
-    ShareApi.projectBranchDefinitionDiff projectRef params
+fetchDefinitionDiff appContext projectRef contribRef definitionType changeLine params =
+    ShareApi.projectContributionDefinitionDiff projectRef contribRef definitionType params
         |> HttpApi.toRequest
             (DefinitionDiff.decode definitionType)
             (RemoteData.fromResult >> FetchDefinitionDiffFinished changeLine)
