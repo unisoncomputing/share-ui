@@ -606,7 +606,12 @@ update appContext projectRef route msg model =
                         _ ->
                             Cmd.none
             in
-            ( { model | switchBranch = switchBranch }, Cmd.batch [ Cmd.map SwitchBranchMsg switchBranchCmd, navCmd ] )
+            ( { model | switchBranch = switchBranch }
+            , Cmd.batch
+                [ Cmd.map SwitchBranchMsg switchBranchCmd
+                , navCmd
+                ]
+            )
 
         ( _, ShowUseProjectModal ) ->
             ( { model | modal = UseProjectModal }, Cmd.none )
@@ -870,6 +875,7 @@ viewDeleteProjectModal projectRef { confirmText, deleting } =
             div [ class "delete-project-modal_content" ]
                 [ p []
                     [ text "You're about to permanently delete "
+                    , text confirmText
                     , strong [] [ text projectRef_ ]
                     , text "."
                     ]

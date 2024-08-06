@@ -632,7 +632,7 @@ view model =
         appDocument =
             case model.page of
                 Catalog catalog ->
-                    AppDocument.map CatalogPageMsg (CatalogPage.view catalog)
+                    AppDocument.map CatalogPageMsg (CatalogPage.view appContext catalog)
 
                 Account accountModel ->
                     case session of

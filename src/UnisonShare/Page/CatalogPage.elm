@@ -1,28 +1,18 @@
 module UnisonShare.Page.CatalogPage exposing (..)
 
-import Html exposing (Html, div, footer, h1, input, p, strong, table, tbody, td, text, tr)
-import Html.Attributes exposing (autofocus, class, classList, placeholder)
-import Html.Events exposing (onBlur, onFocus, onInput, onMouseDown)
-import Json.Decode as Decode exposing (nullable, string)
-import Json.Decode.Extra exposing (when)
-import Json.Decode.Pipeline exposing (required)
-import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.Search as Search exposing (Search)
-import Lib.SearchResults as SearchResults exposing (SearchResults(..))
-import Lib.Util exposing (decodeTag)
+import Html exposing (Html, div, footer, h1, p, strong, text)
+import Html.Attributes exposing (class)
+import Lib.HttpApi as HttpApi
+import Lib.SearchResults exposing (SearchResults(..))
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
 import UI.Card as Card
 import UI.Icon as Icon
-import UI.KeyboardShortcut as KeyboardShortcut exposing (KeyboardShortcut(..))
-import UI.KeyboardShortcut.Key as Key exposing (Key(..))
-import UI.KeyboardShortcut.KeyboardEvent as KeyboardEvent exposing (KeyboardEvent)
 import UI.Modal as Modal
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.Placeholder as Placeholder
-import UI.ProfileSnippet as ProfileSnippet
 import UI.StatusMessage as StatusMessage
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
@@ -30,33 +20,14 @@ import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Catalog as Catalog exposing (Catalog, CatalogWithFeatured)
 import UnisonShare.Link as Link
+import UnisonShare.OmniSearch as OmniSearch
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Project as Project exposing (Project, ProjectSummary)
+import UnisonShare.Project exposing (ProjectSummary)
 import UnisonShare.Project.ProjectListing as ProjectListing
-import UnisonShare.Project.ProjectRef as ProjectRef
-import UnisonShare.Route as Route
-import UnisonShare.User as User exposing (UserSummary)
 
 
 
 -- MODEL
-
-
-{-| TODO: This should maybe include more fields and be more like ProjectSummary
--}
-type alias ProjectSearchMatch =
-    Project
-        { summary : Maybe String
-        }
-
-
-type Match
-    = UserMatch UserSummary
-    | ProjectMatch ProjectSearchMatch
-
-
-type alias CatalogSearch =
-    Search Match
 
 
 type PageModal
@@ -65,10 +36,8 @@ type PageModal
 
 
 type alias Model =
-    { search : CatalogSearch
-    , hasFocus : Bool
+    { search : OmniSearch.Model
     , catalog : WebData Catalog
-    , keyboardShortcut : KeyboardShortcut.Model
     , modal : PageModal
     }
 
@@ -77,10 +46,8 @@ init : AppContext -> ( Model, Cmd Msg )
 init appContext =
     let
         model =
-            { search = Search.empty
-            , hasFocus = True
+            { search = OmniSearch.init appContext
             , catalog = Loading
-            , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
             , modal = NoModal
             }
     in
@@ -92,18 +59,11 @@ init appContext =
 
 
 type Msg
-    = UpdateQuery String
-    | PerformSearch String
-    | FetchCatalogFinished (WebData Catalog)
+    = FetchCatalogFinished (WebData Catalog)
     | RetryFetchCatalog
-    | UpdateFocus Bool
-    | ClearQuery
-    | SearchFinished String (HttpResult (List Match))
-    | SelectMatch Match
     | ShowGetOnTheCatalogModal
     | CloseModal
-    | Keydown KeyboardEvent
-    | KeyboardShortcutMsg KeyboardShortcut.Msg
+    | OmniSearchMsg OmniSearch.Msg
 
 
 update : AppContext -> Msg -> Model -> ( Model, Cmd Msg )
@@ -115,150 +75,22 @@ update appContext msg model =
         RetryFetchCatalog ->
             ( { model | catalog = Loading }, fetchCatalog appContext )
 
-        UpdateFocus hasFocus ->
-            ( { model | hasFocus = hasFocus }, Cmd.none )
-
-        UpdateQuery query ->
-            let
-                search =
-                    Search.withQuery query model.search
-            in
-            if Search.hasSubstantialQuery search then
-                ( { model | search = search }, Search.debounce (PerformSearch query) )
-
-            else
-                ( { model | search = search }, Cmd.none )
-
-        PerformSearch query ->
-            if Search.queryEquals query model.search then
-                ( { model | search = Search.toSearching model.search }, searchUsers appContext query )
-
-            else
-                ( model, Cmd.none )
-
-        ClearQuery ->
-            ( { model | search = Search.reset model.search }, Cmd.none )
-
-        SearchFinished query results ->
-            if Search.queryEquals query model.search then
-                ( { model | search = Search.fromResult model.search results }, Cmd.none )
-
-            else
-                ( model, Cmd.none )
-
-        SelectMatch match ->
-            let
-                cmd =
-                    matchToNavigate appContext match
-            in
-            ( model, cmd )
-
         ShowGetOnTheCatalogModal ->
             ( { model | modal = GetOnTheCatalogModal }, Cmd.none )
 
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none )
 
-        Keydown event ->
+        OmniSearchMsg omniSearchMsg ->
             let
-                ( keyboardShortcut, kCmd ) =
-                    KeyboardShortcut.collect model.keyboardShortcut event.key
-
-                cmd =
-                    Cmd.map KeyboardShortcutMsg kCmd
-
-                newModel =
-                    { model | keyboardShortcut = keyboardShortcut }
-
-                shortcut =
-                    KeyboardShortcut.fromKeyboardEvent model.keyboardShortcut event
+                ( search, cmd ) =
+                    OmniSearch.update appContext omniSearchMsg model.search
             in
-            case shortcut of
-                Sequence _ Escape ->
-                    ( { newModel | search = Search.reset model.search }, cmd )
-
-                Sequence _ ArrowUp ->
-                    ( { newModel | search = Search.searchResultsPrev model.search }, cmd )
-
-                Sequence _ ArrowDown ->
-                    ( { newModel | search = Search.searchResultsNext model.search }, cmd )
-
-                Sequence _ Enter ->
-                    case model.search of
-                        Search.Success _ results ->
-                            let
-                                navigate =
-                                    results
-                                        |> SearchResults.focus
-                                        |> Maybe.map (matchToNavigate appContext)
-                                        |> Maybe.withDefault Cmd.none
-                            in
-                            ( newModel, Cmd.batch [ cmd, navigate ] )
-
-                        _ ->
-                            ( newModel, cmd )
-
-                Sequence (Just Semicolon) k ->
-                    case Key.toNumber k of
-                        Just n ->
-                            let
-                                navigate =
-                                    Search.searchResults model.search
-                                        |> Maybe.andThen (SearchResults.getAt (n - 1))
-                                        |> Maybe.map (matchToNavigate appContext)
-                                        |> Maybe.withDefault Cmd.none
-                            in
-                            ( newModel, Cmd.batch [ cmd, navigate ] )
-
-                        Nothing ->
-                            ( newModel, cmd )
-
-                _ ->
-                    ( newModel, cmd )
-
-        KeyboardShortcutMsg kMsg ->
-            let
-                ( keyboardShortcut, cmd ) =
-                    KeyboardShortcut.update kMsg model.keyboardShortcut
-            in
-            ( { model | keyboardShortcut = keyboardShortcut }, Cmd.map KeyboardShortcutMsg cmd )
+            ( { model | search = search }, Cmd.map OmniSearchMsg cmd )
 
 
 
 -- EFFECTS
-
-
-searchUsers : AppContext -> String -> Cmd Msg
-searchUsers appContext query =
-    let
-        makeProjectSearchMatch ref visibility summary =
-            { ref = ref, visibility = visibility, summary = summary }
-
-        decodeProjectSearchMatch =
-            Decode.succeed makeProjectSearchMatch
-                |> required "projectRef" ProjectRef.decode
-                |> required "visibility" Project.decodeVisibility
-                |> required "summary" (nullable string)
-
-        decodeMatch =
-            Decode.oneOf
-                [ when decodeTag ((==) "User") (Decode.map UserMatch User.decodeSummary)
-                , when decodeTag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
-                ]
-    in
-    ShareApi.search query
-        |> HttpApi.toRequest (Decode.list decodeMatch) (SearchFinished query)
-        |> HttpApi.perform appContext.api
-
-
-matchToNavigate : AppContext -> Match -> Cmd Msg
-matchToNavigate appContext match =
-    case match of
-        UserMatch u ->
-            u.handle |> Route.userProfile |> Route.navigate appContext.navKey
-
-        ProjectMatch p ->
-            p.ref |> Route.projectOverview |> Route.navigate appContext.navKey
 
 
 fetchCatalog : AppContext -> Cmd Msg
@@ -306,108 +138,6 @@ viewCategory ( category, projects ) =
     in
     Card.titled category [ div [ class "catalog_projects" ] projectLinks ]
         |> Card.view
-
-
-{-| View a match in the dropdown list. Use `onMouseDown` instead of `onClick`
-to avoid competing with `onBlur` on the input
--}
-viewMatch : KeyboardShortcut.Model -> Match -> Bool -> Maybe Key -> Html Msg
-viewMatch keyboardShortcut match isFocused shortcut =
-    let
-        shortcutIndicator =
-            if isFocused then
-                KeyboardShortcut.view keyboardShortcut (Sequence Nothing Key.Enter)
-
-            else
-                case shortcut of
-                    Nothing ->
-                        UI.nothing
-
-                    Just key ->
-                        KeyboardShortcut.view keyboardShortcut (Sequence (Just Key.Semicolon) key)
-    in
-    case match of
-        UserMatch user ->
-            tr
-                [ classList [ ( "search-result", True ), ( "focused", isFocused ) ]
-                , onMouseDown (SelectMatch match)
-                ]
-                [ td [ class "match-name" ]
-                    [ div [ class "user-match" ]
-                        [ ProfileSnippet.profileSnippet user |> ProfileSnippet.view
-                        ]
-                    ]
-                , td [ class "category" ] [ text "User" ]
-                , td [] [ div [ class "shortcut" ] [ shortcutIndicator ] ]
-                ]
-
-        ProjectMatch project ->
-            let
-                summary =
-                    UI.viewMaybe
-                        (\s ->
-                            div [ class "project-match_summary" ]
-                                [ text s ]
-                        )
-                        project.summary
-            in
-            tr
-                [ classList [ ( "search-result", True ), ( "focused", isFocused ) ]
-                , onMouseDown (SelectMatch match)
-                ]
-                [ td [ class "match-name" ]
-                    [ div [ class "project-match" ]
-                        [ ProjectListing.projectListing project |> ProjectListing.view
-                        , summary
-                        ]
-                    ]
-                , td [ class "category" ] [ text "Project" ]
-                , td [] [ div [ class "shortcut" ] [ shortcutIndicator ] ]
-                ]
-
-
-indexToShortcut : Int -> Maybe Key
-indexToShortcut index =
-    let
-        n =
-            index + 1
-    in
-    if n > 9 then
-        Nothing
-
-    else
-        n |> String.fromInt |> Key.fromString |> Just
-
-
-viewMatches : KeyboardShortcut.Model -> SearchResults.Matches Match -> Html Msg
-viewMatches keyboardShortcut matches =
-    let
-        matchItems =
-            matches
-                |> SearchResults.mapMatchesToList (\d f -> ( d, f ))
-                |> List.indexedMap (\i ( d, f ) -> ( d, f, indexToShortcut i ))
-                |> List.map (\( d, f, s ) -> viewMatch keyboardShortcut d f s)
-    in
-    table [] [ tbody [] matchItems ]
-
-
-viewSearchResults : KeyboardShortcut.Model -> CatalogSearch -> Html Msg
-viewSearchResults keyboardShortcut search =
-    case search of
-        Search.Success query r ->
-            let
-                resultsPane =
-                    case r of
-                        SearchResults.Empty ->
-                            div [ class "empty-state" ] [ text ("No matches found for \"" ++ query ++ "\"") ]
-
-                        SearchResults.SearchResults matches ->
-                            viewMatches keyboardShortcut matches
-            in
-            div [ class "search-results" ] [ resultsPane ]
-
-        _ ->
-            UI.nothing
 
 
 viewGetOnTheCatalogModal : Html Msg
@@ -478,8 +208,8 @@ viewCategories categories =
         ++ List.map viewCategory categories.rest
 
 
-view_ : Model -> PageLayout Msg
-view_ model =
+view_ : AppContext -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view_ appContext model =
     let
         catalog =
             case model.catalog of
@@ -510,21 +240,10 @@ view_ model =
                             |> StatusMessage.view
                         ]
 
-        searchResults =
-            if model.hasFocus then
-                viewSearchResults model.keyboardShortcut model.search
-
-            else
-                UI.nothing
-
-        keyboardEvent =
-            KeyboardEvent.on KeyboardEvent.Keydown Keydown
-                |> KeyboardEvent.stopPropagation
-                |> KeyboardEvent.preventDefaultWhen
-                    (\evt -> List.member evt.key [ ArrowUp, ArrowDown, Semicolon ])
-                |> KeyboardEvent.attach
+        ( omniSearch, omniSearchModal ) =
+            OmniSearch.view appContext model.search
     in
-    PageLayout.heroLayout
+    ( PageLayout.heroLayout
         (PageLayout.PageHero
             (div [ class "catalog-hero" ]
                 [ h1 []
@@ -538,41 +257,26 @@ view_ model =
                         ]
                     , div [] [ text "Projects, libraries, documention, terms, and types" ]
                     ]
-                , Html.node "search"
-                    [ class "catalog-search", keyboardEvent ]
-                    [ div [ class "search-field" ]
-                        [ Icon.view Icon.search
-                        , input
-                            [ placeholder "Search for projects and users"
-                            , onInput UpdateQuery
-                            , autofocus True
-                            , onBlur (UpdateFocus False)
-                            , onFocus (UpdateFocus True)
-                            ]
-                            []
-                        ]
-                    , searchResults
-                    ]
+                , Html.map OmniSearchMsg omniSearch
                 ]
             )
         )
-        (PageContent.oneColumn
-            [ catalog
-            ]
-        )
+        (PageContent.oneColumn [ catalog ])
         PageFooter.pageFooter
+    , Maybe.map (Html.map OmniSearchMsg) omniSearchModal
+    )
 
 
-view : Model -> AppDocument Msg
-view model =
+view : AppContext -> Model -> AppDocument Msg
+view appContext model =
     let
-        page =
-            model |> view_ |> PageLayout.view
+        ( page, pageModal ) =
+            view_ appContext model
 
         modal =
             case model.modal of
                 NoModal ->
-                    Nothing
+                    pageModal
 
                 GetOnTheCatalogModal ->
                     Just viewGetOnTheCatalogModal
@@ -580,7 +284,7 @@ view model =
     { pageId = "catalog-page"
     , title = "Catalog"
     , pageHeader = Nothing
-    , page = page
+    , page = PageLayout.view page
     , appHeader = AppHeader.appHeader AppHeader.Catalog
     , modal = modal
     }
