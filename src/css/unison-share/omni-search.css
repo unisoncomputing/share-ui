@@ -142,7 +142,7 @@
       }
     }
 
-    & .match::after {
+    & .definition-match::after {
       position: absolute;
       content: " ";
       top: 0;
