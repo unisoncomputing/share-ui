@@ -1,3 +1,7 @@
+import cssHasPseudo from 'css-has-pseudo/browser';
+
+cssHasPseudo(document);
+
 import "ui-core/css/ui.css";
 import "ui-core/css/themes/unison-light.css";
 import "ui-core/css/code.css";

@@ -33,6 +33,7 @@ const unisonShareCfg = {
                     features: {
                       "is-pseudo-class": false,
                       "nesting-rules": true,
+                      "has-pseudo-class": true,
                     },
                   }),
                 ],
