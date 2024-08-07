@@ -60,10 +60,11 @@ definitionTypeToString type_ =
 -- VIEW
 
 
-viewSegments : Linked.Linked msg -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
-viewSegments linked segments =
+viewSegments : Linked.Linked msg -> String -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
+viewSegments linked className segments =
     segments
         |> NEL.map (SyntaxSegment.view linked)
+        |> NEL.map (\seg -> span [ class className ] [ seg ])
         |> NEL.toList
 
 
@@ -82,17 +83,15 @@ viewOldDiffSegment linked segment =
         viewSegment =
             SyntaxSegment.view linked
 
-        viewSegments_ =
-            viewSegments linked
+        viewSegments_ className =
+            viewSegments linked className
     in
     case segment of
         Old segments ->
-            -- span [ class "diff-segment old" ]
-            viewSegments_ segments
+            viewSegments_ "diff-segment old" segments
 
         Both segments ->
-            -- span []
-            viewSegments_ segments
+            viewSegments_ "diff-segment both" segments
 
         New _ ->
             []
@@ -112,18 +111,18 @@ viewNewDiffSegment linked segment =
         viewSegment =
             SyntaxSegment.view linked
 
-        viewSegments_ =
-            viewSegments linked
+        viewSegments_ className =
+            viewSegments linked className
     in
     case segment of
         Old _ ->
             []
 
         New segments ->
-            viewSegments_ segments
+            viewSegments_ "diff-segment new" segments
 
         Both segments ->
-            viewSegments_ segments
+            viewSegments_ "diff-segment old" segments
 
         AnnotationChange change ->
             [ viewTooltip
