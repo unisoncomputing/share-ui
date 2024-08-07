@@ -28,6 +28,7 @@ const unisonShareCfg = {
                   postcssPresetEnv({
                     features: {
                       "is-pseudo-class": false,
+                      "nesting-rules": true,
                       "custom-media-queries": {
                         importFrom: `${UI_CORE_SRC}/css/ui/viewport.css`,
                       },

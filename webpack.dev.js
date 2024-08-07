@@ -3,6 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const postcssPresetEnv = require("postcss-preset-env");
+const postcssGlobalData = require("@csstools/postcss-global-data");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const branchDiffJson = require("./api-stubs/branch-diff.json");
 const definitionDiffJson = require("./api-stubs/definition-diff.json");
@@ -37,12 +38,13 @@ module.exports = {
             options: {
               postcssOptions: {
                 plugins: [
+                  postcssGlobalData({
+                    files: [`${UI_CORE_SRC}/css/ui/viewport.css`],
+                  }),
                   postcssPresetEnv({
                     features: {
                       "is-pseudo-class": false,
-                      "custom-media-queries": {
-                        importFrom: `${UI_CORE_SRC}/css/ui/viewport.css`,
-                      },
+                      "nesting-rules": true,
                     },
                   }),
                 ],
