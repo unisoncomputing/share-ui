@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const postcssGlobalData = require("@csstools/postcss-global-data");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const webpack = require("webpack");
 const postcssPresetEnv = require("postcss-preset-env");
@@ -25,13 +26,13 @@ const unisonShareCfg = {
             options: {
               postcssOptions: {
                 plugins: [
+                  postcssGlobalData({
+                    files: [`${UI_CORE_SRC}/css/ui/viewport.css`],
+                  }),
                   postcssPresetEnv({
                     features: {
                       "is-pseudo-class": false,
                       "nesting-rules": true,
-                      "custom-media-queries": {
-                        importFrom: `${UI_CORE_SRC}/css/ui/viewport.css`,
-                      },
                     },
                   }),
                 ],
