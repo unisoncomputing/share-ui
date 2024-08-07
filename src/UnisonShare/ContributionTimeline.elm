@@ -2,7 +2,7 @@ module UnisonShare.ContributionTimeline exposing (..)
 
 import Browser.Dom as Dom
 import Dict exposing (Dict)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)

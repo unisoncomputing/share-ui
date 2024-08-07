@@ -2,7 +2,7 @@ module UnisonShare.Ticket.TicketTimeline exposing (..)
 
 import Browser.Dom as Dom
 import Dict exposing (Dict)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
@@ -509,7 +509,28 @@ viewTicketEvent appContext projectRef modifyCommentRequests event =
 
 view : AppContext -> ProjectRef -> Model -> Html Msg
 view appContext projectRef model =
+    let
+        shape length =
+            Placeholder.text
+                |> Placeholder.withLength length
+                |> Placeholder.subdued
+                |> Placeholder.tiny
+                |> Placeholder.view
+
+        viewLoading =
+            div [ class "loading-timeline" ]
+                [ shape Placeholder.Large
+                , shape Placeholder.Small
+                , shape Placeholder.Medium
+                ]
+    in
     case model.timeline of
+        NotAsked ->
+            viewLoading
+
+        Loading ->
+            viewLoading
+
         Success timeline ->
             div []
                 [ div [ class "timeline" ] (List.map (viewTicketEvent appContext projectRef model.modifyCommentRequests) timeline)
@@ -521,8 +542,5 @@ view appContext projectRef model =
                     }
                 ]
 
-        _ ->
-            div []
-                [ Placeholder.text
-                    |> Placeholder.view
-                ]
+        Failure _ ->
+            div [ class "error" ] [ text "Error loading timeline." ]
