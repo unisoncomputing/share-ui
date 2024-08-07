@@ -230,7 +230,7 @@ update appContext msg model =
                                             )
                                         )
                                     |> Maybe.withDefault
-                                        ( toDefinitionSearchSearchingWithQuery model.search q
+                                        ( toDefinitionSearchSearchingWithQuery model.search model.fieldValue
                                         , searchDefinitions appContext model.filter model.fieldValue
                                         )
                         in
@@ -500,15 +500,18 @@ updateForValue appContext model value =
 
     else if hasEnoughChars then
         let
-            ( nameSearch, searchNamesCmd ) =
+            ( mainSearch, nameSearch, cmd ) =
                 case searchNames appContext model.filter value of
                     Nothing ->
-                        ( model.nameSearch, Cmd.none )
+                        ( toDefinitionSearchSearchingWithQuery model.search value
+                        , model.nameSearch
+                        , searchDefinitions appContext model.filter value
+                        )
 
                     Just searchNamesCmd_ ->
-                        ( Searching value Nothing, searchNamesCmd_ )
+                        ( model.search, Searching value Nothing, searchNamesCmd_ )
         in
-        ( { model | fieldValue = value, nameSearch = nameSearch }, searchNamesCmd )
+        ( { model | fieldValue = value, search = mainSearch, nameSearch = nameSearch }, cmd )
 
     else
         ( { model | fieldValue = value }, Cmd.none )
