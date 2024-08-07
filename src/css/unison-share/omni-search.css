@@ -286,7 +286,7 @@
 }
 
 .omni-search:focus-within .search-field .inner-field .name-suggestion {
-  display: inline !important;
+  display: inline;
 }
 
 /* For some reason this doesn't work with nested CSS */
@@ -386,7 +386,7 @@
   .omni-search .button,
   .omni-search .main-result-sheet .match .keyboard-shortcuts,
   .omni-search .summary,
-  .omni-search .name-suggestion,
+  .omni-search:focus-within .search-field .inner-field .name-suggestion,
   .omni-search .syntax {
     display: none;
   }
