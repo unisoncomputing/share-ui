@@ -406,7 +406,7 @@ viewNamespaceLine projectRef changedDefinitions { name, lines } =
 
 viewFailedToLoadExpandedContent : Http.Error -> Html msg
 viewFailedToLoadExpandedContent _ =
-    div [] [ text "Error, couldn't load diff details" ]
+    div [ class "error-expanded-content" ] [ text "Error, couldn't load diff details" ]
 
 
 viewLoadingExpandedContent : Html msg
