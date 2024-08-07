@@ -231,7 +231,7 @@ update appContext msg model =
                                         )
                                     |> Maybe.withDefault
                                         ( toDefinitionSearchSearchingWithQuery model.search q
-                                        , searchDefinitions appContext model.filter q
+                                        , searchDefinitions appContext model.filter model.fieldValue
                                         )
                         in
                         ( { model | nameSearch = Success q results, search = search }, cmd )
