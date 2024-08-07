@@ -622,13 +622,19 @@ searchNames appContext filter query =
                     (Decode.list (Decode.field "token" Decode.string))
                     (\r -> NameSearchFinished { query = query, results = r })
                 |> HttpApi.perform appContext.api
+
+        skipSpecialChars word =
+            if Regex.contains regex word then
+                Nothing
+
+            else
+                Just word
     in
     query
         |> StringE.clean
         |> String.split " "
         |> ListE.last
-        |> Maybe.map (Regex.replace regex (always ""))
-        |> Maybe.andThen StringE.nonEmpty
+        |> Maybe.andThen skipSpecialChars
         |> Maybe.map perform
 
 
