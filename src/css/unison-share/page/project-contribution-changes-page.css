@@ -398,7 +398,7 @@
     }
 
     & .contribution-changes-group .change-line.namespace {
-      padding-left: 1.5rem;
+      padding-left: 1.25rem;
     }
 
     & .change-line:not(.namespace)::before {
