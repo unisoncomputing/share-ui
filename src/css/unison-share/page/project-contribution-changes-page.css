@@ -172,11 +172,11 @@
     }
 
     & .definition-change.card.updated .old {
-      background: var(--color-pink-4);
+      background: var(--color-pink-5);
     }
 
     & .definition-change.card.updated .old a:hover {
-      background: var(--color-pink-3);
+      background: var(--color-pink-4);
     }
 
     & .definition-change.card.updated .old:has(+ .new) {
