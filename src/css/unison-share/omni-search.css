@@ -383,7 +383,7 @@
   }
 
   .omni-search .button,
-  .omni-search .keyboard-shortcut,
+  .omni-search .main-result-sheet .match .keyboard-shortcuts,
   .omni-search .summary,
   .omni-search .syntax {
     display: none;
