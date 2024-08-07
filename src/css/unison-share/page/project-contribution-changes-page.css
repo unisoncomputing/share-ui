@@ -182,12 +182,6 @@
       }
     }
 
-    & .definition-change.card .diff-segment {
-      padding: 0 0.25rem;
-      border-radius: var(--border-radius-base);
-      line-height: 1.4;
-    }
-
     & .definition-change.card.updated .replace {
       background: var(--color-orange-4);
     }
@@ -202,14 +196,6 @@
 
     & .definition-change.card.updated .old a:hover {
       background: var(--color-pink-4);
-    }
-
-    & .definition-change.card.updated .old:has(+ .new) {
-      border-radius: var(--border-radius-base) 0 0 var(--border-radius-base);
-    }
-
-    & .definition-change.card.updated .old + .new {
-      border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
     }
 
     & .definition-change.card.updated .new {
