@@ -188,7 +188,7 @@
     }
 
     & .definition-change.card.updated .new {
-      background: var(--color-green-4);
+      background: var(--color-green-5);
     }
 
     & .definition-change.card.updated .new a:hover {

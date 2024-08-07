@@ -3,14 +3,13 @@ module UnisonShare.DefinitionDiff exposing (..)
 import Code.Hash as Hash exposing (Hash)
 import Code.Syntax.Linked as Linked
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
-import Html exposing (Html, code, div, pre, span, text)
+import Html exposing (Html, code, div, span, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Util exposing (decodeNonEmptyList)
 import List.Nonempty as NEL
-import UI.Icon as Icon
 import UI.Tooltip as Tooltip
 
 
@@ -120,22 +119,18 @@ viewDiffSegment linked segment =
                     (span [ class "diff-segment segment-change" ] [ viewSegment to ])
 
 
-viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> Html msg
+viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> List (Html msg)
 viewDiff linked segments =
-    let
-        segments_ =
-            segments
-                |> NEL.map (viewDiffSegment linked)
-                |> NEL.toList
-    in
-    div [] segments_
+    segments
+        |> NEL.map (viewDiffSegment linked)
+        |> NEL.toList
 
 
 view : Linked.Linked msg -> DefinitionDiff -> Html msg
 view linked defDiff =
     case defDiff of
         Diff _ diff ->
-            div [] [ viewDiff linked diff ]
+            div [] (viewDiff linked diff)
 
         Mismatched _ ->
             div [] [ text "TODO" ]
