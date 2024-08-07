@@ -27,8 +27,8 @@
   }
 
   & .change-tree {
-    gap: 1.5rem;
-    width: 20rem;
+    width: 18rem;
+    padding: 1rem;
     height: max-content;
     overflow: hidden;
     position: relative;
@@ -37,7 +37,15 @@
       display: flex;
       flex-direction: column;
       gap: 0.125rem;
-      font-size: var(--font-size-medium);
+      font-size: var(--font-size-small);
+    }
+
+    & .change-line {
+      gap: 0.25rem;
+
+      & .icon {
+        font-size: var(--font-size-small);
+      }
     }
   }
 
