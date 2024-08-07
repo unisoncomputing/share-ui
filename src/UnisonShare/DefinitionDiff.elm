@@ -10,7 +10,6 @@ import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Util exposing (decodeNonEmptyList)
 import List.Nonempty as NEL
-import UI
 import UI.Tooltip as Tooltip
 
 
@@ -77,7 +76,7 @@ viewTooltip content =
 
 {-| View diff segments from the perspective of viewing the old definition
 -}
-viewOldDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
+viewOldDiffSegment : Linked.Linked msg -> DiffSegment -> List (Html msg)
 viewOldDiffSegment linked segment =
     let
         viewSegment =
@@ -88,24 +87,26 @@ viewOldDiffSegment linked segment =
     in
     case segment of
         Old segments ->
-            span [ class "diff-segment old" ] (viewSegments_ segments)
+            -- span [ class "diff-segment old" ]
+            viewSegments_ segments
 
         Both segments ->
-            span [] (viewSegments_ segments)
+            -- span []
+            viewSegments_ segments
 
         New _ ->
-            UI.nothing
+            []
 
         AnnotationChange change ->
-            span [] [ viewSegment change.segment ]
+            [ viewSegment change.segment ]
 
         SegmentChange { from } ->
-            span [] [ viewSegment from ]
+            [ viewSegment from ]
 
 
 {-| View diff segments from the perspective of viewing the new definition
 -}
-viewNewDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
+viewNewDiffSegment : Linked.Linked msg -> DiffSegment -> List (Html msg)
 viewNewDiffSegment linked segment =
     let
         viewSegment =
@@ -116,16 +117,16 @@ viewNewDiffSegment linked segment =
     in
     case segment of
         Old _ ->
-            UI.nothing
+            []
 
         New segments ->
-            span [ class "diff-segment new" ] (viewSegments_ segments)
+            viewSegments_ segments
 
         Both segments ->
-            span [] (viewSegments_ segments)
+            viewSegments_ segments
 
         AnnotationChange change ->
-            viewTooltip
+            [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ div [ class "hash-changed" ]
                         [ text "The hash changed"
@@ -138,9 +139,10 @@ viewNewDiffSegment linked segment =
                 )
                 |> Tooltip.view
                     (span [ class "diff-segment annotation-change" ] [ viewSegment change.segment ])
+            ]
 
         SegmentChange { from, to } ->
-            viewTooltip
+            [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ text "Changed from"
                     , code [] [ viewSegment from ]
@@ -148,6 +150,7 @@ viewNewDiffSegment linked segment =
                 )
                 |> Tooltip.view
                     (span [ class "diff-segment segment-change" ] [ viewSegment to ])
+            ]
 
 
 viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> Html msg
@@ -155,13 +158,13 @@ viewDiff linked segments =
     let
         old =
             segments
-                |> NEL.map (viewOldDiffSegment linked)
                 |> NEL.toList
+                |> List.concatMap (viewOldDiffSegment linked)
 
         new =
             segments
-                |> NEL.map (viewNewDiffSegment linked)
                 |> NEL.toList
+                |> List.concatMap (viewNewDiffSegment linked)
     in
     div [ class "diff-side-by-side" ]
         [ pre [ class "monochrome diff-side" ] [ code [] old ]
