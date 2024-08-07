@@ -128,10 +128,7 @@ update appContext projectRef contribRef msg model =
                     ChangedDefinitions.set model.changedDefinitions
                         changeLine
                         { isExpanded = isExpanded
-                        , data =
-                            resp
-                                |> RemoteData.map DefinitionDiff.addReplaceSegments
-                                |> ChangedDefinitions.Diff
+                        , data = ChangedDefinitions.Diff resp
                         }
             in
             ( { model | changedDefinitions = changedDefinitions }, Cmd.none )

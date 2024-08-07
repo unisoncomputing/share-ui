@@ -19,8 +19,7 @@ type alias DiffSyntaxSegments =
 
 
 type DiffSegment
-    = Replace { old : DiffSyntaxSegments, new : DiffSyntaxSegments }
-    | Old DiffSyntaxSegments
+    = Old DiffSyntaxSegments
     | New DiffSyntaxSegments
     | Both DiffSyntaxSegments
     | AnnotationChange { segment : SyntaxSegment, fromHash : Hash, toHash : Hash }
@@ -59,47 +58,21 @@ definitionTypeToString type_ =
 
 
 
--- HELPERS
-
-
-{-| condense the diff segments down to `Replace` when seeing an `Old` followed
-by a `New` (this means something was deleted and something else took its exact
-position in the syntax tree)
--}
-addReplaceSegments : DefinitionDiff -> DefinitionDiff
-addReplaceSegments diff =
-    case diff of
-        Diff details originalSegments ->
-            let
-                f seg acc =
-                    case acc of
-                        last :: rest ->
-                            case ( last, seg ) of
-                                ( New new, Old old ) ->
-                                    Replace { old = old, new = new } :: rest
-
-                                _ ->
-                                    seg :: acc
-
-                        _ ->
-                            seg :: acc
-            in
-            originalSegments
-                |> NEL.toList
-                |> List.foldr f []
-                |> NEL.fromList
-                -- Note: it's impossible to not have a successful NEL, but NEL doesn't
-                -- have good foldr functions, so we go through List and have to do this
-                -- silly Maybe dance...
-                |> Maybe.withDefault originalSegments
-                |> Diff details
-
-        _ ->
-            diff
-
-
-
 -- VIEW
+
+
+viewSegments : Linked.Linked msg -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
+viewSegments linked segments =
+    segments
+        |> NEL.map (SyntaxSegment.view linked)
+        |> NEL.toList
+
+
+viewTooltip : Html msg -> Tooltip.Tooltip msg
+viewTooltip content =
+    Tooltip.rich content
+        |> Tooltip.tooltip
+        |> Tooltip.withArrow Tooltip.Start
 
 
 viewDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
@@ -108,46 +81,21 @@ viewDiffSegment linked segment =
         viewSegment =
             SyntaxSegment.view linked
 
-        viewSegments segments =
-            segments
-                |> NEL.map viewSegment
-                |> NEL.toList
-
-        tooltip content =
-            Tooltip.rich content
-                |> Tooltip.tooltip
-                |> Tooltip.withArrow Tooltip.Start
+        viewSegments_ =
+            viewSegments linked
     in
     case segment of
-        Replace { old, new } ->
-            tooltip
-                (div [ class "tooltip-changes-summary" ]
-                    [ pre [] [ code [ class "monochrome" ] (viewSegments old) ]
-                    , text "was replaced with "
-                    , pre [] [ code [ class "monochrome" ] (viewSegments new) ]
-                    ]
-                )
-                |> Tooltip.view
-                    (span [ class "diff-segment replace" ] (viewSegments new))
-
         Old segments ->
-            tooltip
-                (div [ class "tooltip-changes-summary" ]
-                    [ pre [] [ code [ class "monochrome" ] (viewSegments segments) ]
-                    , text "was removed"
-                    ]
-                )
-                |> Tooltip.view
-                    (span [ class "diff-segment remove-marker" ] [ Icon.view Icon.textDelete ])
+            span [ class "diff-segment old" ] (viewSegments_ segments)
 
         New segments ->
-            span [ class "diff-segment new" ] (viewSegments segments)
+            span [ class "diff-segment new" ] (viewSegments_ segments)
 
         Both segments ->
-            span [] (viewSegments segments)
+            span [] (viewSegments_ segments)
 
         AnnotationChange change ->
-            tooltip
+            viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ div [ class "hash-changed" ]
                         [ text "The hash changed"
@@ -162,7 +110,7 @@ viewDiffSegment linked segment =
                     (span [ class "diff-segment annotation-change" ] [ viewSegment change.segment ])
 
         SegmentChange { from, to } ->
-            tooltip
+            viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ text "Changed from"
                     , code [] [ viewSegment from ]
