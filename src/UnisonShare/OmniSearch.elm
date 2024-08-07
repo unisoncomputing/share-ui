@@ -39,7 +39,7 @@ import Code.Syntax as Syntax
 import Code.Syntax.Linked as SyntaxLinked
 import Code.Version as Version
 import Html exposing (Html, code, div, h2, input, span, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (autofocus, class, classList, name, placeholder, spellcheck, type_, value)
+import Html.Attributes exposing (autofocus, class, classList, name, placeholder, spellcheck, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import Json.Decode as Decode exposing (nullable, string)
 import Json.Decode.Extra exposing (when)
@@ -1114,7 +1114,7 @@ view appContext model =
             isMainSearchSearching model.search || Search.isSearching model.nameSearch
     in
     ( Html.node "search"
-        [ class "omni-search", classList [ ( "searching", isSearching ) ], keyboardEvent ]
+        [ class "omni-search", tabindex 0, classList [ ( "searching", isSearching ) ], keyboardEvent ]
         [ viewField model isSearching
         , viewMainSearch model.keyboardShortcut model.search
         ]
