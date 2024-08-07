@@ -160,7 +160,7 @@
       display: flex;
       flex-direction: row;
       gap: 1.5rem;
-      align-items: flex-start;
+      align-items: center;
     }
 
     & .user-match .profile-snippet {
@@ -178,7 +178,7 @@
     }
 
     & .project-match .project-info {
-      width: 14rem;
+      width: 17rem;
     }
 
     & .definition-match .keyboard-shortcuts {
