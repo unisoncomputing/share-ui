@@ -1002,7 +1002,7 @@ viewSearchHelpModal appContext =
                     [ class "help-content" ]
                     [ div []
                         [ div [] [ text "Find users, projects, and definitions with the below syntax." ]
-                        , div [] [ text "Navigate the result with the ", downKey, text " and ", upKey, text " keys. Select a match with ", enterKey, text "." ]
+                        , div [] [ text "Navigate the result with the ", downKey, text " and ", upKey, text " keys. Select a match with ", enterKey, text " (or click)." ]
                         ]
                     , divider
                     , div []
