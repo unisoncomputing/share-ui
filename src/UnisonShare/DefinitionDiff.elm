@@ -122,7 +122,7 @@ viewNewDiffSegment linked segment =
             viewSegments_ "diff-segment new" segments
 
         Both segments ->
-            viewSegments_ "diff-segment old" segments
+            viewSegments_ "diff-segment both" segments
 
         AnnotationChange change ->
             [ viewTooltip
