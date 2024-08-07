@@ -514,7 +514,28 @@ viewContributionEvent appContext projectRef modifyCommentRequests event =
 
 view : AppContext -> ProjectRef -> Model -> Html Msg
 view appContext projectRef model =
+    let
+        shape length =
+            Placeholder.text
+                |> Placeholder.withLength length
+                |> Placeholder.subdued
+                |> Placeholder.tiny
+                |> Placeholder.view
+
+        viewLoading =
+            div [ class "loading-timeline" ]
+                [ shape Placeholder.Large
+                , shape Placeholder.Small
+                , shape Placeholder.Medium
+                ]
+    in
     case model.timeline of
+        NotAsked ->
+            viewLoading
+
+        Loading ->
+            viewLoading
+
         Success timeline ->
             div []
                 [ div [ class "timeline" ] (List.map (viewContributionEvent appContext projectRef model.modifyCommentRequests) timeline)
@@ -526,8 +547,5 @@ view appContext projectRef model =
                     }
                 ]
 
-        _ ->
-            div []
-                [ Placeholder.text
-                    |> Placeholder.view
-                ]
+        Failure _ ->
+            div [ class "error" ] [ text "Error loading timeline." ]
