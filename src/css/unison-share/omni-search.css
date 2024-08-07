@@ -119,6 +119,18 @@
         align-items: center;
         font-size: var(--font-size-small);
         color: var(--u-color_text_subdued);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 0.5rem 0 4rem;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--c-omni-search_match_background),
+          var(--c-omni-search_match_background),
+          var(--c-omni-search_match_background)
+        );
 
         & .go-to,
         & .filter-by {
@@ -173,27 +185,11 @@
 
     & .project-match .summary {
       color: var(--u-color_text_subdued);
-      max-width: 19rem;
       font-size: var(--font-size-small);
     }
 
     & .project-match .project-info {
-      width: 17rem;
-    }
-
-    & .definition-match .keyboard-shortcuts {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      padding: 0 0.5rem 0 4rem;
-      background: linear-gradient(
-        to right,
-        transparent,
-        var(--c-omni-search_match_background),
-        var(--c-omni-search_match_background),
-        var(--c-omni-search_match_background)
-      );
+      width: 18rem;
     }
 
     & .definition-match .definition-info-and-project {
