@@ -72,6 +72,7 @@
     font-size: var(--font-size-medium);
 
     & .definition-change.card {
+      container: definition-change-card / inline-size;
       padding: 0;
       gap: 0;
 
@@ -82,7 +83,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 2rem;
-        width: 101%;
+        width: 100%;
 
         & .change-info {
           display: flex;
@@ -117,8 +118,7 @@
         position: relative;
         width: 100%;
         border-top: 1px solid var(--u-color_border_subdued);
-        padding: 1rem 1.5rem;
-        overflow: auto;
+        padding: 0;
 
         & pre {
           max-width: var(--readable-column-width-base);
@@ -161,6 +161,22 @@
             font-family: var(--font-monospace);
           }
         }
+      }
+    }
+
+    & .definition-change.card .diff-side-by-side {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      gap: 0;
+
+      & .diff-side {
+        width: 50%;
+        padding: 0.5rem 1rem;
+      }
+
+      & .diff-side:first-child {
+        border-right: 1px solid var(--u-color_border_subdued);
       }
     }
 
@@ -403,6 +419,42 @@
 .change-line.namespace
   .change-line:not(.namespace):has(+ .change-line.namespace)::before {
   bottom: 1.25rem;
+}
+
+.definition-change.card {
+}
+
+@container (max-width: 1199px) {
+  .project-contribution-changes-page .definition-changes {
+    & .definition-change.card .diff-side-by-side {
+      font-size: var(--font-size-medium);
+      flex-direction: column;
+    }
+
+    & .definition-change.card .diff-side-by-side .diff-side {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    & .definition-change.card .diff-side-by-side .diff-side:first-child {
+      border-right: 0;
+      border-bottom: 1px solid var(--u-color_border_subdued);
+    }
+  }
+}
+
+@container (min-width: 1200px) {
+  .diff-side-by-side {
+    font-size: var(--font-size-small);
+    flex-direction: row;
+  }
+}
+
+@container (min-width: 1260px) {
+  .diff-side-by-side {
+    font-size: var(--font-size-medium);
+    flex-direction: row;
+  }
 }
 
 @media only screen and (--u-viewport_max-xl) {

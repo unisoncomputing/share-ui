@@ -450,13 +450,9 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                                                 viewLoadingExpandedContent
 
                                             Success d ->
-                                                pre [ class "monochrome" ]
-                                                    [ code []
-                                                        [ DefinitionDiff.view
-                                                            (linked branchDiff.newBranch.ref)
-                                                            d
-                                                        ]
-                                                    ]
+                                                DefinitionDiff.view
+                                                    (linked branchDiff.newBranch.ref)
+                                                    d
 
                                             Failure e ->
                                                 viewFailedToLoadExpandedContent e

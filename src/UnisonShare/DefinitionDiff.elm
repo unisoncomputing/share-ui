@@ -3,13 +3,14 @@ module UnisonShare.DefinitionDiff exposing (..)
 import Code.Hash as Hash exposing (Hash)
 import Code.Syntax.Linked as Linked
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
-import Html exposing (Html, code, div, span, text)
+import Html exposing (Html, code, div, pre, span, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Util exposing (decodeNonEmptyList)
 import List.Nonempty as NEL
+import UI
 import UI.Tooltip as Tooltip
 
 
@@ -74,8 +75,10 @@ viewTooltip content =
         |> Tooltip.withArrow Tooltip.Start
 
 
-viewDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
-viewDiffSegment linked segment =
+{-| View diff segments from the perspective of viewing the old definition
+-}
+viewOldDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
+viewOldDiffSegment linked segment =
     let
         viewSegment =
             SyntaxSegment.view linked
@@ -86,6 +89,34 @@ viewDiffSegment linked segment =
     case segment of
         Old segments ->
             span [ class "diff-segment old" ] (viewSegments_ segments)
+
+        Both segments ->
+            span [] (viewSegments_ segments)
+
+        New _ ->
+            UI.nothing
+
+        AnnotationChange change ->
+            span [] [ viewSegment change.segment ]
+
+        SegmentChange { from } ->
+            span [] [ viewSegment from ]
+
+
+{-| View diff segments from the perspective of viewing the new definition
+-}
+viewNewDiffSegment : Linked.Linked msg -> DiffSegment -> Html msg
+viewNewDiffSegment linked segment =
+    let
+        viewSegment =
+            SyntaxSegment.view linked
+
+        viewSegments_ =
+            viewSegments linked
+    in
+    case segment of
+        Old _ ->
+            UI.nothing
 
         New segments ->
             span [ class "diff-segment new" ] (viewSegments_ segments)
@@ -119,18 +150,30 @@ viewDiffSegment linked segment =
                     (span [ class "diff-segment segment-change" ] [ viewSegment to ])
 
 
-viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> List (Html msg)
+viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> Html msg
 viewDiff linked segments =
-    segments
-        |> NEL.map (viewDiffSegment linked)
-        |> NEL.toList
+    let
+        old =
+            segments
+                |> NEL.map (viewOldDiffSegment linked)
+                |> NEL.toList
+
+        new =
+            segments
+                |> NEL.map (viewNewDiffSegment linked)
+                |> NEL.toList
+    in
+    div [ class "diff-side-by-side" ]
+        [ pre [ class "monochrome diff-side" ] [ code [] old ]
+        , pre [ class "monochrome diff-side" ] [ code [] new ]
+        ]
 
 
 view : Linked.Linked msg -> DefinitionDiff -> Html msg
 view linked defDiff =
     case defDiff of
         Diff _ diff ->
-            div [] (viewDiff linked diff)
+            div [] [ viewDiff linked diff ]
 
         Mismatched _ ->
             div [] [ text "TODO" ]
