@@ -385,7 +385,7 @@
   .omni-search .button,
   .omni-search .main-result-sheet .match .keyboard-shortcuts,
   .omni-search .summary,
-  .omni-search .name-suggestion {
+  .omni-search .name-suggestion,
   .omni-search .syntax {
     display: none;
   }
