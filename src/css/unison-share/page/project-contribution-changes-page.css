@@ -166,6 +166,10 @@
       }
     }
 
+    & .definition-change.card .definition-syntax {
+      padding: 0.5rem 1rem;
+    }
+
     & .definition-change.card .diff-side-by-side {
       display: flex;
       flex-direction: row;

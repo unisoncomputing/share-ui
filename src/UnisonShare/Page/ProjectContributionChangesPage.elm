@@ -482,7 +482,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                                                 viewLoadingExpandedContent
 
                                             Success s ->
-                                                pre [ class "monochrome" ]
+                                                pre [ class "definition-syntax monochrome" ]
                                                     [ code [] [ Syntax.view (linked branchRef) s ] ]
 
                                             Failure e ->
