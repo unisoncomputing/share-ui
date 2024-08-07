@@ -65,6 +65,7 @@
   }
 
   & .definition-changes {
+    container: definition-changes / inline-size;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -72,7 +73,6 @@
     font-size: var(--font-size-medium);
 
     & .definition-change.card {
-      container: definition-change-card / inline-size;
       padding: 0;
       gap: 0;
 
