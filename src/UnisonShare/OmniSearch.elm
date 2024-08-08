@@ -154,7 +154,7 @@ init appContext query filter =
             { fieldValue = fieldValue
             , filter = filter_
             , search = search
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
             , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
             , modal = NoModal
             }
@@ -337,7 +337,7 @@ update appContext msg model =
                     -- Full reset
                     let
                         model_ =
-                            { newModel | search = NoSearch, fieldValue = "", nameSearch = NotAsked "" }
+                            { newModel | search = NoSearch, fieldValue = "", nameSearch = Search.empty }
                     in
                     ( model_, Cmd.batch [ cmd, updateQuery model_.fieldValue model_.filter ], NoOut )
 
@@ -414,7 +414,7 @@ update appContext msg model =
                                 ( nameSearch, searchNamesCmd ) =
                                     case searchNames appContext model.filter val of
                                         Nothing ->
-                                            ( NotAsked "", Cmd.none )
+                                            ( Search.empty, Cmd.none )
 
                                         Just searchNamesCmd_ ->
                                             ( Searching q Nothing, searchNamesCmd_ )
@@ -444,7 +444,7 @@ update appContext msg model =
                                             let
                                                 model_ =
                                                     { model
-                                                        | nameSearch = NotAsked ""
+                                                        | nameSearch = Search.empty
                                                         , filter = UserFilter u.handle
                                                         , fieldValue = ""
                                                         , search = NoSearch
@@ -459,7 +459,7 @@ update appContext msg model =
                                             let
                                                 model_ =
                                                     { model
-                                                        | nameSearch = NotAsked ""
+                                                        | nameSearch = Search.empty
                                                         , filter = ProjectFilter p.ref
                                                         , fieldValue = ""
                                                         , search = NoSearch
@@ -471,10 +471,10 @@ update appContext msg model =
                                             )
 
                                         _ ->
-                                            ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none, NoOut )
+                                            ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
 
                                 _ ->
-                                    ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none, NoOut )
+                                    ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
 
                 Sequence _ Backspace ->
                     if String.isEmpty newModel.fieldValue then
@@ -482,7 +482,7 @@ update appContext msg model =
                             model_ =
                                 { newModel
                                     | filter = NoFilter
-                                    , nameSearch = NotAsked ""
+                                    , nameSearch = Search.empty
                                     , search = NoSearch
                                 }
                         in
@@ -532,7 +532,7 @@ updateForValue appContext model value =
         ( { model
             | fieldValue = value
             , search = NoSearch
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
           }
         , Cmd.none
         )
@@ -558,7 +558,7 @@ updateForValue appContext model value =
         ( { model
             | fieldValue = val
             , search = search_
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
             , filter = filter
           }
         , Cmd.none
@@ -569,7 +569,7 @@ updateForValue appContext model value =
         ( { model
             | fieldValue = value
             , search = toEntitySearchSearchingWithQuery model.search value
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
           }
         , searchEntities appContext model.filter value
         )
@@ -578,7 +578,7 @@ updateForValue appContext model value =
         -- "#" is used for hash based definition search
         ( { model
             | fieldValue = value
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
           }
         , Search.debounce (SearchDefinitions model.filter value)
         )
@@ -590,7 +590,7 @@ updateForValue appContext model value =
         ( { model
             | fieldValue = value
             , search = toDefinitionSearchSearchingWithQuery model.search value
-            , nameSearch = NotAsked ""
+            , nameSearch = Search.empty
           }
         , searchDefinitions appContext model.filter value
         )
