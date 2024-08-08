@@ -1,4 +1,4 @@
-import cssHasPseudo from 'css-has-pseudo/browser';
+import cssHasPseudo from "css-has-pseudo/browser";
 
 cssHasPseudo(document);
 

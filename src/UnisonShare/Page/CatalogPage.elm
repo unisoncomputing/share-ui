@@ -98,7 +98,7 @@ update appContext msg model =
                         OmniSearch.NoOut ->
                             Cmd.none
 
-                        OmniSearch.UpdateQuery { query, filter } ->
+                        OmniSearch.UpdateParams { query, filter } ->
                             let
                                 queryString =
                                     [ StringE.nonEmpty query
