@@ -414,7 +414,7 @@ update appContext msg model =
                                 ( nameSearch, searchNamesCmd ) =
                                     case searchNames appContext model.filter val of
                                         Nothing ->
-                                            ( model.nameSearch, Cmd.none )
+                                            ( NotAsked "", Cmd.none )
 
                                         Just searchNamesCmd_ ->
                                             ( Searching q Nothing, searchNamesCmd_ )
