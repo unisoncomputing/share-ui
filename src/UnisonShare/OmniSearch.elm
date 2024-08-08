@@ -729,12 +729,20 @@ searchNames appContext filter query =
 
             else
                 Just word
+
+        hasEnoughChars s =
+            if String.length s > 2 then
+                Just s
+
+            else
+                Nothing
     in
     query
         |> StringE.clean
         |> String.split " "
         |> ListE.last
         |> Maybe.andThen skipSpecialChars
+        |> Maybe.andThen hasEnoughChars
         |> Maybe.map perform
 
 
