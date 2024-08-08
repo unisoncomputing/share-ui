@@ -39,7 +39,7 @@ import Code.Syntax as Syntax
 import Code.Syntax.Linked as SyntaxLinked
 import Code.Version as Version
 import Html exposing (Html, code, div, h2, input, span, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (autofocus, class, classList, name, placeholder, spellcheck, tabindex, type_, value)
+import Html.Attributes exposing (autocomplete, autofocus, class, classList, name, placeholder, spellcheck, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import Json.Decode as Decode exposing (nullable, string)
 import Json.Decode.Extra exposing (when)
@@ -855,6 +855,7 @@ viewField model isSearching =
                 , name "search"
                 , value model.fieldValue
                 , onInput UpdateFieldValue
+                , autocomplete False
                 , spellcheck False
                 , placeholder placeholder_
                 , autofocus True
