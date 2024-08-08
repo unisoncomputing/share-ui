@@ -1,10 +1,13 @@
 module UnisonShare.Page.CatalogPage exposing (..)
 
+import Browser.Navigation as Nav
 import Html exposing (Html, div, footer, h1, p, strong, text)
 import Html.Attributes exposing (class)
 import Lib.HttpApi as HttpApi
 import Lib.SearchResults exposing (SearchResults(..))
+import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
+import String.Extra as StringE
 import UI
 import UI.Button as Button
 import UI.Card as Card
@@ -24,6 +27,7 @@ import UnisonShare.OmniSearch as OmniSearch
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project exposing (ProjectSummary)
 import UnisonShare.Project.ProjectListing as ProjectListing
+import Url
 
 
 
@@ -42,16 +46,19 @@ type alias Model =
     }
 
 
-init : AppContext -> ( Model, Cmd Msg )
-init appContext =
+init : AppContext -> Maybe String -> Maybe String -> ( Model, Cmd Msg )
+init appContext searchQuery searchFilter =
     let
+        ( omni, omniCmd ) =
+            OmniSearch.init appContext searchQuery searchFilter
+
         model =
-            { search = OmniSearch.init appContext
+            { search = omni
             , catalog = Loading
             , modal = NoModal
             }
     in
-    ( model, fetchCatalog appContext )
+    ( model, Cmd.batch [ fetchCatalog appContext, Cmd.map OmniSearchMsg omniCmd ] )
 
 
 
@@ -83,10 +90,36 @@ update appContext msg model =
 
         OmniSearchMsg omniSearchMsg ->
             let
-                ( search, cmd ) =
+                ( search, cmd, omniSearchOut ) =
                     OmniSearch.update appContext omniSearchMsg model.search
+
+                navCmd =
+                    case omniSearchOut of
+                        OmniSearch.NoOut ->
+                            Cmd.none
+
+                        OmniSearch.UpdateQuery { query, filter } ->
+                            let
+                                queryString =
+                                    [ StringE.nonEmpty query
+                                        |> Maybe.map (\q -> "search=" ++ Url.percentEncode q)
+                                    , StringE.nonEmpty filter
+                                        |> Maybe.map (\f -> "filter=" ++ Url.percentEncode f)
+                                    ]
+                                        |> MaybeE.values
+                                        |> String.join "&"
+                                        |> StringE.nonEmpty
+                                        |> Maybe.map (\qs -> "?" ++ qs)
+                                        |> Maybe.withDefault ""
+                            in
+                            Nav.replaceUrl appContext.navKey queryString
             in
-            ( { model | search = search }, Cmd.map OmniSearchMsg cmd )
+            ( { model | search = search }
+            , Cmd.batch
+                [ Cmd.map OmniSearchMsg cmd
+                , navCmd
+                ]
+            )
 
 
 

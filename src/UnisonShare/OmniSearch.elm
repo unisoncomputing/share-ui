@@ -130,15 +130,59 @@ type alias Model =
     }
 
 
-init : AppContext -> Model
-init appContext =
-    { fieldValue = ""
-    , filter = NoFilter
-    , search = NoSearch
-    , nameSearch = NotAsked ""
-    , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
-    , modal = NoModal
-    }
+init : AppContext -> Maybe String -> Maybe String -> ( Model, Cmd Msg )
+init appContext query filter =
+    let
+        fieldValue =
+            Maybe.withDefault "" query
+
+        filter_ =
+            filter
+                |> Maybe.andThen filterFromString
+                |> Maybe.withDefault NoFilter
+
+        ( search, cmd ) =
+            if fieldValue /= "" then
+                ( toDefinitionSearchSearchingWithQuery NoSearch fieldValue
+                , searchDefinitions appContext filter_ fieldValue
+                )
+
+            else
+                ( NoSearch, Cmd.none )
+
+        model =
+            { fieldValue = fieldValue
+            , filter = filter_
+            , search = search
+            , nameSearch = NotAsked ""
+            , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
+            , modal = NoModal
+            }
+    in
+    ( model, cmd )
+
+
+filterFromString : String -> Maybe Filter
+filterFromString s =
+    case String.split "/" s of
+        [ handle, slug ] ->
+            Maybe.map ProjectFilter (ProjectRef.fromString handle slug)
+
+        _ ->
+            Maybe.map UserFilter (UserHandle.fromString s)
+
+
+filterToString : Filter -> String
+filterToString filter =
+    case filter of
+        NoFilter ->
+            ""
+
+        UserFilter h ->
+            UserHandle.toString h
+
+        ProjectFilter pRef ->
+            ProjectRef.toString pRef
 
 
 
@@ -158,33 +202,47 @@ type Msg
     | KeyboardShortcutMsg KeyboardShortcut.Msg
 
 
-update : AppContext -> Msg -> Model -> ( Model, Cmd Msg )
+type OutMsg
+    = NoOut
+    | UpdateQuery { query : String, filter : String }
+
+
+update : AppContext -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext msg model =
+    let
+        updateQuery q filter =
+            UpdateQuery { query = q, filter = filterToString filter }
+    in
     case msg of
         UpdateFieldValue value ->
-            updateForValue appContext model value
+            let
+                ( model_, cmd ) =
+                    updateForValue appContext model value
+            in
+            ( model_, cmd, updateQuery model_.fieldValue model_.filter )
 
         EntitySearchFinished res ->
             -- Are we still searching for the same thing?
             if res.query == model.fieldValue then
                 case ( model.search, res.results ) of
                     ( EntitySearch (Searching q _), Ok matches ) ->
-                        ( { model | search = EntitySearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none )
+                        ( { model | search = EntitySearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none, NoOut )
 
                     ( EntitySearch (Searching q _), Err e ) ->
-                        ( { model | search = EntitySearch (Failure q e) }, Cmd.none )
+                        ( { model | search = EntitySearch (Failure q e) }, Cmd.none, NoOut )
 
                     _ ->
-                        ( model, Cmd.none )
+                        ( model, Cmd.none, NoOut )
 
             else
-                ( model, Cmd.none )
+                ( model, Cmd.none, NoOut )
 
         SearchDefinitions filter query ->
             ( { model
                 | search = toDefinitionSearchSearchingWithQuery model.search query
               }
             , searchDefinitions appContext filter query
+            , NoOut
             )
 
         DefinitionSearchFinished res ->
@@ -201,16 +259,16 @@ update appContext msg model =
             if res.query == val then
                 case ( model.search, res.results ) of
                     ( DefinitionSearch (Searching q _), Ok matches ) ->
-                        ( { model | search = DefinitionSearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none )
+                        ( { model | search = DefinitionSearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none, NoOut )
 
                     ( DefinitionSearch (Searching q _), Err e ) ->
-                        ( { model | search = DefinitionSearch (Failure q e) }, Cmd.none )
+                        ( { model | search = DefinitionSearch (Failure q e) }, Cmd.none, NoOut )
 
                     _ ->
-                        ( model, Cmd.none )
+                        ( model, Cmd.none, NoOut )
 
             else
-                ( model, Cmd.none )
+                ( model, Cmd.none, NoOut )
 
         NameSearchFinished res ->
             if String.endsWith res.query model.fieldValue then
@@ -234,19 +292,23 @@ update appContext msg model =
                                         , searchDefinitions appContext model.filter model.fieldValue
                                         )
                         in
-                        ( { model | nameSearch = Success q results, search = search }, cmd )
+                        ( { model | nameSearch = Success q results, search = search }, cmd, NoOut )
 
                     ( Searching q _, Err e ) ->
-                        ( { model | nameSearch = Failure q e }, Cmd.none )
+                        ( { model | nameSearch = Failure q e }, Cmd.none, NoOut )
 
                     _ ->
-                        ( model, Cmd.none )
+                        ( model, Cmd.none, NoOut )
 
             else
-                ( model, Cmd.none )
+                ( model, Cmd.none, NoOut )
 
         ClearFilter ->
-            updateForValue appContext { model | filter = NoFilter } model.fieldValue
+            let
+                ( model_, cmd ) =
+                    updateForValue appContext { model | filter = NoFilter } model.fieldValue
+            in
+            ( model_, cmd, updateQuery model_.fieldValue model_.filter )
 
         Keydown event ->
             let
@@ -265,29 +327,33 @@ update appContext msg model =
             case shortcut of
                 Sequence _ Escape ->
                     -- Full reset
-                    ( { newModel | search = NoSearch, fieldValue = "", nameSearch = NotAsked "" }, cmd )
+                    let
+                        model_ =
+                            { newModel | search = NoSearch, fieldValue = "", nameSearch = NotAsked "" }
+                    in
+                    ( model_, cmd, updateQuery model_.fieldValue model_.filter )
 
                 Sequence _ ArrowUp ->
                     case model.search of
                         EntitySearch s ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsPrev s) }, cmd )
+                            ( { newModel | search = EntitySearch (Search.searchResultsPrev s) }, cmd, NoOut )
 
                         DefinitionSearch s ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsPrev s) }, cmd )
+                            ( { newModel | search = DefinitionSearch (Search.searchResultsPrev s) }, cmd, NoOut )
 
                         _ ->
-                            ( newModel, cmd )
+                            ( newModel, cmd, NoOut )
 
                 Sequence _ ArrowDown ->
                     case model.search of
                         EntitySearch s ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsNext s) }, cmd )
+                            ( { newModel | search = EntitySearch (Search.searchResultsNext s) }, cmd, NoOut )
 
                         DefinitionSearch s ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsNext s) }, cmd )
+                            ( { newModel | search = DefinitionSearch (Search.searchResultsNext s) }, cmd, NoOut )
 
                         _ ->
-                            ( newModel, cmd )
+                            ( newModel, cmd, NoOut )
 
                 Sequence _ Enter ->
                     let
@@ -328,7 +394,7 @@ update appContext msg model =
                                 _ ->
                                     Cmd.none
                     in
-                    ( newModel, Cmd.batch [ cmd, navCmd ] )
+                    ( newModel, Cmd.batch [ cmd, navCmd ], NoOut )
 
                 Sequence _ Tab ->
                     case model.nameSearch of
@@ -344,17 +410,21 @@ update appContext msg model =
 
                                         Just searchNamesCmd_ ->
                                             ( Searching q Nothing, searchNamesCmd_ )
+
+                                model_ =
+                                    { model
+                                        | fieldValue = val
+                                        , nameSearch = nameSearch
+                                        , search =
+                                            toDefinitionSearchSearchingWithQuery model.search val
+                                    }
                             in
-                            ( { model
-                                | fieldValue = val
-                                , nameSearch = nameSearch
-                                , search =
-                                    toDefinitionSearchSearchingWithQuery model.search val
-                              }
+                            ( model_
                             , Cmd.batch
                                 [ searchDefinitions appContext model.filter val
                                 , searchNamesCmd
                                 ]
+                            , updateQuery model_.fieldValue model_.filter
                             )
 
                         _ ->
@@ -362,59 +432,74 @@ update appContext msg model =
                                 EntitySearch s ->
                                     case Search.searchResultsFocus s of
                                         Just (UserMatch u) ->
-                                            ( { model
-                                                | nameSearch = NotAsked ""
-                                                , filter = UserFilter u.handle
-                                                , fieldValue = ""
-                                                , search = NoSearch
-                                              }
+                                            let
+                                                model_ =
+                                                    { model
+                                                        | nameSearch = NotAsked ""
+                                                        , filter = UserFilter u.handle
+                                                        , fieldValue = ""
+                                                        , search = NoSearch
+                                                    }
+                                            in
+                                            ( model_
                                             , Cmd.none
+                                            , updateQuery model_.fieldValue model_.filter
                                             )
 
                                         Just (ProjectMatch p) ->
-                                            ( { model
-                                                | nameSearch = NotAsked ""
-                                                , filter = ProjectFilter p.ref
-                                                , fieldValue = ""
-                                                , search = NoSearch
-                                              }
+                                            let
+                                                model_ =
+                                                    { model
+                                                        | nameSearch = NotAsked ""
+                                                        , filter = ProjectFilter p.ref
+                                                        , fieldValue = ""
+                                                        , search = NoSearch
+                                                    }
+                                            in
+                                            ( model_
                                             , Cmd.none
+                                            , updateQuery model_.fieldValue model_.filter
                                             )
 
                                         _ ->
-                                            ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none )
+                                            ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none, NoOut )
 
                                 _ ->
-                                    ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none )
+                                    ( { model | nameSearch = NotAsked "", search = NoSearch }, Cmd.none, NoOut )
 
                 Sequence _ Backspace ->
                     if String.isEmpty newModel.fieldValue then
-                        ( { newModel
-                            | filter = NoFilter
-                            , nameSearch = NotAsked ""
-                            , search = NoSearch
-                          }
+                        let
+                            model_ =
+                                { newModel
+                                    | filter = NoFilter
+                                    , nameSearch = NotAsked ""
+                                    , search = NoSearch
+                                }
+                        in
+                        ( model_
                         , cmd
+                        , updateQuery model_.fieldValue model_.filter
                         )
 
                     else
-                        ( newModel, cmd )
+                        ( newModel, cmd, NoOut )
 
                 _ ->
-                    ( newModel, cmd )
+                    ( newModel, cmd, NoOut )
 
         ShowSearchHelpModal ->
-            ( { model | modal = SearchHelpModal }, Cmd.none )
+            ( { model | modal = SearchHelpModal }, Cmd.none, NoOut )
 
         CloseModal ->
-            ( { model | modal = NoModal }, Cmd.none )
+            ( { model | modal = NoModal }, Cmd.none, NoOut )
 
         KeyboardShortcutMsg kMsg ->
             let
                 ( keyboardShortcut, cmd ) =
                     KeyboardShortcut.update kMsg model.keyboardShortcut
             in
-            ( { model | keyboardShortcut = keyboardShortcut }, Cmd.map KeyboardShortcutMsg cmd )
+            ( { model | keyboardShortcut = keyboardShortcut }, Cmd.map KeyboardShortcutMsg cmd, NoOut )
 
 
 

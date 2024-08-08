@@ -56,6 +56,8 @@ import UnisonShare.Route as Route exposing (Route)
 import UnisonShare.Session as Session
 import UnisonShare.Tour as Tour
 import Url exposing (Url)
+import Url.Parser as Parser
+import Url.Parser.Query as Query
 import WhatsNew exposing (WhatsNew)
 
 
@@ -98,8 +100,21 @@ init appContext route =
             case route of
                 Route.Catalog ->
                     let
+                        url =
+                            appContext.currentUrl
+
+                        search =
+                            Parser.parse (Parser.query (Query.string "search")) url
+                                |> Maybe.withDefault Nothing
+                                |> Maybe.andThen Url.percentDecode
+
+                        filter =
+                            Parser.parse (Parser.query (Query.string "filter")) url
+                                |> Maybe.withDefault Nothing
+                                |> Maybe.andThen Url.percentDecode
+
                         ( catalog, catalogCmd ) =
-                            CatalogPage.init appContext
+                            CatalogPage.init appContext search filter
                     in
                     ( Catalog catalog, Cmd.map CatalogPageMsg catalogCmd )
 
@@ -224,11 +239,19 @@ update msg ({ appContext } as model) =
                 ( m, c ) =
                     case route of
                         Route.Catalog ->
-                            let
-                                ( catalog, cmd ) =
-                                    CatalogPage.init appContext_
-                            in
-                            ( { model_ | page = Catalog catalog }, Cmd.map CatalogPageMsg cmd )
+                            case model.page of
+                                Catalog _ ->
+                                    -- The URL changed because we added to the search
+                                    -- query parameter. This doesn't warrant
+                                    -- re-initializing the CatalogPage
+                                    ( model_, Cmd.none )
+
+                                _ ->
+                                    let
+                                        ( catalog, cmd ) =
+                                            CatalogPage.init appContext_ Nothing Nothing
+                                    in
+                                    ( { model_ | page = Catalog catalog }, Cmd.map CatalogPageMsg cmd )
 
                         Route.Account ->
                             ( { model_ | page = Account AccountPage.init }, Cmd.none )
