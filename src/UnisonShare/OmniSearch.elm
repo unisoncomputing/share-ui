@@ -199,27 +199,35 @@ type Msg
     | Keydown KeyboardEvent
     | ShowSearchHelpModal
     | CloseModal
+    | SendUpdatedParams { query : String, filter : String }
     | KeyboardShortcutMsg KeyboardShortcut.Msg
 
 
 type OutMsg
     = NoOut
-    | UpdateQuery { query : String, filter : String }
+    | UpdateParams { query : String, filter : String }
 
 
 update : AppContext -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext msg model =
     let
         updateQuery q filter =
-            UpdateQuery { query = q, filter = filterToString filter }
+            Util.delayMsg 300 (SendUpdatedParams { query = q, filter = filterToString filter })
     in
     case msg of
+        SendUpdatedParams params ->
+            if params.query == model.fieldValue && params.filter == filterToString model.filter then
+                ( model, Cmd.none, UpdateParams params )
+
+            else
+                ( model, Cmd.none, NoOut )
+
         UpdateFieldValue value ->
             let
                 ( model_, cmd ) =
                     updateForValue appContext model value
             in
-            ( model_, cmd, updateQuery model_.fieldValue model_.filter )
+            ( model_, Cmd.batch [ cmd, updateQuery model_.fieldValue model_.filter ], NoOut )
 
         EntitySearchFinished res ->
             -- Are we still searching for the same thing?
@@ -308,7 +316,7 @@ update appContext msg model =
                 ( model_, cmd ) =
                     updateForValue appContext { model | filter = NoFilter } model.fieldValue
             in
-            ( model_, cmd, updateQuery model_.fieldValue model_.filter )
+            ( model_, Cmd.batch [ cmd, updateQuery model_.fieldValue model_.filter ], NoOut )
 
         Keydown event ->
             let
@@ -331,7 +339,7 @@ update appContext msg model =
                         model_ =
                             { newModel | search = NoSearch, fieldValue = "", nameSearch = NotAsked "" }
                     in
-                    ( model_, cmd, updateQuery model_.fieldValue model_.filter )
+                    ( model_, Cmd.batch [ cmd, updateQuery model_.fieldValue model_.filter ], NoOut )
 
                 Sequence _ ArrowUp ->
                     case model.search of
@@ -423,8 +431,9 @@ update appContext msg model =
                             , Cmd.batch
                                 [ searchDefinitions appContext model.filter val
                                 , searchNamesCmd
+                                , updateQuery model_.fieldValue model_.filter
                                 ]
-                            , updateQuery model_.fieldValue model_.filter
+                            , NoOut
                             )
 
                         _ ->
@@ -442,8 +451,8 @@ update appContext msg model =
                                                     }
                                             in
                                             ( model_
-                                            , Cmd.none
                                             , updateQuery model_.fieldValue model_.filter
+                                            , NoOut
                                             )
 
                                         Just (ProjectMatch p) ->
@@ -457,8 +466,8 @@ update appContext msg model =
                                                     }
                                             in
                                             ( model_
-                                            , Cmd.none
                                             , updateQuery model_.fieldValue model_.filter
+                                            , NoOut
                                             )
 
                                         _ ->
@@ -478,8 +487,11 @@ update appContext msg model =
                                 }
                         in
                         ( model_
-                        , cmd
-                        , updateQuery model_.fieldValue model_.filter
+                        , Cmd.batch
+                            [ cmd
+                            , updateQuery model_.fieldValue model_.filter
+                            ]
+                        , NoOut
                         )
 
                     else
