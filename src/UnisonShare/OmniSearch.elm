@@ -264,7 +264,7 @@ update appContext msg model =
                             model.fieldValue
             in
             -- Are we still searching for the same thing?
-            if res.query == val then
+            if res.query == val || res.query == model.fieldValue then
                 case ( model.search, res.results ) of
                     ( DefinitionSearch (Searching q _), Ok matches ) ->
                         ( { model | search = DefinitionSearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none, NoOut )
