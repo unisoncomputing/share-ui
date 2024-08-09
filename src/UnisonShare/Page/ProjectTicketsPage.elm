@@ -228,7 +228,9 @@ viewTicketRow appContext projectRef ticket =
             , numComments
             ]
         , div [ class "ticket-row_info" ]
-            [ ByAt.view appContext.timeZone appContext.now byAt
+            [ byAt
+                |> ByAt.withToClick Link.userProfile
+                |> ByAt.view appContext.timeZone appContext.now
             ]
         ]
 

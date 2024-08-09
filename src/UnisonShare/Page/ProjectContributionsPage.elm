@@ -320,7 +320,9 @@ viewContributionRow appContext projectRef contribution =
             , numComments
             ]
         , div [ class "contribution-row_info" ]
-            [ ByAt.view appContext.timeZone appContext.now byAt
+            [ byAt
+                |> ByAt.withToClick Link.userProfile
+                |> ByAt.view appContext.timeZone appContext.now
             , Tag.view (BranchRef.toTag contribution.sourceBranchRef)
             ]
         ]

@@ -20,6 +20,7 @@ import UnisonShare.Account as Account
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
+import UnisonShare.Link as Link
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -293,6 +294,7 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
     let
         byAt =
             ByAt.byAt actor timestamp
+                |> ByAt.withToClick Link.userProfile
                 |> ByAt.view dtContext.timeZone dtContext.now
     in
     case newStatus of
