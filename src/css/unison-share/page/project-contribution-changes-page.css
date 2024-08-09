@@ -85,15 +85,16 @@
         gap: 2rem;
         width: 100%;
 
+        & .change-title .fully-qualified-name {
+          font-weight: 500;
+        }
+
+
         & .change-info {
           display: flex;
           flex-direction: row;
           align-items: center;
           gap: 0.25rem;
-
-          & .change-title .fully-qualified-name {
-            font-weight: 500;
-          }
 
           & .extra-info {
             font-size: var(--font-size-small);
@@ -408,6 +409,10 @@
     & .change-line:not(.namespace):last-child::before {
       bottom: 1.25rem;
     }
+  }
+
+  & .change-tree .contribution-changes-group:first-child .change-line.namespace:first-child {
+    margin-top: 0;
   }
 }
 
