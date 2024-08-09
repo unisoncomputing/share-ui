@@ -383,7 +383,10 @@ detailedPageTitle appContext ticket =
     PageTitle.title ticket.title
         |> PageTitle.withLeftTitleText (TicketRef.toString ticket.ref)
         |> PageTitle.withDescription_
-            (ByAt.view appContext.timeZone appContext.now byAt)
+            (byAt
+                |> ByAt.withToClick Link.userProfile
+                |> ByAt.view appContext.timeZone appContext.now
+            )
         |> PageTitle.withRightSide rightSide
 
 
