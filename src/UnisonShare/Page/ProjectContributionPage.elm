@@ -320,6 +320,7 @@ detailedPageTitle appContext contribution =
             contribution.author
                 |> Maybe.map (\a -> ByAt.byAt a contribution.createdAt)
                 |> Maybe.withDefault (ByAt.byUnknown contribution.createdAt)
+                |> ByAt.withToClick Link.userProfile
                 |> ByAt.view appContext.timeZone appContext.now
     in
     PageTitle.custom

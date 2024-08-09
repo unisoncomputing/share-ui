@@ -5,6 +5,7 @@ import Html.Attributes exposing (class)
 import UI.ByAt as ByAt
 import UI.Icon exposing (Icon)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
+import UnisonShare.Link as Link
 import UnisonShare.Timeline.TimelineEvent as TimelineEvent exposing (TimelineEventDetails)
 
 
@@ -13,6 +14,7 @@ view dtContext icon title { actor, timestamp } =
     let
         byAt =
             ByAt.byAt actor timestamp
+                |> ByAt.withToClick Link.userProfile
                 |> ByAt.view dtContext.timeZone dtContext.now
     in
     div [ class "timeline-event_status-change" ]
