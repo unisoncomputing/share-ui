@@ -1,0 +1,10 @@
+{
+    "targets": {
+        "UnisonShare": {
+            "inputs": [
+                "src/UnisonShare.elm"
+            ],
+            "output": "dist/UnisonShare/static/*.js"
+        }
+    }
+}

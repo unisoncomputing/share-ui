@@ -36,7 +36,7 @@ import Code.Definition.Type as Type exposing (TypeSource)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
-import Code.Syntax.Linked as SyntaxLinked
+import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Code.Version as Version
 import Html exposing (Html, code, div, h2, input, span, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (autocomplete, autofocus, class, classList, name, placeholder, spellcheck, tabindex, type_, value)
@@ -978,21 +978,21 @@ viewDefinitionMatch keyboardShortcut def isFocused =
         ( defIcon, summary ) =
             case def.type_ of
                 TermMatch sig ->
-                    ( Icon.term, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
+                    ( Icon.term, Syntax.view SyntaxConfig.empty (Term.termSignatureSyntax sig) )
 
                 TypeMatch sum ->
                     ( Icon.type_
                     , sum
                         |> Type.typeSourceSyntax
-                        |> Maybe.map (Syntax.view SyntaxLinked.NotLinked)
+                        |> Maybe.map (Syntax.view SyntaxConfig.empty)
                         |> Maybe.withDefault UI.nothing
                     )
 
                 DataConstructorMatch sig ->
-                    ( Icon.dataConstructor, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
+                    ( Icon.dataConstructor, Syntax.view SyntaxConfig.empty (Term.termSignatureSyntax sig) )
 
                 AbilityConstructorMatch sig ->
-                    ( Icon.abilityConstructor, Syntax.view SyntaxLinked.NotLinked (Term.termSignatureSyntax sig) )
+                    ( Icon.abilityConstructor, Syntax.view SyntaxConfig.empty (Term.termSignatureSyntax sig) )
 
         shouldTruncateName =
             def.displayName

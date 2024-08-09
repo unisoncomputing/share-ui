@@ -1,7 +1,7 @@
 module UnisonShare.DefinitionDiff exposing (..)
 
 import Code.Hash as Hash exposing (Hash)
-import Code.Syntax.Linked as Linked
+import Code.Syntax.SyntaxConfig exposing (SyntaxConfig)
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
 import Html exposing (Html, code, div, pre, span, text)
 import Html.Attributes exposing (class)
@@ -60,10 +60,10 @@ definitionTypeToString type_ =
 -- VIEW
 
 
-viewSegments : Linked.Linked msg -> String -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
-viewSegments linked className segments =
+viewSegments : SyntaxConfig msg -> String -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
+viewSegments syntaxConfig className segments =
     segments
-        |> NEL.map (SyntaxSegment.view linked)
+        |> NEL.map (SyntaxSegment.view syntaxConfig)
         |> NEL.map (\seg -> span [ class className ] [ seg ])
         |> NEL.toList
 
@@ -77,14 +77,14 @@ viewTooltip content =
 
 {-| View diff segments from the perspective of viewing the old definition
 -}
-viewOldDiffSegment : Linked.Linked msg -> DiffSegment -> List (Html msg)
-viewOldDiffSegment linked segment =
+viewOldDiffSegment : SyntaxConfig msg -> DiffSegment -> List (Html msg)
+viewOldDiffSegment syntaxConfig segment =
     let
         viewSegment =
-            SyntaxSegment.view linked
+            SyntaxSegment.view syntaxConfig
 
         viewSegments_ className =
-            viewSegments linked className
+            viewSegments syntaxConfig className
     in
     case segment of
         Old segments ->
@@ -105,14 +105,14 @@ viewOldDiffSegment linked segment =
 
 {-| View diff segments from the perspective of viewing the new definition
 -}
-viewNewDiffSegment : Linked.Linked msg -> DiffSegment -> List (Html msg)
-viewNewDiffSegment linked segment =
+viewNewDiffSegment : SyntaxConfig msg -> DiffSegment -> List (Html msg)
+viewNewDiffSegment syntaxConfig segment =
     let
         viewSegment =
-            SyntaxSegment.view linked
+            SyntaxSegment.view syntaxConfig
 
         viewSegments_ className =
-            viewSegments linked className
+            viewSegments syntaxConfig className
     in
     case segment of
         Old _ ->
@@ -152,18 +152,18 @@ viewNewDiffSegment linked segment =
             ]
 
 
-viewDiff : Linked.Linked msg -> NEL.Nonempty DiffSegment -> Html msg
-viewDiff linked segments =
+viewDiff : SyntaxConfig msg -> NEL.Nonempty DiffSegment -> Html msg
+viewDiff syntaxConfig segments =
     let
         old =
             segments
                 |> NEL.toList
-                |> List.concatMap (viewOldDiffSegment linked)
+                |> List.concatMap (viewOldDiffSegment syntaxConfig)
 
         new =
             segments
                 |> NEL.toList
-                |> List.concatMap (viewNewDiffSegment linked)
+                |> List.concatMap (viewNewDiffSegment syntaxConfig)
     in
     div [ class "diff-side-by-side" ]
         [ pre [ class "monochrome diff-side" ] [ code [] old ]
@@ -171,11 +171,11 @@ viewDiff linked segments =
         ]
 
 
-view : Linked.Linked msg -> DefinitionDiff -> Html msg
-view linked defDiff =
+view : SyntaxConfig msg -> DefinitionDiff -> Html msg
+view syntaxConfig defDiff =
     case defDiff of
         Diff _ diff ->
-            div [] [ viewDiff linked diff ]
+            div [] [ viewDiff syntaxConfig diff ]
 
         Mismatched _ ->
             div [] [ text "TODO" ]

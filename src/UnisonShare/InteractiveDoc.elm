@@ -7,7 +7,7 @@ import Code.Config exposing (Config)
 import Code.Definition.Doc as Doc exposing (Doc, DocFoldToggles)
 import Code.Definition.Reference exposing (Reference)
 import Code.DefinitionSummaryTooltip as DefinitionSummaryTooltip
-import Code.Syntax.Linked as Linked
+import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Html exposing (Html)
 import UI.Click as Click
 
@@ -72,7 +72,7 @@ view : Model -> Doc -> Html Msg
 view model doc =
     let
         syntaxConfig =
-            Linked.linkedWithTooltipConfig
+            SyntaxConfig.default
                 (OpenReference >> Click.onClick)
                 (DefinitionSummaryTooltip.tooltipConfig
                     DefinitionSummaryTooltipMsg

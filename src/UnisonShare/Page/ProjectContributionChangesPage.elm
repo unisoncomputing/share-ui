@@ -6,7 +6,7 @@ import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
-import Code.Syntax.Linked as SyntaxLinked
+import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Html exposing (Html, code, div, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
@@ -435,8 +435,9 @@ viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> Ch
 viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine type_ content =
     let
         linked branchRef =
-            SyntaxLinked.Linked
-                (Link.projectBranchDefinition projectRef branchRef)
+            SyntaxConfig.empty
+                |> SyntaxConfig.withToClick
+                    (Link.projectBranchDefinition projectRef branchRef)
 
         ( expanded, toggleIcon ) =
             case ChangedDefinitions.get changedDefinitions changeLine of
