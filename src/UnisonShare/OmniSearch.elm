@@ -1226,7 +1226,7 @@ view appContext model =
                 |> KeyboardEvent.attach
 
         isSearching =
-            isMainSearchSearching model.search || Search.isSearching model.nameSearch
+            isMainSearchSearching model.search
     in
     ( Html.node "search"
         [ class "omni-search", tabindex 0, classList [ ( "searching", isSearching ) ], keyboardEvent ]
