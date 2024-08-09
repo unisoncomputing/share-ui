@@ -18,6 +18,7 @@ import UI.Form.TextField as TextField
 import UI.Icon as Icon
 import UI.StatusBanner as StatusBanner
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session
 import UnisonShare.Timeline.CommentId as CommentId exposing (CommentId)
@@ -117,6 +118,7 @@ viewCommentEvent appContext actions { details, request } =
     let
         byAt =
             ByAt.byAt details.actor details.timestamp
+                |> ByAt.withToClick Link.userProfile
                 |> ByAt.view appContext.timeZone appContext.now
 
         md comment =
