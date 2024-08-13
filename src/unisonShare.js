@@ -110,4 +110,8 @@ if (app.ports) {
   app.ports.updateWhatsNewReadPostIds?.subscribe((postIds) => {
     Storage.set("whatsNewReadPostIds", JSON.stringify(postIds));
   });
+
+  app.ports.copyToClipboard?.subscribe((text) => {
+     navigator.clipboard.writeText(text);
+  });
 }

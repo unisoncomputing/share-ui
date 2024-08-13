@@ -9,6 +9,7 @@ import Html exposing (Html, text)
 import Lib.HttpApi as HttpApi exposing (HttpApi)
 import Lib.UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
+import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route exposing (Route)
@@ -248,6 +249,11 @@ projectContributionOverview projectRef_ contribRef =
 projectContributionChanges : ProjectRef -> ContributionRef -> Click msg
 projectContributionChanges projectRef_ contribRef =
     toClick (Route.projectContributionChanges projectRef_ contribRef)
+
+
+projectContributionChange : ProjectRef -> ContributionRef -> ChangeLineId -> Click msg
+projectContributionChange projectRef_ contribRef changeLineId =
+    toClick (Route.projectContributionChange projectRef_ contribRef changeLineId)
 
 
 projectContributions : ProjectRef -> Click msg

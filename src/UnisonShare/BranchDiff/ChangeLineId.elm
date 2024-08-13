@@ -30,6 +30,13 @@ changeLineId ct dt fqn =
         }
 
 
+equals : ChangeLineId -> ChangeLineId -> Bool
+equals (ChangeLineId a) (ChangeLineId b) =
+    DefinitionType.equals a.definitionType b.definitionType
+        && changeLineTypeEquals a.changeType b.changeType
+        && FQN.equals a.fqn b.fqn
+
+
 toKey : ChangeLineId -> String
 toKey cl =
     toString cl
@@ -96,6 +103,11 @@ fromUrl =
 
 
 -- INTERNAL
+
+
+changeLineTypeEquals : ChangeLineType -> ChangeLineType -> Bool
+changeLineTypeEquals a b =
+    changeLineTypeToString a == changeLineTypeToString b
 
 
 changeLineTypeToString : ChangeLineType -> String

@@ -30,6 +30,7 @@ module UnisonShare.Route exposing
     , replacePerspective
     , termsOfService
     , toRoute
+    , toUrl
     , toUrlPattern
     , toUrlString
     , ucmConnected
@@ -66,6 +67,7 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import List.Nonempty as NEL
 import Parser exposing ((|.), (|=), Parser, oneOf, succeed, symbol)
 import UI.ViewMode as ViewMode exposing (ViewMode)
+import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
@@ -732,6 +734,15 @@ toUrlPattern r =
 
         NotFound _ ->
             "404"
+
+
+toUrl : AppContext -> Route -> Url
+toUrl appContext route =
+    let
+        currentUrl =
+            appContext.currentUrl
+    in
+    { currentUrl | path = "/" ++ toUrlString route }
 
 
 toUrlString : Route -> String

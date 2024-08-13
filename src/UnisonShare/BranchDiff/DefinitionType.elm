@@ -60,6 +60,11 @@ toReferenceConstructor dt =
             Reference.DataConstructorReference
 
 
+equals : DefinitionType -> DefinitionType -> Bool
+equals a b =
+    a == b
+
+
 toString : DefinitionType -> String
 toString dt =
     case dt of

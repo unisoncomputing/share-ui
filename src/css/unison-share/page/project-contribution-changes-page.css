@@ -89,7 +89,6 @@
           font-weight: 500;
         }
 
-
         & .change-info {
           display: flex;
           flex-direction: row;
@@ -116,6 +115,11 @@
           & a:hover .hash {
             color: var(--u-color_interactive);
           }
+        }
+
+        & .definition-change-actions .tooltip-bubble {
+          margin-right: 0.5rem;
+          margin-top: 0.125rem;
         }
       }
 

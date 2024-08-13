@@ -6,7 +6,9 @@ import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import List.Extra as ListE
+import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine(..))
+import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 
 
 type alias DiffBranchRef =
@@ -105,6 +107,19 @@ condense changeLines =
                     acc ++ [ changeLine ]
     in
     List.foldl f [] changeLines
+
+
+changeLineById : ChangeLineId -> BranchDiff -> Maybe ChangeLine
+changeLineById changeLineId branchDiff =
+    let
+        f cl_ acc =
+            if MaybeE.isJust acc then
+                acc
+
+            else
+                ChangeLine.byId changeLineId cl_
+    in
+    List.foldl f Nothing branchDiff.lines
 
 
 

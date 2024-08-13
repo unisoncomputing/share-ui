@@ -1,4 +1,4 @@
-module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
+port module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 
 import Code.BranchRef exposing (BranchRef)
 import Code.Definition.Reference exposing (Reference(..))
@@ -39,6 +39,8 @@ import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
+import UnisonShare.Route as Route
+import Url
 
 
 
@@ -48,6 +50,7 @@ import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 type alias Model =
     { branchDiff : WebData BranchDiff
     , changedDefinitions : ChangedDefinitions
+    , urlFocusedChangeLineId : Maybe ChangeLineId
     }
 
 
@@ -58,9 +61,10 @@ type alias DiffBranches =
 
 
 init : AppContext -> ProjectRef -> ContributionRef -> Maybe ChangeLineId -> ( Model, Cmd Msg )
-init appContext projectRef contribRef _ =
+init appContext projectRef contribRef changeLineId =
     ( { branchDiff = Loading
       , changedDefinitions = ChangedDefinitions.empty
+      , urlFocusedChangeLineId = changeLineId
       }
     , fetchBranchDiff appContext projectRef contribRef
     )
@@ -76,6 +80,7 @@ type Msg
     | ToggleChangeDetails ChangeLine
     | FetchDefinitionDiffFinished ChangeLine (WebData DefinitionDiff)
     | FetchDefinitionSyntaxFinished ChangeLine (WebData Syntax.Syntax)
+    | CopyChangeLinePermalink ChangeLineId
     | NoOp
 
 
@@ -92,8 +97,29 @@ update appContext projectRef contribRef msg model =
                             }
                         )
                         branchDiff
+
+                modelWithBranchDiff =
+                    { model | branchDiff = branchDiff_ }
+
+                ( m, cmd ) =
+                    case ( model.urlFocusedChangeLineId, branchDiff_ ) of
+                        ( Just changeLineId, Success bd ) ->
+                            case BranchDiff.changeLineById changeLineId bd of
+                                Just changeLine ->
+                                    expandAndScrollTo appContext
+                                        projectRef
+                                        contribRef
+                                        modelWithBranchDiff
+                                        bd
+                                        changeLine
+
+                                Nothing ->
+                                    ( modelWithBranchDiff, Cmd.none )
+
+                        _ ->
+                            ( modelWithBranchDiff, Cmd.none )
             in
-            ( { model | branchDiff = branchDiff_ }, Cmd.none )
+            ( m, cmd )
 
         ExpandChangeDetails changeLine ->
             case model.branchDiff of
@@ -148,8 +174,21 @@ update appContext projectRef contribRef msg model =
             in
             ( { model | changedDefinitions = changedDefinitions }, Cmd.none )
 
+        CopyChangeLinePermalink changeLineId ->
+            let
+                url =
+                    changeLineId
+                        |> Route.projectContributionChange projectRef contribRef
+                        |> Route.toUrl appContext
+                        |> Url.toString
+            in
+            ( model, copyToClipboard url )
+
         NoOp ->
             ( model, Cmd.none )
+
+
+port copyToClipboard : String -> Cmd msg
 
 
 
@@ -510,6 +549,24 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
             changeLine
                 |> ChangeLine.toChangeLineId
                 |> Maybe.map ChangeLineId.toDomId
+
+        copyPermalink =
+            changeLine
+                |> ChangeLine.toChangeLineId
+                |> Maybe.map
+                    (\cid ->
+                        Button.icon (CopyChangeLinePermalink cid) Icon.clipboard
+                            |> Button.subdued
+                            |> Button.small
+                            |> Button.view
+                    )
+                |> Maybe.map
+                    (\bt ->
+                        Tooltip.text "Copy permanent link"
+                            |> Tooltip.tooltip
+                            |> Tooltip.withPosition Tooltip.LeftOf
+                            |> Tooltip.view bt
+                    )
     in
     Card.card
         [ div [ class "definition-change-header" ]
@@ -518,10 +575,13 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                 , viewDefinitionIcon type_
                 , content
                 ]
-            , Button.icon (ToggleChangeDetails changeLine) toggleIcon
-                |> Button.subdued
-                |> Button.small
-                |> Button.view
+            , div [ class "definition-change-actions" ]
+                [ Maybe.withDefault UI.nothing copyPermalink
+                , Button.icon (ToggleChangeDetails changeLine) toggleIcon
+                    |> Button.subdued
+                    |> Button.small
+                    |> Button.view
+                ]
             ]
         , expanded
             |> Maybe.map

@@ -8,6 +8,7 @@ import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
 import Lib.Util exposing (decodeNonEmptyList, decodeTag)
 import List.Nonempty as NEL
+import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType(..))
 
@@ -57,6 +58,33 @@ type ChangeLine
         , ref : Reference
         }
     | Namespace NamespaceLineItem
+
+
+matchesId : ChangeLineId -> ChangeLine -> Bool
+matchesId id cl =
+    toChangeLineId cl == Just id
+
+
+byId : ChangeLineId -> ChangeLine -> Maybe ChangeLine
+byId id cl =
+    case cl of
+        Namespace { lines } ->
+            let
+                f cl_ acc =
+                    if MaybeE.isJust acc then
+                        acc
+
+                    else
+                        byId id cl_
+            in
+            List.foldl f Nothing lines
+
+        _ ->
+            if matchesId id cl then
+                Just cl
+
+            else
+                Nothing
 
 
 definitionType : ChangeLine -> Maybe DefinitionType
