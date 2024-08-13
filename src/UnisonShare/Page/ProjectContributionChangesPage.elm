@@ -31,7 +31,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
-import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId
+import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
 import UnisonShare.Contribution exposing (Contribution)
@@ -57,7 +57,7 @@ type alias DiffBranches =
     }
 
 
-init : AppContext -> ProjectRef -> ContributionRef -> Maybe FQN.FQN -> ( Model, Cmd Msg )
+init : AppContext -> ProjectRef -> ContributionRef -> Maybe ChangeLineId -> ( Model, Cmd Msg )
 init appContext projectRef contribRef _ =
     ( { branchDiff = Loading
       , changedDefinitions = ChangedDefinitions.empty

@@ -1,6 +1,7 @@
 module UnisonShare.BranchDiff.ChangeLineId exposing (..)
 
 import Code.FullyQualifiedName as FQN exposing (FQN)
+import Parser exposing (Parser)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
 
 
@@ -74,6 +75,23 @@ fromString raw =
 
         _ ->
             Nothing
+
+
+fromUrl : Parser ChangeLineId
+fromUrl =
+    let
+        parseMaybe clid =
+            case clid of
+                Just clid_ ->
+                    Parser.succeed clid_
+
+                Nothing ->
+                    Parser.problem "Invalid ChangeLineId"
+    in
+    Parser.chompUntilEndOr "/"
+        |> Parser.getChompedString
+        |> Parser.map fromString
+        |> Parser.andThen parseMaybe
 
 
 
