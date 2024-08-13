@@ -8,6 +8,7 @@ import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
 import Lib.Util exposing (decodeNonEmptyList, decodeTag)
 import List.Nonempty as NEL
+import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType(..))
 
 
@@ -168,57 +169,26 @@ toString line =
             "Namespace"
 
 
-toKey : ChangeLine -> String
-toKey line =
-    let
-        type_ dt =
-            case dt of
-                Term ->
-                    "term"
+toChangeLineId : ChangeLine -> Maybe ChangeLineId
+toChangeLineId line =
+    case line of
+        Added dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.Added dt d.fullName)
 
-                Type ->
-                    "type"
+        Removed dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.Removed dt d.fullName)
 
-                Doc ->
-                    "doc"
+        Updated dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.Updated dt d.fullName)
 
-                Ability ->
-                    "ability"
+        RenamedFrom dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.RenamedFrom dt d.newFullName)
 
-                AbilityConstructor ->
-                    "ability-constructor"
+        Aliased dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.Aliased dt d.aliasFullName)
 
-                DataConstructor ->
-                    "data-constructor"
-
-                Test ->
-                    "test"
-
-        -- We also use the key for dom ids, which doesn't support "."
-        fqnToKeyPart fqn =
-            fqn |> FQN.toString |> String.replace "." "__"
-
-        key_ =
-            case line of
-                Added dt d ->
-                    [ "added", type_ dt, fqnToKeyPart d.fullName ]
-
-                Removed dt d ->
-                    [ "removed", type_ dt, fqnToKeyPart d.fullName ]
-
-                Updated dt d ->
-                    [ "updated", type_ dt, fqnToKeyPart d.fullName ]
-
-                RenamedFrom dt d ->
-                    [ "renamed", type_ dt, fqnToKeyPart d.newFullName ]
-
-                Aliased dt d ->
-                    [ "aliased", type_ dt, fqnToKeyPart d.aliasFullName ]
-
-                Namespace d ->
-                    [ "namespace", FQN.toString d.name ]
-    in
-    String.join "_" key_
+        Namespace _ ->
+            Nothing
 
 
 isNamespace : ChangeLine -> Bool

@@ -58,3 +58,56 @@ toReferenceConstructor dt =
 
         DataConstructor ->
             Reference.DataConstructorReference
+
+
+toString : DefinitionType -> String
+toString dt =
+    case dt of
+        Term ->
+            "term"
+
+        Type ->
+            "type"
+
+        Doc ->
+            "doc"
+
+        Ability ->
+            "ability"
+
+        AbilityConstructor ->
+            "ability-constructor"
+
+        DataConstructor ->
+            "data-constructor"
+
+        Test ->
+            "test"
+
+
+fromString : String -> Maybe DefinitionType
+fromString dt =
+    case dt of
+        "term" ->
+            Just Term
+
+        "type" ->
+            Just Type
+
+        "doc" ->
+            Just Doc
+
+        "ability" ->
+            Just Ability
+
+        "ability-constructor" ->
+            Just AbilityConstructor
+
+        "data-constructor" ->
+            Just DataConstructor
+
+        "test" ->
+            Just Test
+
+        _ ->
+            Nothing

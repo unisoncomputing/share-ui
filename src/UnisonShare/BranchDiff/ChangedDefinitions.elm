@@ -7,6 +7,7 @@ import Code.Syntax exposing (Syntax)
 import Dict exposing (Dict)
 import RemoteData exposing (WebData)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
+import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId
 import UnisonShare.DefinitionDiff exposing (DefinitionDiff)
 
 
@@ -34,77 +35,107 @@ empty =
 
 set : ChangedDefinitions -> ChangeLine -> ChangedDefinition -> ChangedDefinitions
 set (ChangedDefinitions changes) changeLine el =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    ChangedDefinitions
-        (Dict.insert key el changes)
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
+            in
+            ChangedDefinitions
+                (Dict.insert key el changes)
+
+        Nothing ->
+            ChangedDefinitions changes
 
 
 member : ChangedDefinitions -> ChangeLine -> Bool
 member (ChangedDefinitions changes) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    Dict.member key changes
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
+            in
+            Dict.member key changes
+
+        Nothing ->
+            False
 
 
 isExpanded : ChangedDefinitions -> ChangeLine -> Bool
 isExpanded (ChangedDefinitions changes) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    Dict.get key changes
-        |> Maybe.map .isExpanded
-        |> Maybe.withDefault False
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
+            in
+            Dict.get key changes
+                |> Maybe.map .isExpanded
+                |> Maybe.withDefault False
+
+        Nothing ->
+            False
 
 
 isLoaded : ChangedDefinitions -> ChangeLine -> Bool
 isLoaded (ChangedDefinitions changes) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
 
-        isLoaded_ detail =
-            case detail of
-                Diff d ->
-                    RemoteData.isSuccess d
+                isLoaded_ detail =
+                    case detail of
+                        Diff d ->
+                            RemoteData.isSuccess d
 
-                DefinitionSyntax d ->
-                    RemoteData.isSuccess d
-    in
-    Dict.get key changes
-        |> Maybe.map (.data >> isLoaded_)
-        |> Maybe.withDefault False
+                        DefinitionSyntax d ->
+                            RemoteData.isSuccess d
+            in
+            Dict.get key changes
+                |> Maybe.map (.data >> isLoaded_)
+                |> Maybe.withDefault False
+
+        Nothing ->
+            False
 
 
 collapse : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 collapse ((ChangedDefinitions changes) as orig) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    Dict.get key changes
-        |> Maybe.map (\cd -> { cd | isExpanded = False })
-        |> Maybe.map (\cd -> Dict.insert key cd changes)
-        |> Maybe.map ChangedDefinitions
-        |> Maybe.withDefault orig
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
+            in
+            Dict.get key changes
+                |> Maybe.map (\cd -> { cd | isExpanded = False })
+                |> Maybe.map (\cd -> Dict.insert key cd changes)
+                |> Maybe.map ChangedDefinitions
+                |> Maybe.withDefault orig
+
+        Nothing ->
+            orig
 
 
 expand : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
 expand ((ChangedDefinitions changes) as orig) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    Dict.get key changes
-        |> Maybe.map (\cd -> { cd | isExpanded = True })
-        |> Maybe.map (\cd -> Dict.insert key cd changes)
-        |> Maybe.map ChangedDefinitions
-        |> Maybe.withDefault orig
+    case ChangeLine.toChangeLineId changeLine of
+        Just changeLineId ->
+            let
+                key =
+                    ChangeLineId.toKey changeLineId
+            in
+            Dict.get key changes
+                |> Maybe.map (\cd -> { cd | isExpanded = True })
+                |> Maybe.map (\cd -> Dict.insert key cd changes)
+                |> Maybe.map ChangedDefinitions
+                |> Maybe.withDefault orig
+
+        Nothing ->
+            orig
 
 
 toggle : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
@@ -118,18 +149,16 @@ toggle changedDefinitions changeLine =
 
 get : ChangedDefinitions -> ChangeLine -> Maybe ChangedDefinition
 get (ChangedDefinitions changes) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    Dict.get key changes
+    changeLine
+        |> ChangeLine.toChangeLineId
+        |> Maybe.map ChangeLineId.toKey
+        |> Maybe.andThen (\key -> Dict.get key changes)
 
 
 remove : ChangedDefinitions -> ChangeLine -> ChangedDefinitions
-remove (ChangedDefinitions changes) changeLine =
-    let
-        key =
-            ChangeLine.toKey changeLine
-    in
-    ChangedDefinitions
-        (Dict.remove key changes)
+remove ((ChangedDefinitions changes) as orig) changeLine =
+    changeLine
+        |> ChangeLine.toChangeLineId
+        |> Maybe.map ChangeLineId.toKey
+        |> Maybe.map (\key -> ChangedDefinitions (Dict.remove key changes))
+        |> Maybe.withDefault orig
