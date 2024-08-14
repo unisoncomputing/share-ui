@@ -555,7 +555,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                 |> ChangeLine.toChangeLineId
                 |> Maybe.map
                     (\cid ->
-                        Button.icon (CopyChangeLinePermalink cid) Icon.clipboard
+                        Button.icon (CopyChangeLinePermalink cid) Icon.chain
                             |> Button.subdued
                             |> Button.small
                             |> Button.view
