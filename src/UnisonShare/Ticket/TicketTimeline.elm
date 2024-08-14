@@ -518,7 +518,7 @@ view appContext projectRef model =
                 |> Placeholder.view
 
         viewLoading =
-            div [ class "loading-timeline" ]
+            div [ class "timeline-loading" ]
                 [ shape Placeholder.Large
                 , shape Placeholder.Small
                 , shape Placeholder.Medium

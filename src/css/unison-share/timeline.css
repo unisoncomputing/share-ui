@@ -5,6 +5,12 @@
   flex-direction: column;
   gap: 1.5rem;
 
+  & .timeline-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
   & .timeline-event {
     display: flex;
     flex-direction: column;
