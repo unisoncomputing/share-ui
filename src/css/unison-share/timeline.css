@@ -5,12 +5,6 @@
   flex-direction: column;
   gap: 1.5rem;
 
-  & .timeline-loading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
   & .timeline-event {
     display: flex;
     flex-direction: column;
@@ -105,6 +99,12 @@
       margin-left: 2rem;
     }
   }
+}
+
+.timeline-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 @media only screen and (--u-viewport_max-sm) {
