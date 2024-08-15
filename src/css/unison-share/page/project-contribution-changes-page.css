@@ -30,7 +30,7 @@
     width: 18rem;
     padding: 1rem;
     height: max-content;
-    overflow: hidden;
+    overflow-x: clip;
     position: relative;
 
     & .contribution-changes-group {
@@ -73,6 +73,7 @@
     font-size: var(--font-size-medium);
 
     & .definition-change.card {
+      scroll-margin-top: 100px;
       padding: 0;
       gap: 0;
 

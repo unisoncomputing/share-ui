@@ -208,7 +208,7 @@ expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
                     | changedDefinitions =
                         ChangedDefinitions.expand model.changedDefinitions changeLine
                   }
-                , Cmd.batch [ navCmd, ScrollTo.scrollTo NoOp "page-content" (ChangeLineId.toDomId changeLineId) ]
+                , Cmd.batch [ navCmd, scrollTo changeLineId ]
                 )
 
             else
@@ -275,9 +275,14 @@ expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
                 , Cmd.batch
                     [ cmd
                     , navCmd
-                    , ScrollTo.scrollTo NoOp "page-content" (ChangeLineId.toDomId changeLineId)
+                    , scrollTo changeLineId
                     ]
                 )
+
+
+scrollTo : ChangeLineId -> Cmd Msg
+scrollTo changeLineId =
+    ScrollTo.scrollTo_ NoOp "page-content" (ChangeLineId.toDomId changeLineId) 16
 
 
 
