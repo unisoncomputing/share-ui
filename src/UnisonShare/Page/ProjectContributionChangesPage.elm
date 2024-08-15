@@ -98,28 +98,20 @@ update appContext projectRef contribRef msg model =
                         )
                         branchDiff
 
-                modelWithBranchDiff =
-                    { model | branchDiff = branchDiff_ }
-
-                ( m, cmd ) =
+                cmd =
                     case ( model.urlFocusedChangeLineId, branchDiff_ ) of
                         ( Just changeLineId, Success bd ) ->
                             case BranchDiff.changeLineById changeLineId bd of
                                 Just changeLine ->
-                                    expandAndScrollTo appContext
-                                        projectRef
-                                        contribRef
-                                        modelWithBranchDiff
-                                        bd
-                                        changeLine
+                                    Util.delayMsg 500 (ExpandChangeDetails changeLine)
 
                                 Nothing ->
-                                    ( modelWithBranchDiff, Cmd.none )
+                                    Cmd.none
 
                         _ ->
-                            ( modelWithBranchDiff, Cmd.none )
+                            Cmd.none
             in
-            ( m, cmd )
+            ( { model | branchDiff = branchDiff_ }, cmd )
 
         ExpandChangeDetails changeLine ->
             case model.branchDiff of
@@ -137,7 +129,8 @@ update appContext projectRef contribRef msg model =
                             | changedDefinitions =
                                 ChangedDefinitions.collapse model.changedDefinitions changeLine
                           }
-                        , Cmd.none
+                          -- Clear selected changeline from the URL
+                        , Route.navigate appContext.navKey (Route.projectContributionChanges projectRef contribRef)
                         )
 
                     else
@@ -197,6 +190,14 @@ port copyToClipboard : String -> Cmd msg
 
 expandAndScrollTo : AppContext -> ProjectRef -> ContributionRef -> Model -> BranchDiff -> ChangeLine -> ( Model, Cmd Msg )
 expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
+    let
+        navCmd =
+            changeLine
+                |> ChangeLine.toChangeLineId
+                |> Maybe.map (Route.projectContributionChange projectRef contribRef)
+                |> Maybe.map (Route.navigate appContext.navKey)
+                |> Maybe.withDefault Cmd.none
+    in
     case ChangeLine.toChangeLineId changeLine of
         Nothing ->
             ( model, Cmd.none )
@@ -207,7 +208,7 @@ expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
                     | changedDefinitions =
                         ChangedDefinitions.expand model.changedDefinitions changeLine
                   }
-                , ScrollTo.scrollTo NoOp "page-content" (ChangeLineId.toDomId changeLineId)
+                , Cmd.batch [ navCmd, ScrollTo.scrollTo NoOp "page-content" (ChangeLineId.toDomId changeLineId) ]
                 )
 
             else
@@ -273,6 +274,7 @@ expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
                 ( { model | changedDefinitions = changedDefinitions }
                 , Cmd.batch
                     [ cmd
+                    , navCmd
                     , ScrollTo.scrollTo NoOp "page-content" (ChangeLineId.toDomId changeLineId)
                     ]
                 )
