@@ -142,7 +142,12 @@ init appContext query filter =
                 |> Maybe.withDefault NoFilter
 
         ( search, cmd ) =
-            if fieldValue /= "" then
+            if String.startsWith "@" fieldValue then
+                ( toEntitySearchSearchingWithQuery NoSearch fieldValue
+                , searchEntities appContext filter_ fieldValue
+                )
+
+            else if fieldValue /= "" then
                 ( toDefinitionSearchSearchingWithQuery NoSearch fieldValue
                 , searchDefinitions appContext filter_ fieldValue
                 )
