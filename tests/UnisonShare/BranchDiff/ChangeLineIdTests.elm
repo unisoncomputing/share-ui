@@ -40,15 +40,24 @@ equals =
 fromString : Test
 fromString =
     describe "ChangeLineId.fromString"
-        [ test "parse a string into a ChangeLinId" <|
+        [ test "parse a string into a ChangeLineId" <|
             \_ ->
                 Expect.equal
-                    ("added_term_List.map"
+                    ("added-term-List.map"
                         |> ChangeLineId.fromString
                         |> Maybe.map ChangeLineId.toString
                         |> Maybe.withDefault "FAIL!"
                     )
-                    "added_term_List.map"
+                    "added-term-List.map"
+        , test "parse a string with an _ in the definition name into a ChangeLineId" <|
+            \_ ->
+                Expect.equal
+                    ("added-term-List.map_"
+                        |> ChangeLineId.fromString
+                        |> Maybe.map ChangeLineId.toString
+                        |> Maybe.withDefault "FAIL!"
+                    )
+                    "added-term-List.map_"
         , test "fails to parse an invalid string" <|
             \_ ->
                 Expect.equal
@@ -66,7 +75,7 @@ toString =
                     id =
                         ChangeLineId.changeLineId ChangeLineId.Added DefinitionType.Term (FQN.fromString "List.map")
                 in
-                Expect.equal "added_term_List.map" (ChangeLineId.toString id)
+                Expect.equal "added-term-List.map" (ChangeLineId.toString id)
         ]
 
 
@@ -79,7 +88,7 @@ toKey =
                     id =
                         ChangeLineId.changeLineId ChangeLineId.Added DefinitionType.Term (FQN.fromString "List.map")
                 in
-                Expect.equal "added_term_List.map" (ChangeLineId.toKey id)
+                Expect.equal "added-term-List.map" (ChangeLineId.toKey id)
         ]
 
 
@@ -92,5 +101,5 @@ toDomId =
                     id =
                         ChangeLineId.changeLineId ChangeLineId.Added DefinitionType.Term (FQN.fromString "List.map")
                 in
-                Expect.equal "added_term_List__map" (ChangeLineId.toDomId id)
+                Expect.equal "added-term-List__map" (ChangeLineId.toDomId id)
         ]

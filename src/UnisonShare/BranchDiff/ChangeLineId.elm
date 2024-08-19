@@ -55,7 +55,7 @@ toDomId (ChangeLineId { definitionType, changeType, fqn }) =
         key_ =
             [ changeLineTypeToString changeType, type_, fqnToKeyPart ]
     in
-    String.join "_" key_
+    String.join "-" key_
 
 
 toString : ChangeLineId -> String
@@ -67,12 +67,12 @@ toString (ChangeLineId { definitionType, changeType, fqn }) =
         key_ =
             [ changeLineTypeToString changeType, type_, FQN.toString fqn ]
     in
-    String.join "_" key_
+    String.join "-" key_
 
 
 fromString : String -> Maybe ChangeLineId
 fromString raw =
-    case String.split "_" raw of
+    case String.split "-" raw of
         [ rawChangeLineType, rawDefinitionType, rawFQN ] ->
             Maybe.map3
                 changeLineId
