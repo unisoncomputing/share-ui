@@ -925,11 +925,13 @@ viewUseProjectModal project branchRef =
         installCommand_ br =
             let
                 sameRelease =
-                  case (project.latestVersion, BranchRef.version br) of
-                    ( Just lv, Just bv ) ->
-                        lv == bv
-                    _ ->
-                        False
+                    case ( project.latestVersion, BranchRef.version br ) of
+                        ( Just lv, Just bv ) ->
+                            lv == bv
+
+                        _ ->
+                            False
+
                 cmd =
                     if sameRelease then
                         UcmCommand.Install project.ref Nothing
