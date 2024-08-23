@@ -1,7 +1,13 @@
 module UnisonShare.Contribution exposing
     ( Contribution
+    , ContributionDetails
+    , ContributionStateToken(..)
+    , ContributionSummary
     , dateOfHistoricDiffSupport
-    , decode
+    , decodeDetails
+    , decodeSummary
+    , toDetails
+    , toSummary
     )
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
@@ -15,23 +21,74 @@ import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.User as User exposing (UserSummary)
 
 
-type alias Contribution =
-    { ref : ContributionRef
-    , author : Maybe UserSummary
-    , sourceBranchRef : BranchRef
-    , targetBranchRef : BranchRef
-    , projectRef : ProjectRef
-    , createdAt : DateTime
-    , updatedAt : DateTime
-    , status : ContributionStatus
-    , numComments : Int
-    , title : String
-    , description : Maybe String
+{-| Fetched with a contribution and part of the params to merge a contribution.
+If the frontend and backend ever differ on what the token is, it means that
+there was a change to the contribution in the time between the contribution
+was fetched and the user pressed the "merge" button.
+-}
+type ContributionStateToken
+    = ContributionStateToken String
+
+
+type alias Contribution c =
+    { c
+        | ref : ContributionRef
+        , author : Maybe UserSummary
+        , sourceBranchRef : BranchRef
+        , targetBranchRef : BranchRef
+        , projectRef : ProjectRef
+        , createdAt : DateTime
+        , updatedAt : DateTime
+        , status : ContributionStatus
+        , numComments : Int
+        , title : String
+        , description : Maybe String
     }
+
+
+type alias ContributionSummary =
+    Contribution {}
+
+
+type alias ContributionDetails =
+    Contribution { contributionStateToken : ContributionStateToken }
 
 
 
 -- HELPERS
+
+
+toSummary : ContributionDetails -> ContributionSummary
+toSummary contrib =
+    { ref = contrib.ref
+    , author = contrib.author
+    , sourceBranchRef = contrib.sourceBranchRef
+    , targetBranchRef = contrib.targetBranchRef
+    , projectRef = contrib.projectRef
+    , createdAt = contrib.createdAt
+    , updatedAt = contrib.updatedAt
+    , status = contrib.status
+    , numComments = contrib.numComments
+    , title = contrib.title
+    , description = contrib.description
+    }
+
+
+toDetails : ContributionStateToken -> ContributionSummary -> ContributionDetails
+toDetails token contrib =
+    { ref = contrib.ref
+    , author = contrib.author
+    , sourceBranchRef = contrib.sourceBranchRef
+    , targetBranchRef = contrib.targetBranchRef
+    , projectRef = contrib.projectRef
+    , createdAt = contrib.createdAt
+    , updatedAt = contrib.updatedAt
+    , status = contrib.status
+    , numComments = contrib.numComments
+    , title = contrib.title
+    , description = contrib.description
+    , contributionStateToken = token
+    }
 
 
 dateOfHistoricDiffSupport : DateTime
@@ -43,8 +100,8 @@ dateOfHistoricDiffSupport =
 -- DECODE
 
 
-decode : Decode.Decoder Contribution
-decode =
+decodeDetails : Decode.Decoder ContributionDetails
+decodeDetails =
     let
         emptyUser h =
             { handle = h
@@ -58,8 +115,69 @@ decode =
                 [ Decode.map emptyUser UserHandle.decodeUnprefixed
                 , User.decodeSummary
                 ]
+
+        makeContributionDetails ref author sourceBranchRef targetBranchRef projectRef createdAt updatedAt status numComments title description contributionStateToken =
+            { ref = ref
+            , author = author
+            , sourceBranchRef = sourceBranchRef
+            , targetBranchRef = targetBranchRef
+            , projectRef = projectRef
+            , createdAt = createdAt
+            , updatedAt = updatedAt
+            , status = status
+            , numComments = numComments
+            , title = title
+            , description = description
+            , contributionStateToken = contributionStateToken
+            }
     in
-    Decode.succeed Contribution
+    Decode.succeed makeContributionDetails
+        |> required "number" ContributionRef.decode
+        |> optional "author" (Decode.map Just decodeAuthor) Nothing
+        |> required "sourceBranchRef" BranchRef.decode
+        |> required "targetBranchRef" BranchRef.decode
+        |> required "projectRef" ProjectRef.decode
+        |> required "createdAt" DateTime.decode
+        |> required "updatedAt" DateTime.decode
+        |> required "status" ContributionStatus.decode
+        |> required "numComments" Decode.int
+        |> required "title" Decode.string
+        |> optional "description" (Decode.map Just Decode.string) Nothing
+        |> required "contributionStateToken"
+            (Decode.map ContributionStateToken Decode.string)
+
+
+decodeSummary : Decode.Decoder ContributionSummary
+decodeSummary =
+    let
+        emptyUser h =
+            { handle = h
+            , name = Nothing
+            , avatarUrl = Nothing
+            , pronouns = Nothing
+            }
+
+        decodeAuthor =
+            Decode.oneOf
+                [ Decode.map emptyUser UserHandle.decodeUnprefixed
+                , User.decodeSummary
+                ]
+
+        makeContributionSummary ref author sourceBranchRef targetBranchRef projectRef createdAt updatedAt status numComments title description =
+            { ref = ref
+            , author = author
+            , sourceBranchRef = sourceBranchRef
+            , targetBranchRef = targetBranchRef
+            , projectRef = projectRef
+            , createdAt = createdAt
+            , updatedAt = updatedAt
+            , status = status
+            , numComments = numComments
+            , title = title
+            , description = description
+            }
+    in
+    Decode.succeed makeContributionSummary
         |> required "number" ContributionRef.decode
         |> optional "author" (Decode.map Just decodeAuthor) Nothing
         |> required "sourceBranchRef" BranchRef.decode

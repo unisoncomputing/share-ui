@@ -26,7 +26,7 @@ import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
-import UnisonShare.Contribution as Contribution exposing (Contribution)
+import UnisonShare.Contribution as Contribution exposing (ContributionSummary)
 import UnisonShare.Contribution.ContributionRef as ContributionRef
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.Link as Link
@@ -58,7 +58,7 @@ type alias RecentBranches =
 
 
 type alias Model =
-    { contributions : WebData (List Contribution)
+    { contributions : WebData (List ContributionSummary)
     , modal : ContribitionsModal
     , tab : Tab
     , recentBranches : Maybe RecentBranches
@@ -109,7 +109,7 @@ init appContext projectRef =
 
 
 type Msg
-    = FetchContributionsFinished (WebData (List Contribution))
+    = FetchContributionsFinished (WebData (List ContributionSummary))
     | FetchOwnContributorBranchesFinished (WebData (List BranchSummary))
     | FetchProjectBranchesFinished (WebData (List BranchSummary))
     | ShowSubmitContributionModal
@@ -198,7 +198,7 @@ fetchProjectContributions : AppContext -> ProjectRef -> Cmd Msg
 fetchProjectContributions appContext projectRef =
     ShareApi.projectContributions projectRef
         |> HttpApi.toRequest
-            (Decode.field "items" (Decode.list Contribution.decode))
+            (Decode.field "items" (Decode.list Contribution.decodeSummary))
             (RemoteData.fromResult >> FetchContributionsFinished)
         |> HttpApi.perform appContext.api
 
@@ -285,7 +285,7 @@ viewLoadingPage =
         |> PageLayout.withSubduedBackground
 
 
-viewContributionRow : AppContext -> ProjectRef -> Contribution -> Html Msg
+viewContributionRow : AppContext -> ProjectRef -> ContributionSummary -> Html Msg
 viewContributionRow appContext projectRef contribution =
     let
         byAt =
@@ -328,7 +328,7 @@ viewContributionRow appContext projectRef contribution =
         ]
 
 
-viewPageContent : AppContext -> ProjectRef -> Maybe RecentBranches -> Tab -> List Contribution -> PageContent Msg
+viewPageContent : AppContext -> ProjectRef -> Maybe RecentBranches -> Tab -> List ContributionSummary -> PageContent Msg
 viewPageContent appContext projectRef recentBranches tab contributions =
     let
         viewEmptyState icon text_ =
