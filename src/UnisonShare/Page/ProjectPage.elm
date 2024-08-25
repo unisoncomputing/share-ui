@@ -875,7 +875,6 @@ viewDeleteProjectModal projectRef { confirmText, deleting } =
             div [ class "delete-project-modal_content" ]
                 [ p []
                     [ text "You're about to permanently delete "
-                    , text confirmText
                     , strong [] [ text projectRef_ ]
                     , text "."
                     ]
