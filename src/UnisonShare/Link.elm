@@ -49,6 +49,11 @@ website =
     Click.externalHref "https://unison-lang.org"
 
 
+conference : Click msg
+conference =
+    Click.externalHref "https://unison-lang.org/conference"
+
+
 whatsNew : Click msg
 whatsNew =
     Click.externalHref "https://unison-lang.org/whats-new"

@@ -1,11 +1,11 @@
 module UnisonShare.AppDocument exposing (AppDocument, appDocument, map, view, withModal)
 
 import Browser exposing (Document)
-import Html exposing (Html, div)
-import Html.Attributes exposing (class, id)
+import Html exposing (Html, div, img)
+import Html.Attributes exposing (class, id, src, width)
 import Maybe.Extra as MaybeE
 import UI
-import UI.Icon as Icon
+import UI.Button as Button
 import UI.PageHeader as PageHeader exposing (PageHeader)
 import UnisonShare.AppHeader as AppHeader exposing (AppHeader, AppHeaderContext)
 import UnisonShare.Link as Link
@@ -94,9 +94,14 @@ viewAnnouncement =
     Just
         (div [ id "announcement" ]
             [ div [ class "announcement_content" ]
-                [ Icon.view Icon.cloud
-                , Icon.view Icon.graduationCap
-                , Link.view "Learn to Cloud by building and deploying apps!" Link.unisonCloudWebsiteLearn
+                [ img [ src "https://www.unison-lang.org/assets/unison-forall.png", width 48 ] []
+                , Link.view
+                    "The Unison Forall 2024 conference is coming up this September 20."
+                    Link.conference
+                , Button.button_ Link.conference "Sign up now"
+                    |> Button.emphasized
+                    |> Button.small
+                    |> Button.view
                 ]
             ]
         )
