@@ -98,7 +98,7 @@ viewAnnouncement =
                 , Link.view
                     "The Unison Forall 2024 conference is coming up this September 20."
                     Link.conference
-                , Button.button_ Link.conference "Sign up now"
+                , Button.button_ Link.conference "Sign up for free"
                     |> Button.emphasized
                     |> Button.small
                     |> Button.view

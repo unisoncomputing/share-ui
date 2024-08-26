@@ -172,7 +172,7 @@ viewExportDataModal confirm =
         content =
             case confirm of
                 NotConfirmed ->
-                    viewContent (Button.button ExportDataConfirm "Confirm Data Export" |> Button.emphasized |> Button.view)
+                    viewContent (Button.button ExportDataConfirm "Create support ticket" |> Button.emphasized |> Button.view)
 
                 Confirmed status ->
                     viewContent (viewStatus status)
@@ -203,7 +203,7 @@ viewDeleteAccountModal a confirm =
         content =
             case confirm of
                 NotConfirmed ->
-                    viewContent (Button.button DeleteAccountConfirm "Confirm Account Deletion" |> Button.emphasized |> Button.view)
+                    viewContent (Button.button DeleteAccountConfirm "Create support ticket" |> Button.emphasized |> Button.view)
 
                 Confirmed status ->
                     viewContent (viewStatus status)
