@@ -11,7 +11,6 @@ import Html.Attributes exposing (class)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.UserHandle as UserHandle
 import RemoteData exposing (RemoteData(..), WebData)
-import UI
 import UI.Button as Button
 import UI.Card as Card
 import UI.Click as Click
