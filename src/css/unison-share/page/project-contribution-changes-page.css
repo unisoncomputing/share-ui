@@ -416,7 +416,10 @@
     }
   }
 
-  & .change-tree .contribution-changes-group:first-child .change-line.namespace:first-child {
+  &
+    .change-tree
+    .contribution-changes-group:first-child
+    .change-line.namespace:first-child {
     margin-top: 0;
   }
 }

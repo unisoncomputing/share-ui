@@ -112,6 +112,6 @@ if (app.ports) {
   });
 
   app.ports.copyToClipboard?.subscribe((text) => {
-     navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text);
   });
 }

@@ -53,7 +53,6 @@ import Code.UrlParsers
         ( b
         , branchRef
         , end
-        , fqn
         , perspectiveParams
         , projectSlug
         , reference
