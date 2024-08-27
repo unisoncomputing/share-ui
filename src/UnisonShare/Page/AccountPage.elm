@@ -15,6 +15,8 @@ import UI
 import UI.Button as Button
 import UI.Card as Card
 import UI.Click as Click
+import UI.Divider as Divider
+import UI.Form.TextField as TextField
 import UI.Icon as Icon
 import UI.Modal as Modal
 import UI.PageContent as PageContent
@@ -40,8 +42,8 @@ type Confirm
 
 type Model
     = NoModal
-    | ExportDataModal Confirm
-    | DeleteAccountModal Confirm
+    | ExportDataModal String Confirm
+    | DeleteAccountModal String Confirm
 
 
 init : Model
@@ -56,39 +58,87 @@ init =
 type Msg
     = ShowExportDataModal
     | ExportDataConfirm
+    | UpdateExportDataMessage String
     | ExportDataRequestFinished (HttpResult ())
     | ShowDeleteAccountModal
+    | UpdateDeleteAccountMessage String
     | DeleteAccountConfirm
     | DeleteAccountRequestFinished (HttpResult ())
     | CloseModal
 
 
 update : AppContext -> Account a -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext _ msg _ =
+update appContext _ msg model =
     case msg of
         ShowExportDataModal ->
-            ( ExportDataModal NotConfirmed, Cmd.none )
+            ( ExportDataModal "" NotConfirmed, Cmd.none )
+
+        UpdateExportDataMessage val ->
+            case model of
+                ExportDataModal _ confirm ->
+                    ( ExportDataModal val confirm, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ExportDataConfirm ->
-            ( ExportDataModal (Confirmed Loading), exportDataRequest appContext )
+            case model of
+                ExportDataModal val _ ->
+                    ( ExportDataModal val (Confirmed Loading), exportDataRequest appContext val )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ExportDataRequestFinished (Ok r) ->
-            ( ExportDataModal (Confirmed (Success r)), Cmd.none )
+            case model of
+                ExportDataModal val _ ->
+                    ( ExportDataModal val (Confirmed (Success r)), Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ExportDataRequestFinished (Err e) ->
-            ( ExportDataModal (Confirmed (Failure e)), Cmd.none )
+            case model of
+                ExportDataModal val _ ->
+                    ( ExportDataModal val (Confirmed (Failure e)), Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ShowDeleteAccountModal ->
-            ( DeleteAccountModal NotConfirmed, Cmd.none )
+            ( DeleteAccountModal "" NotConfirmed, Cmd.none )
+
+        UpdateDeleteAccountMessage val ->
+            case model of
+                DeleteAccountModal _ confirm ->
+                    ( DeleteAccountModal val confirm, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         DeleteAccountConfirm ->
-            ( DeleteAccountModal (Confirmed Loading), deleteAccountRequest appContext )
+            case model of
+                DeleteAccountModal val _ ->
+                    ( DeleteAccountModal val (Confirmed Loading), deleteAccountRequest appContext val )
+
+                _ ->
+                    ( model, Cmd.none )
 
         DeleteAccountRequestFinished (Ok r) ->
-            ( DeleteAccountModal (Confirmed (Success r)), Cmd.none )
+            case model of
+                DeleteAccountModal val _ ->
+                    ( DeleteAccountModal val (Confirmed (Success r)), Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         DeleteAccountRequestFinished (Err e) ->
-            ( DeleteAccountModal (Confirmed (Failure e)), Cmd.none )
+            case model of
+                DeleteAccountModal val _ ->
+                    ( DeleteAccountModal val (Confirmed (Failure e)), Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         CloseModal ->
             ( NoModal, Cmd.none )
@@ -98,12 +148,19 @@ update appContext _ msg _ =
 -- EFFECTS
 
 
-exportDataRequest : AppContext -> Cmd Msg
-exportDataRequest appContext =
+exportDataRequest : AppContext -> String -> Cmd Msg
+exportDataRequest appContext details =
     let
+        body =
+            if String.isEmpty details then
+                "Automated support request to export my Unison Share data"
+
+            else
+                details
+
         data =
             { subject = "Export my Unison Share data"
-            , body = "Automated support request to export my Unison Share data"
+            , body = body
             , tags = [ "export-data" ]
             }
     in
@@ -112,17 +169,24 @@ exportDataRequest appContext =
         |> HttpApi.perform appContext.api
 
 
-deleteAccountRequest : AppContext -> Cmd Msg
-deleteAccountRequest appContext =
+deleteAccountRequest : AppContext -> String -> Cmd Msg
+deleteAccountRequest appContext reason =
     let
+        body =
+            if String.isEmpty reason then
+                "Automated support request to delete my Unison Share account"
+
+            else
+                reason
+
         data =
             { subject = "Delete my Unison Share account"
-            , body = "Automated support request to delete my Unison Share account"
+            , body = body
             , tags = [ "delete-account" ]
             }
     in
     ShareApi.createSupportTicket data
-        |> HttpApi.toRequestWithEmptyResponse ExportDataRequestFinished
+        |> HttpApi.toRequestWithEmptyResponse DeleteAccountRequestFinished
         |> HttpApi.perform appContext.api
 
 
@@ -158,13 +222,16 @@ viewStatus status =
                 ]
 
 
-viewExportDataModal : Confirm -> Html Msg
-viewExportDataModal confirm =
+viewExportDataModal : String -> Confirm -> Html Msg
+viewExportDataModal message confirm =
     let
         viewContent action =
             Modal.Content
                 (section [ class "info-modal-content" ]
                     [ p [] [ text "We don't yet have an automated export system, and are handling requests via our support system." ]
+                    , TextField.field UpdateExportDataMessage "What are you looking to export?" message
+                        |> TextField.withRows 4
+                        |> TextField.view
                     , action
                     ]
                 )
@@ -172,7 +239,7 @@ viewExportDataModal confirm =
         content =
             case confirm of
                 NotConfirmed ->
-                    viewContent (Button.button ExportDataConfirm "Create support ticket" |> Button.emphasized |> Button.view)
+                    viewContent (Button.button ExportDataConfirm "Submit support ticket" |> Button.emphasized |> Button.view)
 
                 Confirmed status ->
                     viewContent (viewStatus status)
@@ -182,8 +249,8 @@ viewExportDataModal confirm =
         |> Modal.view
 
 
-viewDeleteAccountModal : Account a -> Confirm -> Html Msg
-viewDeleteAccountModal a confirm =
+viewDeleteAccountModal : Account a -> String -> Confirm -> Html Msg
+viewDeleteAccountModal a message confirm =
     let
         viewContent action =
             Modal.Content
@@ -195,7 +262,12 @@ viewDeleteAccountModal a confirm =
                         , strong [] [ text (UserHandle.toString a.handle) ]
                         , text " account."
                         ]
-                    , p [] [ text "We don't yet have an automatic deletion system in place, and are handling it via our support system." ]
+                    , div [] [ text "We don't yet have an automatic deletion system in place, and are handling it via our support system." ]
+                    , Divider.divider |> Divider.small |> Divider.view
+                    , TextField.field UpdateDeleteAccountMessage "Delete reason (optional)" message
+                        |> TextField.withPlaceholder "Say a few works aboyt why you're looking to delete your account"
+                        |> TextField.withRows 4
+                        |> TextField.view
                     , action
                     ]
                 )
@@ -203,7 +275,7 @@ viewDeleteAccountModal a confirm =
         content =
             case confirm of
                 NotConfirmed ->
-                    viewContent (Button.button DeleteAccountConfirm "Create support ticket" |> Button.emphasized |> Button.view)
+                    viewContent (Button.button DeleteAccountConfirm "Submit support ticket" |> Button.emphasized |> Button.view)
 
                 Confirmed status ->
                     viewContent (viewStatus status)
@@ -220,7 +292,7 @@ view account model =
             [ Card.titled "Account"
                 [ Button.iconThenLabel_ (Click.onClick ShowExportDataModal) Icon.download "Export data" |> Button.view
                 , div [] [ text "Download a zip of all your data on Unison Share. Including your codebase and user settings." ]
-                , UI.divider
+                , Divider.divider |> Divider.small |> Divider.view
                 , Button.iconThenLabel_ (Click.onClick ShowDeleteAccountModal) Icon.warn "Delete Account" |> Button.critical |> Button.view
                 , p [] [ text "Deleting your account will remove all data associated with your account. References to your authors will remain in place, but no longer tied to an account." ]
                 , p [] [ text "Deletion of your account can’t be completed if you own any published projects—ownership must be transfered." ]
@@ -243,11 +315,11 @@ view account model =
 
         modal =
             case model of
-                ExportDataModal confirm ->
-                    Just (viewExportDataModal confirm)
+                ExportDataModal val confirm ->
+                    Just (viewExportDataModal val confirm)
 
-                DeleteAccountModal confirm ->
-                    Just (viewDeleteAccountModal account confirm)
+                DeleteAccountModal val confirm ->
+                    Just (viewDeleteAccountModal account val confirm)
 
                 _ ->
                     Nothing

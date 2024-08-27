@@ -15,13 +15,7 @@
 }
 
 #info-modal .status .status-banner {
-  margin: 0 1.5rem;
-}
-
-#info-modal .status p {
-  margin-left: 2.25rem;
-  padding: 0 1.5rem;
-  font-size: 12px;
+  margin: 0;
 }
 
 #info-modal .button {
