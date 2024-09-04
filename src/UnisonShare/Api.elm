@@ -1,64 +1,4 @@
-module UnisonShare.Api exposing
-    ( DefinitionDiffParams(..)
-    , NewProjectContribution
-    , NewProjectTicket
-    , ProjectBranchesKindFilter(..)
-    , ProjectBranchesParams
-    , ProjectContributionUpdate(..)
-    , ProjectTicketUpdate(..)
-    , ProjectUpdate(..)
-    , UserBranchesParams
-    , browseCodebase
-    , catalog
-    , codebaseApiEndpointToEndpoint
-    , completeTours
-    , createProjectContribution
-    , createProjectContributionComment
-    , createProjectRelease
-    , createProjectTicket
-    , createProjectTicketComment
-    , createSupportTicket
-    , deleteProject
-    , deleteProjectBranch
-    , deleteProjectContributionComment
-    , deleteProjectTicketComment
-    , namespace
-    , project
-    , projectBranch
-    , projectBranchDefinitionByName
-    , projectBranchDefinitionDiff
-    , projectBranchDiff
-    , projectBranchReleaseNotes
-    , projectBranches
-    , projectContribution
-    , projectContributionDefinitionDiff
-    , projectContributionDiff
-    , projectContributionTimeline
-    , projectContributions
-    , projectReadme
-    , projectRelease
-    , projectReleaseNotes
-    , projectReleases
-    , projectTicket
-    , projectTicketTimeline
-    , projectTickets
-    , projects
-    , search
-    , searchDefinitions
-    , searchNames
-    , session
-    , updateProject
-    , updateProjectContribution
-    , updateProjectContributionComment
-    , updateProjectFav
-    , updateProjectTicket
-    , updateProjectTicketComment
-    , updateUserProfile
-    , user
-    , userBranches
-    , userProjects
-    , userReadme
-    )
+module UnisonShare.Api exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.CodebaseApi as CodebaseApi
@@ -80,6 +20,7 @@ import Regex
 import Set exposing (Set)
 import UI.KeyboardShortcut.Key exposing (Key(..))
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
+import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DefinitionDiff as DefinitionDiff
@@ -342,6 +283,36 @@ projectContribution projectRef contribRef =
     GET
         { path = [ "users", handle, "projects", slug, "contributions", ContributionRef.toApiString contribRef ]
         , queryParams = []
+        }
+
+
+projectContributionCheckMergeability : ProjectRef -> ContributionRef -> Endpoint
+projectContributionCheckMergeability projectRef contribRef =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    GET
+        { path = [ "users", handle, "projects", slug, "contributions", ContributionRef.toApiString contribRef, "merge", "check" ]
+        , queryParams = []
+        }
+
+
+projectContributionMerge : ProjectRef -> ContributionRef -> ContributionStateToken -> Endpoint
+projectContributionMerge projectRef contribRef (ContributionStateToken token) =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+
+        body =
+            Encode.object
+                [ ( "contributionStateToken", Encode.string token )
+                ]
+    in
+    POST
+        { path = [ "users", handle, "projects", slug, "contributions", ContributionRef.toApiString contribRef, "merge" ]
+        , queryParams = []
+        , body = Http.jsonBody body
         }
 
 

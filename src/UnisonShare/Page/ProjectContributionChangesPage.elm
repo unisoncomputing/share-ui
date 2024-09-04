@@ -34,7 +34,7 @@ import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
-import UnisonShare.Contribution exposing (Contribution)
+import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
 import UnisonShare.Link as Link
@@ -776,7 +776,7 @@ viewErrorPage _ _ =
         ]
 
 
-view : AppContext -> ProjectRef -> Contribution -> Model -> PageContent Msg
+view : AppContext -> ProjectRef -> ContributionDetails -> Model -> PageContent Msg
 view appContext projectRef contribution model =
     case model.branchDiff of
         NotAsked ->

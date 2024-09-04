@@ -1,9 +1,9 @@
 module UnisonShare.Page.ProjectContributionOverviewPage exposing (..)
 
-import Code.BranchRef as BranchRef
-import Html exposing (Html, div, em, header, p, text)
+import Html exposing (Html, div, em, header, text)
 import Html.Attributes exposing (class)
 import Http
+import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
@@ -11,24 +11,24 @@ import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
 import UI.Card as Card
-import UI.CopyField as CopyField
 import UI.DateTime as DateTime
 import UI.Icon as Icon
-import UI.Modal as Modal
 import UI.PageContent as PageContent exposing (PageContent)
+import UI.StatusBanner as StatusBanner
 import UI.TabList as TabList
 import UI.Tooltip as Tooltip
 import UnisonShare.Account as Account
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
-import UnisonShare.Contribution as Contribution exposing (Contribution)
+import UnisonShare.Contribution as Contribution exposing (ContributionDetails, ContributionStateToken)
 import UnisonShare.Contribution.ContributionEvent as ContributionEvent
+import UnisonShare.Contribution.ContributionMergeability as ContributionMergeability exposing (ContributionMergeability)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
-import UnisonShare.Contribution.ContributionStatus exposing (ContributionStatus(..))
+import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.ContributionTimeline as ContributionTimeline
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
-import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
+import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.Timeline.TimelineEvent as TimelineEvent
 
@@ -46,12 +46,22 @@ type UpdateStatus
 
 type ContributionOverviewModal
     = NoModal
-    | HowToReviewModal
+    | UpdateBranchInstructionsModal
+
+
+type MergeStatus
+    = Checking
+    | Checked ContributionMergeability
+    | Merging -- The "Merged" status itself is tracked via UpdateStatus
+    | MergeFailed Http.Error
+    | Merged
+    | CheckFailed Http.Error
 
 
 type alias Model =
     { timeline : ContributionTimeline.Model
     , updateStatus : UpdateStatus
+    , mergeStatus : MergeStatus
     , modal : ContributionOverviewModal
     }
 
@@ -64,9 +74,13 @@ init appContext projectRef contribRef =
     in
     ( { timeline = timeline
       , updateStatus = Idle
+      , mergeStatus = Checking
       , modal = NoModal
       }
-    , Cmd.map ContributionTimelineMsg timelineCmd
+    , Cmd.batch
+        [ Cmd.map ContributionTimelineMsg timelineCmd
+        , fetchMergeability appContext projectRef contribRef
+        ]
     )
 
 
@@ -78,8 +92,11 @@ type Msg
     = NoOp
     | UpdateStatus ContributionStatus
     | UpdateStatusFinished ContributionStatus (HttpResult ())
-    | ShowHowToReviewModal
+    | ShowUpdateBranchInstructionsModal
     | CloseModal
+    | FetchMergeabilityFinished (HttpResult ContributionMergeability)
+    | Merge
+    | MergeFinished (HttpResult ())
     | ContributionTimelineMsg ContributionTimeline.Msg
 
 
@@ -88,11 +105,59 @@ type OutMsg
     | ContributionStatusUpdated ContributionStatus
 
 
-update : AppContext -> ProjectRef -> ContributionRef -> WebData Contribution -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
+update : AppContext -> ProjectRef -> ContributionRef -> WebData ContributionDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef contributionRef contribution msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none, NoOut )
+
+        FetchMergeabilityFinished (Ok mergeability) ->
+            ( { model | mergeStatus = Checked mergeability }, Cmd.none, NoOut )
+
+        FetchMergeabilityFinished (Err e) ->
+            ( { model | mergeStatus = CheckFailed e }, Cmd.none, NoOut )
+
+        Merge ->
+            case contribution of
+                Success { contributionStateToken } ->
+                    ( { model | mergeStatus = Merging }
+                    , mergeContribution
+                        appContext
+                        projectRef
+                        contributionRef
+                        contributionStateToken
+                    , NoOut
+                    )
+
+                _ ->
+                    ( model, Cmd.none, NoOut )
+
+        MergeFinished resp ->
+            case ( appContext.session, contribution, resp ) of
+                ( Session.SignedIn me, Success contrib, Ok _ ) ->
+                    let
+                        contributionEvent =
+                            ContributionEvent.StatusChange
+                                { newStatus = ContributionStatus.Merged
+                                , oldStatus = Just contrib.status
+                                , timestamp = appContext.now
+                                , actor = Account.toUserSummary me
+                                }
+                    in
+                    ( { model
+                        | timeline = ContributionTimeline.addEvent model.timeline contributionEvent
+                        , updateStatus = Idle
+                        , mergeStatus = Merged
+                      }
+                    , Cmd.none
+                    , ContributionStatusUpdated ContributionStatus.Merged
+                    )
+
+                ( _, _, Err e ) ->
+                    ( { model | mergeStatus = MergeFailed e }, Cmd.none, NoOut )
+
+                _ ->
+                    ( model, Cmd.none, NoOut )
 
         UpdateStatus newStatus ->
             ( { model | updateStatus = UpdatingStatus }
@@ -131,8 +196,8 @@ update appContext projectRef contributionRef contribution msg model =
                 Session.Anonymous ->
                     ( model, Cmd.none, NoOut )
 
-        ShowHowToReviewModal ->
-            ( { model | modal = HowToReviewModal }, Cmd.none, NoOut )
+        ShowUpdateBranchInstructionsModal ->
+            ( { model | modal = UpdateBranchInstructionsModal }, Cmd.none, NoOut )
 
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none, NoOut )
@@ -165,12 +230,30 @@ updateContributionStatus appContext projectRef contributionRef newStatus =
         |> HttpApi.perform appContext.api
 
 
+fetchMergeability : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
+fetchMergeability appContext projectRef contributionRef =
+    let
+        decode =
+            Decode.at [ "mergeability", "kind" ] ContributionMergeability.decode
+    in
+    ShareApi.projectContributionCheckMergeability projectRef contributionRef
+        |> HttpApi.toRequest decode FetchMergeabilityFinished
+        |> HttpApi.perform appContext.api
+
+
+mergeContribution : AppContext -> ProjectRef -> ContributionRef -> ContributionStateToken -> Cmd Msg
+mergeContribution appContext projectRef contributionRef token =
+    ShareApi.projectContributionMerge projectRef contributionRef token
+        |> HttpApi.toRequestWithEmptyResponse MergeFinished
+        |> HttpApi.perform appContext.api
+
+
 
 -- VIEW
 
 
-viewContribution : Session -> ProjectRef -> UpdateStatus -> Contribution -> Html Msg
-viewContribution session projectRef updateStatus contribution =
+viewContribution : Session -> ProjectRef -> UpdateStatus -> ContributionDetails -> MergeStatus -> Html Msg
+viewContribution session projectRef updateStatus contribution mergeStatus =
     let
         isContributor =
             contribution.author
@@ -200,18 +283,9 @@ viewContribution session projectRef updateStatus contribution =
                 "Browse Code"
                 |> Button.view
 
-        reviewButton =
-            Button.iconThenLabel
-                ShowHowToReviewModal
-                Icon.questionmark
-                "How to review contribution code?"
-                |> Button.subdued
-                |> Button.small
-                |> Button.view
-
         archiveButton =
             if (hasProjectAccess || isContributor) && updateStatus /= TimelineNotReady then
-                Button.iconThenLabel (UpdateStatus Archived) Icon.archive "Archive"
+                Button.iconThenLabel (UpdateStatus ContributionStatus.Archived) Icon.archive "Archive"
                     |> Button.outlined
                     |> Button.view
 
@@ -220,24 +294,67 @@ viewContribution session projectRef updateStatus contribution =
 
         mergeButton =
             if hasProjectAccess && updateStatus /= TimelineNotReady then
-                let
-                    markAsMergedTooltip =
-                        Tooltip.tooltip (Tooltip.text "We currently don't support automatic merging.\nPlease merge manually before marking the contribution as merged.")
-                            |> Tooltip.withArrow Tooltip.End
-                in
-                Tooltip.view
-                    (Button.iconThenLabel (UpdateStatus Merged) Icon.merge "Mark as Merged"
-                        |> Button.positive
-                        |> Button.view
-                    )
-                    markAsMergedTooltip
+                case mergeStatus of
+                    Checking ->
+                        StatusBanner.working "Checking mergeability..."
+
+                    Checked m ->
+                        if ContributionMergeability.isMergeable m then
+                            Button.iconThenLabel Merge Icon.merge "Merge Contribution"
+                                |> Button.positive
+                                |> Button.view
+
+                        else
+                            let
+                                tooltip =
+                                    Tooltip.tooltip (Tooltip.text "This Contribution can't be fast-forwarded, please bring it up to date with the target branch.")
+                                        |> Tooltip.withArrow Tooltip.End
+                            in
+                            Tooltip.view
+                                (Button.iconThenLabel Merge Icon.merge "Can't be merged"
+                                    |> Button.disabled
+                                    |> Button.view
+                                )
+                                tooltip
+
+                    Merging ->
+                        StatusBanner.working "Merging..."
+
+                    Merged ->
+                        UI.nothing
+
+                    MergeFailed _ ->
+                        let
+                            tooltip =
+                                Tooltip.tooltip (Tooltip.text "Something went wrong when checking if the Contribution could be merged. Please try again.")
+                                    |> Tooltip.withArrow Tooltip.End
+                        in
+                        Tooltip.view
+                            (Button.iconThenLabel Merge Icon.warn "Unknown mergeability"
+                                |> Button.disabled
+                                |> Button.view
+                            )
+                            tooltip
+
+                    CheckFailed _ ->
+                        let
+                            tooltip =
+                                Tooltip.tooltip (Tooltip.text "Something went wrong when checking if the Contribution could be merged. Please try again.")
+                                    |> Tooltip.withArrow Tooltip.End
+                        in
+                        Tooltip.view
+                            (Button.iconThenLabel Merge Icon.warn "Unknown mergeability"
+                                |> Button.disabled
+                                |> Button.view
+                            )
+                            tooltip
 
             else
                 UI.nothing
 
         reopenButton =
             if hasProjectAccess || isContributor then
-                Button.iconThenLabel (UpdateStatus InReview) Icon.conversation "Re-open"
+                Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Re-open"
                     |> Button.outlined
                     |> Button.view
 
@@ -246,26 +363,26 @@ viewContribution session projectRef updateStatus contribution =
 
         actions =
             case contribution.status of
-                Draft ->
+                ContributionStatus.Draft ->
                     [ browseButton
                     , div [ class "right-actions" ]
-                        [ Button.iconThenLabel (UpdateStatus InReview) Icon.conversation "Submit for review"
+                        [ Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Submit for review"
                             |> Button.emphasized
                             |> Button.view
                         ]
                     ]
 
-                InReview ->
-                    [ div [ class "left-actions" ] [ browseButton, reviewButton ]
+                ContributionStatus.InReview ->
+                    [ div [ class "left-actions" ] [ browseButton ]
                     , div [ class "right-actions" ] [ archiveButton, mergeButton ]
                     ]
 
-                Merged ->
+                ContributionStatus.Merged ->
                     [ browseButton
-                    , div [ class "right-actions" ] [ reopenButton ]
+                    , div [ class "right-actions" ] [ StatusBanner.good "Merged" ]
                     ]
 
-                Archived ->
+                ContributionStatus.Archived ->
                     [ browseButton
                     , div [ class "right-actions" ] [ reopenButton ]
                     ]
@@ -292,7 +409,7 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
                 |> ByAt.view dtContext.timeZone dtContext.now
     in
     case newStatus of
-        Draft ->
+        ContributionStatus.Draft ->
             [ header [ class "timeline-event_header" ]
                 [ div [ class "timeline-event_header_description" ]
                     [ TimelineEvent.viewIcon Icon.writingPad
@@ -302,11 +419,11 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
                 ]
             ]
 
-        InReview ->
+        ContributionStatus.InReview ->
             let
                 title =
                     case oldStatus of
-                        Just Archived ->
+                        Just ContributionStatus.Archived ->
                             "Re-opened"
 
                         _ ->
@@ -321,7 +438,7 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
                 ]
             ]
 
-        Merged ->
+        ContributionStatus.Merged ->
             [ header [ class "timeline-event_header" ]
                 [ div [ class "timeline-event_header_description" ]
                     [ TimelineEvent.viewIcon Icon.merge
@@ -331,7 +448,7 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
                 ]
             ]
 
-        Archived ->
+        ContributionStatus.Archived ->
             [ header [ class "timeline-event_header" ]
                 [ div [ class "timeline-event_header_description" ]
                     [ TimelineEvent.viewIcon Icon.archive
@@ -346,10 +463,11 @@ viewPageContent :
     AppContext
     -> ProjectRef
     -> UpdateStatus
-    -> Contribution
+    -> ContributionDetails
+    -> MergeStatus
     -> ContributionTimeline.Model
     -> PageContent Msg
-viewPageContent appContext projectRef updateStatus contribution timeline =
+viewPageContent appContext projectRef updateStatus contribution mergeStatus timeline =
     let
         timeline_ =
             ContributionTimeline.view appContext projectRef timeline
@@ -357,7 +475,7 @@ viewPageContent appContext projectRef updateStatus contribution timeline =
         tabs =
             -- Before this date, we couldn't show diffs on merged
             -- contributions, so we don't want to show the "changes" tab
-            if DateTime.isAfter Contribution.dateOfHistoricDiffSupport contribution.createdAt || contribution.status == InReview then
+            if DateTime.isAfter Contribution.dateOfHistoricDiffSupport contribution.createdAt || contribution.status == ContributionStatus.InReview then
                 TabList.tabList
                     []
                     (TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref))
@@ -370,76 +488,25 @@ viewPageContent appContext projectRef updateStatus contribution timeline =
     PageContent.oneColumn
         [ tabs
         , div [ class "project-contribution-overview-page" ]
-            [ viewContribution appContext.session projectRef updateStatus contribution
+            [ viewContribution
+                appContext.session
+                projectRef
+                updateStatus
+                contribution
+                mergeStatus
             , Html.map ContributionTimelineMsg timeline_
             ]
         ]
 
 
-viewHowToReviewModal : Contribution -> Html Msg
-viewHowToReviewModal contribution =
-    let
-        projectRef =
-            ProjectRef.toString contribution.projectRef
-
-        source =
-            "/" ++ BranchRef.toString contribution.sourceBranchRef
-
-        target =
-            "/" ++ BranchRef.toString contribution.targetBranchRef
-
-        content =
-            div []
-                [ p [] [ text "Reviewing and merging contribution code is a manual process for now. Follow the steps below." ]
-                , div [ class "instructions" ]
-                    [ p [] [ text "From within the project pull the target branch (usually /main):" ]
-                    , CopyField.copyField (always NoOp) "pull"
-                        |> CopyField.withPrefix (projectRef ++ "/main>")
-                        |> CopyField.view
-                    , p [] [ text "Then clone the source branch:" ]
-                    , CopyField.copyField (always NoOp) ("clone " ++ source)
-                        |> CopyField.withPrefix (projectRef ++ "/main>")
-                        |> CopyField.view
-                    , p [] [ text "Next, switch to the target branch:" ]
-                    , CopyField.copyField (always NoOp) ("switch " ++ target)
-                        |> CopyField.withPrefix (projectRef ++ source ++ ">")
-                        |> CopyField.view
-                    , p [] [ text "Merge the changes to accept the contribution:" ]
-                    , CopyField.copyField (always NoOp) ("merge " ++ source)
-                        |> CopyField.withPrefix (projectRef ++ target ++ ">")
-                        |> CopyField.view
-                    , p [] [ text "Finally, push the project to share and mark the contribution as merged." ]
-                    ]
-                ]
-    in
-    content
-        |> Modal.content
-        |> Modal.modal "project-contribution-how-to-review-modal" CloseModal
-        |> Modal.withActions
-            [ Button.button CloseModal "Got it"
-                |> Button.medium
-                |> Button.emphasized
-            ]
-        |> Modal.withHeader "How to review contribution code?"
-        |> Modal.view
-
-
-view : AppContext -> ProjectRef -> Contribution -> Model -> ( PageContent Msg, Maybe (Html Msg) )
+view : AppContext -> ProjectRef -> ContributionDetails -> Model -> ( PageContent Msg, Maybe (Html Msg) )
 view appContext projectRef contribution model =
-    let
-        modal =
-            case model.modal of
-                HowToReviewModal ->
-                    Just (viewHowToReviewModal contribution)
-
-                _ ->
-                    Nothing
-    in
     ( viewPageContent
         appContext
         projectRef
         model.updateStatus
         contribution
+        model.mergeStatus
         model.timeline
-    , modal
+    , Nothing
     )

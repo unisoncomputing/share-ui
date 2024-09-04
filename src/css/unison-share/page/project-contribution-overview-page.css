@@ -34,24 +34,34 @@
       justify-content: space-between;
 
       & .left-actions {
+        position: relative;
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 0.5rem;
+
+        & .tooltip {
+          left: 0;
+        }
       }
 
       & .right-actions {
+        position: relative;
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
+
+        & .tooltip {
+          right: 0;
+        }
       }
 
       & .tooltip {
         & .tooltip-bubble {
           top: 2.5rem;
-          left: 0;
-          transform: translateX(-75%);
-          white-space: pre;
+          white-space: pre-wrap;
+          min-width: 16rem;
+          max-width: 16rem;
         }
       }
     }

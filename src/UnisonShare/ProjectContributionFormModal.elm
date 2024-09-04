@@ -31,7 +31,7 @@ import UnisonShare.Account as Account exposing (AccountSummary)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
-import UnisonShare.Contribution as Contribution exposing (Contribution)
+import UnisonShare.Contribution as Contribution exposing (ContributionSummary)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.Link as Link
@@ -80,14 +80,14 @@ type alias Form =
     , sourceBranchRef : Maybe BranchRef
     , targetBranchRef : BranchRef
     , selectBranchSheet : SelectBranchSheet
-    , save : WebData Contribution
+    , save : WebData ContributionSummary
     , recentBranches : RecentBranches
     , validity : Validity
     }
 
 
 type FormAction
-    = Edit Contribution
+    = Edit ContributionSummary
     | Create
 
 
@@ -118,14 +118,14 @@ type Msg
     | ToggleSelectTargetBranchSheet
     | SearchBranchSheetMsg SearchBranchSheet.Msg
     | SaveContribution
-    | SaveContributionFinished (WebData Contribution)
-    | SuccessfullySaved Contribution
+    | SaveContributionFinished (WebData ContributionSummary)
+    | SuccessfullySaved ContributionSummary
 
 
 type OutMsg
     = None
     | RequestToCloseModal
-    | Saved Contribution
+    | Saved ContributionSummary
 
 
 update : AppContext -> ProjectRef -> AccountSummary -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
@@ -138,7 +138,6 @@ update appContext projectRef account msg model =
             case recentBranches of
                 Ok rb ->
                     let
-                        form : Form
                         form =
                             { title = contrib.title
                             , description = Maybe.withDefault "" contrib.description
@@ -420,7 +419,7 @@ createProjectContribution : AppContext -> ProjectRef -> ShareApi.NewProjectContr
 createProjectContribution appContext projectRef newContribution =
     ShareApi.createProjectContribution projectRef newContribution
         |> HttpApi.toRequest
-            Contribution.decode
+            Contribution.decodeSummary
             (RemoteData.fromResult >> SaveContributionFinished)
         |> HttpApi.perform appContext.api
 
@@ -440,7 +439,7 @@ updateProjectContribution :
 updateProjectContribution appContext projectRef contribRef updates =
     ShareApi.updateProjectContribution projectRef contribRef (ShareApi.ProjectContributionUpdate updates)
         |> HttpApi.toRequest
-            Contribution.decode
+            Contribution.decodeSummary
             (RemoteData.fromResult >> SaveContributionFinished)
         |> HttpApi.perform appContext.api
 

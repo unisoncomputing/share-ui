@@ -4,7 +4,7 @@ import Code.BranchRef as BranchRef
 import Html exposing (Html, div, h1, span, text)
 import Html.Attributes exposing (class)
 import Http
-import Lib.HttpApi as HttpApi
+import Lib.HttpApi as HttpApi exposing (HttpResult)
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
@@ -20,7 +20,7 @@ import UI.StatusBanner as StatusBanner
 import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
-import UnisonShare.Contribution as Contribution exposing (Contribution)
+import UnisonShare.Contribution as Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
@@ -48,7 +48,7 @@ type ProjectContributionSubPage
 
 
 type alias Model =
-    { contribution : WebData Contribution
+    { contribution : WebData ContributionDetails
     , modal : ContributionModal
     , subPage : ProjectContributionSubPage
     }
@@ -90,7 +90,8 @@ init appContext projectRef contribRef route =
 
 type Msg
     = NoOp
-    | FetchContributionFinished (WebData Contribution)
+    | FetchContributionFinished (WebData ContributionDetails)
+    | FetchMergeabilityFinished (HttpResult Bool)
     | ShowEditModal
     | ProjectContributionFormModalMsg ProjectContributionFormModal.Msg
     | CloseModal
@@ -122,7 +123,7 @@ update appContext projectRef contribRef _ msg model =
                             ProjectContributionFormModal.init appContext
                                 a
                                 projectRef
-                                (ProjectContributionFormModal.Edit contrib)
+                                (ProjectContributionFormModal.Edit (Contribution.toSummary contrib))
                     in
                     ( { model | modal = EditModal formModel }, Cmd.map ProjectContributionFormModalMsg formCmd )
 
@@ -130,8 +131,8 @@ update appContext projectRef contribRef _ msg model =
                     ( model, Cmd.none )
 
         ( _, ProjectContributionFormModalMsg formMsg ) ->
-            case ( appContext.session, model.modal ) of
-                ( Session.SignedIn account, EditModal formModel ) ->
+            case ( appContext.session, model.contribution, model.modal ) of
+                ( Session.SignedIn account, Success contrib, EditModal formModel ) ->
                     let
                         ( projectContributionFormModal, cmd, out ) =
                             ProjectContributionFormModal.update appContext
@@ -148,9 +149,9 @@ update appContext projectRef contribRef _ msg model =
                                 ProjectContributionFormModal.RequestToCloseModal ->
                                     ( NoModal, model.contribution )
 
-                                ProjectContributionFormModal.Saved c ->
+                                ProjectContributionFormModal.Saved newContrib ->
                                     -- TODO: also add a ContributionEvent
-                                    ( NoModal, Success c )
+                                    ( NoModal, Success (Contribution.toDetails contrib.contributionStateToken newContrib) )
                     in
                     ( { model | modal = modal, contribution = contribution }
                     , Cmd.map ProjectContributionFormModalMsg cmd
@@ -239,7 +240,7 @@ updateSubPage appContext projectRef contribRef contribRoute model =
 fetchContribution : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
 fetchContribution appContext projectRef contributionRef =
     ShareApi.projectContribution projectRef contributionRef
-        |> HttpApi.toRequest Contribution.decode (RemoteData.fromResult >> FetchContributionFinished)
+        |> HttpApi.toRequest Contribution.decodeDetails (RemoteData.fromResult >> FetchContributionFinished)
         |> HttpApi.perform appContext.api
 
 
@@ -250,7 +251,7 @@ fetchContribution appContext projectRef contributionRef =
 viewPageContent :
     AppContext
     -> ProjectRef
-    -> Contribution
+    -> ContributionDetails
     -> ProjectContributionSubPage
     -> ( PageLayout Msg, Maybe (Html Msg) )
 viewPageContent appContext projectRef contribution subPage =
@@ -297,7 +298,7 @@ timeAgo dateTimeContext t =
     DateTime.view (DateTime.DistanceFrom dateTimeContext.now) dateTimeContext.timeZone t
 
 
-detailedPageTitle : AppContext -> Contribution -> PageTitle Msg
+detailedPageTitle : AppContext -> ContributionDetails -> PageTitle Msg
 detailedPageTitle appContext contribution =
     let
         isContributor =
