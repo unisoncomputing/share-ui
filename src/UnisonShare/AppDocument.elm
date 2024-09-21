@@ -91,20 +91,26 @@ map toMsgB { pageId, title, appHeader, pageHeader, page, modal } =
 
 viewAnnouncement : Maybe (Html msg)
 viewAnnouncement =
-    Just
-        (div [ id "announcement" ]
-            [ div [ class "announcement_content" ]
-                [ img [ src "https://www.unison-lang.org/assets/unison-forall.png", width 48 ] []
-                , Link.view
-                    "The Unison Forall 2024 conference is coming up this September 20."
-                    Link.conference
-                , Button.button_ Link.conference "Sign up for free"
-                    |> Button.emphasized
-                    |> Button.small
-                    |> Button.view
-                ]
-            ]
-        )
+    Nothing
+
+
+
+{-
+   Just
+       (div [ id "announcement" ]
+           [ div [ class "announcement_content" ]
+               [ img [ src "https://www.unison-lang.org/assets/unison-forall.png", width 48 ] []
+               , Link.view
+                   "The Unison Forall 2024 conference is coming up this September 20."
+                   Link.conference
+               , Button.button_ Link.conference "Sign up for free"
+                   |> Button.emphasized
+                   |> Button.small
+                   |> Button.view
+               ]
+           ]
+       )
+-}
 
 
 view : AppHeaderContext msg -> AppDocument msg -> Document msg
