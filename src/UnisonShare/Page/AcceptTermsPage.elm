@@ -8,7 +8,6 @@ import Html exposing (div)
 import Html.Attributes exposing (class)
 import Lib.HttpApi as HttpApi
 import Lib.Util as Util
-import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
@@ -23,6 +22,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
+import UnisonShare.Markdown as Markdown
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Tour as Tour
 import Url exposing (Url)
@@ -112,7 +112,7 @@ view model =
         content =
             Card.card
                 [ div [ class "definition-doc" ]
-                    [ Markdown.toHtml [] "require:src/terms-of-service.md" ]
+                    [ Markdown.view_ [] "require:src/terms-of-service.md" ]
                 ]
                 |> Card.asContained
                 |> Card.view

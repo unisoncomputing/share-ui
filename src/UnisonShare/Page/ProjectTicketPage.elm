@@ -4,7 +4,6 @@ import Html exposing (Html, div, header)
 import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
@@ -21,6 +20,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
+import UnisonShare.Markdown as Markdown
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -247,8 +247,7 @@ viewTicket session projectRef updateStatus ticket =
                 "ticket-description"
 
         description =
-            Markdown.toHtml [ class "definition-doc" ]
-                ticket.description
+            Markdown.view ticket.description
 
         closeButton =
             if (hasProjectAccess || isContributor) && updateStatus /= TimelineNotReady then

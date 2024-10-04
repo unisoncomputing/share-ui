@@ -7,7 +7,6 @@ import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required)
 import Lib.UserHandle exposing (UserHandle)
-import Markdown
 import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
@@ -19,6 +18,7 @@ import UI.Icon as Icon
 import UI.StatusBanner as StatusBanner
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
+import UnisonShare.Markdown as Markdown
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session
 import UnisonShare.Timeline.CommentId as CommentId exposing (CommentId)
@@ -123,7 +123,7 @@ viewCommentEvent appContext actions { details, request } =
 
         md comment =
             Card.card
-                [ Markdown.toHtml [ class "definition-doc" ] comment ]
+                [ Markdown.view comment ]
                 |> Card.asContained
                 |> Card.withTightPadding
                 |> Card.withClassName "comment-event_content"

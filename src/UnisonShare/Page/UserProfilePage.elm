@@ -7,7 +7,6 @@ import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Lib.Util exposing (unicodeStringLength)
-import Markdown
 import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
 import Set
@@ -27,6 +26,7 @@ import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
+import UnisonShare.Markdown as Markdown
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectSummary)
 import UnisonShare.Project.ProjectListing as ProjectListing
@@ -283,7 +283,7 @@ view_ session user projects =
             [ MaybeE.unwrap
                 UI.nothing
                 (\b ->
-                    Card.card [ Markdown.toHtml [] b ]
+                    Card.card [ Markdown.view_ [] b ]
                         |> Card.asContained
                         |> Card.withTitle "BIO"
                         |> Card.withClassName "bio"

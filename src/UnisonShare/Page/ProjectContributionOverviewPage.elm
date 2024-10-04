@@ -5,7 +5,6 @@ import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
@@ -28,6 +27,7 @@ import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposin
 import UnisonShare.ContributionTimeline as ContributionTimeline
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
+import UnisonShare.Markdown as Markdown
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.Timeline.TimelineEvent as TimelineEvent
@@ -273,7 +273,7 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
 
         description =
             contribution.description
-                |> Maybe.map (Markdown.toHtml [ class "definition-doc" ])
+                |> Maybe.map Markdown.view
                 |> Maybe.withDefault (em [ class "no-description" ] [ text "No description..." ])
 
         browseButton =
