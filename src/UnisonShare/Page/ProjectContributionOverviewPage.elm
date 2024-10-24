@@ -479,8 +479,7 @@ viewPageContent appContext projectRef updateStatus contribution mergeStatus time
                 TabList.tabList
                     []
                     (TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref))
-                    []
-                    -- TabList.tab "Changes" (Link.projectContributionChanges projectRef contribution.ref) ]
+                    [ TabList.tab "Changes (beta preview)" (Link.projectContributionChanges projectRef contribution.ref) ]
                     |> TabList.view
 
             else
