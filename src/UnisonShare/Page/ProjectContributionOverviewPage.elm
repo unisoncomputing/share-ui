@@ -532,7 +532,8 @@ viewViewLocallyInstructionsModal contribution =
             "/" ++ BranchRef.toString contribution.targetBranchRef
 
         mergeInstructions_ =
-            [ h3 [] [ text "Merge (and resolve conflicts) locally:" ]
+            [ Divider.divider |> Divider.small |> Divider.view
+            , h3 [] [ text "Merge (and resolve conflicts) locally:" ]
             , div [ class "instructions" ]
                 [ p [] [ text "Clone the contribution branch:" ]
                 , CopyField.copyField (always NoOp) ("clone " ++ source)
@@ -574,7 +575,6 @@ viewViewLocallyInstructionsModal contribution =
                         |> CopyField.withPrefix (projectRef ++ "/main>")
                         |> CopyField.view
                     ]
-                 , Divider.divider |> Divider.small |> Divider.view
                  ]
                     ++ mergeInstructions
                 )
