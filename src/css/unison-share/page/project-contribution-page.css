@@ -75,6 +75,30 @@
         border-color: var(--u-color_border_hovered);
         background: var(--u-color_container_hovered);
       }
+
+      & .copy-on-click {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 1.5rem;
+
+        & .button {
+          height: 1.5rem;
+          width: 1.5rem;
+          flex-grow: 0;
+        }
+
+        & .copy-on-click_success {
+          position: absolute;
+          width: 1.5rem;
+          height: 1.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: var(--border-radius-base);
+          background: var(--u-color_action);
+        }
+      }
     }
   }
 }

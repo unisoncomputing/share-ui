@@ -10,6 +10,7 @@ import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
 import UI.Card as Card
+import UI.CopyOnClick as CopyOnClick
 import UI.DateTime as DateTime exposing (DateTime)
 import UI.Icon as Icon
 import UI.PageContent as PageContent
@@ -343,11 +344,13 @@ detailedPageTitle appContext contribution =
                             |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef)
                             |> Tag.large
                             |> Tag.view
+                        , CopyOnClick.copyButton (BranchRef.toString contribution.sourceBranchRef)
                         , text "to"
                         , BranchRef.toTag contribution.targetBranchRef
                             |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.targetBranchRef)
                             |> Tag.large
                             |> Tag.view
+                        , CopyOnClick.copyButton (BranchRef.toString contribution.targetBranchRef)
                         ]
                     ]
                 ]

@@ -1,6 +1,7 @@
 module UnisonShare.Page.ProjectContributionOverviewPage exposing (..)
 
-import Html exposing (Html, div, em, header, text)
+import Code.BranchRef as BranchRef
+import Html exposing (Html, div, em, h3, header, p, text)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
@@ -10,8 +11,11 @@ import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
 import UI.Card as Card
+import UI.CopyField as CopyField
 import UI.DateTime as DateTime
+import UI.Divider as Divider
 import UI.Icon as Icon
+import UI.Modal as Modal
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.StatusBanner as StatusBanner
 import UI.TabList as TabList
@@ -28,7 +32,7 @@ import UnisonShare.ContributionTimeline as ContributionTimeline
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
 import UnisonShare.Markdown as Markdown
-import UnisonShare.Project.ProjectRef exposing (ProjectRef)
+import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.Timeline.TimelineEvent as TimelineEvent
 
@@ -46,7 +50,7 @@ type UpdateStatus
 
 type ContributionOverviewModal
     = NoModal
-    | UpdateBranchInstructionsModal
+    | ViewLocallyInstructionsModal
 
 
 type MergeStatus
@@ -92,7 +96,7 @@ type Msg
     = NoOp
     | UpdateStatus ContributionStatus
     | UpdateStatusFinished ContributionStatus (HttpResult ())
-    | ShowUpdateBranchInstructionsModal
+    | ShowViewLocallyInstructionsModal
     | CloseModal
     | FetchMergeabilityFinished (HttpResult ContributionMergeability)
     | Merge
@@ -196,8 +200,8 @@ update appContext projectRef contributionRef contribution msg model =
                 Session.Anonymous ->
                     ( model, Cmd.none, NoOut )
 
-        ShowUpdateBranchInstructionsModal ->
-            ( { model | modal = UpdateBranchInstructionsModal }, Cmd.none, NoOut )
+        ShowViewLocallyInstructionsModal ->
+            ( { model | modal = ViewLocallyInstructionsModal }, Cmd.none, NoOut )
 
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none, NoOut )
@@ -283,6 +287,10 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                 "Browse Code"
                 |> Button.view
 
+        viewLocallyInstructionsButton =
+            Button.iconThenLabel ShowViewLocallyInstructionsModal Icon.download "View locally"
+                |> Button.view
+
         archiveButton =
             if (hasProjectAccess || isContributor) && updateStatus /= TimelineNotReady then
                 Button.iconThenLabel (UpdateStatus ContributionStatus.Archived) Icon.archive "Archive"
@@ -365,6 +373,7 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
             case contribution.status of
                 ContributionStatus.Draft ->
                     [ browseButton
+                    , viewLocallyInstructionsButton
                     , div [ class "right-actions" ]
                         [ Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Submit for review"
                             |> Button.emphasized
@@ -373,17 +382,22 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                     ]
 
                 ContributionStatus.InReview ->
-                    [ div [ class "left-actions" ] [ browseButton ]
+                    [ div [ class "left-actions" ]
+                        [ browseButton
+                        , viewLocallyInstructionsButton
+                        ]
                     , div [ class "right-actions" ] [ archiveButton, mergeButton ]
                     ]
 
                 ContributionStatus.Merged ->
                     [ browseButton
+                    , viewLocallyInstructionsButton
                     , div [ class "right-actions" ] [ StatusBanner.good "Merged" ]
                     ]
 
                 ContributionStatus.Archived ->
                     [ browseButton
+                    , viewLocallyInstructionsButton
                     , div [ class "right-actions" ] [ reopenButton ]
                     ]
 
@@ -499,8 +513,72 @@ viewPageContent appContext projectRef updateStatus contribution mergeStatus time
         ]
 
 
+viewViewLocallyInstructionsModal : ContributionDetails -> Html Msg
+viewViewLocallyInstructionsModal contribution =
+    let
+        projectRef =
+            ProjectRef.toString contribution.projectRef
+
+        source =
+            "/" ++ BranchRef.toString contribution.sourceBranchRef
+
+        target =
+            "/" ++ BranchRef.toString contribution.targetBranchRef
+
+        content =
+            div []
+                [ h3 [] [ text "View the contribution locally:" ]
+                , div [ class "instructions" ]
+                    [ p [] [ text "Clone the contribution branch:" ]
+                    , CopyField.copyField (always NoOp) ("clone " ++ source)
+                        |> CopyField.withPrefix (projectRef ++ "/main>")
+                        |> CopyField.view
+                    ]
+                , Divider.divider |> Divider.small |> Divider.view
+                , h3 [] [ text "Merge (and resolve conflicts) locally:" ]
+                , div [ class "instructions" ]
+                    [ p [] [ text "Clone the contribution branch:" ]
+                    , CopyField.copyField (always NoOp) ("clone " ++ source)
+                        |> CopyField.withPrefix (projectRef ++ "/main>")
+                        |> CopyField.view
+                    , p [] [ text "Next, switch to the target branch (usually /main):" ]
+                    , CopyField.copyField (always NoOp) ("switch " ++ target)
+                        |> CopyField.withPrefix (projectRef ++ source ++ ">")
+                        |> CopyField.view
+                    , p [] [ text "Make sure the target branch is up to date:" ]
+                    , CopyField.copyField (always NoOp) "pull"
+                        |> CopyField.withPrefix (projectRef ++ "/main>")
+                        |> CopyField.view
+                    , p [] [ text "Merge the changes:" ]
+                    , CopyField.copyField (always NoOp) ("merge " ++ source)
+                        |> CopyField.withPrefix (projectRef ++ target ++ ">")
+                        |> CopyField.view
+                    , p [] [ text "Finally, push the project to share and mark the contribution as merged." ]
+                    ]
+                ]
+    in
+    content
+        |> Modal.content
+        |> Modal.modal "project-contribution-view-locally-instructions-modal" CloseModal
+        |> Modal.withActions
+            [ Button.button CloseModal "Got it"
+                |> Button.medium
+                |> Button.emphasized
+            ]
+        |> Modal.view
+
+
 view : AppContext -> ProjectRef -> ContributionDetails -> Model -> ( PageContent Msg, Maybe (Html Msg) )
 view appContext projectRef contribution model =
+    let
+        modal =
+            case model.modal of
+                NoModal ->
+                    Nothing
+
+                ViewLocallyInstructionsModal ->
+                    Just (viewViewLocallyInstructionsModal contribution)
+    in
     ( viewPageContent
         appContext
         projectRef
@@ -508,5 +586,5 @@ view appContext projectRef contribution model =
         contribution
         model.mergeStatus
         model.timeline
-    , Nothing
+    , modal
     )

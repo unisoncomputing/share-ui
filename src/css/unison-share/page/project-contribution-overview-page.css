@@ -107,16 +107,27 @@
   }
 }
 
-#project-contribution-how-to-review-modal .instructions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  & .copy-field {
-    margin-bottom: 1rem;
+#project-contribution-view-locally-instructions-modal {
+  & h3 {
+    margin-bottom: 0.5rem;
+    font-size: var(--font-size-base);
   }
 
-  & p {
-    margin-bottom: 0;
+  & .divider {
+    background-color: var(--u-color_border);
+  }
+
+  & .instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    & .copy-field:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    & p {
+      margin-bottom: 0;
+    }
   }
 }
