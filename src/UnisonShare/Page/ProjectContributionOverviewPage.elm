@@ -372,8 +372,10 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
         actions =
             case contribution.status of
                 ContributionStatus.Draft ->
-                    [ browseButton
-                    , viewLocallyInstructionsButton
+                    [ div [ class "left-actions" ]
+                        [ browseButton
+                        , viewLocallyInstructionsButton
+                        ]
                     , div [ class "right-actions" ]
                         [ Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Submit for review"
                             |> Button.emphasized
@@ -390,14 +392,18 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                     ]
 
                 ContributionStatus.Merged ->
-                    [ browseButton
-                    , viewLocallyInstructionsButton
+                    [ div [ class "left-actions" ]
+                        [ browseButton
+                        , viewLocallyInstructionsButton
+                        ]
                     , div [ class "right-actions" ] [ StatusBanner.good "Merged" ]
                     ]
 
                 ContributionStatus.Archived ->
-                    [ browseButton
-                    , viewLocallyInstructionsButton
+                    [ div [ class "left-actions" ]
+                        [ browseButton
+                        , viewLocallyInstructionsButton
+                        ]
                     , div [ class "right-actions" ] [ reopenButton ]
                     ]
 
@@ -525,37 +531,53 @@ viewViewLocallyInstructionsModal contribution =
         target =
             "/" ++ BranchRef.toString contribution.targetBranchRef
 
+        mergeInstructions_ =
+            [ h3 [] [ text "Merge (and resolve conflicts) locally:" ]
+            , div [ class "instructions" ]
+                [ p [] [ text "Clone the contribution branch:" ]
+                , CopyField.copyField (always NoOp) ("clone " ++ source)
+                    |> CopyField.withPrefix (projectRef ++ "/main>")
+                    |> CopyField.view
+                , p [] [ text "Next, switch to the target branch (usually /main):" ]
+                , CopyField.copyField (always NoOp) ("switch " ++ target)
+                    |> CopyField.withPrefix (projectRef ++ source ++ ">")
+                    |> CopyField.view
+                , p [] [ text "Make sure the target branch is up to date:" ]
+                , CopyField.copyField (always NoOp) "pull"
+                    |> CopyField.withPrefix (projectRef ++ "/main>")
+                    |> CopyField.view
+                , p [] [ text "Merge the changes:" ]
+                , CopyField.copyField (always NoOp) ("merge " ++ source)
+                    |> CopyField.withPrefix (projectRef ++ target ++ ">")
+                    |> CopyField.view
+                , p [] [ text "Finally, push the project to share and mark the contribution as merged." ]
+                ]
+            ]
+
+        mergeInstructions =
+            case contribution.status of
+                ContributionStatus.Draft ->
+                    mergeInstructions_
+
+                ContributionStatus.InReview ->
+                    mergeInstructions_
+
+                _ ->
+                    []
+
         content =
             div []
-                [ h3 [] [ text "View the contribution locally:" ]
-                , div [ class "instructions" ]
+                ([ h3 [] [ text "View the contribution locally:" ]
+                 , div [ class "instructions" ]
                     [ p [] [ text "Clone the contribution branch:" ]
                     , CopyField.copyField (always NoOp) ("clone " ++ source)
                         |> CopyField.withPrefix (projectRef ++ "/main>")
                         |> CopyField.view
                     ]
-                , Divider.divider |> Divider.small |> Divider.view
-                , h3 [] [ text "Merge (and resolve conflicts) locally:" ]
-                , div [ class "instructions" ]
-                    [ p [] [ text "Clone the contribution branch:" ]
-                    , CopyField.copyField (always NoOp) ("clone " ++ source)
-                        |> CopyField.withPrefix (projectRef ++ "/main>")
-                        |> CopyField.view
-                    , p [] [ text "Next, switch to the target branch (usually /main):" ]
-                    , CopyField.copyField (always NoOp) ("switch " ++ target)
-                        |> CopyField.withPrefix (projectRef ++ source ++ ">")
-                        |> CopyField.view
-                    , p [] [ text "Make sure the target branch is up to date:" ]
-                    , CopyField.copyField (always NoOp) "pull"
-                        |> CopyField.withPrefix (projectRef ++ "/main>")
-                        |> CopyField.view
-                    , p [] [ text "Merge the changes:" ]
-                    , CopyField.copyField (always NoOp) ("merge " ++ source)
-                        |> CopyField.withPrefix (projectRef ++ target ++ ">")
-                        |> CopyField.view
-                    , p [] [ text "Finally, push the project to share and mark the contribution as merged." ]
-                    ]
-                ]
+                 , Divider.divider |> Divider.small |> Divider.view
+                 ]
+                    ++ mergeInstructions
+                )
     in
     content
         |> Modal.content
