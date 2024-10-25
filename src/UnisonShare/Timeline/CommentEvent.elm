@@ -98,13 +98,15 @@ type CommentEventActions msg
 
 
 commentEventActions : AppContext -> ActionMsgs msg -> ProjectRef -> UserHandle -> CommentEventActions msg
-commentEventActions appContext msgs projectRef commenterHandle =
+commentEventActions appContext msgs _ commenterHandle =
     let
         isCommentOwner =
             Session.isHandle commenterHandle appContext.session
 
         canEditAndDelete =
-            Session.hasProjectAccess projectRef appContext.session || isCommentOwner
+            -- TODO: Re-enable to support moderation
+            -- Session.hasProjectAccess projectRef appContext.session || isCommentOwner
+            isCommentOwner
     in
     if canEditAndDelete then
         CanModify msgs
