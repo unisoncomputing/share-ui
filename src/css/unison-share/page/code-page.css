@@ -1,7 +1,7 @@
 .code-page {
   /* increase the readable-column-width-medium size to account for extra gutter
    * space added by the fold toggle */
-  --readable-column-width-medium: calc(var(--readable-column-width-medium) + 2rem)
+  --readable-column-width-medium: calc(var(--readable-column-width-medium) + 2rem);
 }
 
 .code-page .sidebar .namespace-header {
