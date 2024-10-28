@@ -1,7 +1,13 @@
 .code-page {
   /* increase the readable-column-width-medium size to account for extra gutter
-   * space added by the fold toggle */
-  --readable-column-width-medium: calc(var(--readable-column-width-medium) + 2rem);
+   * space added by the fold toggle 
+   *
+   * unfortunately it doesn't look like we can define css variable based off of 
+   * itself, so we're going its 45rem here because 
+  --readable-column-width-medium originally is 43 and we're adding 2rem;
+   * */
+  --readable-column-width-medium_original: 43rem;
+  --readable-column-width-medium: calc(var(--readable-column-width-medium_original) + 2rem);
 }
 
 .code-page .sidebar .namespace-header {
