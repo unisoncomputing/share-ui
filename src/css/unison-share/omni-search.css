@@ -376,7 +376,7 @@
 
     & .icon {
       color: var(--u-color_icon_subdued);
-      font-size: var(--font–size-medium);
+      font-size: var(--font-size-medium);
     }
   }
 

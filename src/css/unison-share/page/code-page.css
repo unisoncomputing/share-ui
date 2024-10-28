@@ -7,7 +7,9 @@
    --readable-column-width-medium originally is 43 and we're adding 2rem;
    * */
   --readable-column-width-medium_original: 43rem;
-  --readable-column-width-medium: calc(var(--readable-column-width-medium_original) + 2rem);
+  --readable-column-width-medium: calc(
+    var(--readable-column-width-medium_original) + 2rem
+  );
 }
 
 .code-page .sidebar .namespace-header {
