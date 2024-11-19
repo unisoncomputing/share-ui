@@ -258,7 +258,7 @@ update appContext projectRef account msg model =
                                     { form | selectBranchSheet = OpenForTarget { t | sheet = sheet_ } }
 
                                 SearchBranchSheet.SelectBranchRequest branch ->
-                                    { form | sourceBranchRef = Just branch.ref, selectBranchSheet = Closed }
+                                    { form | targetBranchRef = branch.ref, selectBranchSheet = Closed }
                     in
                     ( { model | form = Success newForm }
                     , Cmd.map SearchBranchSheetMsg cmd
