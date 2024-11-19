@@ -201,7 +201,7 @@
       }
     }
 
-    & .definition-change.card.updated .replace {
+    & .definition-change.card.updated .replace:not(:has(span .blank)) {
       background: var(--color-orange-4);
     }
 
@@ -209,7 +209,7 @@
       background: var(--color-orange-3);
     }
 
-    & .definition-change.card.updated .old {
+    & .definition-change.card.updated .old:not(:has(span .blank)) {
       background: var(--color-pink-5);
     }
 
@@ -225,7 +225,7 @@
       background: var(--color-green-3);
     }
 
-    & .definition-change.card.updated .annotation-change {
+    & .definition-change.card.updated .annotation-change:not(:has(span .blank)) {
       background: var(--color-orange-4);
     }
 
@@ -233,7 +233,7 @@
       background: var(--color-orange-3);
     }
 
-    & .definition-change.card.updated .segment-change {
+    & .definition-change.card.updated .segment-change:not(:has(span .blank)) {
       background: var(--color-orange-4);
     }
 
