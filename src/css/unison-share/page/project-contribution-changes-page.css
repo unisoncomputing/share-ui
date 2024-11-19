@@ -217,7 +217,7 @@
       background: var(--color-pink-4);
     }
 
-    & .definition-change.card.updated .new {
+    & .definition-change.card.updated .new:not(:has(span .blank)) {
       background: var(--color-green-5);
     }
 
