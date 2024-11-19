@@ -200,7 +200,12 @@ viewSidebar perspective cfg codebaseTree =
         codeSection =
             Maybe.map
                 (\c ->
-                    Sidebar.section "Code" [ Html.map c.codebaseTreeMsg (CodebaseTree.view c.codebaseTree) ]
+                    Sidebar.section "Code"
+                        [ Html.map c.codebaseTreeMsg
+                            (CodebaseTree.view { withPerspective = True }
+                                c.codebaseTree
+                            )
+                        ]
                         |> Sidebar.sectionWithTitleButton (Button.iconThenLabel cfg.showFinderModalMsg Icon.browse "Search" |> Button.small)
                         |> Sidebar.sectionWithScrollable
                 )

@@ -8,6 +8,7 @@ import Code.Finder.SearchOptions as SearchOptions
 import Code.FullyQualifiedName as FQN
 import Code.Namespace.NamespaceRef as NamespaceRef
 import Code.Perspective as Perspective
+import Code.ProjectDependency as ProjectDependency exposing (ProjectDependency)
 import Code.ReadmeCard as ReadmeCard
 import Html exposing (Html, div, footer, form, p, span, strong, text)
 import Html.Attributes exposing (class)
@@ -49,7 +50,6 @@ import UnisonShare.CodeBrowsingContext as CodeBrowsingContext exposing (CodeBrow
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectDetails)
-import UnisonShare.Project.ProjectDependency as ProjectDependency exposing (ProjectDependency)
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
