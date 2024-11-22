@@ -486,7 +486,15 @@ viewLoadingExpandedContent =
 viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
 viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine type_ content =
     let
-        linked branchRef =
+        toSyntaxConfig isNew =
+            let
+                branchRef =
+                    if isNew then
+                        branchDiff.newBranch.ref
+
+                    else
+                        branchDiff.newBranch.ref
+            in
             SyntaxConfig.empty
                 |> SyntaxConfig.withToClick
                     (Link.projectBranchDefinition projectRef branchRef)
@@ -508,7 +516,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
 
                                             Success d ->
                                                 DefinitionDiff.view
-                                                    (linked branchDiff.newBranch.ref)
+                                                    toSyntaxConfig
                                                     d
 
                                             Failure e ->

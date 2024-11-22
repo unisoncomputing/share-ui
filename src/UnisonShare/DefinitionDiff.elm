@@ -152,18 +152,18 @@ viewNewDiffSegment syntaxConfig segment =
             ]
 
 
-viewDiff : SyntaxConfig msg -> NEL.Nonempty DiffSegment -> Html msg
-viewDiff syntaxConfig segments =
+viewDiff : (Bool -> SyntaxConfig msg) -> NEL.Nonempty DiffSegment -> Html msg
+viewDiff toSyntaxConfig segments =
     let
         old =
             segments
                 |> NEL.toList
-                |> List.concatMap (viewOldDiffSegment syntaxConfig)
+                |> List.concatMap (viewOldDiffSegment (toSyntaxConfig False))
 
         new =
             segments
                 |> NEL.toList
-                |> List.concatMap (viewNewDiffSegment syntaxConfig)
+                |> List.concatMap (viewNewDiffSegment (toSyntaxConfig True))
     in
     div [ class "diff-side-by-side" ]
         [ pre [ class "monochrome diff-side" ] [ code [] old ]
@@ -171,11 +171,11 @@ viewDiff syntaxConfig segments =
         ]
 
 
-view : SyntaxConfig msg -> DefinitionDiff -> Html msg
-view syntaxConfig defDiff =
+view : (Bool -> SyntaxConfig msg) -> DefinitionDiff -> Html msg
+view toSyntaxConfig defDiff =
     case defDiff of
         Diff _ diff ->
-            div [] [ viewDiff syntaxConfig diff ]
+            div [] [ viewDiff toSyntaxConfig diff ]
 
         Mismatched _ ->
             div [] [ text "TODO" ]
