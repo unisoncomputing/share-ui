@@ -493,7 +493,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                         branchDiff.newBranch.ref
 
                     else
-                        branchDiff.newBranch.ref
+                        branchDiff.oldBranch.ref
             in
             SyntaxConfig.empty
                 |> SyntaxConfig.withToClick
@@ -526,13 +526,19 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
 
                             ChangedDefinitions.DefinitionSyntax syntax ->
                                 let
-                                    branchRef =
-                                        case changeLine of
-                                            ChangeLine.Removed _ _ ->
-                                                branchDiff.oldBranch.ref
+                                    linked =
+                                        let
+                                            branchRef =
+                                                case changeLine of
+                                                    ChangeLine.Removed _ _ ->
+                                                        branchDiff.oldBranch.ref
 
-                                            _ ->
-                                                branchDiff.newBranch.ref
+                                                    _ ->
+                                                        branchDiff.newBranch.ref
+                                        in
+                                        SyntaxConfig.empty
+                                            |> SyntaxConfig.withToClick
+                                                (Link.projectBranchDefinition projectRef branchRef)
 
                                     expandedContent =
                                         case syntax of
@@ -544,7 +550,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
 
                                             Success s ->
                                                 pre [ class "definition-syntax monochrome" ]
-                                                    [ code [] [ Syntax.view (linked branchRef) s ] ]
+                                                    [ code [] [ Syntax.view linked s ] ]
 
                                             Failure e ->
                                                 viewFailedToLoadExpandedContent e
