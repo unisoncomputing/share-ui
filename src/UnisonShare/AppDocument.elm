@@ -5,8 +5,10 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class, id)
 import Maybe.Extra as MaybeE
 import UI
+import UI.Button as Button
 import UI.PageHeader as PageHeader exposing (PageHeader)
 import UnisonShare.AppHeader as AppHeader exposing (AppHeader, AppHeaderContext)
+import UnisonShare.Link as Link
 
 
 
@@ -89,26 +91,19 @@ map toMsgB { pageId, title, appHeader, pageHeader, page, modal } =
 
 viewAnnouncement : Maybe (Html msg)
 viewAnnouncement =
-    Nothing
-
-
-
-{-
-   Just
-       (div [ id "announcement" ]
-           [ div [ class "announcement_content" ]
-               [ img [ src "https://www.unison-lang.org/assets/unison-forall.png", width 48 ] []
-               , Link.view
-                   "The Unison Forall 2024 conference is coming up this September 20."
-                   Link.conference
-               , Button.button_ Link.conference "Sign up for free"
-                   |> Button.emphasized
-                   |> Button.small
-                   |> Button.view
-               ]
-           ]
-       )
--}
+    Just
+        (div [ id "announcement" ]
+            [ div [ class "announcement_content" ]
+                [ Link.view
+                    "🎄 Season's Greetings! Join us for this year's Advent of Code puzzles."
+                    Link.aoc2024
+                , Button.button_ Link.aoc2024 "Get started"
+                    |> Button.emphasized
+                    |> Button.small
+                    |> Button.view
+                ]
+            ]
+        )
 
 
 view : AppHeaderContext msg -> AppDocument msg -> Document msg

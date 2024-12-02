@@ -54,6 +54,11 @@ conference =
     Click.externalHref "https://unison-lang.org/conference"
 
 
+aoc2024 : Click msg
+aoc2024 =
+    Click.externalHref "https://unison-lang.org/adventofcode2024"
+
+
 whatsNew : Click msg
 whatsNew =
     Click.externalHref "https://unison-lang.org/whats-new"

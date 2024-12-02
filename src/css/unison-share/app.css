@@ -18,9 +18,9 @@ body:has(#modal-overlay) {
 }
 
 #announcement {
-  --c-color_announcement_background: var(--color-purple-5);
-  --c-color_announcement_text: var(--color-gray-lighten-100);
-  --u-color_interactive: var(--color-purple-1);
+  --c-color_announcement_background: var(--color-green-4);
+  --c-color_announcement_text: var(--color-green-1);
+  --u-color_interactive: var(--color-green-0);
 
   display: flex;
   grid-area: announcement;
@@ -41,7 +41,7 @@ body:has(#modal-overlay) {
     gap: 0.75rem;
 
     & a:not(.button):hover {
-      color: var(--color-purple-2);
+      color: var(--color-pink-0);
     }
   }
 }
