@@ -106,6 +106,11 @@ init appContext route =
                         search =
                             Parser.parse (Parser.query (Query.string "search")) url
                                 |> Maybe.withDefault Nothing
+                                -- When using the Browser's address bar to
+                                -- perform a search on Share it uses + instead
+                                -- of %20 to encode spaces and this ends up as
+                                -- literal + when parsed with Url.percentDecode
+                                |> Maybe.map (String.replace "+" "%20")
                                 |> Maybe.andThen Url.percentDecode
 
                         filter =
