@@ -1,12 +1,13 @@
 module UnisonShare.AppDocument exposing (AppDocument, appDocument, map, view, withModal)
 
 import Browser exposing (Document)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id)
 import Maybe.Extra as MaybeE
 import UI
 import UI.PageHeader as PageHeader exposing (PageHeader)
 import UnisonShare.AppHeader as AppHeader exposing (AppHeader, AppHeaderContext)
+import UnisonShare.Link as Link
 
 
 
@@ -89,7 +90,15 @@ map toMsgB { pageId, title, appHeader, pageHeader, page, modal } =
 
 viewAnnouncement : Maybe (Html msg)
 viewAnnouncement =
-    Nothing
+    Just
+        (div [ id "announcement" ]
+            [ div [ class "announcement_content" ]
+                [ Link.view
+                    "⛅ Coming soon: create Unison Cloud clusters in minutes on your own infrastructure."
+                    Link.unisonCloudWebsiteByoc
+                ]
+            ]
+        )
 
 
 view : AppHeaderContext msg -> AppDocument msg -> Document msg
