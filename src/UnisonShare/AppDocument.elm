@@ -99,6 +99,7 @@ viewAnnouncement =
                     Link.unisonCloudWebsiteByoc
                 , Button.button_ Link.unisonCloudWebsiteByoc "Learn more"
                     |> Button.small
+                    |> Button.emphasized
                     |> Button.view
                 ]
             ]
