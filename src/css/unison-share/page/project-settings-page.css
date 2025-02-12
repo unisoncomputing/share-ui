@@ -1,3 +1,9 @@
+.project-settings-page .settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .project-settings-page .settings-content .card {
   position: relative;
 }
@@ -5,6 +11,62 @@
 .project-settings-page .settings-content h2 {
   color: var(--u-color_text_subdued);
   margin-bottom: 0.75rem;
+}
+
+.project-settings-page .collaborators {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.project-settings-page .collaborators_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-settings-page .collaborator {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-settings-page .collaborator_access,
+.project-settings-page .collaborator_profile-snippet {
+  width: 33%;
+}
+
+.project-settings-page .collaborator_access {
+  font-size: var(--font-size-small);
+  color: var(--u-color_text_subdued);
+}
+
+.project-settings-page .collaborators_empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-settings-page .collaborators_empty-state_text {
+  color: var(--u-color_text_subdued);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-base);
+}
+
+.project-settings-page .collaborators_empty-state_text .icon {
+  font-size: var(--font-size-base);
+  color: var(--u-color_icon_subdued);
+}
+
+.project-settings-page .collaborators_loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .project-settings-page .actions {

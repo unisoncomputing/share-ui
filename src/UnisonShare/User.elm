@@ -2,8 +2,10 @@ module UnisonShare.User exposing
     ( User
     , UserDetails
     , UserSummary
+    , UserSummaryWithId
     , decodeDetails
     , decodeSummary
+    , decodeSummaryWithId
     , name
     , toAvatar
     )
@@ -27,6 +29,10 @@ type alias User u =
 
 type alias UserSummary =
     User { pronouns : Maybe String }
+
+
+type alias UserSummaryWithId =
+    User { id : String, pronouns : Maybe String }
 
 
 type alias UserDetails =
@@ -69,6 +75,24 @@ decodeSummary =
             }
     in
     Decode.map3 makeSummary
+        (field "handle" UserHandle.decodeUnprefixed)
+        (maybe (field "name" string))
+        (maybe (field "avatarUrl" decodeUrl))
+
+
+decodeSummaryWithId : Decode.Decoder UserSummaryWithId
+decodeSummaryWithId =
+    let
+        makeSummaryWithId id handle name_ avatarUrl =
+            { id = id
+            , handle = handle
+            , name = name_
+            , avatarUrl = avatarUrl
+            , pronouns = Nothing
+            }
+    in
+    Decode.map4 makeSummaryWithId
+        (field "userId" string)
         (field "handle" UserHandle.decodeUnprefixed)
         (maybe (field "name" string))
         (maybe (field "avatarUrl" decodeUrl))
