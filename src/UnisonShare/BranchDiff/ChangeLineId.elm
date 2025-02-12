@@ -9,6 +9,7 @@ type ChangeLineType
     = Added
     | Removed
     | Updated
+    | Propagated
     | RenamedFrom
     | Aliased
 
@@ -121,6 +122,9 @@ changeLineTypeToString changeLineType =
 
         Updated ->
             "updated"
+
+        Propagated ->
+            "propagated"
 
         RenamedFrom ->
             "renamed"
