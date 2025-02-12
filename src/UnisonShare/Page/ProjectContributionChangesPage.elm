@@ -433,6 +433,9 @@ viewDiffTreeNode projectRef changedDefinitions changeLine =
         ChangeLine.Updated type_ { shortName } ->
             view_ type_ (viewTitle shortName)
 
+        ChangeLine.Propagated _ _ ->
+            UI.nothing
+
         ChangeLine.RenamedFrom type_ { newShortName } ->
             view_ type_ (viewTitle newShortName)
 
@@ -671,6 +674,9 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
                             ]
                         )
                         :: acc
+
+                ChangeLine.Propagated _ _ ->
+                    acc
 
                 ChangeLine.RenamedFrom type_ i ->
                     view_ changeLine

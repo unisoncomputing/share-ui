@@ -40,6 +40,14 @@ type ChangeLine
         , fullName : FQN
         , ref : Reference
         }
+    | Propagated
+        DefinitionType
+        { oldHash : Hash
+        , newHash : Hash
+        , shortName : FQN
+        , fullName : FQN
+        , ref : Reference
+        }
     | RenamedFrom
         DefinitionType
         { hash : Hash
@@ -99,6 +107,9 @@ definitionType changeLine =
         Updated dt _ ->
             Just dt
 
+        Propagated dt _ ->
+            Just dt
+
         RenamedFrom dt _ ->
             Just dt
 
@@ -119,6 +130,9 @@ fullName changeLine =
             d.fullName
 
         Updated _ d ->
+            d.fullName
+
+        Propagated _ d ->
             d.fullName
 
         RenamedFrom _ d ->
@@ -143,6 +157,9 @@ shortName changeLine =
         Updated _ d ->
             d.shortName
 
+        Propagated _ d ->
+            d.shortName
+
         RenamedFrom _ d ->
             d.newShortName
 
@@ -163,6 +180,9 @@ reference changeLine =
             Just d.ref
 
         Updated _ d ->
+            Just d.ref
+
+        Propagated _ d ->
             Just d.ref
 
         RenamedFrom _ d ->
@@ -187,6 +207,9 @@ toString line =
         Updated _ _ ->
             "Updated"
 
+        Propagated _ _ ->
+            "Propagated"
+
         RenamedFrom _ _ ->
             "Renamed"
 
@@ -208,6 +231,9 @@ toChangeLineId line =
 
         Updated dt d ->
             Just (ChangeLineId.changeLineId ChangeLineId.Updated dt d.fullName)
+
+        Propagated dt d ->
+            Just (ChangeLineId.changeLineId ChangeLineId.Propagated dt d.fullName)
 
         RenamedFrom dt d ->
             Just (ChangeLineId.changeLineId ChangeLineId.RenamedFrom dt d.newFullName)
@@ -274,6 +300,15 @@ decode_ type_ =
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
                 }
 
+        propagated_ oldHash newHash shortName_ fullName_ =
+            Propagated type_
+                { oldHash = oldHash
+                , newHash = newHash
+                , shortName = shortName_
+                , fullName = fullName_
+                , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                }
+
         renamedFrom_ hash oldNames newShortName newFullName =
             RenamedFrom type_
                 { hash = hash
@@ -331,6 +366,14 @@ decode_ type_ =
                 |> requiredAt [ "contents", "aliasShortName" ] FQN.decode
                 |> requiredAt [ "contents", "aliasFullName" ] FQN.decode
                 |> requiredAt [ "contents", "otherNames" ] (decodeNonEmptyList FQN.decode)
+            )
+        , when decodeTag
+            ((==) "Propagated")
+            (Decode.succeed propagated_
+                |> requiredAt [ "contents", "oldHash" ] Hash.decode
+                |> requiredAt [ "contents", "newHash" ] Hash.decode
+                |> requiredAt [ "contents", "shortName" ] FQN.decode
+                |> requiredAt [ "contents", "fullName" ] FQN.decode
             )
         ]
 
