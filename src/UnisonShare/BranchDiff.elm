@@ -140,5 +140,5 @@ decode =
         |> required "oldRefHash" Hash.decode
         |> required "newRef" BranchRef.decode
         |> required "newRefHash" Hash.decode
-        |> requiredAt [ "diff", "changes" ] (Decode.list ChangeLine.decode)
-        |> requiredAt [ "diff", "children" ] (Decode.list ChangeLine.decodeNamespace)
+        |> requiredAt [ "diff", "defns", "changes" ] (Decode.list ChangeLine.decode)
+        |> requiredAt [ "diff", "defns", "children" ] (Decode.list ChangeLine.decodeNamespace)

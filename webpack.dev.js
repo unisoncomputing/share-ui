@@ -200,6 +200,7 @@ module.exports = {
         pathRewrite: { "^/api": "" },
         logLevel: "debug",
         bypass: (req, res, _proxyOptions) => {
+          /*
           if (req.url.endsWith("/diff")) {
             res.send(branchDiffJson);
           }
@@ -209,6 +210,7 @@ module.exports = {
           if (req.url.includes("/definitions/by-name")) {
             res.send(definitionsByNameJson);
           }
+          */
         },
       },
       "/website": {
