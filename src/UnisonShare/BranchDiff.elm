@@ -68,6 +68,9 @@ condense changeLines =
                 Updated type_ ({ shortName } as details) ->
                     Updated type_ { details | shortName = FQN.append ns shortName }
 
+                Propagated type_ ({ shortName } as details) ->
+                    Propagated type_ { details | shortName = FQN.append ns shortName }
+
                 RenamedFrom type_ ({ newShortName } as details) ->
                     RenamedFrom type_ { details | newShortName = FQN.append ns newShortName }
 
@@ -140,5 +143,5 @@ decode =
         |> required "oldRefHash" Hash.decode
         |> required "newRef" BranchRef.decode
         |> required "newRefHash" Hash.decode
-        |> requiredAt [ "diff", "changes" ] (Decode.list ChangeLine.decode)
-        |> requiredAt [ "diff", "children" ] (Decode.list ChangeLine.decodeNamespace)
+        |> requiredAt [ "diff", "defns", "changes" ] (Decode.list ChangeLine.decode)
+        |> requiredAt [ "diff", "defns", "children" ] (Decode.list ChangeLine.decodeNamespace)
