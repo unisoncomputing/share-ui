@@ -1,15 +1,17 @@
 module UnisonShare.Page.ProjectSettingsPage exposing (..)
 
-import Html exposing (div, footer, h2, text)
+import Html exposing (Html, div, footer, h2, text)
 import Html.Attributes exposing (class)
 import Http exposing (Error)
+import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Util as Util
 import List.Nonempty as NEL
-import RemoteData exposing (WebData)
+import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
 import UI.Card as Card
+import UI.Divider as Divider
 import UI.ErrorCard as ErrorCard
 import UI.Form.RadioField as RadioField
 import UI.Icon as Icon
@@ -17,12 +19,16 @@ import UI.PageContent as PageContent exposing (PageContent)
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle
 import UI.Placeholder as Placeholder
+import UI.ProfileSnippet as ProfileSnippet
 import UI.StatusBanner as StatusBanner
+import UnisonShare.AddProjectCollaboratorModal as AddProjectCollaboratorModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project exposing (ProjectDetails, ProjectVisibility(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
+import UnisonShare.ProjectAccess as ProjectAccess
+import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.Session as Session exposing (Session)
 
 
@@ -46,13 +52,45 @@ type alias DeleteProject =
     { confirmText : String, deleting : WebData () }
 
 
+type Modal
+    = NoModal
+    | AddCollaboratorModal AddProjectCollaboratorModal.Model
+
+
 type alias Model =
-    { form : Form }
+    { collaborators : WebData (List ProjectCollaborator)
+    , modal : Modal
+    , form : Form
+    }
 
 
-init : Model
-init =
-    { form = NoChanges }
+{-| Unlike `init` this doesn't fetch collaboratos, as doing so eventually
+requires the project from the parent ProjectPage to be fetched and would cause
+a race condition. `init` it self is only used when switching between project
+subpages when the project data is already fetched.
+-}
+preInit : Model
+preInit =
+    { collaborators = NotAsked
+    , modal = NoModal
+    , form = NoChanges
+    }
+
+
+{-| `init` with the fetching of collaborators depends on the parent page
+(ProjectPage) having the project data fetched already (otherwise
+`ProjectSettingsPage.update` is not run). Therefore, only use `init` when that
+project data is already fetched. For instance when switching between sub
+project pages.
+-}
+init : AppContext -> ProjectRef -> ( Model, Cmd Msg )
+init appContext projectRef =
+    ( { collaborators = Loading
+      , modal = NoModal
+      , form = NoChanges
+      }
+    , fetchCollaborators appContext projectRef
+    )
 
 
 
@@ -60,13 +98,18 @@ init =
 
 
 type Msg
-    = UpdateVisibility ProjectVisibility
+    = FetchCollaboratorsFinished (WebData (List ProjectCollaborator))
+    | UpdateVisibility ProjectVisibility
     | DiscardChanges
     | SaveChanges
     | SaveFinished (HttpResult ())
     | ClearAfterSave
     | ShowDeleteProjectModal
+    | ShowAddCollaboratorModal
     | CloseModal
+    | RemoveCollaborator ProjectCollaborator
+    | RemoveCollaboratorFinished (HttpResult ())
+    | AddProjectCollaboratorModalMsg AddProjectCollaboratorModal.Msg
 
 
 type OutMsg
@@ -78,6 +121,9 @@ type OutMsg
 update : AppContext -> ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext project msg model =
     case ( msg, model.form ) of
+        ( FetchCollaboratorsFinished collabs, _ ) ->
+            ( { model | collaborators = collabs, form = NoChanges }, Cmd.none, None )
+
         ( UpdateVisibility newVisibility, WithChanges c ) ->
             if newVisibility /= project.visibility then
                 ( { model | form = WithChanges { c | visibility = newVisibility } }, Cmd.none, None )
@@ -110,12 +156,80 @@ update appContext project msg model =
         ( ShowDeleteProjectModal, _ ) ->
             ( model, Cmd.none, ShowDeleteProjectModalRequest )
 
+        ( ShowAddCollaboratorModal, _ ) ->
+            ( { model | modal = AddCollaboratorModal AddProjectCollaboratorModal.init }, Cmd.none, None )
+
+        ( CloseModal, _ ) ->
+            ( { model | modal = NoModal }, Cmd.none, None )
+
+        ( RemoveCollaborator collab, _ ) ->
+            let
+                collaborators =
+                    model.collaborators
+                        |> RemoteData.map (List.filter (\c -> not (c == collab)))
+            in
+            ( { model | collaborators = collaborators }, removeCollaborator appContext project.ref collab, None )
+
+        ( AddProjectCollaboratorModalMsg collabMsg, _ ) ->
+            case ( model.modal, model.collaborators ) of
+                ( AddCollaboratorModal m, Success currentCollabs ) ->
+                    let
+                        ( modal, cmd, out ) =
+                            AddProjectCollaboratorModal.update appContext project.ref currentCollabs collabMsg m
+                    in
+                    case out of
+                        AddProjectCollaboratorModal.NoOutMsg ->
+                            ( { model | modal = AddCollaboratorModal modal }
+                            , Cmd.map AddProjectCollaboratorModalMsg cmd
+                            , None
+                            )
+
+                        AddProjectCollaboratorModal.RequestCloseModal ->
+                            ( { model | modal = NoModal }
+                            , Cmd.map AddProjectCollaboratorModalMsg cmd
+                            , None
+                            )
+
+                        AddProjectCollaboratorModal.AddedCollaborator collab ->
+                            let
+                                collaborators =
+                                    Success (collab :: currentCollabs)
+                            in
+                            ( { model | modal = AddCollaboratorModal modal, collaborators = collaborators }
+                            , Cmd.batch [ Cmd.map AddProjectCollaboratorModalMsg cmd, Util.delayMsg 1500 CloseModal ]
+                            , None
+                            )
+
+                _ ->
+                    ( model, Cmd.none, None )
+
         _ ->
             ( model, Cmd.none, None )
 
 
+fetchProjectCollaborators : AppContext -> ProjectRef -> Model -> ( Model, Cmd Msg )
+fetchProjectCollaborators appContext projectRef model =
+    ( { model | collaborators = Loading }, fetchCollaborators appContext projectRef )
+
+
 
 -- EFFECTS
+
+
+fetchCollaborators : AppContext -> ProjectRef -> Cmd Msg
+fetchCollaborators appContext projectRef =
+    ShareApi.projectMaintainers projectRef
+        |> HttpApi.toRequest
+            (Decode.field "maintainers" (Decode.list ProjectCollaborator.decode))
+            (RemoteData.fromResult >> FetchCollaboratorsFinished)
+        |> HttpApi.perform appContext.api
+
+
+removeCollaborator : AppContext -> ProjectRef -> ProjectCollaborator -> Cmd Msg
+removeCollaborator appContext projectRef collab =
+    ShareApi.deleteProjectMaintainer projectRef collab
+        |> HttpApi.toRequestWithEmptyResponse RemoveCollaboratorFinished
+        |> HttpApi.perform appContext.api
 
 
 updateProjectSettings : AppContext -> ProjectRef -> Changes -> Cmd Msg
@@ -161,8 +275,77 @@ viewLoadingPage =
         |> PageLayout.withSubduedBackground
 
 
-viewPageContent : ProjectDetails -> Model -> PageContent Msg
-viewPageContent project model =
+viewCollaborators : Session -> Model -> Html Msg
+viewCollaborators session model =
+    if not (Session.isUnisonMember session) then
+        UI.nothing
+
+    else
+        let
+            collabs =
+                case model.collaborators of
+                    Success collaborators ->
+                        let
+                            addButton =
+                                Button.iconThenLabel ShowAddCollaboratorModal Icon.plus "Add a collaborator"
+
+                            viewCollaborator collab =
+                                div [ class "collaborator" ]
+                                    [ div [ class "collaborator_profile-snippet" ]
+                                        [ ProfileSnippet.profileSnippet collab.user
+                                            |> ProfileSnippet.view
+                                        ]
+                                    , div [ class "collaborator_access" ] [ text (ProjectAccess.toString collab.access) ]
+                                    , Button.icon (RemoveCollaborator collab) Icon.trash
+                                        |> Button.small
+                                        |> Button.subdued
+                                        |> Button.view
+                                    ]
+
+                            content =
+                                if List.isEmpty collaborators then
+                                    div [ class "collaborators_empty-state" ]
+                                        [ div [ class "collaborators_empty-state_text" ]
+                                            [ Icon.view Icon.userGroup, text "You haven't invited any collaborators yet" ]
+                                        , Button.view addButton
+                                        ]
+
+                                else
+                                    div [ class "collaborators" ]
+                                        [ addButton |> Button.small |> Button.view
+                                        , Divider.divider
+                                            |> Divider.withoutMargin
+                                            |> Divider.small
+                                            |> Divider.view
+                                        , div [ class "collaborators_list" ]
+                                            (List.map viewCollaborator collaborators)
+                                        ]
+                        in
+                        content
+
+                    Failure _ ->
+                        div [ class "collaborators_error" ]
+                            [ StatusBanner.bad "Could not load collaborators"
+                            ]
+
+                    _ ->
+                        div [ class "collaborators_loading" ]
+                            [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
+                            , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
+                            , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
+                            , Placeholder.text |> Placeholder.withLength Placeholder.Large |> Placeholder.view
+                            ]
+        in
+        Card.card
+            [ h2 [] [ text "Project Collaborators" ]
+            , collabs
+            ]
+            |> Card.asContained
+            |> Card.view
+
+
+viewPageContent : Session -> ProjectDetails -> Model -> PageContent Msg
+viewPageContent session project model =
     let
         activeVisiblityValue =
             case model.form of
@@ -244,7 +427,8 @@ viewPageContent project model =
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
-            [ form
+            [ viewCollaborators session model
+            , form
             , footer [ class "actions" ]
                 [ message
                 , div [ class "buttons" ]
@@ -265,13 +449,24 @@ viewPageContent project model =
             )
 
 
-view : Session -> ProjectDetails -> Model -> PageLayout Msg
+view : Session -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view session project model =
     if Session.hasProjectAccess project.ref session then
-        PageLayout.centeredNarrowLayout
-            (viewPageContent project model)
+        let
+            modal =
+                case model.modal of
+                    AddCollaboratorModal m ->
+                        Just (Html.map AddProjectCollaboratorModalMsg (AddProjectCollaboratorModal.view m))
+
+                    _ ->
+                        Nothing
+        in
+        ( PageLayout.centeredNarrowLayout
+            (viewPageContent session project model)
             PageFooter.pageFooter
             |> PageLayout.withSubduedBackground
+        , modal
+        )
 
     else
         let
@@ -287,7 +482,7 @@ view session project model =
                         , "Sorry, but your account does not have access to Project Settings for '" ++ ProjectRef.toString project.ref ++ "'."
                         )
         in
-        PageLayout.centeredNarrowLayout
+        ( PageLayout.centeredNarrowLayout
             (PageContent.oneColumn
                 [ ErrorCard.errorCard errorTitle errorMessage
                     |> ErrorCard.toCard
@@ -297,3 +492,5 @@ view session project model =
             )
             PageFooter.pageFooter
             |> PageLayout.withSubduedBackground
+        , Nothing
+        )

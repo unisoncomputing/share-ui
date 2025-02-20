@@ -181,7 +181,11 @@ init appContext projectRef route =
                     ( Releases releases_, Cmd.map ProjectReleasesPageMsg releasesCmd )
 
                 ProjectSettings ->
-                    ( Settings ProjectSettingsPage.init, Cmd.none )
+                    let
+                        settings =
+                            ProjectSettingsPage.preInit
+                    in
+                    ( Settings settings, Cmd.none )
     in
     ( { subPage = subPage
       , project = Loading
@@ -276,6 +280,15 @@ update appContext projectRef route msg model =
                     in
                     ( { modelWithProject | subPage = Overview overview }
                     , Cmd.map ProjectOverviewPageMsg cmd
+                    )
+
+                ( Settings settings, Success _ ) ->
+                    let
+                        ( settings_, settingsCmd ) =
+                            ProjectSettingsPage.fetchProjectCollaborators appContext projectRef settings
+                    in
+                    ( { modelWithProject | subPage = Settings settings_ }
+                    , Cmd.map ProjectSettingsPageMsg settingsCmd
                     )
 
                 _ ->
@@ -778,7 +791,11 @@ updateSubPage appContext projectRef model route =
                     ( model, Cmd.none )
 
                 _ ->
-                    ( { model | subPage = Settings ProjectSettingsPage.init }, Cmd.none )
+                    let
+                        ( settings, cmd ) =
+                            ProjectSettingsPage.init appContext projectRef
+                    in
+                    ( { model | subPage = Settings settings }, Cmd.map ProjectSettingsPageMsg cmd )
 
 
 
@@ -1566,7 +1583,7 @@ view appContext projectRef model =
 
                         Settings settings ->
                             let
-                                settings_ =
+                                ( settings_, modal_ ) =
                                     ProjectSettingsPage.view appContext.session project settings
                             in
                             { pageId = "project-page project-settings-page"
@@ -1580,5 +1597,5 @@ view appContext projectRef model =
                                         project
                                     )
                             , page = PageLayout.view (PageLayout.map ProjectSettingsPageMsg settings_)
-                            , modal = modal Nothing
+                            , modal = modal (Maybe.map (Html.map ProjectSettingsPageMsg) modal_)
                             }
