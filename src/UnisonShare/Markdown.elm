@@ -1,9 +1,10 @@
 module UnisonShare.Markdown exposing (view, view_)
 
-import Html exposing (Attribute, Html, code, div, pre, text)
+import Html exposing (Attribute, Html, code, div, pre, span, text)
 import Html.Attributes exposing (class)
 import Markdown.Parser as MdParser
 import Markdown.Renderer exposing (defaultHtmlRenderer)
+import UnisonShare.Link as Link
 
 
 viewCodeBlock : { body : String, language : Maybe String } -> Html msg
@@ -17,6 +18,14 @@ viewCodeBlock { body, language } =
     pre (class "source code" :: langAttr) [ code [] [ text body ] ]
 
 
+{-| TODO: UnisonShare.Link (UI.Click really) should support "title"
+-}
+viewLink : { title : Maybe String, destination : String } -> List (Html msg) -> Html msg
+viewLink { destination } content =
+    Link.link destination
+        |> Link.view_ (span [] content)
+
+
 view_ : List (Attribute msg) -> String -> Html msg
 view_ attrs rawMarkdown =
     let
@@ -26,7 +35,7 @@ view_ attrs rawMarkdown =
                 |> String.join "\n"
 
         renderer =
-            { defaultHtmlRenderer | codeBlock = viewCodeBlock }
+            { defaultHtmlRenderer | link = viewLink, codeBlock = viewCodeBlock }
 
         content =
             case
