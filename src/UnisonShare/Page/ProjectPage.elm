@@ -35,7 +35,6 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
-import UnisonShare.CodebaseStatus as CodebaseStatus
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Page.CodePage as CodePage
 import UnisonShare.Page.ProjectBranchesPage as ProjectBranchesPage
@@ -1430,7 +1429,6 @@ view appContext projectRef model =
                                     CodePage.view appContext
                                         CodePageMsg
                                         viewMode_
-                                        CodebaseStatus.NotEmpty
                                         codePage
                             in
                             { pageId = "project-page code-page"
