@@ -1,0 +1,399 @@
+{
+  "diff": {
+    "contents": [
+      {
+        "diffTag": "both",
+        "elements": [
+          {
+            "annotation": {
+              "tag": "DataTypeKeyword"
+            },
+            "segment": "ability"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          }
+        ]
+      },
+      {
+        "diffTag": "old",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "BeforeAbility",
+              "tag": "HashQualifier"
+            },
+            "segment": "BeforeAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "new",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "AfterAbility",
+              "tag": "HashQualifier"
+            },
+            "segment": "AfterAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "both",
+        "elements": [
+          {
+            "annotation": {
+              "tag": "ControlKeyword"
+            },
+            "segment": " where"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          }
+        ]
+      },
+      {
+        "diffTag": "old",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "#ebotvibo97n9s8ggp2n32jf6splp86102tjh70q395gmmdsfi45pvrvtkpot5e97ugg6t4j602ol001i3p28t62c8iga2rlma0ckfs0#a0",
+              "tag": "TermReference"
+            },
+            "segment": "beforeAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "new",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "#i1i6tae2gi8jp12lukns1e027i98ekbqhh6p5b944i44l6otiltjphbnmt2r844e2ukr2kppob3c5gvdpegc6ej54h9eg2j9gkc6ifg#a0",
+              "tag": "TermReference"
+            },
+            "segment": "afterAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "both",
+        "elements": [
+          {
+            "annotation": {
+              "tag": "TypeAscriptionColon"
+            },
+            "segment": " :"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          }
+        ]
+      },
+      {
+        "diffTag": "old",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "##Nat",
+              "tag": "TypeReference"
+            },
+            "segment": "Nat"
+          }
+        ]
+      },
+      {
+        "diffTag": "new",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "##Int",
+              "tag": "TypeReference"
+            },
+            "segment": "Int"
+          }
+        ]
+      },
+      {
+        "diffTag": "both",
+        "elements": [
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "tag": "TypeOperator"
+            },
+            "segment": "->"
+          },
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "{"
+          }
+        ]
+      },
+      {
+        "diffTag": "old",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "#ebotvibo97n9s8ggp2n32jf6splp86102tjh70q395gmmdsfi45pvrvtkpot5e97ugg6t4j602ol001i3p28t62c8iga2rlma0ckfs0",
+              "tag": "TypeReference"
+            },
+            "segment": "BeforeAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "new",
+        "elements": [
+          {
+            "annotation": {
+              "contents": "#i1i6tae2gi8jp12lukns1e027i98ekbqhh6p5b944i44l6otiltjphbnmt2r844e2ukr2kppob3c5gvdpegc6ej54h9eg2j9gkc6ifg",
+              "tag": "TypeReference"
+            },
+            "segment": "AfterAbility"
+          }
+        ]
+      },
+      {
+        "diffTag": "both",
+        "elements": [
+          {
+            "annotation": {
+              "tag": "AbilityBraces"
+            },
+            "segment": "}"
+          },
+          {
+            "annotation": null,
+            "segment": " "
+          },
+          {
+            "annotation": {
+              "contents": "##Text",
+              "tag": "TypeReference"
+            },
+            "segment": "Text"
+          }
+        ]
+      }
+    ],
+    "tag": "UserObject"
+  },
+  "diffKind": "diff",
+  "newBranchRef": "after",
+  "newType": {
+    "bestTypeName": "AfterAbility",
+    "defnTypeTag": "Ability",
+    "typeDefinition": {
+      "contents": [
+        {
+          "annotation": {
+            "tag": "DataTypeKeyword"
+          },
+          "segment": "ability"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "AfterAbility",
+            "tag": "HashQualifier"
+          },
+          "segment": "AfterAbility"
+        },
+        {
+          "annotation": {
+            "tag": "ControlKeyword"
+          },
+          "segment": " where"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "#i1i6tae2gi8jp12lukns1e027i98ekbqhh6p5b944i44l6otiltjphbnmt2r844e2ukr2kppob3c5gvdpegc6ej54h9eg2j9gkc6ifg#a0",
+            "tag": "TermReference"
+          },
+          "segment": "afterAbility"
+        },
+        {
+          "annotation": {
+            "tag": "TypeAscriptionColon"
+          },
+          "segment": " :"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "##Int",
+            "tag": "TypeReference"
+          },
+          "segment": "Int"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "TypeOperator"
+          },
+          "segment": "->"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "{"
+        },
+        {
+          "annotation": {
+            "contents": "#i1i6tae2gi8jp12lukns1e027i98ekbqhh6p5b944i44l6otiltjphbnmt2r844e2ukr2kppob3c5gvdpegc6ej54h9eg2j9gkc6ifg",
+            "tag": "TypeReference"
+          },
+          "segment": "AfterAbility"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "}"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "##Text",
+            "tag": "TypeReference"
+          },
+          "segment": "Text"
+        }
+      ],
+      "tag": "UserObject"
+    },
+    "typeDocs": [],
+    "typeNames": ["AfterAbility"]
+  },
+  "oldBranchRef": "before",
+  "oldType": {
+    "bestTypeName": "BeforeAbility",
+    "defnTypeTag": "Ability",
+    "typeDefinition": {
+      "contents": [
+        {
+          "annotation": {
+            "tag": "DataTypeKeyword"
+          },
+          "segment": "ability"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "BeforeAbility",
+            "tag": "HashQualifier"
+          },
+          "segment": "BeforeAbility"
+        },
+        {
+          "annotation": {
+            "tag": "ControlKeyword"
+          },
+          "segment": " where"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "#ebotvibo97n9s8ggp2n32jf6splp86102tjh70q395gmmdsfi45pvrvtkpot5e97ugg6t4j602ol001i3p28t62c8iga2rlma0ckfs0#a0",
+            "tag": "TermReference"
+          },
+          "segment": "beforeAbility"
+        },
+        {
+          "annotation": {
+            "tag": "TypeAscriptionColon"
+          },
+          "segment": " :"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "##Nat",
+            "tag": "TypeReference"
+          },
+          "segment": "Nat"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "tag": "TypeOperator"
+          },
+          "segment": "->"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "{"
+        },
+        {
+          "annotation": {
+            "contents": "#ebotvibo97n9s8ggp2n32jf6splp86102tjh70q395gmmdsfi45pvrvtkpot5e97ugg6t4j602ol001i3p28t62c8iga2rlma0ckfs0",
+            "tag": "TypeReference"
+          },
+          "segment": "BeforeAbility"
+        },
+        {
+          "annotation": {
+            "tag": "AbilityBraces"
+          },
+          "segment": "}"
+        },
+        {
+          "annotation": null,
+          "segment": " "
+        },
+        {
+          "annotation": {
+            "contents": "##Text",
+            "tag": "TypeReference"
+          },
+          "segment": "Text"
+        }
+      ],
+      "tag": "UserObject"
+    },
+    "typeDocs": [],
+    "typeNames": ["BeforeAbility"]
+  },
+  "project": "@transcripts/definition-diff"
+}

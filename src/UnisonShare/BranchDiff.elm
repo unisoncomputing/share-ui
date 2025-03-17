@@ -4,7 +4,7 @@ import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode exposing (Decoder)
-import Json.Decode.Pipeline exposing (required, requiredAt)
+import Json.Decode.Pipeline exposing (required)
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine(..))
@@ -67,6 +67,9 @@ condense changeLines =
 
                 Updated type_ ({ shortName } as details) ->
                     Updated type_ { details | shortName = FQN.append ns shortName }
+
+                Propagated type_ ({ shortName } as details) ->
+                    Propagated type_ { details | shortName = FQN.append ns shortName }
 
                 RenamedFrom type_ ({ newShortName } as details) ->
                     RenamedFrom type_ { details | newShortName = FQN.append ns newShortName }
@@ -134,11 +137,24 @@ decode =
             , newBranch = { ref = newRef, hash = newRefHash }
             , lines = changes ++ children
             }
+
+        {- TODO backwards compat to support the new nesting with `defns` to be deployed before backend is ready -}
+        changeLines =
+            Decode.oneOf
+                [ Decode.at [ "defns", "changes" ] (Decode.list ChangeLine.decode)
+                , Decode.field "changes" (Decode.list ChangeLine.decode)
+                ]
+
+        namespaces =
+            Decode.oneOf
+                [ Decode.at [ "defns", "children" ] (Decode.list ChangeLine.decodeNamespace)
+                , Decode.field "children" (Decode.list ChangeLine.decodeNamespace)
+                ]
     in
     Decode.succeed mk
         |> required "oldRef" BranchRef.decode
         |> required "oldRefHash" Hash.decode
         |> required "newRef" BranchRef.decode
         |> required "newRefHash" Hash.decode
-        |> requiredAt [ "diff", "changes" ] (Decode.list ChangeLine.decode)
-        |> requiredAt [ "diff", "children" ] (Decode.list ChangeLine.decodeNamespace)
+        |> required "diff" changeLines
+        |> required "diff" namespaces
