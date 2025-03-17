@@ -2,7 +2,7 @@ module UnisonShare.Page.UserPage exposing (..)
 
 import Html exposing (h2, text)
 import Http
-import Lib.HttpApi as HttpApi exposing (HttpResult)
+import Lib.HttpApi as HttpApi
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import RemoteData exposing (RemoteData(..), WebData)
 import Tuple
@@ -14,20 +14,17 @@ import UI.PageLayout as PageLayout
 import UI.Sidebar as Sidebar
 import UI.StatusMessage as StatusMessage
 import UI.ViewMode exposing (ViewMode)
-import UnisonShare.Account exposing (AccountSummary)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
-import UnisonShare.CodebaseStatus as CodebaseStatus exposing (CodebaseStatus)
 import UnisonShare.Page.CodePage as CodePage
 import UnisonShare.Page.UserContributionsPage as UserContributionsPage
 import UnisonShare.Page.UserProfilePage as UserProfilePage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Route as Route exposing (CodeRoute, UserRoute(..))
 import UnisonShare.Session as Session
-import UnisonShare.SetupInstructions as SetupInstructions
 import UnisonShare.User as User exposing (UserDetails)
 import UnisonShare.UserPageHeader as UserPageHeader
 
@@ -45,8 +42,6 @@ type SubPage
 type alias Model =
     { user : WebData UserDetails
     , subPage : SubPage
-    , codebaseStatus : WebData CodebaseStatus
-    , setupInstructions : Maybe ( SetupInstructions.Model, AccountSummary )
     , mobileNavIsOpen : Bool
     }
 
@@ -79,33 +74,14 @@ init appContext handle userRoute =
                             UserContributionsPage.init appContext handle
                     in
                     ( Contributions contributionsPage, Cmd.map UserContributionsPageMsg contributionsCmd )
-
-        setupInstructions =
-            case appContext.session of
-                Session.SignedIn a ->
-                    if UserHandle.equals handle a.handle then
-                        Just ( SetupInstructions.init appContext a, a )
-
-                    else
-                        Nothing
-
-                _ ->
-                    Nothing
     in
     ( { user = Loading
-      , codebaseStatus = Loading
       , subPage = subPage
-      , setupInstructions = Maybe.map (\( ( c, _ ), a ) -> ( c, a )) setupInstructions
       , mobileNavIsOpen = False
       }
     , Cmd.batch
         [ fetchUser appContext handle
-        , CodebaseStatus.checkStatus CodebaseStatusCheckFinished appContext codeBrowsingContext
         , cmd
-        , setupInstructions
-            |> Maybe.map (Tuple.first >> Tuple.second)
-            |> Maybe.map (Cmd.map SetupInstructionsMsg)
-            |> Maybe.withDefault Cmd.none
         ]
     )
 
@@ -116,9 +92,7 @@ init appContext handle userRoute =
 
 type Msg
     = FetchUserFinished (WebData UserDetails)
-    | CodebaseStatusCheckFinished (HttpResult CodebaseStatus)
     | ToggleMobileNav
-    | SetupInstructionsMsg SetupInstructions.Msg
     | UserProfilePageMsg UserProfilePage.Msg
     | CodePageMsg CodePage.Msg
     | UserContributionsPageMsg UserContributionsPage.Msg
@@ -129,42 +103,6 @@ update appContext handle route msg model =
     case ( model.subPage, msg ) of
         ( _, FetchUserFinished u ) ->
             ( { model | user = u }, Cmd.none )
-
-        ( _, CodebaseStatusCheckFinished r ) ->
-            ( { model | codebaseStatus = RemoteData.fromResult r }, Cmd.none )
-
-        ( Code viewMode _, SetupInstructionsMsg csiMsg ) ->
-            case ( model.setupInstructions, route ) of
-                ( Just ( csi, a ), Route.UserCode _ cr ) ->
-                    let
-                        ( csi_, csiCmd, csiOut ) =
-                            SetupInstructions.update appContext a csiMsg csi
-
-                        ( newModel, outCmd ) =
-                            case csiOut of
-                                SetupInstructions.Remain ->
-                                    ( { model | setupInstructions = Just ( csi_, a ) }, Cmd.none )
-
-                                SetupInstructions.NoLongerEmpty ->
-                                    let
-                                        ( codePage, codePageCmd ) =
-                                            CodePage.init appContext (CodeBrowsingContext.UserCode handle) cr
-                                    in
-                                    ( { model
-                                        | setupInstructions = Just ( csi_, a )
-                                        , codebaseStatus = Success CodebaseStatus.NotEmpty
-                                        , subPage = Code viewMode codePage
-                                      }
-                                    , Cmd.map CodePageMsg codePageCmd
-                                    )
-
-                                SetupInstructions.Exit ->
-                                    ( { model | setupInstructions = Nothing }, Cmd.none )
-                    in
-                    ( newModel, Cmd.batch [ Cmd.map SetupInstructionsMsg csiCmd, outCmd ] )
-
-                _ ->
-                    ( model, Cmd.none )
 
         ( _, ToggleMobileNav ) ->
             ( { model | mobileNavIsOpen = not model.mobileNavIsOpen }, Cmd.none )
@@ -465,43 +403,11 @@ view appContext handle model =
                             , page = PageLayout.view page
                             , modal = modal
                             }
+
+                        ( codePage, modal_ ) =
+                            CodePage.view appContext
+                                CodePageMsg
+                                viewMode_
+                                codeSubPage
                     in
-                    case model.codebaseStatus of
-                        Success CodebaseStatus.Empty ->
-                            let
-                                ( codePage, modal_ ) =
-                                    CodePage.view appContext
-                                        CodePageMsg
-                                        viewMode_
-                                        CodebaseStatus.Empty
-                                        codeSubPage
-                            in
-                            case model.setupInstructions of
-                                Just ( csi, a ) ->
-                                    appDoc
-                                        (codePage
-                                            |> PageLayout.withContent
-                                                (PageContent.oneColumn [ Html.map SetupInstructionsMsg (SetupInstructions.view appContext a csi) ])
-                                        )
-                                        viewMode_
-                                        modal_
-
-                                Nothing ->
-                                    appDoc codePage viewMode_ modal_
-
-                        Success CodebaseStatus.NotEmpty ->
-                            let
-                                ( codePage, modal_ ) =
-                                    CodePage.view appContext
-                                        CodePageMsg
-                                        viewMode_
-                                        CodebaseStatus.NotEmpty
-                                        codeSubPage
-                            in
-                            appDoc codePage viewMode_ modal_
-
-                        Failure e ->
-                            viewErrorPage appContext model.subPage handle e
-
-                        _ ->
-                            viewLoadingPage appContext model.subPage handle
+                    appDoc codePage viewMode_ modal_

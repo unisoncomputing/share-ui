@@ -22,7 +22,6 @@ import UI.Sidebar as Sidebar exposing (Sidebar)
 import UI.ViewMode as ViewMode exposing (ViewMode)
 import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
-import UnisonShare.CodebaseStatus as CodebaseStatus exposing (CodebaseStatus)
 import UnisonShare.Page.CodePageContent as CodePageContent
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Route as Route exposing (CodeRoute(..))
@@ -524,30 +523,25 @@ viewContent viewMode perspective content =
             PageContent.oneColumn [ Html.map WorkspaceMsg (Workspace.view viewMode workspace) ]
 
 
-viewSidebar : CodebaseStatus -> Model -> Sidebar Msg
-viewSidebar codebaseStatus model =
+viewSidebar : Model -> Sidebar Msg
+viewSidebar model =
     let
         codebaseTree =
             Just { codebaseTree = model.codebaseTree, codebaseTreeMsg = CodebaseTreeMsg }
     in
-    case codebaseStatus of
-        CodebaseStatus.NotEmpty ->
-            CodePageContent.viewSidebar
-                model.config.perspective
-                { upOneLevelMsg = UpOneLevel
-                , showFinderModalMsg = ShowFinderModal
-                , changePerspectiveToNamespaceMsg = ChangePerspectiveToNamespace
-                }
-                codebaseTree
-                |> Sidebar.withToggle
-                    { isToggled = model.sidebarToggled, toggleMsg = ToggleSidebar }
-
-        CodebaseStatus.Empty ->
-            Sidebar.empty "main-sidebar"
+    CodePageContent.viewSidebar
+        model.config.perspective
+        { upOneLevelMsg = UpOneLevel
+        , showFinderModalMsg = ShowFinderModal
+        , changePerspectiveToNamespaceMsg = ChangePerspectiveToNamespace
+        }
+        codebaseTree
+        |> Sidebar.withToggle
+            { isToggled = model.sidebarToggled, toggleMsg = ToggleSidebar }
 
 
-view : AppContext -> (Msg -> msg) -> ViewMode -> CodebaseStatus -> Model -> ( PageLayout msg, Maybe (Html msg) )
-view appContext toMsg viewMode codebaseStatus model =
+view : AppContext -> (Msg -> msg) -> ViewMode -> Model -> ( PageLayout msg, Maybe (Html msg) )
+view appContext toMsg viewMode model =
     let
         content =
             PageContent.map toMsg (viewContent viewMode model.config.perspective model.content)
@@ -564,7 +558,7 @@ view appContext toMsg viewMode codebaseStatus model =
         ( PerspectivePage _, ViewMode.Regular ) ->
             ( PageLayout.sidebarLeftContentLayout
                 appContext.operatingSystem
-                (Sidebar.map toMsg (viewSidebar codebaseStatus model))
+                (Sidebar.map toMsg (viewSidebar model))
                 content
                 PageFooter.pageFooter
                 |> PageLayout.withSidebarToggle model.sidebarToggled
@@ -574,7 +568,7 @@ view appContext toMsg viewMode codebaseStatus model =
         ( WorkspacePage _, ViewMode.Regular ) ->
             ( PageLayout.sidebarLeftContentLayout
                 appContext.operatingSystem
-                (Sidebar.map toMsg (viewSidebar codebaseStatus model))
+                (Sidebar.map toMsg (viewSidebar model))
                 content
                 PageFooter.pageFooter
                 |> PageLayout.withSidebarToggle model.sidebarToggled
