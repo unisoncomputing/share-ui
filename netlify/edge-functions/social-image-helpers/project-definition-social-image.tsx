@@ -1,31 +1,17 @@
 import React from "https://esm.sh/react@18.2.0";
-import { ShareAPI, SyntaxSegment } from "../common/share-api.ts";
+import { ShareAPI } from "../common/share-api.ts";
+import { DocSpecial, SyntaxSegment, DocElement } from "../common/definition.ts";
+import Docs from "./docs.tsx";
+import { Syntax } from "./syntax.tsx";
 import { defaultSocialImage } from "./social-content.tsx";
 import * as Sizing from "../common/sizing.ts";
 import { Icon, IconType } from "./icon.tsx";
 import Colors from "../common/colors.ts";
 import SocialImageWithSheet from "./social-image-with-sheet.tsx";
+import SocialImageWithLargeSheet from "./social-image-with-large-sheet.tsx";
 import Sheet from "./sheet.tsx";
 import { titleize, hash } from "../common/utils.ts";
 import Tag from "./tag.tsx";
-
-function Syntax(props: { syntax: Array<SyntaxSegment> }) {
-  const segments = props.syntax.map((seg) => {
-    const annotationStyle = STYLES[seg.annotation?.tag] || {};
-    const style = {
-      ...STYLES.segment,
-      ...annotationStyle,
-    };
-    return <span style={style}>{seg.segment}</span>;
-  });
-
-  return (
-    <pre style={STYLES.syntax}>
-      <code>{segments}</code>
-      <span style={STYLES.syntaxFade}></span>
-    </pre>
-  );
-}
 
 async function projectDefinitionSocialImage(
   handle: string,
@@ -66,6 +52,7 @@ async function projectDefinitionSocialImage(
         category: raw.defnTermeTag,
         signature: raw.signature,
         definition: raw.termDefinition,
+        docs: raw.termDocs,
       };
     }
   } else {
@@ -77,6 +64,7 @@ async function projectDefinitionSocialImage(
         name: raw.bestTypeName,
         category: raw.defnTypeTag,
         definition: raw.typeDefinition,
+        docs: raw.typeDocs,
       };
     }
   }
@@ -149,15 +137,30 @@ async function projectDefinitionSocialImage(
     topRowRight = [];
   }
 
+  const docs =
+    definition.docs[0] && definition.docs[0][2] ? (
+      <Docs docRoot={definition.docs[0][2]} />
+    ) : null;
+
+  const Wrapper = docs ? SocialImageWithLargeSheet : SocialImageWithSheet;
+
+  const bottomRow = docs ? (
+    <span style={STYLES.syntaxAndDocs}>
+      {syntax} {docs}
+    </span>
+  ) : (
+    syntax
+  );
+
   return (
-    <SocialImageWithSheet>
+    <Wrapper>
       <Sheet
         title={definition.name}
         topRowLeft={[projectRef, branchRef_]}
         topRowRight={topRowRight}
-        bottomRowLeft={syntax}
+        bottomRowLeft={bottomRow}
       />
-    </SocialImageWithSheet>
+    </Wrapper>
   );
 }
 
@@ -184,44 +187,11 @@ const STYLES = {
     flexDirection: "column",
     gap: Sizing.toPx(0.5),
   },
-  syntax: {
-    position: "relative",
-    margin: 0,
-    padding: 0,
-    fontSize: Sizing.toPx(2),
-    lineHeight: 1.2,
-    width: "100%",
-  },
-  syntaxFade: {
-    position: "absolute",
-    top: -10,
-    right: `-${Sizing.toPx(2.5)}px`,
-    bottom: -10,
-    width: 400,
-    height: Sizing.toPx(4),
-    background: `linear-gradient(to right, rgba(255, 255, 255, 0), ${Colors.gray.lighten100}, ${Colors.gray.lighten100})`,
-  },
-  segment: {
-    color: Colors.gray.base,
-    fontFamily: "FiraCode",
-  },
-  DataTypeKeyword: {
-    color: Colors.gray.lighten30,
-  },
-  TypeAscriptionColon: {
-    color: Colors.gray.lighten30,
-  },
-  DataTypeModifier: {
-    color: Colors.gray.lighten30,
-  },
-  TypeOperator: {
-    color: Colors.gray.lighten30,
-  },
-  AbilityBraces: {
-    color: Colors.gray.lighten30,
-  },
-  DelimiterChar: {
-    color: Colors.gray.lighten30,
+  syntaxAndDocs: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    gap: Sizing.toPx(0.5),
   },
 };
 
