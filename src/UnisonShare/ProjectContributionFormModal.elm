@@ -27,7 +27,7 @@ import UI.Icon as Icon
 import UI.Modal as Modal
 import UI.StatusBanner as StatusBanner
 import UI.StatusMessage as StatusMessage
-import UnisonShare.Account as Account exposing (AccountSummary)
+import UnisonShare.Account exposing (AccountSummary)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
@@ -35,6 +35,7 @@ import UnisonShare.Contribution as Contribution exposing (ContributionSummary)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.Link as Link
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.SearchBranchSheet as SearchBranchSheet
 
@@ -128,8 +129,8 @@ type OutMsg
     | Saved ContributionSummary
 
 
-update : AppContext -> ProjectRef -> AccountSummary -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
-update appContext projectRef account msg model =
+update : AppContext -> ProjectDetails -> AccountSummary -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
+update appContext project account msg model =
     case ( msg, model.form, model.action ) of
         ( CloseModal, _, _ ) ->
             ( model, Cmd.none, RequestToCloseModal )
@@ -184,7 +185,7 @@ update appContext projectRef account msg model =
                 form_ =
                     let
                         filter =
-                            if Account.hasProjectAccess projectRef account then
+                            if Project.canContribute project then
                                 ShareApi.AllBranches (Just account.handle)
 
                             else
@@ -229,7 +230,7 @@ update appContext projectRef account msg model =
                 OpenForSource s ->
                     let
                         ( sheet_, cmd, sbsOut ) =
-                            SearchBranchSheet.update appContext projectRef sbsMsg s.sheet
+                            SearchBranchSheet.update appContext project.ref sbsMsg s.sheet
 
                         newForm =
                             case ( sbsOut, RemoteData.map .selectBranchSheet model.form ) of
@@ -250,7 +251,7 @@ update appContext projectRef account msg model =
                 OpenForTarget t ->
                     let
                         ( sheet_, cmd, sbsOut ) =
-                            SearchBranchSheet.update appContext projectRef sbsMsg t.sheet
+                            SearchBranchSheet.update appContext project.ref sbsMsg t.sheet
 
                         newForm =
                             case sbsOut of
@@ -322,7 +323,7 @@ update appContext projectRef account msg model =
                                 }
                         in
                         ( { model | form = Success newForm }
-                        , createProjectContribution appContext projectRef newContribution
+                        , createProjectContribution appContext project.ref newContribution
                         , None
                         )
 
@@ -349,7 +350,7 @@ update appContext projectRef account msg model =
                     in
                     ( { model | form = Success newForm }
                     , updateProjectContribution appContext
-                        projectRef
+                        project.ref
                         c.ref
                         updatedContribution
                     , None

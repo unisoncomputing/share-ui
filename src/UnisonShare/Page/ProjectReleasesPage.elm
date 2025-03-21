@@ -42,11 +42,11 @@ import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Project.Release as Release exposing (Release)
 import UnisonShare.PublishProjectReleaseModal as PublishProjectReleaseModal
 import UnisonShare.Route as Route
-import UnisonShare.Session as Session
 import UnisonShare.UcmCommand as UcmCommand
 
 
@@ -77,11 +77,6 @@ type alias ReleaseDraft =
     }
 
 
-type ProjectReleasesPermissions a
-    = CanPublish a
-    | NotPermitted
-
-
 type DocVisibility
     = Unknown
     | Cropped
@@ -99,7 +94,7 @@ type alias ReleaseNotes =
 type alias Model =
     { releases : WebData Releases
     , latestReleaseNotes : WebData (Maybe ReleaseNotes)
-    , permitted : ProjectReleasesPermissions (WebData (List ReleaseDraft))
+    , releaseDrafts : WebData (List ReleaseDraft)
     , modal : ProjectReleasesModal
     }
 
@@ -107,13 +102,6 @@ type alias Model =
 init : AppContext -> ProjectRef -> WebData (Maybe Version) -> ( Model, Cmd Msg )
 init appContext projectRef latestVersion =
     let
-        ( permitted, releaseDraftsCmd ) =
-            if Session.hasProjectAccess projectRef appContext.session then
-                ( CanPublish Loading, fetchReleaseDrafts appContext projectRef )
-
-            else
-                ( NotPermitted, Cmd.none )
-
         ( latestReleaseNotes, latestReleaseNotesCmd ) =
             case latestVersion of
                 Success (Just v) ->
@@ -133,12 +121,12 @@ init appContext projectRef latestVersion =
     in
     ( { releases = Loading
       , latestReleaseNotes = latestReleaseNotes
-      , permitted = permitted
+      , releaseDrafts = Loading
       , modal = NoModal
       }
     , Cmd.batch
         [ fetchProjectReleases appContext projectRef
-        , releaseDraftsCmd
+        , fetchReleaseDrafts appContext projectRef
         , latestReleaseNotesCmd
         ]
     )
@@ -177,26 +165,21 @@ update appContext projectRef msg model =
             )
 
         FetchReleaseDraftsFinished draftBranches ->
-            case model.permitted of
-                CanPublish _ ->
-                    let
-                        toDraft branchSummary acc =
-                            case branchSummary.ref of
-                                BranchRef.ReleaseDraftBranchRef v ->
-                                    { version = v, branch = branchSummary } :: acc
+            let
+                toDraft branchSummary acc =
+                    case branchSummary.ref of
+                        BranchRef.ReleaseDraftBranchRef v ->
+                            { version = v, branch = branchSummary } :: acc
 
-                                _ ->
-                                    acc
+                        _ ->
+                            acc
 
-                        toDrafts brs =
-                            brs
-                                |> List.foldl toDraft []
-                                |> Util.sortByWith .version Version.descending
-                    in
-                    ( { model | permitted = CanPublish (RemoteData.map toDrafts draftBranches) }, Cmd.none, None )
-
-                NotPermitted ->
-                    ( model, Cmd.none, None )
+                toDrafts brs =
+                    brs
+                        |> List.foldl toDraft []
+                        |> Util.sortByWith .version Version.descending
+            in
+            ( { model | releaseDrafts = RemoteData.map toDrafts draftBranches }, Cmd.none, None )
 
         FetchLatestReleaseNotesFinished doc ->
             let
@@ -738,59 +721,58 @@ viewDraft draft =
 
 viewPageContent :
     AppContext
-    -> ProjectRef
+    -> ProjectDetails
     -> Releases
     -> Maybe ReleaseNotes
-    -> ProjectReleasesPermissions (List ReleaseDraft)
+    -> List ReleaseDraft
     -> PageContent Msg
-viewPageContent appContext projectRef releases latestReleaseNotes permitted =
+viewPageContent appContext project releases latestReleaseNotes releaseDrafts =
     let
         content =
             case releases of
                 NoReleases ->
-                    viewEmptyState projectRef
+                    viewEmptyState project.ref
 
                 Releases rs ->
                     case rs.latest of
                         Just l ->
                             if List.isEmpty rs.past then
-                                [ viewLatestRelease appContext projectRef l latestReleaseNotes ]
+                                [ viewLatestRelease appContext project.ref l latestReleaseNotes ]
 
                             else
-                                viewLatestRelease appContext projectRef l latestReleaseNotes
-                                    :: viewPastReleases appContext projectRef rs.past
+                                viewLatestRelease appContext project.ref l latestReleaseNotes
+                                    :: viewPastReleases appContext project.ref rs.past
 
                         Nothing ->
-                            viewPastReleases appContext projectRef rs.past
+                            viewPastReleases appContext project.ref rs.past
 
         currentVersion_ =
             currentVersion releases
 
         ( drafts, publishAction ) =
-            case permitted of
-                CanPublish d ->
-                    ( d
-                        |> List.filter (.version >> Version.lessThan currentVersion_)
-                        |> NEL.fromList
-                        |> Maybe.map (NEL.map viewDraft)
-                        |> Maybe.map NEL.toList
-                        |> Maybe.map Card.card
-                        |> Maybe.map (Card.withClassName "project-releases_drafts")
-                        |> Maybe.map Card.asContained
-                        |> Maybe.map Card.withTightPadding
-                        |> MaybeE.unwrap UI.nothing Card.view
-                    , Button.iconThenLabel (ShowPublishReleaseModal Nothing) Icon.rocket "Cut a new release"
-                        |> Button.outlined
-                        |> Button.small
-                        |> Just
-                    )
+            if Project.canManage project then
+                ( releaseDrafts
+                    |> List.filter (.version >> Version.lessThan currentVersion_)
+                    |> NEL.fromList
+                    |> Maybe.map (NEL.map viewDraft)
+                    |> Maybe.map NEL.toList
+                    |> Maybe.map Card.card
+                    |> Maybe.map (Card.withClassName "project-releases_drafts")
+                    |> Maybe.map Card.asContained
+                    |> Maybe.map Card.withTightPadding
+                    |> MaybeE.unwrap UI.nothing Card.view
+                , Button.iconThenLabel (ShowPublishReleaseModal Nothing) Icon.rocket "Cut a new release"
+                    |> Button.outlined
+                    |> Button.small
+                    |> Just
+                )
 
-                NotPermitted ->
-                    ( UI.nothing, Nothing )
+            else
+                ( UI.nothing, Nothing )
     in
     PageContent.oneColumn
         [ div [ class "project-releases_releases" ] (drafts :: content) ]
-        |> PageContent.withPageTitle (pageTitle projectRef publishAction)
+        |> PageContent.withPageTitle (pageTitle project.ref publishAction)
 
 
 viewInstallModal : ProjectRef -> Version -> Html Msg
@@ -837,29 +819,21 @@ viewInstallModal projectRef version =
         |> Modal.view
 
 
-view : AppContext -> ProjectRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
-view appContext projectRef model =
+view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view appContext project model =
     let
-        drafts =
-            case model.permitted of
-                CanPublish d ->
-                    RemoteData.map CanPublish d
-
-                NotPermitted ->
-                    Success NotPermitted
-
         data =
             RemoteData.map3 (\rs rn drafts_ -> ( rs, rn, drafts_ ))
                 model.releases
                 model.latestReleaseNotes
-                drafts
+                model.releaseDrafts
     in
     case data of
         NotAsked ->
-            ( viewLoadingPage projectRef, Nothing )
+            ( viewLoadingPage project.ref, Nothing )
 
         Loading ->
-            ( viewLoadingPage projectRef, Nothing )
+            ( viewLoadingPage project.ref, Nothing )
 
         Success ( rs, latestReleaseNotes, drafts_ ) ->
             let
@@ -869,7 +843,7 @@ view appContext projectRef model =
                             Nothing
 
                         InstallModal v ->
-                            Just (viewInstallModal projectRef v)
+                            Just (viewInstallModal project.ref v)
 
                         PublishReleaseModal pprm ->
                             Just
@@ -879,11 +853,11 @@ view appContext projectRef model =
                                 )
             in
             ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext projectRef rs latestReleaseNotes drafts_)
+                (viewPageContent appContext project rs latestReleaseNotes drafts_)
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
             , modal
             )
 
         Failure e ->
-            ( viewErrorPage projectRef e, Nothing )
+            ( viewErrorPage project.ref e, Nothing )

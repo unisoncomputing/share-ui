@@ -23,18 +23,22 @@ import UI.StatusBanner as StatusBanner
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
-import UnisonShare.ProjectAccess as ProjectAccess exposing (ProjectAccess(..))
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
+import UnisonShare.ProjectRole as ProjectRole exposing (ProjectRole(..))
 import UnisonShare.Session as Session
 import UnisonShare.User as User exposing (UserSummaryWithId)
 
 
+type alias PotentialProjectCollaborator =
+    { user : UserSummaryWithId, role : ProjectRole }
+
+
 type Model
     = FindUser (Search UserSummaryWithId)
-    | GiveAccess ProjectCollaborator
-    | Saving ProjectCollaborator
-    | Failure Http.Error ProjectCollaborator
-    | Success ProjectCollaborator
+    | AssignRole PotentialProjectCollaborator
+    | Saving PotentialProjectCollaborator
+    | Failure Http.Error PotentialProjectCollaborator
+    | Success PotentialProjectCollaborator
 
 
 init : Model
@@ -52,7 +56,7 @@ type Msg
     | PerformSearch String
     | FetchUsersFinished String (HttpResult (List UserSummaryWithId))
     | SelectUser UserSummaryWithId
-    | SetAccess ProjectAccess
+    | SetRole ProjectRole
     | AddCollaborator
     | AddCollaboratorFinished (HttpResult ())
     | BackToFindUser
@@ -125,19 +129,19 @@ update appContext projectRef currentCollaborators msg model =
                     ( model, Cmd.none, NoOutMsg )
 
         SelectUser user ->
-            ( GiveAccess { user = user, access = Viewer }, Cmd.none, NoOutMsg )
+            ( AssignRole { user = user, role = Viewer }, Cmd.none, NoOutMsg )
 
-        SetAccess access ->
+        SetRole role ->
             case model of
-                GiveAccess { user } ->
-                    ( GiveAccess { user = user, access = access }, Cmd.none, NoOutMsg )
+                AssignRole { user } ->
+                    ( AssignRole { user = user, role = role }, Cmd.none, NoOutMsg )
 
                 _ ->
                     ( model, Cmd.none, NoOutMsg )
 
         AddCollaborator ->
             case model of
-                GiveAccess collab ->
+                AssignRole collab ->
                     ( Saving collab, addCollaborator appContext projectRef collab, NoOutMsg )
 
                 _ ->
@@ -146,7 +150,7 @@ update appContext projectRef currentCollaborators msg model =
         AddCollaboratorFinished res ->
             case ( model, res ) of
                 ( Saving collab, Ok _ ) ->
-                    ( Success collab, Cmd.none, AddedCollaborator collab )
+                    ( Success collab, Cmd.none, AddedCollaborator { user = collab.user, roles = [ collab.role ] } )
 
                 ( Saving collab, Err e ) ->
                     ( Failure e collab, Cmd.none, NoOutMsg )
@@ -183,9 +187,9 @@ fetchUsers appContext query =
         |> HttpApi.perform appContext.api
 
 
-addCollaborator : AppContext -> ProjectRef -> ProjectCollaborator -> Cmd Msg
+addCollaborator : AppContext -> ProjectRef -> PotentialProjectCollaborator -> Cmd Msg
 addCollaborator appContext projectRef collab =
-    ShareApi.createProjectMaintainers projectRef [ collab ]
+    ShareApi.createProjectRoleAssignment projectRef [ { user = collab.user, roles = [ collab.role ] } ]
         |> HttpApi.toRequestWithEmptyResponse AddCollaboratorFinished
         |> HttpApi.perform appContext.api
 
@@ -249,15 +253,15 @@ view model =
                             ]
                         )
 
-                GiveAccess { user, access } ->
+                AssignRole { user, role } ->
                     let
                         options =
-                            NEL.singleton (RadioField.option "Admin" "Full access, including sensitive and destructive actions." Admin)
-                                |> NEL.cons (RadioField.option "Maintain" "Read, download, with merge and write access." Maintainer)
+                            NEL.singleton (RadioField.option "Admin" "Full role, including sensitive and destructive actions." Admin)
+                                |> NEL.cons (RadioField.option "Maintain" "Read, download, with merge and write role." Maintainer)
                                 |> NEL.cons (RadioField.option "View" "Read, download project. Nothing else." Viewer)
                     in
                     modal_
-                        (div [ class "give-access" ]
+                        (div [ class "assign-role" ]
                             [ div [ class "selected-user" ]
                                 [ viewUser user
                                 , Button.icon BackToFindUser Icon.trash
@@ -266,7 +270,7 @@ view model =
                                     |> Button.view
                                 ]
                             , h3 [] [ text "Select a role" ]
-                            , RadioField.field "Select access" SetAccess options access
+                            , RadioField.field "Select role" SetRole options role
                                 |> RadioField.view
                             ]
                         )
@@ -284,8 +288,8 @@ view model =
                                 ("Adding "
                                     ++ User.name collab.user
                                     ++ " with "
-                                    ++ ProjectAccess.toString collab.access
-                                    ++ " access"
+                                    ++ ProjectRole.toString collab.role
+                                    ++ " role"
                                 )
                             ]
                         )
@@ -297,8 +301,8 @@ view model =
                                 ("Failed to add "
                                     ++ User.name collab.user
                                     ++ " with "
-                                    ++ ProjectAccess.toString collab.access
-                                    ++ " access"
+                                    ++ ProjectRole.toString collab.role
+                                    ++ " role"
                                 )
                             ]
                         )
@@ -309,8 +313,8 @@ view model =
                             ("Successfully added "
                                 ++ User.name collab.user
                                 ++ " with "
-                                ++ ProjectAccess.toString collab.access
-                                ++ " access"
+                                ++ ProjectRole.toString collab.role
+                                ++ " role"
                             )
                         )
     in

@@ -37,7 +37,7 @@
     }
   }
 
-  & .give-access {
+  & .assign-role {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

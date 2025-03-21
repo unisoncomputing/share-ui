@@ -23,6 +23,7 @@ import UnisonShare.Link as Link
 import UnisonShare.Markdown as Markdown
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectTicketFormModal as ProjectTicketFormModal
 import UnisonShare.Session as Session exposing (Session)
@@ -227,8 +228,8 @@ updateTicketStatus appContext projectRef ticketRef newStatus =
 -- VIEW
 
 
-viewTicket : Session -> ProjectRef -> UpdateStatus -> Ticket -> Html Msg
-viewTicket session projectRef updateStatus ticket =
+viewTicket : Session -> ProjectDetails -> UpdateStatus -> Ticket -> Html Msg
+viewTicket session project updateStatus ticket =
     let
         isContributor =
             ticket.author
@@ -236,8 +237,8 @@ viewTicket session projectRef updateStatus ticket =
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
-        hasProjectAccess =
-            Session.hasProjectAccess projectRef session
+        canManage =
+            Project.canManage project
 
         className =
             if updateStatus == UpdatingStatus then
@@ -250,7 +251,7 @@ viewTicket session projectRef updateStatus ticket =
             Markdown.view ticket.description
 
         closeButton =
-            if (hasProjectAccess || isContributor) && updateStatus /= TimelineNotReady then
+            if (canManage || isContributor) && updateStatus /= TimelineNotReady then
                 Button.iconThenLabel (UpdateStatus Closed) Icon.archive "Close"
                     |> Button.view
 
@@ -258,7 +259,7 @@ viewTicket session projectRef updateStatus ticket =
                 UI.nothing
 
         reopenButton =
-            if hasProjectAccess || isContributor then
+            if canManage || isContributor then
                 Button.iconThenLabel (UpdateStatus Open) Icon.conversation "Re-open"
                     |> Button.outlined
                     |> Button.view
@@ -329,18 +330,18 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
 
 viewPageContent :
     AppContext
-    -> ProjectRef
+    -> ProjectDetails
     -> UpdateStatus
     -> Ticket
     -> TicketTimeline.Model
     -> PageContent Msg
-viewPageContent appContext projectRef updateStatus ticket timeline =
+viewPageContent appContext project updateStatus ticket timeline =
     let
         timeline_ =
-            TicketTimeline.view appContext projectRef timeline
+            TicketTimeline.view appContext project.ref timeline
     in
     PageContent.oneColumn
-        [ viewTicket appContext.session projectRef updateStatus ticket
+        [ viewTicket appContext.session project updateStatus ticket
         , Html.map TicketTimelineMsg timeline_
         ]
         |> PageContent.withPageTitle (detailedPageTitle appContext ticket)
@@ -422,8 +423,8 @@ viewErrorPage session _ error =
     ErrorPage.view session error "ticket" "project-ticket"
 
 
-view : AppContext -> ProjectRef -> TicketRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
-view appContext projectRef ticketRef model =
+view : AppContext -> ProjectDetails -> TicketRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view appContext project ticketRef model =
     case model.ticket of
         NotAsked ->
             ( viewLoadingPage, Nothing )
@@ -448,7 +449,7 @@ view appContext projectRef ticketRef model =
                 pageContent =
                     viewPageContent
                         appContext
-                        projectRef
+                        project
                         model.updateStatus
                         ticket
                         model.timeline

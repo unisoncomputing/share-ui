@@ -26,8 +26,8 @@ import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposin
 import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
-import UnisonShare.ProjectAccess as ProjectAccess
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
+import UnisonShare.ProjectRole as ProjectRole
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import UnisonShare.Ticket.TicketStatus as TicketStatus exposing (TicketStatus)
 import UnisonShare.Timeline.CommentId as CommentId exposing (CommentId)
@@ -273,85 +273,72 @@ projectBranchReleaseNotes projectRef branchRef =
 
 
 
--- PROJECT MAINTAINERS (COLLABORATORS)
+-- PROJECT ROLE ASSIGNMENTS (COLLABORATORS)
 
 
-projectMaintainers : ProjectRef -> Endpoint
-projectMaintainers projectRef =
+projectRoleAssignments : ProjectRef -> Endpoint
+projectRoleAssignments projectRef =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
     in
     GET
-        { path = [ "users", handle, "projects", slug, "maintainers" ]
+        { path = [ "users", handle, "projects", slug, "roles" ]
         , queryParams = []
         }
 
 
-createProjectMaintainers : ProjectRef -> List ProjectCollaborator -> Endpoint
-createProjectMaintainers projectRef collaborators =
+createProjectRoleAssignment : ProjectRef -> List ProjectCollaborator -> Endpoint
+createProjectRoleAssignment projectRef collaborators =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
 
-        toMaintainer collab =
+        toAssignment collab =
             Encode.object
-                [ ( "user", Encode.string collab.user.id )
-                , ( "permissions", ProjectAccess.encode collab.access )
+                [ ( "subject"
+                  , Encode.object
+                        [ ( "kind", Encode.string "user" )
+                        , ( "id", Encode.string collab.user.id )
+                        ]
+                  )
+                , ( "roles", Encode.list ProjectRole.encode collab.roles )
                 ]
 
         body =
             Encode.object
-                [ ( "maintainers", Encode.list toMaintainer collaborators ) ]
+                [ ( "role_assignments", Encode.list toAssignment collaborators ) ]
     in
     POST
-        { path = [ "users", handle, "projects", slug, "maintainers" ]
+        { path = [ "users", handle, "projects", slug, "roles", "add" ]
         , queryParams = []
         , body = Http.jsonBody body
         }
 
 
-updateProjectMaintainer : ProjectRef -> ProjectCollaborator -> Endpoint
-updateProjectMaintainer projectRef collaborator =
+deleteProjectRoleAssignment : ProjectRef -> ProjectCollaborator -> Endpoint
+deleteProjectRoleAssignment projectRef collaborator =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
 
-        toMaintainer collab =
+        toAssignment collab =
             Encode.object
-                [ ( "user", Encode.string collab.user.id )
-                , ( "permissions", ProjectAccess.encode collab.access )
+                [ ( "subject"
+                  , Encode.object
+                        [ ( "kind", Encode.string "user" )
+                        , ( "id", Encode.string collab.user.id )
+                        ]
+                  )
+                , ( "roles", Encode.list ProjectRole.encode collab.roles )
                 ]
 
         body =
             Encode.object
-                [ ( "maintainers", Encode.list toMaintainer [ collaborator ] ) ]
+                [ ( "role_assignments", Encode.list toAssignment [ collaborator ] ) ]
     in
-    PATCH
-        { path = [ "users", handle, "projects", slug, "maintainers" ]
-        , queryParams = []
-        , body = Http.jsonBody body
-        }
-
-
-deleteProjectMaintainer : ProjectRef -> ProjectCollaborator -> Endpoint
-deleteProjectMaintainer projectRef collaborator =
-    let
-        ( handle, slug ) =
-            ProjectRef.toApiStringParts projectRef
-
-        toMaintainer collab =
-            Encode.object
-                [ ( "user", Encode.string collab.user.id )
-                , ( "permissions", ProjectAccess.encodeNoAccess )
-                ]
-
-        body =
-            Encode.object
-                [ ( "maintainers", Encode.list toMaintainer [ collaborator ] ) ]
-    in
-    PATCH
-        { path = [ "users", handle, "projects", slug, "maintainers" ]
+    POST
+        { path = [ "users", handle, "projects", slug, "roles", "remove" ]
         , queryParams = []
         , body = Http.jsonBody body
         }

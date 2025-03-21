@@ -33,12 +33,12 @@
   align-items: center;
 }
 
-.project-settings-page .collaborator_access,
+.project-settings-page .collaborator_role,
 .project-settings-page .collaborator_profile-snippet {
   width: 33%;
 }
 
-.project-settings-page .collaborator_access {
+.project-settings-page .collaborator_role {
   font-size: var(--font-size-small);
   color: var(--u-color_text_subdued);
 }
