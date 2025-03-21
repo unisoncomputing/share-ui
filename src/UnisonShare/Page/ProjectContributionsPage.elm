@@ -31,9 +31,10 @@ import UnisonShare.Contribution.ContributionRef as ContributionRef
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
-import UnisonShare.Session as Session exposing (Session)
+import UnisonShare.Session as Session
 
 
 
@@ -118,8 +119,8 @@ type Msg
     | ChangeTab Tab
 
 
-update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext projectRef msg model =
+update : AppContext -> ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
+update appContext project msg model =
     case msg of
         FetchContributionsFinished contributions ->
             ( { model | contributions = contributions }, Cmd.none )
@@ -148,7 +149,7 @@ update appContext projectRef msg model =
                             ProjectContributionFormModal.init
                                 appContext
                                 a
-                                projectRef
+                                project.ref
                                 ProjectContributionFormModal.Create
                     in
                     ( { model | modal = SubmitContributionModal projectContributionFormModal }
@@ -163,7 +164,7 @@ update appContext projectRef msg model =
                 ( Session.SignedIn account, SubmitContributionModal formModel ) ->
                     let
                         ( projectContributionFormModal, cmd, out ) =
-                            ProjectContributionFormModal.update appContext projectRef account formMsg formModel
+                            ProjectContributionFormModal.update appContext project account formMsg formModel
 
                         ( modal, contributions ) =
                             case out of
@@ -221,8 +222,8 @@ fetchBranches doneMsg appContext projectRef params =
 -- VIEW
 
 
-viewPageTitle : Session -> ProjectRef -> Maybe RecentBranches -> PageTitle.PageTitle Msg
-viewPageTitle session projectRef recentBranches =
+viewPageTitle : ProjectDetails -> Maybe RecentBranches -> PageTitle.PageTitle Msg
+viewPageTitle project recentBranches =
     let
         pt =
             PageTitle.title "Contributions"
@@ -236,7 +237,7 @@ viewPageTitle session projectRef recentBranches =
         button =
             Button.iconThenLabel ShowSubmitContributionModal Icon.merge "Submit contribution"
     in
-    if Session.hasProjectAccess projectRef session || hasRecentContributorBranches then
+    if Project.canContribute project || hasRecentContributorBranches then
         pt
             |> PageTitle.withRightSide
                 [ button
@@ -328,8 +329,8 @@ viewContributionRow appContext projectRef contribution =
         ]
 
 
-viewPageContent : AppContext -> ProjectRef -> Maybe RecentBranches -> Tab -> List ContributionSummary -> PageContent Msg
-viewPageContent appContext projectRef recentBranches tab contributions =
+viewPageContent : AppContext -> ProjectDetails -> Maybe RecentBranches -> Tab -> List ContributionSummary -> PageContent Msg
+viewPageContent appContext project recentBranches tab contributions =
     let
         viewEmptyState icon text_ =
             EmptyState.iconCloud
@@ -379,7 +380,7 @@ viewPageContent appContext projectRef recentBranches tab contributions =
         content =
             contributions
                 |> List.filter (\c -> c.status == status)
-                |> List.map (viewContributionRow appContext projectRef)
+                |> List.map (viewContributionRow appContext project.ref)
                 |> List.intersperse (Divider.view divider)
 
         card =
@@ -393,11 +394,11 @@ viewPageContent appContext projectRef recentBranches tab contributions =
                     |> Card.view
     in
     PageContent.oneColumn [ TabList.view tabList, card ]
-        |> PageContent.withPageTitle (viewPageTitle appContext.session projectRef recentBranches)
+        |> PageContent.withPageTitle (viewPageTitle project recentBranches)
 
 
-view : AppContext -> ProjectRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
-view appContext projectRef model =
+view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view appContext project model =
     case model.contributions of
         NotAsked ->
             ( viewLoadingPage, Nothing )
@@ -412,14 +413,14 @@ view appContext projectRef model =
                         ( SubmitContributionModal form, Just _ ) ->
                             Just
                                 (Html.map ProjectContributionFormModalMsg
-                                    (ProjectContributionFormModal.view projectRef "Submit contribution for review" form)
+                                    (ProjectContributionFormModal.view project.ref "Submit contribution for review" form)
                                 )
 
                         _ ->
                             Nothing
             in
             ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext projectRef model.recentBranches model.tab contributions)
+                (viewPageContent appContext project model.recentBranches model.tab contributions)
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
             , modal

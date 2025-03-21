@@ -32,6 +32,7 @@ import UnisonShare.ContributionTimeline as ContributionTimeline
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
 import UnisonShare.Markdown as Markdown
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.Timeline.TimelineEvent as TimelineEvent
@@ -256,8 +257,8 @@ mergeContribution appContext projectRef contributionRef token =
 -- VIEW
 
 
-viewContribution : Session -> ProjectRef -> UpdateStatus -> ContributionDetails -> MergeStatus -> Html Msg
-viewContribution session projectRef updateStatus contribution mergeStatus =
+viewContribution : Session -> ProjectDetails -> UpdateStatus -> ContributionDetails -> MergeStatus -> Html Msg
+viewContribution session project updateStatus contribution mergeStatus =
     let
         isContributor =
             contribution.author
@@ -265,8 +266,8 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
-        hasProjectAccess =
-            Session.hasProjectAccess projectRef session
+        canManage =
+            Project.canManage project
 
         className =
             if updateStatus == UpdatingStatus then
@@ -292,7 +293,7 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                 |> Button.view
 
         archiveButton =
-            if (hasProjectAccess || isContributor) && updateStatus /= TimelineNotReady then
+            if (canManage || isContributor) && updateStatus /= TimelineNotReady then
                 Button.iconThenLabel (UpdateStatus ContributionStatus.Archived) Icon.archive "Archive"
                     |> Button.outlined
                     |> Button.view
@@ -301,7 +302,7 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                 UI.nothing
 
         mergeButton =
-            if hasProjectAccess && updateStatus /= TimelineNotReady then
+            if canManage && updateStatus /= TimelineNotReady then
                 case mergeStatus of
                     Checking ->
                         StatusBanner.working "Checking mergeability..."
@@ -361,7 +362,7 @@ viewContribution session projectRef updateStatus contribution mergeStatus =
                 UI.nothing
 
         reopenButton =
-            if hasProjectAccess || isContributor then
+            if canManage || isContributor then
                 Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Re-open"
                     |> Button.outlined
                     |> Button.view
@@ -481,16 +482,16 @@ viewStatusChangeEvent dtContext { newStatus, oldStatus, actor, timestamp } =
 
 viewPageContent :
     AppContext
-    -> ProjectRef
+    -> ProjectDetails
     -> UpdateStatus
     -> ContributionDetails
     -> MergeStatus
     -> ContributionTimeline.Model
     -> PageContent Msg
-viewPageContent appContext projectRef updateStatus contribution mergeStatus timeline =
+viewPageContent appContext project updateStatus contribution mergeStatus timeline =
     let
         timeline_ =
-            ContributionTimeline.view appContext projectRef timeline
+            ContributionTimeline.view appContext project.ref timeline
 
         tabs =
             -- Before this date, we couldn't show diffs on merged
@@ -498,8 +499,8 @@ viewPageContent appContext projectRef updateStatus contribution mergeStatus time
             if DateTime.isAfter Contribution.dateOfHistoricDiffSupport contribution.createdAt || contribution.status == ContributionStatus.InReview then
                 TabList.tabList
                     []
-                    (TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref))
-                    [ TabList.tab "Changes (beta preview)" (Link.projectContributionChanges projectRef contribution.ref) ]
+                    (TabList.tab "Overview" (Link.projectContribution project.ref contribution.ref))
+                    [ TabList.tab "Changes (beta preview)" (Link.projectContributionChanges project.ref contribution.ref) ]
                     |> TabList.view
 
             else
@@ -510,7 +511,7 @@ viewPageContent appContext projectRef updateStatus contribution mergeStatus time
         , div [ class "project-contribution-overview-page" ]
             [ viewContribution
                 appContext.session
-                projectRef
+                project
                 updateStatus
                 contribution
                 mergeStatus
@@ -590,8 +591,8 @@ viewViewLocallyInstructionsModal contribution =
         |> Modal.view
 
 
-view : AppContext -> ProjectRef -> ContributionDetails -> Model -> ( PageContent Msg, Maybe (Html Msg) )
-view appContext projectRef contribution model =
+view : AppContext -> ProjectDetails -> ContributionDetails -> Model -> ( PageContent Msg, Maybe (Html Msg) )
+view appContext project contribution model =
     let
         modal =
             case model.modal of
@@ -603,7 +604,7 @@ view appContext projectRef contribution model =
     in
     ( viewPageContent
         appContext
-        projectRef
+        project
         model.updateStatus
         contribution
         model.mergeStatus

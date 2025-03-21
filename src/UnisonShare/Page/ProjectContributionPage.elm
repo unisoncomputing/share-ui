@@ -28,6 +28,7 @@ import UnisonShare.Link as Link
 import UnisonShare.Page.ProjectContributionChangesPage as ProjectContributionChangesPage
 import UnisonShare.Page.ProjectContributionOverviewPage as ProjectContributionOverviewPage
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
 import UnisonShare.Route exposing (ProjectContributionRoute(..))
@@ -102,13 +103,13 @@ type Msg
 
 update :
     AppContext
-    -> ProjectRef
+    -> ProjectDetails
     -> ContributionRef
     -> ProjectContributionRoute
     -> Msg
     -> Model
     -> ( Model, Cmd Msg )
-update appContext projectRef contribRef _ msg model =
+update appContext project contribRef _ msg model =
     case ( model.subPage, msg ) of
         ( _, NoOp ) ->
             ( model, Cmd.none )
@@ -123,7 +124,7 @@ update appContext projectRef contribRef _ msg model =
                         ( formModel, formCmd ) =
                             ProjectContributionFormModal.init appContext
                                 a
-                                projectRef
+                                project.ref
                                 (ProjectContributionFormModal.Edit (Contribution.toSummary contrib))
                     in
                     ( { model | modal = EditModal formModel }, Cmd.map ProjectContributionFormModalMsg formCmd )
@@ -137,7 +138,7 @@ update appContext projectRef contribRef _ msg model =
                     let
                         ( projectContributionFormModal, cmd, out ) =
                             ProjectContributionFormModal.update appContext
-                                projectRef
+                                project
                                 account
                                 formMsg
                                 formModel
@@ -168,7 +169,7 @@ update appContext projectRef contribRef _ msg model =
             let
                 ( overviewPage_, overviewPageCmd, outMsg ) =
                     ProjectContributionOverviewPage.update appContext
-                        projectRef
+                        project.ref
                         contribRef
                         model.contribution
                         overviewPageMsg
@@ -193,7 +194,7 @@ update appContext projectRef contribRef _ msg model =
             let
                 ( changesPage_, changesPageCmd ) =
                     ProjectContributionChangesPage.update appContext
-                        projectRef
+                        project.ref
                         contribRef
                         changesPageMsg
                         changesPage
@@ -251,11 +252,11 @@ fetchContribution appContext projectRef contributionRef =
 
 viewPageContent :
     AppContext
-    -> ProjectRef
+    -> ProjectDetails
     -> ContributionDetails
     -> ProjectContributionSubPage
     -> ( PageLayout Msg, Maybe (Html Msg) )
-viewPageContent appContext projectRef contribution subPage =
+viewPageContent appContext project contribution subPage =
     let
         pageTitle_ =
             detailedPageTitle appContext contribution
@@ -264,7 +265,7 @@ viewPageContent appContext projectRef contribution subPage =
         Overview overview ->
             let
                 ( overviewPage, modal ) =
-                    ProjectContributionOverviewPage.view appContext projectRef contribution overview
+                    ProjectContributionOverviewPage.view appContext project contribution overview
 
                 pageContent =
                     PageContent.map ProjectContributionOverviewPageMsg overviewPage
@@ -280,7 +281,7 @@ viewPageContent appContext projectRef contribution subPage =
         Changes changes ->
             let
                 changesPage =
-                    ProjectContributionChangesPage.view appContext projectRef contribution changes
+                    ProjectContributionChangesPage.view appContext project.ref contribution changes
 
                 pageContent =
                     PageContent.map ProjectContributionChangesPageMsg changesPage
@@ -403,8 +404,8 @@ viewErrorPage _ _ =
         |> PageLayout.withSubduedBackground
 
 
-view : AppContext -> ProjectRef -> ContributionRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
-view appContext projectRef contribRef model =
+view : AppContext -> ProjectDetails -> ContributionRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view appContext project contribRef model =
     case model.contribution of
         NotAsked ->
             ( viewLoadingPage, Nothing )
@@ -417,7 +418,7 @@ view appContext projectRef contribRef model =
                 ( pageLayout, modal_ ) =
                     viewPageContent
                         appContext
-                        projectRef
+                        project
                         contribution
                         model.subPage
 
@@ -427,7 +428,7 @@ view appContext projectRef contribRef model =
                             Just
                                 (Html.map ProjectContributionFormModalMsg
                                     (ProjectContributionFormModal.view
-                                        projectRef
+                                        project.ref
                                         "Save Contribution"
                                         form
                                     )

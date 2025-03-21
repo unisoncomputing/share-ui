@@ -9,6 +9,7 @@ type ProjectRole
     = Owner
     | Admin
     | Maintainer
+    | Contributor
     | Viewer
 
 
@@ -24,6 +25,9 @@ toString role =
         Maintainer ->
             "Maintainer"
 
+        Contributor ->
+            "Contributor"
+
         Viewer ->
             "Viewer"
 
@@ -34,8 +38,11 @@ encode role =
         Viewer ->
             Encode.string "project_viewer"
 
-        Maintainer ->
+        Contributor ->
             Encode.string "project_contributor"
+
+        Maintainer ->
+            Encode.string "project_maintainer"
 
         Admin ->
             Encode.string "project_admin"
@@ -49,6 +56,7 @@ decode =
     Decode.oneOf
         [ when string ((==) "project_owner") (Decode.succeed Owner)
         , when string ((==) "project_admin") (Decode.succeed Admin)
-        , when string ((==) "project_contributor") (Decode.succeed Maintainer)
+        , when string ((==) "project_maintainer") (Decode.succeed Maintainer)
+        , when string ((==) "project_contributor") (Decode.succeed Contributor)
         , when string ((==) "project_viewer") (Decode.succeed Viewer)
         ]

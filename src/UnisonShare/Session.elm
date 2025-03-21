@@ -3,7 +3,6 @@ module UnisonShare.Session exposing
     , account
     , decode
     , handle
-    , hasProjectAccess
     , isHandle
     , isOrganizationMember
     , isProjectOwner
@@ -45,20 +44,6 @@ isSignedIn session =
 isProjectOwner : ProjectRef -> Session -> Bool
 isProjectOwner projectRef session =
     isHandle (ProjectRef.handle projectRef) session
-
-
-hasProjectAccess : ProjectRef -> Session -> Bool
-hasProjectAccess projectRef session =
-    case session of
-        Anonymous ->
-            False
-
-        SignedIn a ->
-            let
-                projectHandle =
-                    ProjectRef.handle projectRef
-            in
-            UserHandle.equals projectHandle a.handle || Account.isOrganizationMember projectHandle a
 
 
 isOrganizationMember : UserHandle -> Session -> Bool
