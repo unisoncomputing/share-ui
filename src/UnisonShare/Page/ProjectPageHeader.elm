@@ -210,7 +210,7 @@ projectPageHeader session config project =
             allNavItems project config.switchBranch
 
         nav =
-            case ( Session.hasProjectAccess project.ref session, config.activeNavItem ) of
+            case ( Project.canManage project, config.activeNavItem ) of
                 ( True, DocsAndCode ) ->
                     Nav.withItems []
                         allNavItems_.code

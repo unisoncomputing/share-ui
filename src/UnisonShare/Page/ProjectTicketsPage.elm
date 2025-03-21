@@ -24,7 +24,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Project as Project exposing (Project)
+import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectTicketFormModal as ProjectTicketFormModal
 import UnisonShare.Session as Session exposing (Session)
@@ -146,14 +146,14 @@ fetchProjectTickets appContext projectRef =
 -- VIEW
 
 
-viewPageTitle : Session -> Project a -> PageTitle.PageTitle Msg
+viewPageTitle : Session -> ProjectDetails -> PageTitle.PageTitle Msg
 viewPageTitle session project =
     let
         pt =
             PageTitle.title "Tickets"
 
         canSubmit =
-            Session.hasProjectAccess project.ref session || (Session.isSignedIn session && Project.isPublic project)
+            Project.canView project || (Session.isSignedIn session && Project.isPublic project)
     in
     if canSubmit then
         pt
@@ -235,7 +235,7 @@ viewTicketRow appContext projectRef ticket =
         ]
 
 
-viewPageContent : AppContext -> Project a -> Tab -> List Ticket -> PageContent Msg
+viewPageContent : AppContext -> ProjectDetails -> Tab -> List Ticket -> PageContent Msg
 viewPageContent appContext project tab tickets =
     let
         viewEmptyState icon text_ =
@@ -290,7 +290,7 @@ viewPageContent appContext project tab tickets =
         |> PageContent.withPageTitle (viewPageTitle appContext.session project)
 
 
-view : AppContext -> Project a -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
+view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project model =
     case model.tickets of
         NotAsked ->

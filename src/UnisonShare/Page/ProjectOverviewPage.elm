@@ -623,14 +623,11 @@ viewEditDescriptionModal descriptionForm =
         |> Modal.view
 
 
-viewReadmeEmptyState : Session -> ProjectDetails -> Html Msg
-viewReadmeEmptyState session project =
+viewReadmeEmptyState : ProjectDetails -> Html Msg
+viewReadmeEmptyState project =
     let
-        hasProjectAccess =
-            Session.hasProjectAccess project.ref session
-
         cta =
-            if hasProjectAccess then
+            if Project.canContribute project then
                 Button.iconThenLabel
                     ShowReadmeInstructionsModal
                     Icon.graduationCap
@@ -654,8 +651,8 @@ viewReadmeEmptyState session project =
         |> EmptyStateCard.view
 
 
-viewReadmeCard : Session -> ProjectDetails -> WebData ( Maybe Readme, ReadmeCard.Model ) -> Html Msg
-viewReadmeCard session project readme =
+viewReadmeCard : ProjectDetails -> WebData ( Maybe Readme, ReadmeCard.Model ) -> Html Msg
+viewReadmeCard project readme =
     case readme of
         NotAsked ->
             ReadmeCard.viewLoading
@@ -667,10 +664,10 @@ viewReadmeCard session project readme =
             Html.map ReadmeCardMsg (ReadmeCard.asCard card rm |> Card.asContained |> Card.view)
 
         Success ( Nothing, _ ) ->
-            viewReadmeEmptyState session project
+            viewReadmeEmptyState project
 
         Failure (Http.BadStatus 404) ->
-            viewReadmeEmptyState session project
+            viewReadmeEmptyState project
 
         Failure _ ->
             ReadmeCard.viewError RetryFetchReadme
@@ -752,11 +749,11 @@ view_ session project model =
                 ]
                 |> PageTitle.withRightSide rightSide
 
-        hasProjectAccess =
-            Session.hasProjectAccess project.ref session
+        canManage =
+            Project.canManage project
 
-        showIfAccess c =
-            if hasProjectAccess then
+        showIfCanManage c =
+            if canManage then
                 Just c
 
             else
@@ -766,7 +763,7 @@ view_ session project model =
             Button.iconThenLabel ShowEditDescriptionModal icon label
                 |> Button.small
                 |> Button.outlined
-                |> showIfAccess
+                |> showIfCanManage
 
         summaryAndTags =
             case ( project.summary, Set.toList project.tags ) of
@@ -788,13 +785,13 @@ view_ session project model =
                             , Button.icon ShowEditDescriptionModal Icon.writingPad
                                 |> Button.small
                                 |> Button.outlined
-                                |> showIfAccess
+                                |> showIfCanManage
                                 |> MaybeE.unwrap UI.nothing Button.view
                             ]
                         ]
 
                 ( Nothing, [] ) ->
-                    if hasProjectAccess then
+                    if canManage then
                         Just
                             [ div [ class "project-description-empty-state" ]
                                 [ text "Add a bit of detail with a summary."
@@ -807,7 +804,7 @@ view_ session project model =
                         Nothing
 
                 ( Nothing, tags ) ->
-                    if hasProjectAccess then
+                    if canManage then
                         Just
                             [ div []
                                 [ div
@@ -850,7 +847,7 @@ view_ session project model =
                     [ class "project-overview-page_layout" ]
                     [ div
                         [ class "project-overview-page_content" ]
-                        [ viewReadmeCard session project model.readme ]
+                        [ viewReadmeCard project model.readme ]
                     ]
                 ]
                 |> PageContent.withPageTitle pageTitle

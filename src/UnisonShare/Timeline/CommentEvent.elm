@@ -105,7 +105,7 @@ commentEventActions appContext msgs _ commenterHandle =
 
         canEditAndDelete =
             -- TODO: Re-enable to support moderation
-            -- Session.hasProjectAccess projectRef appContext.session || isCommentOwner
+            -- Project.canManage project || isCommentOwner
             isCommentOwner
     in
     if canEditAndDelete then

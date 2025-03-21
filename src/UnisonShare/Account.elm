@@ -81,15 +81,6 @@ isProjectOwner projectRef account =
     UserHandle.equals (ProjectRef.handle projectRef) account.handle
 
 
-hasProjectAccess : ProjectRef -> Account a -> Bool
-hasProjectAccess projectRef account =
-    let
-        projectHandle =
-            ProjectRef.handle projectRef
-    in
-    UserHandle.equals projectHandle account.handle || isOrganizationMember projectHandle account
-
-
 
 -- DECODE
 

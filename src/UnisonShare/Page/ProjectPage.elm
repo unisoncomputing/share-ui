@@ -486,13 +486,13 @@ update appContext projectRef route msg model =
                     ( model, Cmd.none )
 
         ( Contribution currentContribRef contribPage, ProjectContributionPageMsg contribMsg ) ->
-            case route of
-                Route.ProjectContribution contribRef contribRoute ->
+            case ( model.project, route ) of
+                ( Success project, Route.ProjectContribution contribRef contribRoute ) ->
                     if ContributionRef.equals currentContribRef contribRef then
                         let
                             ( contribPage_, contribPageCmd ) =
                                 ProjectContributionPage.update appContext
-                                    projectRef
+                                    project
                                     contribRef
                                     contribRoute
                                     contribMsg
@@ -515,11 +515,11 @@ update appContext projectRef route msg model =
                     ( model, Cmd.none )
 
         ( Contributions contribsPage, ProjectContributionsPageMsg contribsMsg ) ->
-            case route of
-                Route.ProjectContributions ->
+            case ( model.project, route ) of
+                ( Success project, Route.ProjectContributions ) ->
                     let
                         ( contribsPage_, contribsPageCmd ) =
-                            ProjectContributionsPage.update appContext projectRef contribsMsg contribsPage
+                            ProjectContributionsPage.update appContext project contribsMsg contribsPage
                     in
                     ( { model | subPage = Contributions contribsPage_ }
                     , Cmd.map ProjectContributionsPageMsg contribsPageCmd
@@ -1470,10 +1470,7 @@ view appContext projectRef model =
                         Releases releases ->
                             let
                                 ( releases_, modal_ ) =
-                                    ProjectReleasesPage.view
-                                        appContext
-                                        project.ref
-                                        releases
+                                    ProjectReleasesPage.view appContext project releases
                             in
                             { pageId = "project-page project-releases-page"
                             , title = title
@@ -1494,7 +1491,7 @@ view appContext projectRef model =
                                 ( contribution_, modal_ ) =
                                     ProjectContributionPage.view
                                         appContext
-                                        project.ref
+                                        project
                                         cRef
                                         contribution
                             in
@@ -1517,7 +1514,7 @@ view appContext projectRef model =
                                 ( contributions_, modal_ ) =
                                     ProjectContributionsPage.view
                                         appContext
-                                        projectRef
+                                        project
                                         contributions
                             in
                             { pageId = "project-page project-contributions-page"
@@ -1539,7 +1536,7 @@ view appContext projectRef model =
                                 ( ticket_, modal_ ) =
                                     ProjectTicketPage.view
                                         appContext
-                                        project.ref
+                                        project
                                         tRef
                                         ticket
                             in

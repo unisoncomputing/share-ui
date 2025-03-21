@@ -25,7 +25,7 @@ import UnisonShare.AddProjectCollaboratorModal as AddProjectCollaboratorModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Project exposing (ProjectDetails, ProjectVisibility(..))
+import UnisonShare.Project as Project exposing (ProjectDetails, ProjectVisibility(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.ProjectRole as ProjectRole
@@ -457,7 +457,7 @@ viewPageContent session project model =
 
 view : Session -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view session project model =
-    if Session.hasProjectAccess project.ref session then
+    if Project.canManage project then
         let
             modal =
                 case model.modal of
