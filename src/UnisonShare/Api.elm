@@ -310,7 +310,7 @@ createProjectRoleAssignment projectRef collaborators =
                 [ ( "role_assignments", Encode.list toAssignment collaborators ) ]
     in
     POST
-        { path = [ "users", handle, "projects", slug, "roles", "add" ]
+        { path = [ "users", handle, "projects", slug, "roles" ]
         , queryParams = []
         , body = Http.jsonBody body
         }
@@ -337,8 +337,8 @@ deleteProjectRoleAssignment projectRef collaborator =
             Encode.object
                 [ ( "role_assignments", Encode.list toAssignment [ collaborator ] ) ]
     in
-    POST
-        { path = [ "users", handle, "projects", slug, "roles", "remove" ]
+    DELETE
+        { path = [ "users", handle, "projects", slug, "roles" ]
         , queryParams = []
         , body = Http.jsonBody body
         }
@@ -495,6 +495,7 @@ deleteProjectContributionComment projectRef contribRef commentId =
             , "comments"
             , CommentId.toString commentId
             ]
+        , body = Http.emptyBody
         , queryParams = []
         }
 
@@ -815,6 +816,7 @@ deleteProjectTicketComment projectRef ticketRef commentId =
             , "comments"
             , CommentId.toString commentId
             ]
+        , body = Http.emptyBody
         , queryParams = []
         }
 
@@ -1046,6 +1048,7 @@ deleteProject projectRef =
     DELETE
         { path = [ "users", handle, "projects", slug ]
         , queryParams = []
+        , body = Http.emptyBody
         }
 
 
@@ -1058,6 +1061,7 @@ deleteProjectBranch projectRef branchRef =
     DELETE
         { path = [ "users", handle, "projects", slug, "branches", BranchRef.toApiUrlString branchRef ]
         , queryParams = []
+        , body = Http.emptyBody
         }
 
 
