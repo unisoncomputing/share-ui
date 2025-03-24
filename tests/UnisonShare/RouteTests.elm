@@ -130,17 +130,17 @@ notFound =
 -- USERS ROUTE
 
 
-userProfileRoute : Test
-userProfileRoute =
-    describe "Route.fromUrl : user profile route"
-        [ test "Matches /:handle to UserProfile " <|
+profileRoute : Test
+profileRoute =
+    describe "Route.fromUrl : profile route"
+        [ test "Matches /:handle to Profile " <|
             \_ ->
                 let
                     url =
                         mkUrl "/@unison"
                 in
                 Expect.equal
-                    (User (UserHandle.unsafeFromString "unison") UserProfile)
+                    (Profile (UserHandle.unsafeFromString "unison"))
                     (Route.fromUrl "" url)
         ]
 
