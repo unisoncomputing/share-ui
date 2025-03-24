@@ -430,6 +430,21 @@ viewPageContent session project model =
 
                 SaveFailed _ _ ->
                     ( buttons_, "save-failed", StatusBanner.bad "Couldn't save project, please try again" )
+
+        pageTitle_ =
+            if Project.canDelete project then
+                PageContent.withPageTitle
+                    (PageTitle.withRightSide
+                        [ Button.iconThenLabel ShowDeleteProjectModal Icon.trash "Delete Project"
+                            |> Button.small
+                            |> Button.critical
+                            |> Button.view
+                        ]
+                        pageTitle
+                    )
+
+            else
+                PageContent.withPageTitle pageTitle
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
@@ -444,15 +459,7 @@ viewPageContent session project model =
                 ]
             ]
         ]
-        |> PageContent.withPageTitle
-            (PageTitle.withRightSide
-                [ Button.iconThenLabel ShowDeleteProjectModal Icon.trash "Delete Project"
-                    |> Button.small
-                    |> Button.critical
-                    |> Button.view
-                ]
-                pageTitle
-            )
+        |> pageTitle_
 
 
 view : Session -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
