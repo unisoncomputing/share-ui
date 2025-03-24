@@ -1,7 +1,7 @@
 module UnisonShare.ProjectPermission exposing (..)
 
-import Json.Decode as Decode exposing (string)
-import Json.Decode.Extra exposing (when)
+import Json.Decode as Decode
+import Lib.Util as Util
 
 
 type ProjectPermission
@@ -12,12 +12,42 @@ type ProjectPermission
     | ProjectDelete
 
 
+fromString : String -> Maybe ProjectPermission
+fromString raw =
+    case raw of
+        "project:view" ->
+            Just ProjectView
+
+        "project:contribute" ->
+            Just ProjectContribute
+
+        "project:maintain" ->
+            Just ProjectMaintain
+
+        "project:manage" ->
+            Just ProjectManage
+
+        "project:delete" ->
+            Just ProjectDelete
+
+        _ ->
+            Nothing
+
+
 decode : Decode.Decoder ProjectPermission
 decode =
-    Decode.oneOf
-        [ when string ((==) "project:view") (Decode.succeed ProjectView)
-        , when string ((==) "project:contribute") (Decode.succeed ProjectContribute)
-        , when string ((==) "project:maintain") (Decode.succeed ProjectMaintain)
-        , when string ((==) "project:manage") (Decode.succeed ProjectManage)
-        , when string ((==) "project:delete") (Decode.succeed ProjectDelete)
-        ]
+    decodeMaybe
+        |> Decode.andThen (Util.decodeFailInvalid "Invalid ProjectPermission")
+
+
+decodeMaybe : Decode.Decoder (Maybe ProjectPermission)
+decodeMaybe =
+    Decode.map fromString Decode.string
+
+
+{-| soft fail when encountering unknown permissions
+-}
+decodeList : Decode.Decoder (List ProjectPermission)
+decodeList =
+    Decode.list decodeMaybe
+        |> Decode.map (List.filterMap identity)

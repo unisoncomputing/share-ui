@@ -245,7 +245,7 @@ decodeDetails =
         |> optional "isFaved" decodeIsFaved Unknown
         |> required "latestRelease" (nullable Version.decode)
         |> required "defaultBranch" (nullable BranchRef.decode)
-        |> required "permissions" (Decode.list ProjectPermission.decode)
+        |> required "permissions" ProjectPermission.decodeList
         |> required "createdAt" DateTime.decode
         |> required "updatedAt" DateTime.decode
 
