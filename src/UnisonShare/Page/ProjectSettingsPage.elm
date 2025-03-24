@@ -25,10 +25,10 @@ import UnisonShare.AddProjectCollaboratorModal as AddProjectCollaboratorModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Project exposing (ProjectDetails, ProjectVisibility(..))
+import UnisonShare.Project as Project exposing (ProjectDetails, ProjectVisibility(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
-import UnisonShare.ProjectAccess as ProjectAccess
 import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
+import UnisonShare.ProjectRole as ProjectRole
 import UnisonShare.Session as Session exposing (Session)
 
 
@@ -122,7 +122,13 @@ update : AppContext -> ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMs
 update appContext project msg model =
     case ( msg, model.form ) of
         ( FetchCollaboratorsFinished collabs, _ ) ->
-            ( { model | collaborators = collabs, form = NoChanges }, Cmd.none, None )
+            let
+                withoutOwner =
+                    collabs
+                        |> RemoteData.map
+                            (List.filter (\collab -> not (List.member ProjectRole.Owner collab.roles)))
+            in
+            ( { model | collaborators = withoutOwner, form = NoChanges }, Cmd.none, None )
 
         ( UpdateVisibility newVisibility, WithChanges c ) ->
             if newVisibility /= project.visibility then
@@ -218,16 +224,16 @@ fetchProjectCollaborators appContext projectRef model =
 
 fetchCollaborators : AppContext -> ProjectRef -> Cmd Msg
 fetchCollaborators appContext projectRef =
-    ShareApi.projectMaintainers projectRef
+    ShareApi.projectRoleAssignments projectRef
         |> HttpApi.toRequest
-            (Decode.field "maintainers" (Decode.list ProjectCollaborator.decode))
+            (Decode.field "role_assignments" (Decode.list ProjectCollaborator.decode))
             (RemoteData.fromResult >> FetchCollaboratorsFinished)
         |> HttpApi.perform appContext.api
 
 
 removeCollaborator : AppContext -> ProjectRef -> ProjectCollaborator -> Cmd Msg
 removeCollaborator appContext projectRef collab =
-    ShareApi.deleteProjectMaintainer projectRef collab
+    ShareApi.deleteProjectRoleAssignment projectRef collab
         |> HttpApi.toRequestWithEmptyResponse RemoveCollaboratorFinished
         |> HttpApi.perform appContext.api
 
@@ -295,7 +301,7 @@ viewCollaborators session model =
                                         [ ProfileSnippet.profileSnippet collab.user
                                             |> ProfileSnippet.view
                                         ]
-                                    , div [ class "collaborator_access" ] [ text (ProjectAccess.toString collab.access) ]
+                                    , div [ class "collaborator_role" ] [ text (collab.roles |> List.map ProjectRole.toString |> String.join ", ") ]
                                     , Button.icon (RemoveCollaborator collab) Icon.trash
                                         |> Button.small
                                         |> Button.subdued
@@ -451,7 +457,7 @@ viewPageContent session project model =
 
 view : Session -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view session project model =
-    if Session.hasProjectAccess project.ref session then
+    if Project.canManage project then
         let
             modal =
                 case model.modal of

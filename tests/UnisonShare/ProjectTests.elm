@@ -101,6 +101,7 @@ projectDetails isFaved numFavs =
     , visibility = Project.Public
     , latestVersion = Nothing
     , defaultBranch = Nothing
+    , permissions = []
     , createdAt = DateTime.fromPosix (Time.millisToPosix 1)
     , updatedAt = DateTime.fromPosix (Time.millisToPosix 1)
     }

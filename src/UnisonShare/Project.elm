@@ -13,6 +13,7 @@ import Set exposing (Set)
 import UI.DateTime as DateTime exposing (DateTime)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Project.ReleaseDownloads as ReleaseDownloads exposing (ReleaseDownloads)
+import UnisonShare.ProjectPermission as ProjectPermission exposing (ProjectPermission)
 
 
 type alias Project a =
@@ -53,6 +54,7 @@ type alias ProjectDetails =
         , isFaved : IsFaved
         , latestVersion : Maybe Version
         , defaultBranch : Maybe BranchRef
+        , permissions : List ProjectPermission
         , createdAt : DateTime
         , updatedAt : DateTime
         }
@@ -160,6 +162,35 @@ fourWeekTotalDownloads { releaseDownloads } =
     ReleaseDownloads.fourWeekTotal releaseDownloads
 
 
+type alias ProjectWithPermissions a =
+    Project { a | permissions : List ProjectPermission }
+
+
+can : ProjectPermission -> ProjectWithPermissions a -> Bool
+can permission project =
+    List.member permission project.permissions
+
+
+canView : ProjectWithPermissions a -> Bool
+canView project =
+    can ProjectPermission.ProjectView project
+
+
+canContribute : ProjectWithPermissions a -> Bool
+canContribute project =
+    can ProjectPermission.ProjectContribute project
+
+
+canManage : ProjectWithPermissions a -> Bool
+canManage project =
+    can ProjectPermission.ProjectManage project
+
+
+canDelete : ProjectWithPermissions a -> Bool
+canDelete project =
+    can ProjectPermission.ProjectDelete project
+
+
 
 -- DECODE
 
@@ -180,7 +211,7 @@ decodeIsFaved =
 decodeDetails : Decode.Decoder ProjectDetails
 decodeDetails =
     let
-        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch createdAt updatedAt =
+        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch permissions createdAt updatedAt =
             let
                 ref_ =
                     ProjectRef.projectRef handle_ slug_
@@ -196,6 +227,7 @@ decodeDetails =
             , isFaved = isFaved_
             , latestVersion = latestVersion
             , defaultBranch = defaultBranch
+            , permissions = permissions
             , createdAt = createdAt
             , updatedAt = updatedAt
             }
@@ -213,6 +245,7 @@ decodeDetails =
         |> optional "isFaved" decodeIsFaved Unknown
         |> required "latestRelease" (nullable Version.decode)
         |> required "defaultBranch" (nullable BranchRef.decode)
+        |> required "permissions" (Decode.list ProjectPermission.decode)
         |> required "createdAt" DateTime.decode
         |> required "updatedAt" DateTime.decode
 
