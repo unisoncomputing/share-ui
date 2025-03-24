@@ -211,7 +211,7 @@ decodeIsFaved =
 decodeDetails : Decode.Decoder ProjectDetails
 decodeDetails =
     let
-        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch permissions createdAt updatedAt =
+        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch createdAt updatedAt =
             let
                 ref_ =
                     ProjectRef.projectRef handle_ slug_
@@ -227,7 +227,7 @@ decodeDetails =
             , isFaved = isFaved_
             , latestVersion = latestVersion
             , defaultBranch = defaultBranch
-            , permissions = permissions
+            , permissions = []
             , createdAt = createdAt
             , updatedAt = updatedAt
             }
@@ -245,7 +245,7 @@ decodeDetails =
         |> optional "isFaved" decodeIsFaved Unknown
         |> required "latestRelease" (nullable Version.decode)
         |> required "defaultBranch" (nullable BranchRef.decode)
-        |> required "permissions" (Decode.list ProjectPermission.decode)
+        -- |> required "permissions" (Decode.list ProjectPermission.decode)
         |> required "createdAt" DateTime.decode
         |> required "updatedAt" DateTime.decode
 
