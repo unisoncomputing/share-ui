@@ -281,77 +281,73 @@ viewLoadingPage =
         |> PageLayout.withSubduedBackground
 
 
-viewCollaborators : Session -> Model -> Html Msg
-viewCollaborators session model =
-    if not (Session.isUnisonMember session) then
-        UI.nothing
+viewCollaborators : Model -> Html Msg
+viewCollaborators model =
+    let
+        collabs =
+            case model.collaborators of
+                Success collaborators ->
+                    let
+                        addButton =
+                            Button.iconThenLabel ShowAddCollaboratorModal Icon.plus "Add a collaborator"
 
-    else
-        let
-            collabs =
-                case model.collaborators of
-                    Success collaborators ->
-                        let
-                            addButton =
-                                Button.iconThenLabel ShowAddCollaboratorModal Icon.plus "Add a collaborator"
+                        viewCollaborator collab =
+                            div [ class "collaborator" ]
+                                [ div [ class "collaborator_profile-snippet" ]
+                                    [ ProfileSnippet.profileSnippet collab.user
+                                        |> ProfileSnippet.view
+                                    ]
+                                , div [ class "collaborator_role" ] [ text (collab.roles |> List.map ProjectRole.toString |> String.join ", ") ]
+                                , Button.icon (RemoveCollaborator collab) Icon.trash
+                                    |> Button.small
+                                    |> Button.subdued
+                                    |> Button.view
+                                ]
 
-                            viewCollaborator collab =
-                                div [ class "collaborator" ]
-                                    [ div [ class "collaborator_profile-snippet" ]
-                                        [ ProfileSnippet.profileSnippet collab.user
-                                            |> ProfileSnippet.view
-                                        ]
-                                    , div [ class "collaborator_role" ] [ text (collab.roles |> List.map ProjectRole.toString |> String.join ", ") ]
-                                    , Button.icon (RemoveCollaborator collab) Icon.trash
-                                        |> Button.small
-                                        |> Button.subdued
-                                        |> Button.view
+                        content =
+                            if List.isEmpty collaborators then
+                                div [ class "collaborators_empty-state" ]
+                                    [ div [ class "collaborators_empty-state_text" ]
+                                        [ Icon.view Icon.userGroup, text "You haven't invited any collaborators yet" ]
+                                    , Button.view addButton
                                     ]
 
-                            content =
-                                if List.isEmpty collaborators then
-                                    div [ class "collaborators_empty-state" ]
-                                        [ div [ class "collaborators_empty-state_text" ]
-                                            [ Icon.view Icon.userGroup, text "You haven't invited any collaborators yet" ]
-                                        , Button.view addButton
-                                        ]
+                            else
+                                div [ class "collaborators" ]
+                                    [ addButton |> Button.small |> Button.view
+                                    , Divider.divider
+                                        |> Divider.withoutMargin
+                                        |> Divider.small
+                                        |> Divider.view
+                                    , div [ class "collaborators_list" ]
+                                        (List.map viewCollaborator collaborators)
+                                    ]
+                    in
+                    content
 
-                                else
-                                    div [ class "collaborators" ]
-                                        [ addButton |> Button.small |> Button.view
-                                        , Divider.divider
-                                            |> Divider.withoutMargin
-                                            |> Divider.small
-                                            |> Divider.view
-                                        , div [ class "collaborators_list" ]
-                                            (List.map viewCollaborator collaborators)
-                                        ]
-                        in
-                        content
+                Failure _ ->
+                    div [ class "collaborators_error" ]
+                        [ StatusBanner.bad "Could not load collaborators"
+                        ]
 
-                    Failure _ ->
-                        div [ class "collaborators_error" ]
-                            [ StatusBanner.bad "Could not load collaborators"
-                            ]
-
-                    _ ->
-                        div [ class "collaborators_loading" ]
-                            [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
-                            , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
-                            , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
-                            , Placeholder.text |> Placeholder.withLength Placeholder.Large |> Placeholder.view
-                            ]
-        in
-        Card.card
-            [ h2 [] [ text "Project Collaborators" ]
-            , collabs
-            ]
-            |> Card.asContained
-            |> Card.view
+                _ ->
+                    div [ class "collaborators_loading" ]
+                        [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Large |> Placeholder.view
+                        ]
+    in
+    Card.card
+        [ h2 [] [ text "Project Collaborators" ]
+        , collabs
+        ]
+        |> Card.asContained
+        |> Card.view
 
 
-viewPageContent : Session -> ProjectDetails -> Model -> PageContent Msg
-viewPageContent session project model =
+viewPageContent : ProjectDetails -> Model -> PageContent Msg
+viewPageContent project model =
     let
         activeVisiblityValue =
             case model.form of
@@ -448,7 +444,7 @@ viewPageContent session project model =
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
-            [ viewCollaborators session model
+            [ viewCollaborators model
             , form
             , footer [ class "actions" ]
                 [ message
@@ -475,7 +471,7 @@ view session project model =
                         Nothing
         in
         ( PageLayout.centeredNarrowLayout
-            (viewPageContent session project model)
+            (viewPageContent project model)
             PageFooter.pageFooter
             |> PageLayout.withSubduedBackground
         , modal
