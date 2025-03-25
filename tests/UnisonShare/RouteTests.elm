@@ -172,7 +172,6 @@ userCodeRoute =
                 Expect.equal
                     (User (UserHandle.unsafeFromString "unison")
                         (UserCode
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
                         )
                     )
@@ -186,7 +185,6 @@ userCodeRoute =
                 Expect.equal
                     (User (UserHandle.unsafeFromString "unison")
                         (UserCode
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List"))))
                         )
                     )
@@ -200,7 +198,6 @@ userCodeRoute =
                 Expect.equal
                     (User (UserHandle.unsafeFromString "unison")
                         (UserCode
-                            ViewMode.Regular
                             (Definition (Perspective.toParams Perspective.relativeRootPerspective) (termRef "data.List.map"))
                         )
                     )
@@ -214,7 +211,6 @@ userCodeRoute =
                 Expect.equal
                     (User (UserHandle.unsafeFromString "unison")
                         (UserCode
-                            ViewMode.Regular
                             (Definition
                                 (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List")))
                                 (termRef "map")
