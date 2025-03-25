@@ -84,7 +84,7 @@ type CodeRoute
 type UserRoute
     = UserProfile
     | UserContributions
-    | UserCode ViewMode CodeRoute
+    | UserCode CodeRoute
 
 
 type ProjectContributionRoute
@@ -145,7 +145,7 @@ userProfile handle_ =
 
 userCode : UserHandle -> CodeRoute -> Route
 userCode handle_ codeRoute =
-    User handle_ (UserCode ViewMode.Regular codeRoute)
+    User handle_ (UserCode codeRoute)
 
 
 userDefinition : UserHandle -> Perspective -> Reference -> Route
@@ -154,7 +154,7 @@ userDefinition handle_ pers ref =
         pp =
             Perspective.toParams pers
     in
-    User handle_ (UserCode ViewMode.Regular (Definition pp ref))
+    User handle_ (UserCode (Definition pp ref))
 
 
 userCodeRoot : UserHandle -> Perspective -> Route
@@ -163,7 +163,7 @@ userCodeRoot handle_ pers =
         pp =
             Perspective.toParams pers
     in
-    User handle_ (UserCode ViewMode.Regular (CodeRoot pp))
+    User handle_ (UserCode (CodeRoot pp))
 
 
 userContributions : UserHandle -> Route
@@ -303,7 +303,7 @@ toRoute queryString =
         [ b homeParser
         , b catalogParser
         , b accountParser
-        , b (userParser queryString)
+        , b userParser
         , b (projectParser queryString) -- Specifically comes _after_ userParser because project slugs share the url space with user pages
         , b termsOfServiceParser
         , b (acceptTermsParser queryString)
@@ -413,18 +413,11 @@ viewModeQueryParamParser =
         ]
 
 
-userParser : Maybe String -> Parser Route
-userParser queryString =
+userParser : Parser Route
+userParser =
     let
-        viewMode : ViewMode
-        viewMode =
-            queryString
-                |> Maybe.withDefault ""
-                |> Parser.run viewModeQueryParamParser
-                |> Result.withDefault ViewMode.Regular
-
         userCode_ h c =
-            User h (UserCode viewMode c)
+            User h (UserCode c)
 
         userContrib h =
             User h UserContributions
@@ -671,7 +664,7 @@ toUrlPattern r =
         User _ UserProfile ->
             ":handle"
 
-        User _ (UserCode _ codeRoute) ->
+        User _ (UserCode codeRoute) ->
             ":handle/p/code" ++ codePattern codeRoute
 
         User _ UserContributions ->
@@ -823,16 +816,8 @@ toUrlString route =
                 User handle_ UserProfile ->
                     ( [ UserHandle.toString handle_ ], [] )
 
-                User handle_ (UserCode vm codeRoute) ->
-                    let
-                        path_ =
-                            [ UserHandle.toString handle_, "p", "code" ] ++ codePath codeRoute
-                    in
-                    if ViewMode.isPresentation vm then
-                        ( path_, [ string "viewMode" (ViewMode.toString vm) ] )
-
-                    else
-                        ( path_, [] )
+                User handle_ (UserCode codeRoute) ->
+                    ( [ UserHandle.toString handle_, "p", "code" ] ++ codePath codeRoute, [] )
 
                 User handle_ UserContributions ->
                     ( [ UserHandle.toString handle_, "p", "contributions" ], [] )

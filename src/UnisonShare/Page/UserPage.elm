@@ -13,7 +13,7 @@ import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
 import UI.Sidebar as Sidebar
 import UI.StatusMessage as StatusMessage
-import UI.ViewMode exposing (ViewMode)
+import UI.ViewMode as ViewMode
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
@@ -35,7 +35,7 @@ import UnisonShare.UserPageHeader as UserPageHeader
 
 type SubPage
     = Profile UserProfilePage.Model
-    | Code ViewMode CodePage.Model
+    | Code CodePage.Model
     | Contributions UserContributionsPage.Model
 
 
@@ -61,12 +61,12 @@ init appContext handle userRoute =
                     in
                     ( Profile profilePage, Cmd.map UserProfilePageMsg profileCmd )
 
-                UserCode vm codeRoute ->
+                UserCode codeRoute ->
                     let
                         ( codePage, codePageCmd ) =
                             CodePage.init appContext codeBrowsingContext codeRoute
                     in
-                    ( Code vm codePage, Cmd.map CodePageMsg codePageCmd )
+                    ( Code codePage, Cmd.map CodePageMsg codePageCmd )
 
                 UserContributions ->
                     let
@@ -123,18 +123,18 @@ update appContext handle route msg model =
             in
             ( { model | subPage = Profile profilePage_, user = user }, Cmd.map UserProfilePageMsg profileCmd )
 
-        ( Code viewMode codePage, CodePageMsg codePageMsg ) ->
+        ( Code codePage, CodePageMsg codePageMsg ) ->
             let
                 codeBrowsingContext =
                     CodeBrowsingContext.UserCode handle
             in
             case route of
-                Route.UserCode _ cr ->
+                Route.UserCode cr ->
                     let
                         ( codePage_, codePageCmd ) =
-                            CodePage.update appContext codeBrowsingContext viewMode cr codePageMsg codePage
+                            CodePage.update appContext codeBrowsingContext ViewMode.Regular cr codePageMsg codePage
                     in
-                    ( { model | subPage = Code viewMode codePage_ }
+                    ( { model | subPage = Code codePage_ }
                     , Cmd.map CodePageMsg codePageCmd
                     )
 
@@ -173,14 +173,14 @@ updateSubPage appContext handle model route =
                     in
                     ( { model | subPage = Profile profilePage }, Cmd.map UserProfilePageMsg profileCmd )
 
-        UserCode vm codeRoute ->
+        UserCode codeRoute ->
             case model.subPage of
-                Code _ codeSubPage ->
+                Code codeSubPage ->
                     let
                         ( codePage, codePageCmd ) =
                             CodePage.updateSubPage appContext codeBrowsingContext codeRoute codeSubPage
                     in
-                    ( { model | subPage = Code vm codePage }
+                    ( { model | subPage = Code codePage }
                     , Cmd.map CodePageMsg codePageCmd
                     )
 
@@ -189,7 +189,7 @@ updateSubPage appContext handle model route =
                         ( codePage, codePageCmd ) =
                             CodePage.init appContext codeBrowsingContext codeRoute
                     in
-                    ( { model | subPage = Code vm codePage }, Cmd.map CodePageMsg codePageCmd )
+                    ( { model | subPage = Code codePage }, Cmd.map CodePageMsg codePageCmd )
 
         UserContributions ->
             case model.subPage of
@@ -211,7 +211,7 @@ updateSubPage appContext handle model route =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.subPage of
-        Code _ ucp ->
+        Code ucp ->
             Sub.map CodePageMsg (CodePage.subscriptions ucp)
 
         _ ->
@@ -257,7 +257,7 @@ viewErrorPage appContext subPage handle error =
     let
         page =
             case ( error, subPage ) of
-                ( Http.BadStatus 404, Code _ _ ) ->
+                ( Http.BadStatus 404, Code _ ) ->
                     PageLayout.sidebarEdgeToEdgeLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -276,7 +276,7 @@ viewErrorPage appContext subPage handle error =
                         PageFooter.pageFooter
                         |> PageLayout.withSubduedBackground
 
-                ( _, Code _ _ ) ->
+                ( _, Code _ ) ->
                     PageLayout.sidebarEdgeToEdgeLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -306,7 +306,7 @@ viewLoadingPage appContext subPage handle =
                 Profile _ ->
                     ( UserProfilePage.viewLoadingPage, "user-profile-page" )
 
-                Code _ _ ->
+                Code _ ->
                     ( PageLayout.sidebarLeftContentLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -388,17 +388,16 @@ view appContext handle model =
                     , modal = Nothing
                     }
 
-                Code viewMode_ codeSubPage ->
+                Code codeSubPage ->
                     let
                         pageTitle =
                             handle_ ++ " | Code"
 
-                        appDoc page viewMode modal =
+                        appDoc page modal =
                             { pageId = "user-page code-page"
                             , title = pageTitle
                             , appHeader =
                                 AppHeader.appHeader AppHeader.None
-                                    |> AppHeader.withViewMode viewMode
                             , pageHeader = Just (userProfilePageHeader UserPageHeader.Code user)
                             , page = PageLayout.view page
                             , modal = modal
@@ -407,7 +406,7 @@ view appContext handle model =
                         ( codePage, modal_ ) =
                             CodePage.view appContext
                                 CodePageMsg
-                                viewMode_
+                                ViewMode.Regular
                                 codeSubPage
                     in
-                    appDoc codePage viewMode_ modal_
+                    appDoc codePage modal_
