@@ -103,13 +103,14 @@ type Msg
 
 update :
     AppContext
-    -> ProjectDetails
+    -> ProjectRef
     -> ContributionRef
     -> ProjectContributionRoute
+    -> WebData ProjectDetails
     -> Msg
     -> Model
     -> ( Model, Cmd Msg )
-update appContext project contribRef _ msg model =
+update appContext projectRef contribRef _ project msg model =
     case ( model.subPage, msg ) of
         ( _, NoOp ) ->
             ( model, Cmd.none )
@@ -124,7 +125,7 @@ update appContext project contribRef _ msg model =
                         ( formModel, formCmd ) =
                             ProjectContributionFormModal.init appContext
                                 a
-                                project.ref
+                                projectRef
                                 (ProjectContributionFormModal.Edit (Contribution.toSummary contrib))
                     in
                     ( { model | modal = EditModal formModel }, Cmd.map ProjectContributionFormModalMsg formCmd )
@@ -133,31 +134,36 @@ update appContext project contribRef _ msg model =
                     ( model, Cmd.none )
 
         ( _, ProjectContributionFormModalMsg formMsg ) ->
-            case ( appContext.session, model.contribution, model.modal ) of
-                ( Session.SignedIn account, Success contrib, EditModal formModel ) ->
-                    let
-                        ( projectContributionFormModal, cmd, out ) =
-                            ProjectContributionFormModal.update appContext
-                                project
-                                account
-                                formMsg
-                                formModel
+            case ( appContext.session, model.contribution ) of
+                ( Session.SignedIn account, Success contrib ) ->
+                    case ( model.modal, project ) of
+                        ( EditModal formModel, Success p ) ->
+                            let
+                                ( projectContributionFormModal, cmd, out ) =
+                                    ProjectContributionFormModal.update appContext
+                                        p
+                                        account
+                                        formMsg
+                                        formModel
 
-                        ( modal, contribution ) =
-                            case out of
-                                ProjectContributionFormModal.None ->
-                                    ( EditModal projectContributionFormModal, model.contribution )
+                                ( modal, contribution ) =
+                                    case out of
+                                        ProjectContributionFormModal.None ->
+                                            ( EditModal projectContributionFormModal, model.contribution )
 
-                                ProjectContributionFormModal.RequestToCloseModal ->
-                                    ( NoModal, model.contribution )
+                                        ProjectContributionFormModal.RequestToCloseModal ->
+                                            ( NoModal, model.contribution )
 
-                                ProjectContributionFormModal.Saved newContrib ->
-                                    -- TODO: also add a ContributionEvent
-                                    ( NoModal, Success (Contribution.toDetails contrib.contributionStateToken newContrib) )
-                    in
-                    ( { model | modal = modal, contribution = contribution }
-                    , Cmd.map ProjectContributionFormModalMsg cmd
-                    )
+                                        ProjectContributionFormModal.Saved newContrib ->
+                                            -- TODO: also add a ContributionEvent
+                                            ( NoModal, Success (Contribution.toDetails contrib.contributionStateToken newContrib) )
+                            in
+                            ( { model | modal = modal, contribution = contribution }
+                            , Cmd.map ProjectContributionFormModalMsg cmd
+                            )
+
+                        _ ->
+                            ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -169,7 +175,7 @@ update appContext project contribRef _ msg model =
             let
                 ( overviewPage_, overviewPageCmd, outMsg ) =
                     ProjectContributionOverviewPage.update appContext
-                        project.ref
+                        projectRef
                         contribRef
                         model.contribution
                         overviewPageMsg
@@ -194,7 +200,7 @@ update appContext project contribRef _ msg model =
             let
                 ( changesPage_, changesPageCmd ) =
                     ProjectContributionChangesPage.update appContext
-                        project.ref
+                        projectRef
                         contribRef
                         changesPageMsg
                         changesPage

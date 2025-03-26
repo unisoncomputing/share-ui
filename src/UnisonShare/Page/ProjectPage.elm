@@ -486,15 +486,16 @@ update appContext projectRef route msg model =
                     ( model, Cmd.none )
 
         ( Contribution currentContribRef contribPage, ProjectContributionPageMsg contribMsg ) ->
-            case ( model.project, route ) of
-                ( Success project, Route.ProjectContribution contribRef contribRoute ) ->
+            case route of
+                Route.ProjectContribution contribRef contribRoute ->
                     if ContributionRef.equals currentContribRef contribRef then
                         let
                             ( contribPage_, contribPageCmd ) =
                                 ProjectContributionPage.update appContext
-                                    project
+                                    projectRef
                                     contribRef
                                     contribRoute
+                                    model.project
                                     contribMsg
                                     contribPage
                         in
@@ -515,11 +516,11 @@ update appContext projectRef route msg model =
                     ( model, Cmd.none )
 
         ( Contributions contribsPage, ProjectContributionsPageMsg contribsMsg ) ->
-            case ( model.project, route ) of
-                ( Success project, Route.ProjectContributions ) ->
+            case route of
+                Route.ProjectContributions ->
                     let
                         ( contribsPage_, contribsPageCmd ) =
-                            ProjectContributionsPage.update appContext project contribsMsg contribsPage
+                            ProjectContributionsPage.update appContext projectRef model.project contribsMsg contribsPage
                     in
                     ( { model | subPage = Contributions contribsPage_ }
                     , Cmd.map ProjectContributionsPageMsg contribsPageCmd

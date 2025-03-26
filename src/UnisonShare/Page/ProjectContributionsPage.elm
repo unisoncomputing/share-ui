@@ -119,8 +119,8 @@ type Msg
     | ChangeTab Tab
 
 
-update : AppContext -> ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext project msg model =
+update : AppContext -> ProjectRef -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
+update appContext projectRef project msg model =
     case msg of
         FetchContributionsFinished contributions ->
             ( { model | contributions = contributions }, Cmd.none )
@@ -149,7 +149,7 @@ update appContext project msg model =
                             ProjectContributionFormModal.init
                                 appContext
                                 a
-                                project.ref
+                                projectRef
                                 ProjectContributionFormModal.Create
                     in
                     ( { model | modal = SubmitContributionModal projectContributionFormModal }
@@ -160,11 +160,11 @@ update appContext project msg model =
                     ( model, Cmd.none )
 
         ProjectContributionFormModalMsg formMsg ->
-            case ( appContext.session, model.modal ) of
-                ( Session.SignedIn account, SubmitContributionModal formModel ) ->
+            case ( appContext.session, model.modal, project ) of
+                ( Session.SignedIn account, SubmitContributionModal formModel, Success p ) ->
                     let
                         ( projectContributionFormModal, cmd, out ) =
-                            ProjectContributionFormModal.update appContext project account formMsg formModel
+                            ProjectContributionFormModal.update appContext p account formMsg formModel
 
                         ( modal, contributions ) =
                             case out of
