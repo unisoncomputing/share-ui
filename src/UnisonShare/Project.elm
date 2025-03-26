@@ -181,6 +181,11 @@ canContribute project =
     can ProjectPermission.ProjectContribute project
 
 
+canMaintain : ProjectWithPermissions a -> Bool
+canMaintain project =
+    can ProjectPermission.ProjectMaintain project
+
+
 canManage : ProjectWithPermissions a -> Bool
 canManage project =
     can ProjectPermission.ProjectManage project

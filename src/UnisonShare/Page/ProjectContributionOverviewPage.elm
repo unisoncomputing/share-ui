@@ -266,8 +266,8 @@ viewContribution session project updateStatus contribution mergeStatus =
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
-        canManage =
-            Project.canManage project
+        canMaintain =
+            Project.canMaintain project
 
         className =
             if updateStatus == UpdatingStatus then
@@ -293,7 +293,7 @@ viewContribution session project updateStatus contribution mergeStatus =
                 |> Button.view
 
         archiveButton =
-            if (canManage || isContributor) && updateStatus /= TimelineNotReady then
+            if (canMaintain || isContributor) && updateStatus /= TimelineNotReady then
                 Button.iconThenLabel (UpdateStatus ContributionStatus.Archived) Icon.archive "Archive"
                     |> Button.outlined
                     |> Button.view
@@ -302,7 +302,7 @@ viewContribution session project updateStatus contribution mergeStatus =
                 UI.nothing
 
         mergeButton =
-            if canManage && updateStatus /= TimelineNotReady then
+            if canMaintain && updateStatus /= TimelineNotReady then
                 case mergeStatus of
                     Checking ->
                         StatusBanner.working "Checking mergeability..."
@@ -362,7 +362,7 @@ viewContribution session project updateStatus contribution mergeStatus =
                 UI.nothing
 
         reopenButton =
-            if canManage || isContributor then
+            if canMaintain || isContributor then
                 Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Re-open"
                     |> Button.outlined
                     |> Button.view
