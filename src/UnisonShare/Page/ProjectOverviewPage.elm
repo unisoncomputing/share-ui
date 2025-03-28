@@ -749,11 +749,11 @@ view_ session project model =
                 ]
                 |> PageTitle.withRightSide rightSide
 
-        canManage =
-            Project.canManage project
+        canMaintain =
+            Project.canMaintain project
 
-        showIfCanManage c =
-            if canManage then
+        showIfCanMaintain c =
+            if canMaintain then
                 Just c
 
             else
@@ -763,7 +763,7 @@ view_ session project model =
             Button.iconThenLabel ShowEditDescriptionModal icon label
                 |> Button.small
                 |> Button.outlined
-                |> showIfCanManage
+                |> showIfCanMaintain
 
         summaryAndTags =
             case ( project.summary, Set.toList project.tags ) of
@@ -785,13 +785,13 @@ view_ session project model =
                             , Button.icon ShowEditDescriptionModal Icon.writingPad
                                 |> Button.small
                                 |> Button.outlined
-                                |> showIfCanManage
+                                |> showIfCanMaintain
                                 |> MaybeE.unwrap UI.nothing Button.view
                             ]
                         ]
 
                 ( Nothing, [] ) ->
-                    if canManage then
+                    if canMaintain then
                         Just
                             [ div [ class "project-description-empty-state" ]
                                 [ text "Add a bit of detail with a summary."
@@ -804,7 +804,7 @@ view_ session project model =
                         Nothing
 
                 ( Nothing, tags ) ->
-                    if canManage then
+                    if canMaintain then
                         Just
                             [ div []
                                 [ div
