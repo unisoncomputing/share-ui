@@ -13,31 +13,31 @@ import { titleize, userHandle, truncate } from "../common/utils.ts";
 async function projectContributionSocialImage(
   handle: string,
   projectSlug: string,
-  contribRef: number
+  contribRef: number,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log(
     "[ProjectContributionSocialImage]",
     "Fetching project",
-    projectRef
+    projectRef,
   );
   const project = await ShareAPI.getProject(handle, projectSlug);
   console.log(
     "[ProjectContributionSocialImage]",
     "Fetching contribution",
-    contribRef
+    contribRef,
   );
   const contrib = await ShareAPI.getContribution(
     handle,
     projectSlug,
-    contribRef
+    contribRef,
   );
 
   if (!project) {
     console.log(
       "[ProjectContributionSocialImage]",
       "Project not found",
-      projectRef
+      projectRef,
     );
     return await defaultSocialImage();
   }
@@ -46,7 +46,7 @@ async function projectContributionSocialImage(
     console.log(
       "[ProjectContributionSocialImage]",
       "Contribution not found",
-      contribRef
+      contribRef,
     );
     return await defaultSocialImage();
   }

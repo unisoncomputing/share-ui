@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 2, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/Finder.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/CodebaseTree/NamespaceListing.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/Syntax.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/Syntax/SyntaxSegment.elm" }
+  ]
+}

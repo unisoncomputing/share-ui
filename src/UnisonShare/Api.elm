@@ -2,7 +2,7 @@ module UnisonShare.Api exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.CodebaseApi as CodebaseApi
-import Code.Definition.Reference as Reference exposing (Reference(..))
+import Code.Definition.Reference as Reference
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Hash as Hash exposing (Hash)
 import Code.HashQualified as HQ
@@ -18,7 +18,6 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Maybe.Extra as MaybeE
 import Regex
 import Set exposing (Set)
-import UI.KeyboardShortcut.Key exposing (Key(..))
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)

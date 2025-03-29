@@ -48,7 +48,7 @@ async function load() {
       const fontFileResponse = await fetch(url);
       const data = await fontFileResponse.arrayBuffer();
       return { name, weight, style, data };
-    })
+    }),
   );
 }
 

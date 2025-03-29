@@ -31,7 +31,6 @@ import UI.EmptyStateCard as EmptyStateCard
 import UI.Form.TextField as TextField
 import UI.Icon as Icon
 import UI.KeyboardShortcut as KeyboardShortcut
-import UI.KeyboardShortcut.Key exposing (Key(..))
 import UI.KeyboardShortcut.KeyboardEvent as KeyboardEvent exposing (KeyboardEvent)
 import UI.KpiTag as KpiTag
 import UI.Modal as Modal

@@ -70,7 +70,7 @@ const ShareAPI = {
 
   projectBaseUrl: (handle: string, projectSlug: string, path?: string) => {
     return `${ShareAPI.baseURL}/users/${apiHandle(
-      handle
+      handle,
     )}/projects/${projectSlug}${path || ""}`;
   },
 
@@ -88,7 +88,7 @@ const ShareAPI = {
 
   getProject: async (
     handle: string,
-    projectSlug: string
+    projectSlug: string,
   ): Promise<APIProject> => {
     const url = ShareAPI.projectBaseUrl(handle, projectSlug);
 
@@ -104,12 +104,12 @@ const ShareAPI = {
   getContribution: async (
     handle: string,
     projectSlug: string,
-    contribRef: number
+    contribRef: number,
   ): Promise<APIContribution> => {
     const url = ShareAPI.projectBaseUrl(
       handle,
       projectSlug,
-      `/contributions/${contribRef}`
+      `/contributions/${contribRef}`,
     );
     return fetch(url).then(async (resp) => {
       if (!resp.ok) {
@@ -123,12 +123,12 @@ const ShareAPI = {
   getTicket: async (
     handle: string,
     projectSlug: string,
-    ticketRef: number
+    ticketRef: number,
   ): Promise<APITicket> => {
     const url = ShareAPI.projectBaseUrl(
       handle,
       projectSlug,
-      `/tickets/${ticketRef}`
+      `/tickets/${ticketRef}`,
     );
     return fetch(url).then(async (resp) => {
       if (!resp.ok) {
@@ -142,12 +142,12 @@ const ShareAPI = {
   getRelease: async (
     handle: string,
     projectSlug: string,
-    version: string
+    version: string,
   ): Promise<APIRelease> => {
     const url = ShareAPI.projectBaseUrl(
       handle,
       projectSlug,
-      `/releases/${version}`
+      `/releases/${version}`,
     );
 
     return fetch(url).then(async (resp) => {
@@ -163,13 +163,13 @@ const ShareAPI = {
     handle: string,
     projectSlug: string,
     branchRef: string,
-    fqn: Array<string>
+    fqn: Array<string>,
   ): Promise<APIDefinitions> => {
     function mkUrl(branchPart: string): string {
       return ShareAPI.projectBaseUrl(
         handle,
         projectSlug,
-        `/${branchPart}/definitions/by-name/${fqn.join(".")}`
+        `/${branchPart}/definitions/by-name/${fqn.join(".")}`,
       );
     }
 

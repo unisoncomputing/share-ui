@@ -3,6 +3,15 @@
   "automatically created by": "elm-review suppress",
   "learn more": "elm-review suppress --help",
   "suppressions": [
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/Browser.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/DefinitionDetailTooltip.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Lib/Paginated.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Lib/ScrollEvent.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/AppDocument.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Banner.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/ExternalLinkIcon.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Form/CheckboxField.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Toolbar.elm" },
     { "count": 1, "filePath": "src/UnisonShare/RichComment.elm" }
   ]
 }

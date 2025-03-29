@@ -7,7 +7,7 @@ import SocialImageWithIcon from "./social-image-with-icon.tsx";
 
 async function projectBranchesSocialImage(
   handle: string,
-  projectSlug: string
+  projectSlug: string,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log("[ProjectBranchesSocialImage]", "Fetching project", projectRef);
@@ -17,7 +17,7 @@ async function projectBranchesSocialImage(
     console.log(
       "[ProjectBranchesSocialImage]",
       "Project not found",
-      projectRef
+      projectRef,
     );
     return await defaultSocialImage();
   }

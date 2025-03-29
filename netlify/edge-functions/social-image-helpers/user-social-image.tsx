@@ -78,7 +78,7 @@ const STYLES = {
     boxModel: "border-box",
     borderRadius: Sizing.toPx(8),
     boxShadow: `inset 0 0 0 ${Sizing.toPx(
-      0.25
+      0.25,
     )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
       Colors.gray.darken30
     }`,

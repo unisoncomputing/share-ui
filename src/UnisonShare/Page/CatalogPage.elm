@@ -4,7 +4,6 @@ import Browser.Navigation as Nav
 import Html exposing (Html, div, footer, h1, p, strong, text)
 import Html.Attributes exposing (class)
 import Lib.HttpApi as HttpApi
-import Lib.SearchResults exposing (SearchResults(..))
 import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra as StringE

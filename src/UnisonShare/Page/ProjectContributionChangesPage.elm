@@ -1,7 +1,7 @@
 port module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 
 import Code.BranchRef exposing (BranchRef)
-import Code.Definition.Reference exposing (Reference(..))
+import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective

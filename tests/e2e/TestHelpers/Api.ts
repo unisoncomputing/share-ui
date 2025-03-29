@@ -7,7 +7,7 @@ import { project, account } from "./Fixtures";
 async function getAccount(
   page: Page,
   handle: "NOT_SIGNED_IN" | string,
-  accountData = {}
+  accountData = {},
 ) {
   if (handle === "NOT_SIGNED_IN") {
     return get(page, {
@@ -32,7 +32,7 @@ async function getProject(page: Page, projectRef: string, projectData = {}) {
 async function getProject_(
   page: Page,
   projectRef: string,
-  resp: { status: number; data?: {} }
+  resp: { status: number; data?: {} },
 ) {
   const [handle, projectSlug] = projectRef.split("/");
 
@@ -56,14 +56,14 @@ async function getProjectReadme(page: Page, projectRef: string) {
 async function getProjectDependencies(
   page: Page,
   projectRef: string,
-  release: string
+  release: string,
 ) {
   const [handle, projectSlug] = projectRef.split("/");
 
   return get(page, {
     url: `/users/${handle.replace(
       "@",
-      ""
+      "",
     )}/projects/${projectSlug}/releases/${release}/browse?namespace=lib`,
     status: 404,
   });

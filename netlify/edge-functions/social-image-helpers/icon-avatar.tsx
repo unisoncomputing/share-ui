@@ -26,7 +26,7 @@ function IconAvatar(props: IconAvatarProps): React.Element {
           backgroundImage: `linear-gradient(to bottom, ${Colors.purple3}, ${Colors.purple2})`,
           boxModel: "border-box",
           boxShadow: `inset 0 0 0 ${Sizing.toPx(
-            0.25
+            0.25,
           )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
             Colors.gray.darken30
           }`,
@@ -52,7 +52,7 @@ function IconAvatar(props: IconAvatarProps): React.Element {
         backgroundImage: `linear-gradient(to bottom, ${Colors.blue4}, ${Colors.purple5})`,
         boxModel: "border-box",
         boxShadow: `inset 0 0 0 ${Sizing.toPx(
-          0.25
+          0.25,
         )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
           Colors.gray.darken30
         }`,
