@@ -21,7 +21,7 @@ function renderRow(row: React.ReactNode): React.ReactNode {
 
   return intersperse(
     row_.filter((e: unknown) => !!e),
-    rowSep
+    rowSep,
   );
 }
 

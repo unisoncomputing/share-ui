@@ -7,7 +7,7 @@ import SocialImageWithIcon from "./social-image-with-icon.tsx";
 
 async function projectTicketsSocialImage(
   handle: string,
-  projectSlug: string
+  projectSlug: string,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log("[ProjectTicketsSocialImage]", "Fetching project", projectRef);

@@ -1,7 +1,7 @@
 module UnisonShare.RouteTests exposing (..)
 
 import Code.BranchRef as BranchRef
-import Code.Definition.Reference as Reference exposing (Reference(..))
+import Code.Definition.Reference as Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Perspective as Perspective
 import Code.Version as Version

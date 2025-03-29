@@ -13,7 +13,7 @@ import { userHandle, hash } from "../common/utils.ts";
 async function projectReleaseSocialImage(
   handle: string,
   projectSlug: string,
-  version: string
+  version: string,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log("[ProjectReleaseSocialImage]", "Fetching project", projectRef);

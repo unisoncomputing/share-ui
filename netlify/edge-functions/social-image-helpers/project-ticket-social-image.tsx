@@ -13,7 +13,7 @@ import { titleize, truncate, userHandle } from "../common/utils.ts";
 async function projectTicketSocialImage(
   handle: string,
   projectSlug: string,
-  ticketRef: number
+  ticketRef: number,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log("[ProjectTicketSocialImage]", "Fetching project", projectRef);

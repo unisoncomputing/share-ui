@@ -26,7 +26,7 @@ function ProjectOverview(handle: string, projectSlug: string): Route {
 function ProjectCode(
   handle: string,
   projectSlug: string,
-  branchRef?: string
+  branchRef?: string,
 ): Route {
   return new Route("ProjectCode", handle, projectSlug, branchRef);
 }
@@ -36,7 +36,7 @@ function ProjectDefinition(
   projectSlug: string,
   branchRef: string,
   definitionType: string,
-  fqn: Array<string>
+  fqn: Array<string>,
 ): Route {
   return new Route(
     "ProjectDefinition",
@@ -44,7 +44,7 @@ function ProjectDefinition(
     projectSlug,
     branchRef,
     definitionType,
-    fqn
+    fqn,
   );
 }
 
@@ -55,7 +55,7 @@ function ProjectTickets(handle: string, projectSlug: string): Route {
 function ProjectTicket(
   handle: string,
   projectSlug: string,
-  ticketRef: number
+  ticketRef: number,
 ): Route {
   return new Route("ProjectTicket", handle, projectSlug, ticketRef);
 }
@@ -67,7 +67,7 @@ function ProjectContributions(handle: string, projectSlug: string): Route {
 function ProjectContribution(
   handle: string,
   projectSlug: string,
-  contributionRef: number
+  contributionRef: number,
 ): Route {
   return new Route("ProjectContribution", handle, projectSlug, contributionRef);
 }
@@ -79,7 +79,7 @@ function ProjectReleases(handle: string, projectSlug: string): Route {
 function ProjectRelease(
   handle: string,
   projectSlug: string,
-  version: string
+  version: string,
 ): Route {
   return new Route("ProjectRelease", handle, projectSlug, version);
 }
@@ -142,7 +142,7 @@ function fromPathname(rawPath: string): Route {
           branchRef,
           // remove the trailing 's' from the definition type
           definitionType.substring(0, definitionType.length - 1),
-          fqn
+          fqn,
         );
       } else {
         return ProjectCode(handle, projectSlug, branchRef);

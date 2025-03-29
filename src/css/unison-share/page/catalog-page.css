@@ -9,7 +9,8 @@
   display: flex;
   flex: 1;
   height: 100%;
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       to bottom,
       var(--color-catalog-hero-bg),
       var(--color-catalog-hero-bg-transparent)

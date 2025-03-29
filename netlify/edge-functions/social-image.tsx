@@ -17,7 +17,7 @@ import projectBranchesSocialImage from "./social-image-helpers/project-branches-
 import projectDefinitionSocialImage from "./social-image-helpers/project-definition-social-image.tsx";
 
 async function socialImageResponse(
-  content: React.Element
+  content: React.Element,
 ): Promise<ImageResponse> {
   const fonts = await Fonts.load();
 
@@ -55,7 +55,7 @@ function generateSocialImage(url: URL) {
       const content = await projectCodeSocialImage(
         handle,
         projectSlug,
-        branchRef
+        branchRef,
       );
       const resp = await socialImageResponse(content);
       return resp;
@@ -66,21 +66,21 @@ function generateSocialImage(url: URL) {
       projectSlug,
       branchRef,
       definitionType,
-      fqn
+      fqn,
     ) {
       console.log(
         "MatchedRoute: ProjectDefinition",
         handle,
         projectSlug,
         definitionType,
-        fqn
+        fqn,
       );
       const content = await projectDefinitionSocialImage(
         handle,
         projectSlug,
         branchRef,
         definitionType,
-        fqn
+        fqn,
       );
       const resp = await socialImageResponse(content);
       return resp;
@@ -98,12 +98,12 @@ function generateSocialImage(url: URL) {
         "MatchedRoute: ProjectTicket",
         handle,
         projectSlug,
-        ticketRef
+        ticketRef,
       );
       const content = await projectTicketSocialImage(
         handle,
         projectSlug,
-        ticketRef
+        ticketRef,
       );
       const resp = await socialImageResponse(content);
       return resp;
@@ -113,7 +113,7 @@ function generateSocialImage(url: URL) {
       console.log("MatchedRoute: ProjectContributions", handle, projectSlug);
       const content = await projectContributionsSocialImage(
         handle,
-        projectSlug
+        projectSlug,
       );
       const resp = await socialImageResponse(content);
       return resp;
@@ -124,12 +124,12 @@ function generateSocialImage(url: URL) {
         "MatchedRoute: ProjectContribution",
         handle,
         projectSlug,
-        contribRef
+        contribRef,
       );
       const content = await projectContributionSocialImage(
         handle,
         projectSlug,
-        contribRef
+        contribRef,
       );
       const resp = await socialImageResponse(content);
       return resp;
@@ -147,7 +147,7 @@ function generateSocialImage(url: URL) {
       const content = await projectReleaseSocialImage(
         handle,
         projectSlug,
-        version
+        version,
       );
       const resp = await socialImageResponse(content);
       return resp;

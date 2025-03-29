@@ -32,7 +32,7 @@ async function projectDefinitionSocialImage(
   projectSlug: string,
   branchRef: string,
   definitionType: string,
-  ref: Array<string>
+  ref: Array<string>,
 ): Promise<React.Element> {
   const projectRef = `${handle}/${projectSlug}`;
   console.log("[ProjectDefinitionSocialImage]", "Fetching project", projectRef);
@@ -42,14 +42,14 @@ async function projectDefinitionSocialImage(
     handle,
     projectSlug,
     branchRef,
-    ref
+    ref,
   );
 
   if (!project) {
     console.log(
       "[ProjectDefinitionSocialImage]",
       "Project not found",
-      projectRef
+      projectRef,
     );
     return await defaultSocialImage();
   }

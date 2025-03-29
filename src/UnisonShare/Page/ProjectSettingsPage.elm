@@ -172,7 +172,7 @@ update appContext project msg model =
             let
                 collaborators =
                     model.collaborators
-                        |> RemoteData.map (List.filter (\c -> not (c == collab)))
+                        |> RemoteData.map (List.filter (\c -> c /= collab))
             in
             ( { model | collaborators = collaborators }, removeCollaborator appContext project.ref collab, None )
 

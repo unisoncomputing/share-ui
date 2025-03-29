@@ -6,7 +6,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.Search as Search exposing (Search(..))
+import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
 import Lib.Util exposing (decodeTag)
 import List.Nonempty as NEL

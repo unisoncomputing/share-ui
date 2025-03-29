@@ -3,6 +3,6 @@
   "automatically created by": "elm-review suppress",
   "learn more": "elm-review suppress --help",
   "suppressions": [
-    { "count": 12, "filePath": "elm.json" }
+    { "count": 4, "filePath": "elm.json" }
   ]
 }

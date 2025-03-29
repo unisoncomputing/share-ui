@@ -31,13 +31,13 @@ test.describe("without being signed in", () => {
     await API.getProject_(page, "@bob/private-project", { status: 404 });
 
     const response = await page.goto(
-      "http://localhost:1234/@bob/private-project"
+      "http://localhost:1234/@bob/private-project",
     );
     expect(response?.status()).toBeLessThan(400);
 
     // await expect(button(page, "Browse Project Code")).not.toBeVisible();
     await expect(
-      page.getByText("Couldn't find @bob/private-project")
+      page.getByText("Couldn't find @bob/private-project"),
     ).toBeVisible();
     await expect(navItem(page, "Code")).not.toBeVisible();
     await expect(navItem(page, "Tickets")).not.toBeVisible();
@@ -63,7 +63,7 @@ test.describe("signed in", () => {
       });
 
       const response = await page.goto(
-        "http://localhost:1234/@bob/private-project"
+        "http://localhost:1234/@bob/private-project",
       );
       expect(response?.status()).toBeLessThan(400);
 
@@ -86,7 +86,7 @@ test.describe("signed in", () => {
       });
 
       const response = await page.goto(
-        "http://localhost:1234/@bob/private-project"
+        "http://localhost:1234/@bob/private-project",
       );
       expect(response?.status()).toBeLessThan(400);
 
@@ -109,7 +109,7 @@ test.describe("signed in", () => {
       });
 
       const response = await page.goto(
-        "http://localhost:1234/@bob/private-project"
+        "http://localhost:1234/@bob/private-project",
       );
       expect(response?.status()).toBeLessThan(400);
 

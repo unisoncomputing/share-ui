@@ -22,7 +22,7 @@ const template = `
 
 function urlToImageUrl(url: URL): string {
   return `${url.protocol}//${url.hostname}/social-image?path=${encodeURI(
-    url.pathname
+    url.pathname,
   )}`;
 }
 
@@ -82,14 +82,14 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       projectSlug,
       branchRef,
       definitionType,
-      ref
+      ref,
     ) {
       const project = await ShareAPI.getProject(handle, projectSlug);
       const definitions = await ShareAPI.getDefinition(
         handle,
         projectSlug,
         branchRef,
-        ref
+        ref,
       );
 
       if (!project) return DefaultSocialContent;
@@ -166,7 +166,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
       const contrib = await ShareAPI.getContribution(
         handle,
         projectSlug,
-        contribRef
+        contribRef,
       );
 
       if (!project || !contrib) return DefaultSocialContent;
@@ -229,7 +229,7 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
 
 async function replaceSocialContent(
   request: Request,
-  context: Context
+  context: Context,
 ): Promise<Response> {
   if (request.url.includes("social-image")) {
     return;
