@@ -237,8 +237,8 @@ viewTicket session project updateStatus ticket =
                 |> Maybe.map (\h -> Session.isHandle h session)
                 |> Maybe.withDefault False
 
-        canManage =
-            Project.canManage project
+        canMaintain =
+            Project.canMaintain project
 
         className =
             if updateStatus == UpdatingStatus then
@@ -251,7 +251,7 @@ viewTicket session project updateStatus ticket =
             Markdown.view ticket.description
 
         closeButton =
-            if (canManage || isContributor) && updateStatus /= TimelineNotReady then
+            if (canMaintain || isContributor) && updateStatus /= TimelineNotReady then
                 Button.iconThenLabel (UpdateStatus Closed) Icon.archive "Close"
                     |> Button.view
 
@@ -259,7 +259,7 @@ viewTicket session project updateStatus ticket =
                 UI.nothing
 
         reopenButton =
-            if canManage || isContributor then
+            if canMaintain || isContributor then
                 Button.iconThenLabel (UpdateStatus Open) Icon.conversation "Re-open"
                     |> Button.outlined
                     |> Button.view

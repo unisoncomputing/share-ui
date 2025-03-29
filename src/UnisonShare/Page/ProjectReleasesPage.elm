@@ -750,7 +750,7 @@ viewPageContent appContext project releases latestReleaseNotes releaseDrafts =
             currentVersion releases
 
         ( drafts, publishAction ) =
-            if Project.canManage project then
+            if Project.canMaintain project then
                 ( releaseDrafts
                     |> List.filter (.version >> Version.lessThan currentVersion_)
                     |> NEL.fromList

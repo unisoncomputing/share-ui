@@ -285,7 +285,7 @@ canDelete session project branchRef =
             Session.isHandle h session
 
         _ ->
-            Project.canManage project && project.defaultBranch /= Just branchRef
+            Project.canMaintain project && project.defaultBranch /= Just branchRef
 
 
 viewBranchRow : AppContext -> ProjectDetails -> BranchSummary -> Html Msg
