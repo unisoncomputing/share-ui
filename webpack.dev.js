@@ -224,7 +224,7 @@ module.exports = {
         target: WEBSITE_URL,
         pathRewrite: { "^/website": "" },
         logLevel: "debug",
-      }
+      },
     ],
   },
 };
