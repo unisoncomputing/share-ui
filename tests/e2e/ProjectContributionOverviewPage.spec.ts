@@ -109,7 +109,7 @@ test.describe("while signed in", () => {
     await API.getAccount(page, "@alice");
   });
 
-  test.describe("with an another user's private project and `project:view` permission", () => {
+  test.describe("with another user's private project and `project:view` permission", () => {
     test("can view a contribution (but can't merge)", async ({ page }) => {
       const projectRef = "@bob/private-project";
       const contrib = contribution(projectRef);
