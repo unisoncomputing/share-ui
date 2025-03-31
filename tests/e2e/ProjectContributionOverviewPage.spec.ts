@@ -162,7 +162,7 @@ test.describe("while signed in", () => {
     });
   });
 
-  test.describe("with an another user's private project and `project:maintain` permission", () => {
+  test.describe("with another user's private project and `project:maintain` permission", () => {
     test("can view a contribution with a merge and archive button", async ({
       page,
     }) => {
