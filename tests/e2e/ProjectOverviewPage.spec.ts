@@ -3,6 +3,10 @@ import { test, expect } from "@playwright/test";
 import { navItem, button } from "./TestHelpers/Page";
 import * as API from "./TestHelpers/Api";
 
+test.beforeEach(async ({ page }) => {
+  await API.getWebsiteFeed(page);
+});
+
 test.describe("without being signed in", () => {
   test.beforeEach(async ({ page }) => {
     await API.getProjectReadme(page, "@unison/base");
@@ -46,7 +50,7 @@ test.describe("without being signed in", () => {
   });
 });
 
-test.describe("signed in", () => {
+test.describe("while signed in", () => {
   test.beforeEach(async ({ page }) => {
     await API.getAccount(page, "@alice");
     await API.getProjectReadme(page, "@bob/private-project");
@@ -67,7 +71,6 @@ test.describe("signed in", () => {
       );
       expect(response?.status()).toBeLessThan(400);
 
-      // await expect(button(page, "Browse Project Code")).toBeVisible();
       await expect(button(page, "Edit summary")).not.toBeVisible();
       await expect(navItem(page, "Code")).toBeVisible();
       await expect(navItem(page, "Tickets")).toBeVisible();

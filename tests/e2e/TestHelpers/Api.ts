@@ -1,6 +1,21 @@
 // Backend API Stubs
 import { Page } from "@playwright/test";
-import { project, account } from "./Fixtures";
+import { project, contributionTimeline, contribution, account } from "./Data";
+
+async function getWebsiteFeed(page: Page) {
+  const data = {
+    version: "https://jsonfeed.org/version/1.1",
+    title: "Unison Language | Blog",
+    language: "en",
+    home_page_url: "https://www.unison-lang.org/blog",
+    feed_url: "https://www.unison-lang.org/feed.json",
+    items: [],
+  };
+
+  return page.route(`*/**/website/feed.json`, async (request) => {
+    await request.fulfill({ status: 200, json: data });
+  });
+}
 
 // -- /account
 
@@ -69,6 +84,85 @@ async function getProjectDependencies(
   });
 }
 
+// -- /users/:handle/project/contributions/:contribution-ref
+//
+async function getProjectContribution(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  contribData = {},
+) {
+  return getProjectContribution_(page, projectRef, contribRef, {
+    status: 200,
+    data: contribData,
+  });
+}
+
+async function getProjectContribution_(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  resp: { status: number; data?: {} },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}`,
+    status: resp.status,
+    data: { ...contribution(projectRef, contribRef), ...resp.data },
+  });
+}
+
+async function getProjectContributionTimeline(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+) {
+  return getProjectContributionTimeline_(page, projectRef, contribRef, {
+    status: 200,
+  });
+}
+
+async function getProjectContributionTimeline_(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  resp: { status: number },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}/timeline`,
+    status: resp.status,
+    data: contributionTimeline(),
+  });
+}
+
+async function getProjectContributionMergeCheck(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+) {
+  return getProjectContributionMergeCheck_(page, projectRef, contribRef, {
+    status: 200,
+  });
+}
+
+async function getProjectContributionMergeCheck_(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  resp: { status: number },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}/merge/check`,
+    status: resp.status,
+    data: { mergeability: { kind: "fast_forward" } },
+  });
+}
+
 // -- UTIL
 
 type Response = {
@@ -89,10 +183,17 @@ async function get(page: Page, response: Response) {
 }
 
 export {
+  getWebsiteFeed,
   getAccount,
   getProject,
   getProject_,
   getProjectReadme,
   getProjectDependencies,
+  getProjectContribution,
+  getProjectContribution_,
+  getProjectContributionTimeline,
+  getProjectContributionTimeline_,
+  getProjectContributionMergeCheck,
+  getProjectContributionMergeCheck_,
   get,
 };

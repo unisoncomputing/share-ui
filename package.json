@@ -25,6 +25,7 @@
   "homepage": "https://share.unison-lang.org",
   "devDependencies": {
     "@csstools/postcss-global-data": "^3.0.0",
+    "@faker-js/faker": "^9.6.0",
     "@octokit/core": "^6.1.4",
     "@playwright/test": "^1.41.1",
     "@types/node": "^22.13.14",
