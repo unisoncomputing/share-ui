@@ -6,6 +6,7 @@ import UI.Navigation as Nav
 import UI.PageHeader as PageHeader exposing (PageHeader)
 import UI.ProfileSnippet as ProfileSnippet
 import UnisonShare.Link as Link
+import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.User exposing (User)
 
 
@@ -41,8 +42,8 @@ error =
     empty
 
 
-view : msg -> Bool -> ActiveNavItem -> UserHandle -> User u -> PageHeader msg
-view toggleMobileNavMsg mobileNavIsOpen activeNavItem handle user =
+view : Session -> msg -> Bool -> ActiveNavItem -> UserHandle -> User u -> PageHeader msg
+view session toggleMobileNavMsg mobileNavIsOpen activeNavItem handle user =
     let
         context_ =
             ProfileSnippet.profileSnippet user |> ProfileSnippet.view
@@ -54,25 +55,39 @@ view toggleMobileNavMsg mobileNavIsOpen activeNavItem handle user =
             }
 
         nav =
-            if activeNavItem == Code then
-                Nav.withItems
-                    []
-                    (Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability)
-                    [ Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch ]
-                    Nav.empty
+            if Session.isHandle handle session then
+                if activeNavItem == Code then
+                    Nav.withItems
+                        []
+                        (Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability)
+                        [ Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch ]
+                        Nav.empty
+
+                else if activeNavItem == Contributions then
+                    Nav.withItems
+                        [ Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability ]
+                        (Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch)
+                        []
+                        Nav.empty
+
+                else
+                    Nav.withNoSelectedItems
+                        [ Nav.navItem "Code" (Link.userCodeRoot handle)
+                            |> Nav.navItemWithIcon Icon.ability
+                        , Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch
+                        ]
+                        Nav.empty
 
             else if activeNavItem == Contributions then
                 Nav.withItems
-                    [ Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability ]
+                    []
                     (Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch)
                     []
                     Nav.empty
 
             else
                 Nav.withNoSelectedItems
-                    [ Nav.navItem "Code" (Link.userCodeRoot handle)
-                        |> Nav.navItemWithIcon Icon.ability
-                    , Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch
+                    [ Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch
                     ]
                     Nav.empty
     in

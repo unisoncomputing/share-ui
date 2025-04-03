@@ -294,6 +294,7 @@ view appContext handle model =
 
         userProfilePageHeader activeNavItem user =
             UserPageHeader.view
+                appContext.session
                 ToggleMobileNav
                 model.mobileNavIsOpen
                 activeNavItem

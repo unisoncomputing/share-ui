@@ -224,6 +224,7 @@ view appContext model =
                 header =
                     Just
                         (UserPageHeader.view
+                            appContext.session
                             ToggleMobileNav
                             mobileNavIsOpen
                             UserPageHeader.UserProfile
