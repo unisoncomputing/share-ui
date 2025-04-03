@@ -41,7 +41,6 @@ type alias UserDetails =
         , location : Maybe String
         , bio : Maybe String
         , pronouns : Maybe String
-        , twitterHandle : Maybe String
         }
 
 
@@ -101,7 +100,7 @@ decodeSummaryWithId =
 decodeDetails : Decode.Decoder UserDetails
 decodeDetails =
     let
-        makeDetails handle name_ avatarUrl pronouns bio location website twitterHandle =
+        makeDetails handle name_ avatarUrl pronouns bio location website =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
@@ -109,7 +108,6 @@ decodeDetails =
             , bio = bio
             , location = location
             , website = website
-            , twitterHandle = twitterHandle
             }
     in
     Decode.succeed makeDetails
@@ -120,4 +118,3 @@ decodeDetails =
         |> required "bio" (nullable string)
         |> required "location" (nullable string)
         |> required "website" (nullable decodeUrl)
-        |> required "twitterHandle" (nullable string)

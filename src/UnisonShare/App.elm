@@ -46,7 +46,9 @@ import UnisonShare.Page.AppErrorPage as AppErrorPage
 import UnisonShare.Page.CatalogPage as CatalogPage
 import UnisonShare.Page.CloudPage as CloudPage
 import UnisonShare.Page.NotFoundPage as NotFoundPage
+import UnisonShare.Page.OrgPage as OrgPage
 import UnisonShare.Page.PrivacyPolicyPage as PrivacyPolicyPage
+import UnisonShare.Page.ProfilePage as ProfilePage
 import UnisonShare.Page.ProjectPage as ProjectPage
 import UnisonShare.Page.TermsOfServicePage as TermsOfServicePage
 import UnisonShare.Page.UcmConnectedPage as UcmConnectedPage
@@ -68,7 +70,9 @@ import WhatsNew exposing (WhatsNew)
 type Page
     = Catalog CatalogPage.Model
     | Account AccountPage.Model
+    | Profile UserHandle ProfilePage.Model
     | User UserHandle Route.UserRoute UserPage.Model
+    | Org UserHandle Route.OrgRoute OrgPage.Model
     | Project ProjectRef Route.ProjectRoute ProjectPage.Model
     | TermsOfService
     | AcceptTerms (Maybe Url) AcceptTermsPage.Model
@@ -130,12 +134,26 @@ init appContext route =
                     in
                     ( Account account, Cmd.none )
 
+                Route.Profile handle ->
+                    let
+                        ( profile, profileCmd ) =
+                            ProfilePage.init appContext handle
+                    in
+                    ( Profile handle profile, Cmd.map ProfilePageMsg profileCmd )
+
                 Route.User handle userRoute ->
                     let
                         ( user, userCmd ) =
                             UserPage.init appContext handle userRoute
                     in
                     ( User handle userRoute user, Cmd.map UserPageMsg userCmd )
+
+                Route.Org handle orgRoute ->
+                    let
+                        ( org, orgCmd ) =
+                            OrgPage.init appContext handle orgRoute
+                    in
+                    ( Org handle orgRoute org, Cmd.map OrgPageMsg orgCmd )
 
                 Route.Project projectRef projectRoute ->
                     let
@@ -200,7 +218,9 @@ type Msg
     | WhatsNewMarkAllAsRead
       -- Sub msgs
     | CatalogPageMsg CatalogPage.Msg
+    | ProfilePageMsg ProfilePage.Msg
     | UserPageMsg UserPage.Msg
+    | OrgPageMsg OrgPage.Msg
     | ProjectPageMsg ProjectPage.Msg
     | AccountPageMsg AccountPage.Msg
     | AcceptTermsPageMsg AcceptTermsPage.Msg
@@ -261,6 +281,13 @@ update msg ({ appContext } as model) =
                         Route.Account ->
                             ( { model_ | page = Account AccountPage.init }, Cmd.none )
 
+                        Route.Profile handle ->
+                            let
+                                ( profile, cmd ) =
+                                    ProfilePage.init appContext_ handle
+                            in
+                            ( { model_ | page = Profile handle profile }, Cmd.map ProfilePageMsg cmd )
+
                         Route.User handle userRoute ->
                             case model_.page of
                                 User currentHandle _ userModel ->
@@ -284,6 +311,30 @@ update msg ({ appContext } as model) =
                                             UserPage.init appContext_ handle userRoute
                                     in
                                     ( { model_ | page = User handle userRoute user }, Cmd.map UserPageMsg cmd )
+
+                        Route.Org handle orgRoute ->
+                            case model_.page of
+                                Org currentHandle _ userModel ->
+                                    if UserHandle.equals currentHandle handle then
+                                        let
+                                            ( org, cmd ) =
+                                                OrgPage.updateSubPage appContext_ handle userModel orgRoute
+                                        in
+                                        ( { model_ | page = Org handle orgRoute org }, Cmd.map OrgPageMsg cmd )
+
+                                    else
+                                        let
+                                            ( org, cmd ) =
+                                                OrgPage.init appContext_ handle orgRoute
+                                        in
+                                        ( { model_ | page = Org handle orgRoute org }, Cmd.map OrgPageMsg cmd )
+
+                                _ ->
+                                    let
+                                        ( org, cmd ) =
+                                            OrgPage.init appContext_ handle orgRoute
+                                    in
+                                    ( { model_ | page = Org handle orgRoute org }, Cmd.map OrgPageMsg cmd )
 
                         Route.Project projectRef projectRoute ->
                             case model_.page of
@@ -425,12 +476,26 @@ update msg ({ appContext } as model) =
             in
             ( { model | page = Catalog catalog }, Cmd.map CatalogPageMsg cmd )
 
+        ( Profile handle m, ProfilePageMsg pMsg ) ->
+            let
+                ( profile, cmd ) =
+                    ProfilePage.update appContext handle pMsg m
+            in
+            ( { model | page = Profile handle profile }, Cmd.map ProfilePageMsg cmd )
+
         ( User handle route m, UserPageMsg uMsg ) ->
             let
                 ( user, cmd ) =
                     UserPage.update appContext handle route uMsg m
             in
             ( { model | page = User handle route user }, Cmd.map UserPageMsg cmd )
+
+        ( Org handle route m, OrgPageMsg oMsg ) ->
+            let
+                ( org, cmd ) =
+                    OrgPage.update appContext handle route oMsg m
+            in
+            ( { model | page = Org handle route org }, Cmd.map OrgPageMsg cmd )
 
         ( Project projectRef route m, ProjectPageMsg pMsg ) ->
             let
@@ -670,8 +735,14 @@ view model =
                         Session.Anonymous ->
                             NotFoundPage.view
 
+                Profile _ profile ->
+                    AppDocument.map ProfilePageMsg (ProfilePage.view appContext profile)
+
                 User handle _ userModel ->
                     AppDocument.map UserPageMsg (UserPage.view appContext handle userModel)
+
+                Org handle _ orgModel ->
+                    AppDocument.map OrgPageMsg (OrgPage.view appContext handle orgModel)
 
                 Project projectRef _ projectModel ->
                     AppDocument.map ProjectPageMsg (ProjectPage.view appContext projectRef projectModel)

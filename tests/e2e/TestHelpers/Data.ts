@@ -17,9 +17,41 @@ function user(handle?: string) {
 
   return {
     avatarUrl: faker.image.avatar(),
-    handle: handle_,
+    handle: handle_.replace("@", ""),
     name: `${firstName} ${lastName}`,
     userId: faker.string.uuid(),
+    kind: "user",
+  };
+}
+
+function userDetails(handle?: string) {
+  const firstName = faker.person.firstName();
+  const lastName = faker.person.lastName();
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+
+  return {
+    avatarUrl: faker.image.avatar(),
+    handle: handle_.replace("@", ""),
+    name: `${firstName} ${lastName}`,
+    userId: faker.string.uuid(),
+    website: faker.internet.url(),
+    location: null,
+    bio: faker.person.bio(),
+    pronouns: null,
+    kind: "user",
+  };
+}
+
+function org(handle?: string) {
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+
+  return {
+    avatarUrl: faker.image.avatar(),
+    handle: handle_.replace("@", ""),
+    name: faker.company.name(),
+    orgId: faker.string.uuid(),
+    kind: "org",
+    permissions: [],
   };
 }
 
@@ -29,8 +61,9 @@ function projectRef(handle?: string) {
   return `@${handle_}/${slug}`;
 }
 
-function project(projectRef: string) {
-  const [handle, slug] = projectRef.split("/");
+function project(ref?: string) {
+  const ref_ = ref ? ref : projectRef();
+  const [handle, slug] = ref_.split("/");
 
   return {
     createdAt: faker.date.past(),
@@ -125,6 +158,9 @@ export {
   projectRef,
   project,
   account,
+  user,
+  userDetails,
+  org,
   contribution,
   contributionTimeline,
   contributionStatusChangeEvent,
