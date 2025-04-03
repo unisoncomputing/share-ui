@@ -170,7 +170,7 @@ viewLoadingPage =
             PageContent.oneColumn
                 [ div [ class "org-profile-page_page-content" ]
                     [ div [ class "org-profile_main-content" ]
-                        [ text "Loading..." ]
+                        [ text "" ]
                     ]
                 ]
     in

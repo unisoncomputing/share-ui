@@ -4,14 +4,13 @@
 
 module UnisonShare.Page.ProfilePage exposing (..)
 
-import Html exposing (div, text)
+import Html exposing (div)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util as Util
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
 import UI.StatusMessage as StatusMessage
@@ -160,8 +159,7 @@ viewLoadingPage =
         content =
             PageContent.oneColumn
                 [ div [ class "profile-page_page-content" ]
-                    [ div [ class "profile_main-content" ]
-                        [ text "Loading profile..." ]
+                    [ div [ class "profile_main-content" ] []
                     ]
                 ]
     in
@@ -183,7 +181,6 @@ viewErrorPage handle error =
                     PageLayout.centeredNarrowLayout
                         (PageContent.oneColumn
                             [ StatusMessage.bad "Error, could not load page" [] |> StatusMessage.view
-                            , text (Util.httpErrorToString error)
                             ]
                         )
                         PageFooter.pageFooter
