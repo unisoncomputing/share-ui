@@ -17,8 +17,9 @@ import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Org as Org exposing (OrgSummary)
 import UnisonShare.OrgPageHeader as OrgPageHeader
+import UnisonShare.Page.OrgPeoplePage as OrgPeoplePage
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Route exposing (OrgRoute)
+import UnisonShare.Route exposing (OrgRoute(..))
 
 
 
@@ -26,7 +27,7 @@ import UnisonShare.Route exposing (OrgRoute)
 
 
 type SubPage
-    = People
+    = People OrgPeoplePage.Model
     | Settings
 
 
@@ -38,12 +39,25 @@ type alias Model =
 
 
 init : AppContext -> UserHandle -> OrgRoute -> ( Model, Cmd Msg )
-init appContext handle _ =
+init appContext orgHandle route =
+    let
+        ( subPage, cmd ) =
+            case route of
+                OrgPeople ->
+                    let
+                        ( p, cmd_ ) =
+                            OrgPeoplePage.init appContext orgHandle
+                    in
+                    ( People p, Cmd.map OrgPeoplePageMsg cmd_ )
+
+                OrgSettings ->
+                    ( Settings, Cmd.none )
+    in
     ( { org = Loading
-      , subPage = People
+      , subPage = subPage
       , mobileNavIsOpen = False
       }
-    , fetchOrg appContext handle
+    , Cmd.batch [ fetchOrg appContext orgHandle, cmd ]
     )
 
 
@@ -54,16 +68,27 @@ init appContext handle _ =
 type Msg
     = FetchOrgFinished (WebData OrgSummary)
     | ToggleMobileNav
+    | OrgPeoplePageMsg OrgPeoplePage.Msg
 
 
 update : AppContext -> UserHandle -> OrgRoute -> Msg -> Model -> ( Model, Cmd Msg )
-update _ _ _ msg model =
+update appContext orgHandle _ msg model =
     case ( model.subPage, msg ) of
         ( _, FetchOrgFinished o ) ->
             ( { model | org = o }, Cmd.none )
 
         ( _, ToggleMobileNav ) ->
             ( { model | mobileNavIsOpen = not model.mobileNavIsOpen }, Cmd.none )
+
+        ( People people, OrgPeoplePageMsg pMsg ) ->
+            let
+                ( people_, pCmd ) =
+                    OrgPeoplePage.update appContext orgHandle pMsg people
+            in
+            ( { model | subPage = People people_ }, Cmd.map OrgPeoplePageMsg pCmd )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 updateSubPage : AppContext -> UserHandle -> Model -> OrgRoute -> ( Model, Cmd Msg )
@@ -125,7 +150,7 @@ viewLoadingPage _ _ handle =
     , appHeader = AppHeader.appHeader AppHeader.None
     , pageHeader = Just OrgPageHeader.loading
     , page =
-        PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "loading..." ])
+        PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "" ])
             PageFooter.pageFooter
             |> PageLayout.view
     , modal = Nothing
@@ -134,20 +159,36 @@ viewLoadingPage _ _ handle =
 
 view : AppContext -> UserHandle -> Model -> AppDocument Msg
 view appContext handle model =
-    {-
-       let
-           handle_ =
-               UserHandle.toString handle
+    let
+        orgPageHeader activeNavItem org =
+            OrgPageHeader.view
+                ToggleMobileNav
+                model.mobileNavIsOpen
+                activeNavItem
+                handle
+                org
 
-           orgPageHeader activeNavItem user =
-               OrgPageHeader.view
-                   ToggleMobileNav
-                   model.mobileNavIsOpen
-                   activeNavItem
-                   handle
-                   user
-       in
-    -}
+        appDoc activeNavItem org page modal =
+            let
+                pageId =
+                    case activeNavItem of
+                        OrgPageHeader.OrgProfile ->
+                            "org-page org-profile-page"
+
+                        OrgPageHeader.People ->
+                            "org-page org-people-page"
+
+                        OrgPageHeader.Settings ->
+                            "org-page org-settings-page"
+            in
+            { pageId = pageId
+            , title = UserHandle.toString handle ++ " | Loading..."
+            , appHeader = AppHeader.appHeader AppHeader.None
+            , pageHeader = Just (orgPageHeader activeNavItem org)
+            , page = page
+            , modal = modal
+            }
+    in
     case model.org of
         NotAsked ->
             viewLoadingPage appContext model.subPage handle
@@ -158,5 +199,24 @@ view appContext handle model =
         Failure e ->
             viewErrorPage appContext model.subPage handle e
 
-        Success _ ->
-            viewLoadingPage appContext model.subPage handle
+        Success org ->
+            case model.subPage of
+                People people ->
+                    let
+                        ( page, modal ) =
+                            OrgPeoplePage.view people
+                    in
+                    appDoc
+                        OrgPageHeader.People
+                        org
+                        (page |> PageLayout.map OrgPeoplePageMsg |> PageLayout.view)
+                        (Maybe.map (Html.map OrgPeoplePageMsg) modal)
+
+                Settings ->
+                    appDoc OrgPageHeader.Settings
+                        org
+                        (PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "Settings" ])
+                            PageFooter.pageFooter
+                            |> PageLayout.view
+                        )
+                        Nothing
