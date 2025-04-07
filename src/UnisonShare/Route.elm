@@ -13,7 +13,9 @@ module UnisonShare.Route exposing
     , definition
     , fromUrl
     , navigate
+    , orgPeople
     , orgProfile
+    , orgSettings
     , privacyPolicy
     , projectBranch
     , projectBranchDefinition
@@ -154,6 +156,16 @@ userProfile handle_ =
 orgProfile : UserHandle -> Route
 orgProfile handle_ =
     Profile handle_
+
+
+orgPeople : UserHandle -> Route
+orgPeople handle_ =
+    Org handle_ OrgPeople
+
+
+orgSettings : UserHandle -> Route
+orgSettings handle_ =
+    Org handle_ OrgSettings
 
 
 userCode : UserHandle -> CodeRoute -> Route
@@ -452,15 +464,15 @@ userParser =
 orgParser : Parser Route
 orgParser =
     let
-        orgPeople h =
+        orgPeople_ h =
             Org h OrgPeople
 
-        orgSettings h =
+        orgSettings_ h =
             Org h OrgSettings
     in
     oneOf
-        [ b (succeed orgPeople |. slash |= userHandle |. slash |. slash |. s "people" |. end)
-        , b (succeed orgSettings |. slash |= userHandle |. slash |. s "settings" |. end)
+        [ b (succeed orgPeople_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "people" |. end)
+        , b (succeed orgSettings_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "settings" |. end)
         ]
 
 
@@ -706,10 +718,10 @@ toUrlPattern r =
             ":handle/p/contributions"
 
         Org _ OrgPeople ->
-            ":handle/people"
+            ":handle/p/people"
 
         Org _ OrgSettings ->
-            ":handle/settings"
+            ":handle/p/settings"
 
         Project _ ProjectOverview ->
             ":handle/:project-slug"
@@ -864,10 +876,10 @@ toUrlString route =
                     ( [ UserHandle.toString handle_, "p", "contributions" ], [] )
 
                 Org handle_ OrgPeople ->
-                    ( [ UserHandle.toString handle_, "people" ], [] )
+                    ( [ UserHandle.toString handle_, "p", "people" ], [] )
 
                 Org handle_ OrgSettings ->
-                    ( [ UserHandle.toString handle_, "settings" ], [] )
+                    ( [ UserHandle.toString handle_, "p", "settings" ], [] )
 
                 Project projectRef_ ProjectOverview ->
                     ( ProjectRef.toUrlPath projectRef_, [] )

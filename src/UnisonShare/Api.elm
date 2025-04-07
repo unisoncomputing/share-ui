@@ -23,6 +23,8 @@ import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DefinitionDiff as DefinitionDiff
+import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
+import UnisonShare.OrgRole as OrgRole
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
@@ -169,6 +171,105 @@ is likely to grow to include data not needed for Session.
 session : Endpoint
 session =
     GET { path = [ "account" ], queryParams = [] }
+
+
+
+-- ORGS
+-- ORG ROLE ASSIGNMENTS (COLLABORATORS)
+
+
+orgRoleAssignments : UserHandle -> Endpoint
+orgRoleAssignments orgHandle =
+    let
+        handle =
+            UserHandle.toUnprefixedString orgHandle
+    in
+    GET
+        { path = [ "orgs", handle, "roles" ]
+        , queryParams = []
+        }
+
+
+createOrgRoleAssignment : UserHandle -> List OrgMember -> Endpoint
+createOrgRoleAssignment orgHandle members =
+    let
+        handle =
+            UserHandle.toUnprefixedString orgHandle
+
+        toAssignment member =
+            case member of
+                OrgMember.UserMember u ->
+                    Encode.object
+                        [ ( "subject"
+                          , Encode.object
+                                [ ( "kind", Encode.string "user" )
+                                , ( "id", Encode.string u.user.id )
+                                ]
+                          )
+                        , ( "roles", Encode.list OrgRole.encode u.roles )
+                        ]
+
+                OrgMember.TeamMember t ->
+                    Encode.object
+                        [ ( "subject"
+                          , Encode.object
+                                [ ( "kind", Encode.string "team" )
+                                , ( "id", Encode.string t.teamId )
+                                ]
+                          )
+                        , ( "roles", Encode.list OrgRole.encode t.roles )
+                        ]
+
+        body =
+            Encode.object
+                [ ( "role_assignments", Encode.list toAssignment members ) ]
+    in
+    POST
+        { path = [ "orgs", handle, "roles" ]
+        , queryParams = []
+        , body = Http.jsonBody body
+        }
+
+
+deleteOrgRoleAssignment : UserHandle -> OrgMember -> Endpoint
+deleteOrgRoleAssignment orgHandle member =
+    let
+        handle =
+            UserHandle.toUnprefixedString orgHandle
+
+        toAssignment member_ =
+            case member_ of
+                OrgMember.UserMember u ->
+                    Encode.object
+                        [ ( "subject"
+                          , Encode.object
+                                [ ( "kind", Encode.string "user" )
+                                , ( "id", Encode.string u.user.id )
+                                ]
+                          )
+                        , ( "roles", Encode.list OrgRole.encode u.roles )
+                        ]
+
+                OrgMember.TeamMember t ->
+                    Encode.object
+                        [ ( "subject"
+                          , Encode.object
+                                [ ( "kind", Encode.string "team" )
+                                , ( "id", Encode.string t.teamId )
+                                ]
+                          )
+                        , ( "roles", Encode.list OrgRole.encode t.roles )
+                        ]
+
+        body =
+            Encode.object
+                [ ( "role_assignments", Encode.list toAssignment [ member ] ) ]
+    in
+    DELETE
+        { path = [ "orgs", handle, "roles" ]
+        , queryParams = []
+        , body = Http.jsonBody body
+        }
 
 
 
