@@ -10,13 +10,13 @@ import UI.EmptyStateCard as EmptyStateCard
 import UI.Icon as Icon
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
-import UI.StatusMessage as StatusMessage
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Org as Org exposing (OrgSummary)
 import UnisonShare.OrgPageHeader as OrgPageHeader
+import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.Page.OrgPeoplePage as OrgPeoplePage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Route exposing (OrgRoute(..))
@@ -111,12 +111,12 @@ fetchOrg appContext handle =
 -- VIEW
 
 
-viewErrorPage : AppContext -> SubPage -> UserHandle -> Http.Error -> AppDocument msg
-viewErrorPage _ subPage handle error =
+viewErrorPage : AppContext -> UserHandle -> Http.Error -> AppDocument msg
+viewErrorPage appContext handle error =
     let
         page =
-            case ( error, subPage ) of
-                ( Http.BadStatus 404, _ ) ->
+            case error of
+                Http.BadStatus 404 ->
                     PageLayout.centeredLayout
                         (PageContent.oneColumn
                             [ EmptyState.iconCloud
@@ -129,10 +129,7 @@ viewErrorPage _ subPage handle error =
                         |> PageLayout.withSubduedBackground
 
                 _ ->
-                    PageLayout.centeredLayout
-                        (PageContent.oneColumn [ StatusMessage.bad "Error, could not load page" [] |> StatusMessage.view ])
-                        PageFooter.pageFooter
-                        |> PageLayout.withSubduedBackground
+                    ErrorPage.view appContext.session error "organization" "organization-error"
     in
     { pageId = "org-page org-page-error"
     , title = UserHandle.toString handle ++ " | Error"
@@ -159,36 +156,6 @@ viewLoadingPage _ _ handle =
 
 view : AppContext -> UserHandle -> Model -> AppDocument Msg
 view appContext handle model =
-    let
-        orgPageHeader activeNavItem org =
-            OrgPageHeader.view
-                ToggleMobileNav
-                model.mobileNavIsOpen
-                activeNavItem
-                handle
-                org
-
-        appDoc activeNavItem org page modal =
-            let
-                pageId =
-                    case activeNavItem of
-                        OrgPageHeader.OrgProfile ->
-                            "org-page org-profile-page"
-
-                        OrgPageHeader.People ->
-                            "org-page org-people-page"
-
-                        OrgPageHeader.Settings ->
-                            "org-page org-settings-page"
-            in
-            { pageId = pageId
-            , title = UserHandle.toString handle ++ " | Loading..."
-            , appHeader = AppHeader.appHeader AppHeader.None
-            , pageHeader = Just (orgPageHeader activeNavItem org)
-            , page = page
-            , modal = modal
-            }
-    in
     case model.org of
         NotAsked ->
             viewLoadingPage appContext model.subPage handle
@@ -197,26 +164,58 @@ view appContext handle model =
             viewLoadingPage appContext model.subPage handle
 
         Failure e ->
-            viewErrorPage appContext model.subPage handle e
+            viewErrorPage appContext handle e
 
         Success org ->
-            case model.subPage of
-                People people ->
-                    let
-                        ( page, modal ) =
-                            OrgPeoplePage.view people
-                    in
-                    appDoc
-                        OrgPageHeader.People
-                        org
-                        (page |> PageLayout.map OrgPeoplePageMsg |> PageLayout.view)
-                        (Maybe.map (Html.map OrgPeoplePageMsg) modal)
+            if Org.canManage org then
+                let
+                    orgPageHeader activeNavItem =
+                        OrgPageHeader.view
+                            ToggleMobileNav
+                            model.mobileNavIsOpen
+                            activeNavItem
+                            handle
+                            org
 
-                Settings ->
-                    appDoc OrgPageHeader.Settings
-                        org
-                        (PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "Settings" ])
-                            PageFooter.pageFooter
-                            |> PageLayout.view
-                        )
-                        Nothing
+                    appDoc activeNavItem page modal =
+                        let
+                            ( pageId, pageTitle ) =
+                                case activeNavItem of
+                                    OrgPageHeader.OrgProfile ->
+                                        ( "org-page org-profile-page", "Profile" )
+
+                                    OrgPageHeader.People ->
+                                        ( "org-page org-people-page", "People" )
+
+                                    OrgPageHeader.Settings ->
+                                        ( "org-page org-settings-page", "Settings" )
+                        in
+                        { pageId = pageId
+                        , title = UserHandle.toString handle ++ " | " ++ pageTitle
+                        , appHeader = AppHeader.appHeader AppHeader.None
+                        , pageHeader = Just (orgPageHeader activeNavItem)
+                        , page = page
+                        , modal = modal
+                        }
+                in
+                case model.subPage of
+                    People people ->
+                        let
+                            ( page, modal ) =
+                                OrgPeoplePage.view people
+                        in
+                        appDoc
+                            OrgPageHeader.People
+                            (page |> PageLayout.map OrgPeoplePageMsg |> PageLayout.view)
+                            (Maybe.map (Html.map OrgPeoplePageMsg) modal)
+
+                    Settings ->
+                        appDoc OrgPageHeader.Settings
+                            (PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "TODO: Settings" ])
+                                PageFooter.pageFooter
+                                |> PageLayout.view
+                            )
+                            Nothing
+
+            else
+                viewErrorPage appContext handle (Http.BadStatus 404)

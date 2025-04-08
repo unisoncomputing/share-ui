@@ -1,10 +1,11 @@
 module UnisonShare.Page.OrgPeoplePage exposing (..)
 
+import ConfirmDelete exposing (ConfirmDeletes)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.UserHandle exposing (UserHandle)
+import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
@@ -36,12 +37,16 @@ type Modal
 type alias Model =
     { modal : Modal
     , members : WebData (List OrgMember)
+    , confirmDeletes : ConfirmDeletes
     }
 
 
 init : AppContext -> UserHandle -> ( Model, Cmd Msg )
 init appContext handle =
-    ( { modal = NoModal, members = Loading }
+    ( { modal = NoModal
+      , members = Loading
+      , confirmDeletes = ConfirmDelete.emptyDeletes
+      }
     , fetchMembers appContext handle
     )
 
@@ -54,8 +59,10 @@ type Msg
     = FetchMembersFinished (WebData (List OrgMember))
     | ShowAddMemberModal
     | CloseModal
-    | RemoveMember OrgMember
-    | RemoveMemberFinished (HttpResult ())
+    | RequestToRemoveMember UserHandle
+    | ConfirmRemoveMember UserHandle OrgMember
+    | CancelRemoveMember UserHandle
+    | RemoveMemberFinished UserHandle (HttpResult ())
     | AddOrgMemberModalMsg AddOrgMemberModal.Msg
 
 
@@ -71,11 +78,69 @@ update appContext orgHandle msg model =
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none )
 
-        RemoveMember member ->
-            ( model, removeMember appContext orgHandle member )
+        RequestToRemoveMember handle ->
+            ( { model
+                | confirmDeletes =
+                    ConfirmDelete.set (UserHandle.toString handle)
+                        ConfirmDelete.confirm
+                        model.confirmDeletes
+              }
+            , Cmd.none
+            )
 
-        RemoveMemberFinished _ ->
-            ( model, Cmd.none )
+        ConfirmRemoveMember handle member ->
+            ( { model
+                | confirmDeletes =
+                    ConfirmDelete.set
+                        (UserHandle.toString handle)
+                        ConfirmDelete.deleting
+                        model.confirmDeletes
+              }
+            , removeMember appContext orgHandle handle member
+            )
+
+        RemoveMemberFinished handle res ->
+            case res of
+                Ok _ ->
+                    let
+                        withoutRemovedMember m =
+                            case m of
+                                OrgMember.UserMember { user } ->
+                                    not (UserHandle.equals user.handle handle)
+
+                                _ ->
+                                    True
+
+                        members =
+                            RemoteData.map
+                                (List.filter withoutRemovedMember)
+                                model.members
+                    in
+                    ( { model
+                        | members = members
+                        , confirmDeletes =
+                            ConfirmDelete.remove (UserHandle.toString handle) model.confirmDeletes
+                      }
+                    , Cmd.none
+                    )
+
+                Err e ->
+                    ( { model
+                        | confirmDeletes =
+                            ConfirmDelete.set (UserHandle.toString handle)
+                                (ConfirmDelete.DeleteFailed e)
+                                model.confirmDeletes
+                      }
+                    , Cmd.none
+                    )
+
+        CancelRemoveMember handle ->
+            ( { model
+                | confirmDeletes =
+                    ConfirmDelete.remove (UserHandle.toString handle) model.confirmDeletes
+              }
+            , Cmd.none
+            )
 
         AddOrgMemberModalMsg memberModalMsg ->
             case model.modal of
@@ -97,7 +162,7 @@ update appContext orgHandle msg model =
 
                                 AddOrgMemberModal.AddedMember newMember ->
                                     ( { model | modal = AddMemberModal memberModal, members = Success (newMember :: members) }
-                                    , Cmd.map AddOrgMemberModalMsg cmd
+                                    , Cmd.batch [ Cmd.map AddOrgMemberModalMsg cmd, Util.delayMsg 1500 CloseModal ]
                                     )
 
                         _ ->
@@ -120,10 +185,10 @@ fetchMembers appContext orgHandle =
         |> HttpApi.perform appContext.api
 
 
-removeMember : AppContext -> UserHandle -> OrgMember -> Cmd Msg
-removeMember appContext orgHandle member =
+removeMember : AppContext -> UserHandle -> UserHandle -> OrgMember -> Cmd Msg
+removeMember appContext orgHandle memberHandle member =
     ShareApi.deleteOrgRoleAssignment orgHandle member
-        |> HttpApi.toRequestWithEmptyResponse RemoveMemberFinished
+        |> HttpApi.toRequestWithEmptyResponse (RemoveMemberFinished memberHandle)
         |> HttpApi.perform appContext.api
 
 
@@ -131,27 +196,54 @@ removeMember appContext orgHandle member =
 -- VIEW
 
 
-viewUserMember : { user : UserSummaryWithId, roles : List OrgRole } -> Html Msg
-viewUserMember ({ user, roles } as member) =
+viewUserMember : ConfirmDeletes -> Bool -> { user : UserSummaryWithId, roles : List OrgRole } -> Html Msg
+viewUserMember deletes isLastUser ({ user, roles } as member) =
+    let
+        canRemove =
+            not (List.member OrgRole.Owner roles) && not isLastUser
+
+        remove =
+            if canRemove then
+                case ConfirmDelete.get (UserHandle.toString user.handle) deletes of
+                    Just cd ->
+                        ConfirmDelete.view
+                            { confirmMsg = ConfirmRemoveMember user.handle (OrgMember.UserMember member)
+                            , cancelMsg = CancelRemoveMember user.handle
+                            }
+                            cd
+
+                    _ ->
+                        Button.icon
+                            (RequestToRemoveMember user.handle)
+                            Icon.trash
+                            |> Button.small
+                            |> Button.subdued
+                            |> Button.view
+
+            else
+                UI.nothing
+    in
     div [ class "member" ]
         [ div [ class "member_profile-snippet" ]
             [ ProfileSnippet.profileSnippet user |> ProfileSnippet.view ]
-        , div [ class "member_role" ] [ text (roles |> List.map OrgRole.toString |> String.join ", ") ]
-        , Button.icon (RemoveMember (OrgMember.UserMember member)) Icon.trash
-            |> Button.small
-            |> Button.subdued
-            |> Button.view
+        , div [ class "member_role" ]
+            [ roles
+                |> List.map OrgRole.toString
+                |> String.join ", "
+                |> text
+            ]
+        , div [ class "member_remove" ] [ remove ]
         ]
 
 
-viewMember : OrgMember -> Html Msg
-viewMember member =
+viewMember : ConfirmDeletes -> Bool -> OrgMember -> Html Msg
+viewMember deletes isLastUser member =
     case member of
         OrgMember.UserMember m ->
-            viewUserMember m
+            viewUserMember deletes isLastUser m
 
         OrgMember.TeamMember _ ->
-            -- TODO
+            -- TODO: Teams are not yet fully supported
             UI.nothing
 
 
@@ -161,7 +253,14 @@ viewContent model =
         card =
             case model.members of
                 Success members ->
-                    Card.card [ div [ class "members_list" ] (List.map viewMember members) ]
+                    let
+                        hasJustOneMember =
+                            List.length members == 1
+                    in
+                    Card.card
+                        [ div [ class "members_list" ]
+                            (List.map (viewMember model.confirmDeletes hasJustOneMember) members)
+                        ]
                         |> Card.withClassName "members"
 
                 Failure e ->
