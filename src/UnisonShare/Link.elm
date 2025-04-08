@@ -170,6 +170,21 @@ account =
     toClick Route.account
 
 
+orgProfile : UserHandle -> Click msg
+orgProfile =
+    Route.orgProfile >> toClick
+
+
+orgPeople : UserHandle -> Click msg
+orgPeople =
+    Route.orgPeople >> toClick
+
+
+orgSettings : UserHandle -> Click msg
+orgSettings =
+    Route.orgSettings >> toClick
+
+
 userProfile : UserHandle -> Click msg
 userProfile =
     Route.userProfile >> toClick
