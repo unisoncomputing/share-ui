@@ -102,7 +102,7 @@ updateSubPage _ _ model _ =
 
 fetchOrg : AppContext -> UserHandle -> Cmd Msg
 fetchOrg appContext handle =
-    ShareApi.user handle
+    ShareApi.org handle
         |> HttpApi.toRequest Org.decodeSummary (RemoteData.fromResult >> FetchOrgFinished)
         |> HttpApi.perform appContext.api
 
