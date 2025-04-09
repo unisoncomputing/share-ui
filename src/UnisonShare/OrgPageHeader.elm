@@ -36,9 +36,21 @@ loading =
     empty
 
 
-error : PageHeader msg
-error =
-    empty
+error : UserHandle -> PageHeader msg
+error handle =
+    let
+        context_ =
+            ProfileSnippet.profileSnippet
+                { handle = handle, avatarUrl = Nothing, name = Nothing }
+                |> ProfileSnippet.view
+
+        context =
+            { isActive = False
+            , click = Just (Link.orgProfile handle)
+            , content = context_
+            }
+    in
+    PageHeader.pageHeader context
 
 
 nav : ActiveNavItem -> OrgWithPermissions o -> Navigation msg
@@ -72,7 +84,7 @@ view mobileNavToggleMsg mobileNavIsOpen activeNavItem handle org =
 
         context =
             { isActive = activeNavItem == OrgProfile
-            , click = Just (Link.userProfile handle)
+            , click = Just (Link.orgProfile handle)
             , content = context_
             }
 

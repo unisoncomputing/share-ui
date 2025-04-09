@@ -19,10 +19,12 @@
   align-items: center;
 }
 
+.org-people-page .member_profile-snippet {
+  width: 50%;
+}
 .org-people-page .member_role,
-.org-people-page .member_profile-snippet,
 .org-people-page .member_remove {
-  width: 33%;
+  width: 25%;
 }
 
 .org-people-page .member_remove {

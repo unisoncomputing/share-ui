@@ -128,13 +128,25 @@ viewErrorPage appContext handle error =
                         PageFooter.pageFooter
                         |> PageLayout.withSubduedBackground
 
+                Http.BadStatus 403 ->
+                    PageLayout.centeredLayout
+                        (PageContent.oneColumn
+                            [ EmptyState.iconCloud
+                                (EmptyState.IconCenterPiece Icon.profile)
+                                |> EmptyState.withContent [ h2 [] [ text "You're not authorized to view this page" ] ]
+                                |> EmptyStateCard.view
+                            ]
+                        )
+                        PageFooter.pageFooter
+                        |> PageLayout.withSubduedBackground
+
                 _ ->
                     ErrorPage.view appContext.session error "organization" "organization-error"
     in
     { pageId = "org-page org-page-error"
     , title = UserHandle.toString handle ++ " | Error"
     , appHeader = AppHeader.appHeader AppHeader.None
-    , pageHeader = Just OrgPageHeader.error
+    , pageHeader = Just (OrgPageHeader.error handle)
     , page = PageLayout.view page
     , modal = Nothing
     }
@@ -218,4 +230,4 @@ view appContext handle model =
                             Nothing
 
             else
-                viewErrorPage appContext handle (Http.BadStatus 404)
+                viewErrorPage appContext handle (Http.BadStatus 403)

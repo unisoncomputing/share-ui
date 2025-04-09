@@ -6,6 +6,7 @@ import {
   userDetails,
   org,
   contribution,
+  user,
   account,
 } from "./Data";
 
@@ -98,11 +99,39 @@ async function getUserProfile(page: Page, handle: string, userData = {}) {
   });
 }
 
+// -- ORGS
+
 async function getOrgProfile(page: Page, handle: string, orgData = {}) {
   return get(page, {
     url: `users/${handle.replace("@", "")}`,
     status: 200,
     data: { ...org(handle), ...orgData },
+  });
+}
+
+async function getOrgRoleAssignments(page: Page, handle: string, assignments = null) {
+  return getOrgRoleAssignments_(page, handle, { status: 200, data: assignments });
+}
+
+async function getOrgRoleAssignments_(
+  page: Page,
+  handle: string,
+  resp: { status: number; data?: unknown[] },
+) {
+
+  function roleAssignment(roles: string[]) {
+    return {
+      roles: roles,
+      subject: { data: user(), kind: "user" }
+    };
+  }
+
+  return get(page, {
+    url: `/orgs/${handle.replace("@", "")}/roles`,
+    status: resp.status,
+    data: {
+      role_assignments: resp.data || [roleAssignment(["org_admin"]), roleAssignment(["org_viewer"]), roleAssignment(["org_owner"])]
+    }
   });
 }
 
@@ -266,6 +295,8 @@ export {
   getAccount,
   getUserProfile,
   getOrgProfile,
+  getOrgRoleAssignments,
+  getOrgRoleAssignments_,
   getProjects,
   getProject,
   getProject_,
