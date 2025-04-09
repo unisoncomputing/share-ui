@@ -36,6 +36,28 @@ toString role =
             "Viewer"
 
 
+description : OrgRole -> String
+description role =
+    case role of
+        Owner ->
+            "All \"Admin\" permissions + the delete the org and change owner. Only 1 person can be the owner of an Org."
+
+        Admin ->
+            "All \"Maintainer\" permissions + sensitive and destructive actions on both the org and projects."
+
+        Maintainer ->
+            "Read, download, merge and write across all projects."
+
+        Contributor ->
+            "Read, download, and create branches and contributions across all projects."
+
+        Default ->
+            "Default, deprecated..."
+
+        Viewer ->
+            "Read and download projects. Nothing else."
+
+
 encode : OrgRole -> Encode.Value
 encode role =
     case role of
