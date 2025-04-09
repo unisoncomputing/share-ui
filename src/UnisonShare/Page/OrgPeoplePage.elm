@@ -16,6 +16,7 @@ import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle exposing (PageTitle)
 import UI.ProfileSnippet as ProfileSnippet
+import UI.Tooltip as Tooltip
 import UnisonShare.AddOrgMemberModal as AddOrgMemberModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
@@ -196,6 +197,14 @@ removeMember appContext orgHandle memberHandle member =
 -- VIEW
 
 
+viewRole : OrgRole -> Html msg
+viewRole role =
+    Tooltip.text (OrgRole.description role)
+        |> Tooltip.tooltip
+        |> Tooltip.withArrow Tooltip.Start
+        |> Tooltip.view (role |> OrgRole.toString |> text)
+
+
 viewUserMember : ConfirmDeletes -> Bool -> { user : UserSummaryWithId, roles : List OrgRole } -> Html Msg
 viewUserMember deletes isLastUser ({ user, roles } as member) =
     let
@@ -226,12 +235,7 @@ viewUserMember deletes isLastUser ({ user, roles } as member) =
     div [ class "member" ]
         [ div [ class "member_profile-snippet" ]
             [ ProfileSnippet.profileSnippet user |> ProfileSnippet.view ]
-        , div [ class "member_role" ]
-            [ roles
-                |> List.map OrgRole.toString
-                |> String.join ", "
-                |> text
-            ]
+        , div [ class "member_role" ] (roles |> List.map viewRole |> List.intersperse (text ", "))
         , div [ class "member_remove" ] [ remove ]
         ]
 
