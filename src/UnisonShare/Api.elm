@@ -36,16 +36,26 @@ import UnisonShare.Tour as Tour exposing (Tour)
 import Url.Builder exposing (QueryParameter, int, string)
 
 
+profile : UserHandle -> Endpoint
+profile handle =
+    GET { path = [ "users", UserHandle.toUnprefixedString handle ], queryParams = [] }
+
+
 user : UserHandle -> Endpoint
 user handle =
     GET { path = [ "users", UserHandle.toUnprefixedString handle ], queryParams = [] }
 
 
+org : UserHandle -> Endpoint
+org handle =
+    GET { path = [ "users", UserHandle.toUnprefixedString handle ], queryParams = [] }
+
+
 updateUserProfile : UserHandle -> { bio : String } -> Endpoint
-updateUserProfile handle profile =
+updateUserProfile handle profile_ =
     let
         body =
-            Encode.object [ ( "bio", Encode.string profile.bio ) ]
+            Encode.object [ ( "bio", Encode.string profile_.bio ) ]
                 |> Http.jsonBody
     in
     PATCH
@@ -176,6 +186,25 @@ session =
 
 -- ORGS
 -- ORG ROLE ASSIGNMENTS (COLLABORATORS)
+
+
+createOrg : { a | handle : UserHandle, primaryEmail : String } -> String -> UserHandle -> Bool -> Endpoint
+createOrg owner name orgHandle isCommercial =
+    let
+        body =
+            Encode.object
+                [ ( "name", Encode.string name )
+                , ( "handle", Encode.string (UserHandle.toUnprefixedString orgHandle) )
+                , ( "isCommercial", Encode.bool isCommercial )
+                , ( "owner", Encode.string (UserHandle.toUnprefixedString owner.handle) )
+                , ( "email", Encode.string owner.primaryEmail )
+                ]
+    in
+    POST
+        { path = [ "orgs" ]
+        , queryParams = []
+        , body = Http.jsonBody body
+        }
 
 
 orgRoleAssignments : UserHandle -> Endpoint

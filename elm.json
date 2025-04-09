@@ -31,6 +31,7 @@
             "j-maas/elm-ordered-containers": "1.0.0",
             "justinmimbs/time-extra": "1.1.1",
             "krisajenkins/remotedata": "6.0.1",
+            "kuon/elm-string-normalize": "1.0.6",
             "mgold/elm-nonempty-list": "4.2.0",
             "noahzgordon/elm-color-extra": "1.0.2",
             "rtfeldman/elm-iso8601-date-strings": "1.1.4",

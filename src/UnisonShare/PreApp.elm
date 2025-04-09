@@ -127,20 +127,6 @@ fetchSession preAppContext =
         |> Task.onError onError
 
 
-
-{-
-   fetchSession : PreAppContext -> Cmd Msg
-   fetchSession preAppContext =
-       let
-           api =
-               HttpApi.httpApi True preAppContext.flags.apiUrl preAppContext.flags.xsrfToken
-       in
-       ShareApi.session
-           |> HttpApi.toRequest Session.decode FetchSessionFinished
-           |> HttpApi.perform api
--}
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of

@@ -221,7 +221,9 @@ module.exports = {
       },
       {
         context: ["/website"],
-        target: WEBSITE_URL,
+        bypass: (req, res, _proxyOptions) => {
+          return [];
+        },
         pathRewrite: { "^/website": "" },
         logLevel: "debug",
       },

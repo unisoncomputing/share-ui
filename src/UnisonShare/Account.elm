@@ -19,6 +19,7 @@ type alias Account a =
         , pronouns : Maybe String
         , completedTours : List Tour
         , organizationMemberships : List OrganizationMembership
+        , primaryEmail : String
     }
 
 
@@ -88,18 +89,20 @@ isProjectOwner projectRef account =
 decodeSummary : Decode.Decoder AccountSummary
 decodeSummary =
     let
-        makeSummary handle name_ avatarUrl completedTours organizationMemberships =
+        makeSummary handle name_ avatarUrl completedTours organizationMemberships primaryEmail =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
             , pronouns = Nothing
             , completedTours = Maybe.withDefault [] completedTours
             , organizationMemberships = organizationMemberships
+            , primaryEmail = primaryEmail
             }
     in
-    Decode.map5 makeSummary
+    Decode.map6 makeSummary
         (field "handle" UserHandle.decodeUnprefixed)
         (maybe (field "name" string))
         (maybe (field "avatarUrl" decodeUrl))
         (maybe (field "completedTours" (Decode.list Tour.decode)))
         (field "organizationMemberships" (Decode.list (Decode.map OrganizationMembership UserHandle.decodeUnprefixed)))
+        (field "primaryEmail" string)
