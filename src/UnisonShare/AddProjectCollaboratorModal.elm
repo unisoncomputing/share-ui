@@ -257,7 +257,8 @@ view model =
                     let
                         options =
                             NEL.singleton (RadioField.option "Admin" "Full role, including sensitive and destructive actions." Admin)
-                                |> NEL.cons (RadioField.option "Maintain" "Read, download, with merge and write role." Maintainer)
+                                |> NEL.cons (RadioField.option "Maintain" "Read, download, merge and write." Maintainer)
+                                |> NEL.cons (RadioField.option "Contributor" "Read, download, and create branches and contributions." Contributor)
                                 |> NEL.cons (RadioField.option "View" "Read, download project. Nothing else." Viewer)
                     in
                     modal_

@@ -264,9 +264,10 @@ view model =
                 AssignRole { user, role } ->
                     let
                         options =
-                            NEL.singleton (RadioField.option "Admin" "Full role, including sensitive and destructive actions." Admin)
-                                |> NEL.cons (RadioField.option "Maintain" "Read, download, with merge and write role." Maintainer)
-                                |> NEL.cons (RadioField.option "View" "Read, download org. Nothing else." Viewer)
+                            NEL.singleton (RadioField.option "Admin" "\"Maintain\" + sensitive and destructive actions on both org and projects." Admin)
+                                |> NEL.cons (RadioField.option "Maintain" "Read, download, merge and write across all projects" Maintainer)
+                                |> NEL.cons (RadioField.option "Contributor" "Read, download, and create branches and contributions across all projects." Contributor)
+                                |> NEL.cons (RadioField.option "View" "Read and download projects. Nothing else." Viewer)
                     in
                     modal_
                         (div [ class "assign-role" ]
