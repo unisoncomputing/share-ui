@@ -647,6 +647,7 @@ searchEntities appContext _ query =
         decodeMatch =
             Decode.oneOf
                 [ when decodeTag ((==) "User") (Decode.map UserMatch User.decodeSummary)
+                , when decodeTag ((==) "Org") (Decode.map UserMatch User.decodeSummary)
                 , when decodeTag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
                 ]
     in
