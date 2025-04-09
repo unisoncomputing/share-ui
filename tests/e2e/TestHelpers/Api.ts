@@ -109,8 +109,15 @@ async function getOrgProfile(page: Page, handle: string, orgData = {}) {
   });
 }
 
-async function getOrgRoleAssignments(page: Page, handle: string, assignments = null) {
-  return getOrgRoleAssignments_(page, handle, { status: 200, data: assignments });
+async function getOrgRoleAssignments(
+  page: Page,
+  handle: string,
+  assignments = null,
+) {
+  return getOrgRoleAssignments_(page, handle, {
+    status: 200,
+    data: assignments,
+  });
 }
 
 async function getOrgRoleAssignments_(
@@ -118,11 +125,10 @@ async function getOrgRoleAssignments_(
   handle: string,
   resp: { status: number; data?: unknown[] },
 ) {
-
   function roleAssignment(roles: string[]) {
     return {
       roles: roles,
-      subject: { data: user(), kind: "user" }
+      subject: { data: user(), kind: "user" },
     };
   }
 
@@ -130,8 +136,12 @@ async function getOrgRoleAssignments_(
     url: `/orgs/${handle.replace("@", "")}/roles`,
     status: resp.status,
     data: {
-      role_assignments: resp.data || [roleAssignment(["org_admin"]), roleAssignment(["org_viewer"]), roleAssignment(["org_owner"])]
-    }
+      role_assignments: resp.data || [
+        roleAssignment(["org_admin"]),
+        roleAssignment(["org_viewer"]),
+        roleAssignment(["org_owner"]),
+      ],
+    },
   });
 }
 

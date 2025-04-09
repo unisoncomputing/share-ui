@@ -16,7 +16,9 @@ test.describe("without being signed in", () => {
     await API.getOrgProfile(page, orgHandle);
     await API.getOrgRoleAssignments_(page, orgHandle, { status: 403 });
 
-    const response = await page.goto(`http://localhost:1234/${orgHandle}/p/people`);
+    const response = await page.goto(
+      `http://localhost:1234/${orgHandle}/p/people`,
+    );
     expect(response?.status()).toBeLessThan(400);
 
     const handle = page.locator(".page-header").getByText("@unison");
@@ -37,7 +39,9 @@ test.describe("without org:manage permission", () => {
     await API.getOrgProfile(page, orgHandle, { permissions: ["org:view"] });
     await API.getOrgRoleAssignments_(page, orgHandle, { status: 403 });
 
-    const response = await page.goto(`http://localhost:1234/${orgHandle}/p/people`);
+    const response = await page.goto(
+      `http://localhost:1234/${orgHandle}/p/people`,
+    );
     expect(response?.status()).toBeLessThan(400);
 
     const handle = page.locator(".page-header").getByText("@unison");
@@ -58,7 +62,9 @@ test.describe("with org:manage permission", () => {
     await API.getOrgProfile(page, orgHandle, { permissions: ["org:manage"] });
     await API.getOrgRoleAssignments(page, orgHandle);
 
-    const response = await page.goto(`http://localhost:1234/${orgHandle}/p/people`);
+    const response = await page.goto(
+      `http://localhost:1234/${orgHandle}/p/people`,
+    );
     expect(response?.status()).toBeLessThan(400);
 
     const handle = page.locator(".page-header").getByText("@unison");
