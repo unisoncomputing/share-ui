@@ -345,14 +345,16 @@ detailedPageTitle appContext contribution =
             , div [ class "page-title_description" ]
                 [ span
                     [ class "from-to" ]
-                    [ text "from"
-                    , span [ class "branches" ]
-                        [ BranchRef.toTag contribution.sourceBranchRef
+                    [ span [ class "branch" ]
+                        [ text "from"
+                        , BranchRef.toTag contribution.sourceBranchRef
                             |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef)
                             |> Tag.large
                             |> Tag.view
                         , CopyOnClick.copyButton (BranchRef.toString contribution.sourceBranchRef)
-                        , text "to"
+                        ]
+                    , span [ class "branch" ]
+                        [ text "to"
                         , BranchRef.toTag contribution.targetBranchRef
                             |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.targetBranchRef)
                             |> Tag.large
