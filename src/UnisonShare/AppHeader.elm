@@ -120,6 +120,7 @@ type alias AppHeaderContext msg =
     , toggleHelpAndResourcesMenuMsg : msg
     , toggleAccountMenuMsg : msg
     , toggleCreateAccountMenuMsg : msg
+    , showNewOrgModal : msg
     , showKeyboardShortcutsModalMsg : msg
     }
 
@@ -306,6 +307,12 @@ view ctx appHeader_ =
                                     div [ classList [ ( "account-menu-trigger", True ), ( "account-menu_is-open", isOpen ) ] ]
                                         [ avatar, Icon.view chevron ]
 
+                                newOrgButton =
+                                    Button.iconThenLabel ctx.showNewOrgModal Icon.largePlus "New Org"
+                                        |> Button.small
+                                        |> Button.positive
+                                        |> Button.view
+
                                 accountMenu =
                                     ActionMenu.items
                                         (ActionMenu.optionItem Icon.cog "Account Settings" Link.account)
@@ -315,7 +322,7 @@ view ctx appHeader_ =
                                         |> ActionMenu.view
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
-                            ( nav, [ helpAndResources, accountMenu ] )
+                            ( nav, [ newOrgButton, helpAndResources, accountMenu ] )
             in
             UI.AppHeader.appHeader (appTitle (Click.href "/"))
                 |> UI.AppHeader.withNavigation navigation

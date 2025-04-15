@@ -40,6 +40,7 @@ import UnisonShare.AppDocument as AppDocument
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Link as Link
+import UnisonShare.NewOrgModal as NewOrgModal
 import UnisonShare.Page.AcceptTermsPage as AcceptTermsPage
 import UnisonShare.Page.AccountPage as AccountPage
 import UnisonShare.Page.AppErrorPage as AppErrorPage
@@ -86,6 +87,7 @@ type Page
 type AppModal
     = NoModal
     | KeyboardShortcuts
+    | NewOrg NewOrgModal.Model
 
 
 type alias Model =
@@ -213,6 +215,7 @@ type Msg
     | ToggleAccountMenu
     | ToggleCreateAccountMenu
     | ShowKeyboardShortcuts
+    | ShowNewOrgModal
     | CloseModal
     | WhatsNewFetchFinished (HttpResult WhatsNew.LoadedWhatsNew)
     | WhatsNewMarkAllAsRead
@@ -224,6 +227,7 @@ type Msg
     | ProjectPageMsg ProjectPage.Msg
     | AccountPageMsg AccountPage.Msg
     | AcceptTermsPageMsg AcceptTermsPage.Msg
+    | NewOrgModalMsg NewOrgModal.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -465,6 +469,9 @@ update msg ({ appContext } as model) =
         ( _, ShowKeyboardShortcuts ) ->
             ( { model | openedAppHeaderMenu = AppHeader.NoneOpened, appModal = KeyboardShortcuts }, Cmd.none )
 
+        ( _, ShowNewOrgModal ) ->
+            ( { model | openedAppHeaderMenu = AppHeader.NoneOpened, appModal = NewOrg NewOrgModal.init }, Cmd.none )
+
         ( _, CloseModal ) ->
             ( { model | appModal = NoModal }, Cmd.none )
 
@@ -522,6 +529,29 @@ update msg ({ appContext } as model) =
                     AcceptTermsPage.update appContext atMsg continueUrl acceptTerms
             in
             ( { model | page = AcceptTerms continueUrl acceptTerms_ }, Cmd.map AcceptTermsPageMsg acceptTermsCmd )
+
+        ( _, NewOrgModalMsg newOrgMsg ) ->
+            case ( model.appModal, appContext.session ) of
+                ( NewOrg newOrg, Session.SignedIn account ) ->
+                    let
+                        ( newOrg_, cmd, out ) =
+                            NewOrgModal.update appContext account newOrgMsg newOrg
+
+                        appModal =
+                            case out of
+                                NewOrgModal.NoOutMsg ->
+                                    NewOrg newOrg_
+
+                                NewOrgModal.RequestCloseModal ->
+                                    NoModal
+
+                                NewOrgModal.AddedOrg _ ->
+                                    NoModal
+                    in
+                    ( { model | appModal = appModal }, Cmd.map NewOrgModalMsg cmd )
+
+                _ ->
+                    ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -720,6 +750,7 @@ view model =
             , toggleAccountMenuMsg = ToggleAccountMenu
             , toggleCreateAccountMenuMsg = ToggleCreateAccountMenu
             , showKeyboardShortcutsModalMsg = ShowKeyboardShortcuts
+            , showNewOrgModal = ShowNewOrgModal
             }
 
         appDocument =
@@ -783,6 +814,9 @@ view model =
 
                 KeyboardShortcuts ->
                     { appDocument | modal = Just (viewKeyboardShortcutsModal appContext.operatingSystem) }
+
+                NewOrg m ->
+                    { appDocument | modal = Just (Html.map NewOrgModalMsg (NewOrgModal.view m)) }
 
         appDocumentWithWelcomeTermsModal =
             -- We link to TermsOfService and PrivacyPolicy from the welcome

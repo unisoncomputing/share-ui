@@ -3,7 +3,7 @@ import { faker } from "@faker-js/faker";
 function account(handle: string) {
   return {
     ...user(),
-    handle,
+    handle: handle.replace("@", ""),
     completedTours: ["welcome-terms"],
     organizationMemberships: [],
     primaryEmail: faker.internet.email(),

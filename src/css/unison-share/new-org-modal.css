@@ -1,0 +1,14 @@
+#new-org-modal {
+  width: 34rem;
+}
+
+#new-org-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+#new-org-modal form .radio-field .radio-field_option {
+  max-width: auto;
+}
