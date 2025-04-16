@@ -3,6 +3,9 @@ import { Page } from "@playwright/test";
 import {
   project,
   contributionTimeline,
+  definitionSearchMatch,
+  projectSearchMatch,
+  userSearchMatch,
   userDetails,
   org,
   contribution,
@@ -280,6 +283,34 @@ async function getProjectContributionMergeCheck_(
   });
 }
 
+// -- SEARCH
+
+async function getDefinitionSearch(page: Page, query = "map", results = null) {
+  return get(page, {
+    url: `/search-definitions?query=${query}`,
+    status: 200,
+    data: {
+      results: results || [
+        definitionSearchMatch(),
+        definitionSearchMatch(),
+        definitionSearchMatch(),
+      ],
+    },
+  });
+}
+
+async function getEntitySearch(page: Page, query = "@base", results = null) {
+  return get(page, {
+    url: `/search?query=%40${query.replace("@", "")}`,
+    status: 200,
+    data: results || [
+      projectSearchMatch(),
+      userSearchMatch(),
+      projectSearchMatch(),
+    ],
+  });
+}
+
 // -- UTIL
 
 type Response = {
@@ -318,5 +349,7 @@ export {
   getProjectContributionTimeline_,
   getProjectContributionMergeCheck,
   getProjectContributionMergeCheck_,
+  getDefinitionSearch,
+  getEntitySearch,
   get,
 };

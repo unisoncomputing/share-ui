@@ -262,12 +262,16 @@
     }
   }
 
-  .main-result-sheet.empty-state {
-    color: var(--u-color_text_very-subdued);
+  .main-result-sheet .empty-state {
+    color: var(--u-color_text_subdued);
     font-weight: bold;
     text-align: center;
     font-size: var(--font-size-base);
     padding: 2rem;
+  }
+
+  .main-result-sheet .empty-state_small {
+    color: var(--u-color_text_subdued);
   }
 }
 

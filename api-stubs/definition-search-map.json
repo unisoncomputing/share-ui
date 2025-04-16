@@ -1,0 +1,2118 @@
+{
+  "results": [
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.map",
+        "hash": "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "𝕖"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "𝕖"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.map",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "LinkedList.map",
+        "hash": "#8p4edl8ug0hnn8v0hqti7ar7l83n8sv5opngb19tr25ko2kk3b3mhsf5rqkpvbsdjde028aj9k0fuehhhshin4qqhef86hoskvcupl0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#jga718s2it7bml34q759gi69n62g926k0o8agtf1jtdq00migee1pvg53ru64ichd07k265q93t7l38n08205n2614a1o6olvb7fkf8",
+                "tag": "TypeReference"
+              },
+              "segment": "LinkedList"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#jga718s2it7bml34q759gi69n62g926k0o8agtf1jtdq00migee1pvg53ru64ichd07k265q93t7l38n08205n2614a1o6olvb7fkf8",
+                "tag": "TypeReference"
+              },
+              "segment": "LinkedList"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "linkedlist.LinkedList.map",
+      "kind": "term",
+      "projectRef": "@stew/dataextra"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.map2",
+        "hash": "#1n656lrornskc9ad8gc6p30kkbomo2rrr07lsi6fc7hbt5q1k39e111jtibmfcncfenfjhgsgna9eal8pgmpjc9ctfs2ao3ft7c93so",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "c"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "c"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.map2",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.map2_",
+        "hash": "#pfl0c4fn9hc4t9tqg8se0ehbi0nsu4q11hb3kungf2784ife3i68rs8j1jqvafbj2i2k6ijqg5n6k5fgpn8h6p3f1dhd3u3ss2k3n80",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "c"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "c"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.map2_",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "map.doc",
+        "hash": "#hdch66tb9a6fs1s1mfqt4kjub3979fqct0h8qlvqvlisjt2l2jqdf8ms99b8aj4a42a0r3ov1bjf03taqll0mps88e5qosd0hgi3smg",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                "tag": "TypeReference"
+              },
+              "segment": "Doc"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Doc"
+      },
+      "fqn": "data.List.map.doc",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "map.doc",
+        "hash": "#8runq8qk9fctjq4isnngii4kucqfi3je25rs3s3hsghrgpt3ajpjvgpp5udru0m9k48k9p2dtu7mtdg99d4l93lg390b365ud9qi0uo",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                "tag": "TypeReference"
+              },
+              "segment": "Doc"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Doc"
+      },
+      "fqn": "linkedlist.LinkedList.map.doc",
+      "kind": "term",
+      "projectRef": "@stew/dataextra"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "map2.doc",
+        "hash": "#2kt0eng3qpsj3m8eka6ep7h4r6j0uld3j74j7j0e1j7m72pbjf64583osjdaub2gq4p7oufll5ghc9a4r0ajr0q4fgl96v0lm19ijho",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                "tag": "TypeReference"
+              },
+              "segment": "Doc"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Doc"
+      },
+      "fqn": "data.List.map2.doc",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.mapRight",
+        "hash": "#ri775mnka6soridkbqcmhm74ufmal9pj41hqsggps0f0mko86ngnpbmciq0ajsvnjib32ea0l3qaert270vcm4k1n63d2fhpmmnir2g",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.mapRight",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.mapIndexed",
+        "hash": "#ifqqhs5ab3ouh82o8ksf4ti4nf61jedhjk0r17ksj9b70q1uben8fongj79l7bhu9j8n5kn22ieodm6vopsqt8ddidbtpum8nutuobg",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "##Nat",
+                "tag": "TypeReference"
+              },
+              "segment": "Nat"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "𝕖"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "𝕖"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "𝕖"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.mapIndexed",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "mapRight.doc",
+        "hash": "#7o5d1c3soqpvtit6k8ep6ae3s2705ul26f43v6i6tuk5g8crjtavn0odb9bh8csa8d6rcui7urkto3ntdbcas1qc5je61predlmh2to",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                "tag": "TypeReference"
+              },
+              "segment": "Doc"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Doc"
+      },
+      "fqn": "data.List.mapRight.doc",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "mapIndexed.doc",
+        "hash": "#kf75ka9org0fjtgkt4e63vm91h9eqi4fs4gg2abhh548o35vlukfgmgofafthpd755rkqlk4hf3u364ecpk30r0cb9aj14pah4v9ai0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                "tag": "TypeReference"
+              },
+              "segment": "Doc"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Doc"
+      },
+      "fqn": "data.List.mapIndexed.doc",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "tests.functor",
+        "hash": "#0ks141qnhb49bujlj0qsci4160v0qkjv5l64fltudjbv41mdnmq21c5njkdhq08ouq34ofedk2vo3h8o71jb5aipfaus1jvf38itqeo",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "data.List.map.tests.functor",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "tests.ex1",
+        "hash": "#e89f4aj4lneldb275r7rpuuebr7r5ic1o1mu1l1jvrhbc7ep57jp61st6nj89avbdt0u56ot3cpjdbtm0olrlv5dfcr80um14hr2k88",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "data.List.mapIndexed.tests.ex1",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "tests.ex2",
+        "hash": "#g4spn5dftppib2bcr2trk8fo2oafnlmvinb9g5pa2g4tad1e7lsud7f57hga37f3icmadc2ova0t4glgf5u3g2igo8o41ugp4v3uhhg",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "data.List.mapIndexed.tests.ex2",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "tests.mapsAndIndexes",
+        "hash": "#78u9mrkk1hktg5pc0i5j1d4gb41jvejpr2965c27o95d0p5fs66o54nsu823t4fji7afk0nglvbakvl61jom70m66aood8gdhdrbfd8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "data.List.mapIndexed.tests.mapsAndIndexes",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.maximum",
+        "hash": "#7cg6khq0veqe061eq083b1oj2g09ika1j6pq90rehus5ge30f3dr5um411gpgpsbq814tclr1pdemp65q046g5ggqbpb517ljln862o",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#nirp5os0q69o4e1u9p3t6mmq6l6otluefi3ksm7dhm0diidjvkkgl8o9bvnflbj0sanuvdusf34f1qrins3ktcaglpcqv9oums2slsg",
+                "tag": "TypeReference"
+              },
+              "segment": "Optional"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.maximum",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.minimum",
+        "hash": "#pejsm5g8s9nqc5c9udfsgem8vlvm5k1ecdllsi7jhlv3khco5l1v5kak7tmhkk29og60c2hb4i668qu68tgi2nmissdhjc7foafgcvo",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#nirp5os0q69o4e1u9p3t6mmq6l6otluefi3ksm7dhm0diidjvkkgl8o9bvnflbj0sanuvdusf34f1qrins3ktcaglpcqv9oums2slsg",
+                "tag": "TypeReference"
+              },
+              "segment": "Optional"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.minimum",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.modifyAt",
+        "hash": "#0u92dmjuvci6unfmld1b7qa72lbmkmql2gk2uuem8vloim65rf4sa4cu1221ct6d6gfsfp9626vbkd2urngc0deds45hqpvgq9ooleg",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "##Nat",
+                "tag": "TypeReference"
+              },
+              "segment": "Nat"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#nirp5os0q69o4e1u9p3t6mmq6l6otluefi3ksm7dhm0diidjvkkgl8o9bvnflbj0sanuvdusf34f1qrins3ktcaglpcqv9oums2slsg",
+                "tag": "TypeReference"
+              },
+              "segment": "Optional"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.modifyAt",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.maximumBy",
+        "hash": "#dasbhrcnq4q1qqfaj2ljt28m51cgaepu68bvjlg3kpcunjehhnfvf9f5gmh6r1nb2ejcstf5rfiara7e3kqh1ntdhomrfuqd5bb61g0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#4emg66s4kfuli956ucupdn13cc2i46ioh2li909udg8lbrrdrn19kn3f1drod583vor0bpb201q7hc97lbsc0oh6pl9qphs1db0s4n8",
+                "tag": "TypeReference"
+              },
+              "segment": "Ordering"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#nirp5os0q69o4e1u9p3t6mmq6l6otluefi3ksm7dhm0diidjvkkgl8o9bvnflbj0sanuvdusf34f1qrins3ktcaglpcqv9oums2slsg",
+                "tag": "TypeReference"
+              },
+              "segment": "Optional"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.maximumBy",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "List.maximumOn",
+        "hash": "#lva5dlcgosb9jo1g8v7pfibv15negmmlks2q5fmmkrqi7brppm9ujfg9dldm781g020mjq0dpsli4ouid1pnkv3gksudq308hieobig",
+        "summary": {
+          "contents": [
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "f"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#4emg66s4kfuli956ucupdn13cc2i46ioh2li909udg8lbrrdrn19kn3f1drod583vor0bpb201q7hc97lbsc0oh6pl9qphs1db0s4n8",
+                "tag": "TypeReference"
+              },
+              "segment": "Ordering"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": null,
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "b"
+            },
+            {
+              "annotation": null,
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TypeOperator"
+              },
+              "segment": "->"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "{"
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "e"
+            },
+            {
+              "annotation": null,
+              "segment": ","
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "f"
+            },
+            {
+              "annotation": null,
+              "segment": ","
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "g"
+            },
+            {
+              "annotation": {
+                "tag": "AbilityBraces"
+              },
+              "segment": "}"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "contents": "#nirp5os0q69o4e1u9p3t6mmq6l6otluefi3ksm7dhm0diidjvkkgl8o9bvnflbj0sanuvdusf34f1qrins3ktcaglpcqv9oums2slsg",
+                "tag": "TypeReference"
+              },
+              "segment": "Optional"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "Var"
+              },
+              "segment": "a"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Plain"
+      },
+      "fqn": "data.List.maximumOn",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    }
+  ]
+}

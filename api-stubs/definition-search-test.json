@@ -1,0 +1,704 @@
+{
+  "results": [
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "map!.test",
+        "hash": "#25b1acv15bc74jn1la4v2l7cbm7obemehedmlhchv02qb5enp892n7br4b5j3ei1hjlri48ttm14d329rks1rvlfpsb15ake65e7bb0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "abilities.Ask.map!.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "deprecated.test",
+        "hash": "#g8qrgk5i99rnsmgerq7r0t46m254irids6q7lmv29b44f8jrkffo774g6jdllh4f0fk3fqto3nsgsg8c82utra1n6gid2pbr6ba2o18",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "abilities.Store.local.deprecated.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "modify.test",
+        "hash": "#n19s52fcaa04djvnda56c5tjsdapnmlmrfhmfh9767hj5q8vgkkjeb4blnps9iosfnn42599144i7fctojpas9lr42cgmbtgnbi3kq8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "abilities.Store.modify.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "toAlpha.test",
+        "hash": "#8finr2j4o23pk5s9t0i7ptvbda2grrmmuttrol36j4728541aa0kqo5sg321v2qijilg80vevisvqgi4gtmt9qtam9o02ni1t52tn98",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Alpha.toAlpha.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "toText.test",
+        "hash": "#975pocbeh1mg7nh74f8gocjvkmq6vpfb7egfc72f4micj50394oq0rjsu8dabu1vmrrr1hqoph9mgq48s4n32dq81vqvfhrd6r7oruo",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Alpha.toText.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "given.test",
+        "hash": "#n245uokthsh1et32qb3cf75dstuokeskaj8msk09tbji6bkjhicqmc6g1k2c00mv0oarh2h81o8ui901ra99pnof5k3bjqbfuu39k7g",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Boolean.given.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "implies.test",
+        "hash": "#o9suagi4sl1m6dvnos6morpos0tbb7kbo4qq30fgrtgeiqi3jalj6umqgp9mvhppp46vnle31qkil9aueqpp9h58hf11jm5psqbrmo0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Boolean.implies.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "until.test",
+        "hash": "#vf9dti5lbuemaqa8tgn9btcsln9b1ik0hcdp3jvd3qdjv67be0via60qi8nqp5b2nc1o83ituonulo37277ucr0oaem4t9jalo9ieb8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Boolean.until.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "while.test",
+        "hash": "#pa9081l46b03edgmfqvl0lpiduk36vm11359p6ei82neq2r0sna53lni6bnttvhd2k6gequpf98l1hd7nmhq41ns1f67ihqsudoq1j8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Boolean.while.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/3.35.0",
+      "definition": {
+        "displayName": "xor.test",
+        "hash": "#bvp4iudokvn8u3s80e4eb6ehhj7c13s2p0v2keb2cub4vjihqkqke8ur7j74na4v6uoj9a9jhfkucmond2sajiuojat5klhqdcthvvg",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Boolean.xor.test",
+      "kind": "term",
+      "projectRef": "@unison/base"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "set.test",
+        "hash": "#jlqvi3vg730ge7n0u6u9s3l0v675sm8v25lm7ju13k0th5apu680gq8evs6t1vh88l563261nkuuo21espunk8sd3l7205pp0h4f1ao",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.alpha.set.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "alpha.test",
+        "hash": "#vbr7apf32ocvses1khfipk5u6a236m07gm69vfnkirvp57javppbes3mgn47lgtudj0v0bb0au10u5pifi1jp13i6qb5ik4tpqsarjo",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.alpha.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "set.test",
+        "hash": "#irc3vs0ifb8uhf46ipnsnsei1hhlol6fcs7kaqkd1ralfhrlm1uf89g532treaa8bddd371udn6lvmcvbh3e86n4brmud2hdqh47op8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.chroma.set.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "chroma.test",
+        "hash": "#mms4j31np8dcpu7ome5uebufg99tia10oso3g02dmleg2uc0665n9hsqqkj54kuv6ntqmemub73a4ukg47th5jbh238p005b1dqf150",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.chroma.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "contrast.test",
+        "hash": "#lt6pg6m6odo43vuh3vlrhea9qb3m02f0s25trpb7cqkg7ia9ap74320alpo1n1d6j3ums9brd2lrc0c3fbh9enrciscd8ntea7c9kl8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.contrast.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "darken.test",
+        "hash": "#uoskmuae9b50sf57g0648fg5c662srpmlbs4efoch98mejog9e27sb2g9tb0f4t8n44116r2opki60f3cbautl4j04v8lrkanilr6b0",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.darken.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "delta.test",
+        "hash": "#bjbppcucq6lrp895tekv3oiqsgqr2ejd8e38avjpg9uk5if8nlv1jhrsoun47a42vbe44240irke41c16autgma4jk85ki9tp4586to",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.delta.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "desaturate.test",
+        "hash": "#ajtjbnufutbopsoln2uu2pdifuipvu4vd960r1q23v9qk1l637kbk7kr2oeo1d6n01ovlun5fam2aq8ubjufo0ek2p1udhja6dgu95o",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.desaturate.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "eq.test",
+        "hash": "#bhlmfs8svnm7qan0rmuug9fb4gg93akjheve0o2bpemvdghq8hgeem8f1lt4usirr5i9eer7h61k9qej4c1hvft5066v6urbrrpm3ro",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.eq.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    },
+    {
+      "branchRef": "releases/0.1.5",
+      "definition": {
+        "displayName": "fromNat.test",
+        "hash": "#rp6vm8m1s1engbra6p1ojck84u6eesd2n96jiqass2i337spiqg33tost0sesc7ekea50kc4ju5a1lf108vq55odgf7ni03rd6ngue8",
+        "summary": {
+          "contents": [
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "["
+            },
+            {
+              "annotation": {
+                "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                "tag": "TypeReference"
+              },
+              "segment": "Result"
+            },
+            {
+              "annotation": {
+                "tag": "DelimiterChar"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "UserObject"
+        },
+        "tag": "Test"
+      },
+      "fqn": "Color.fromNat.test",
+      "kind": "term",
+      "projectRef": "@andreystepanov/color"
+    }
+  ]
+}

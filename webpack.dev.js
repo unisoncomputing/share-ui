@@ -9,6 +9,8 @@ const branchDiffJson = require("./api-stubs/branch-diff.json");
 const definitionDiffJson = require("./api-stubs/definition-diff.json");
 const definitionTypeDiffJson = require("./api-stubs/definition-type-diff.json");
 const definitionsByNameJson = require("./api-stubs/definitions-by-name.json");
+const definitionSearchTest = require("./api-stubs/definition-search-test.json");
+const definitionSearchMap = require("./api-stubs/definition-search-map.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -209,6 +211,15 @@ module.exports = {
           if (req.url.includes("/diff/types")) {
             res.send(definitionTypeDiffJson);
           }
+
+          if (req.url.includes("/search-definitions?query=test")) {
+            res.send(definitionSearchTest);
+          }
+
+          if (req.url.includes("/search-definitions?query=map")) {
+            res.send(definitionSearchMap);
+          }
+
           /*
           if (req.url.includes("/diff/terms")) {
             res.send(definitionDiffJson);
