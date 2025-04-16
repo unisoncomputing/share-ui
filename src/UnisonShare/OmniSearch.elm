@@ -48,7 +48,7 @@ import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Search as Search exposing (Search(..))
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util as Util exposing (decodeTag)
+import Lib.Util as Util exposing (decodeTag, pluralize)
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
 import Regex
@@ -105,8 +105,11 @@ type alias DefinitionSearchMatch =
 
 type MainSearch
     = NoSearch
-    | EntitySearch (Search EntityMatch)
-    | DefinitionSearch (Search DefinitionSearchMatch)
+      -- Each kind of search has a secondary to help the user if they, say,
+      -- meant to search for the projects instead of definitions. The UI allows
+      -- them to quickly flip over the other result set.
+    | EntitySearch (Search EntityMatch) (Search DefinitionSearchMatch)
+    | DefinitionSearch (Search DefinitionSearchMatch) (Search EntityMatch)
 
 
 type Filter
@@ -144,12 +147,12 @@ init appContext query filter =
         ( search, cmd ) =
             if String.startsWith "@" fieldValue then
                 ( toEntitySearchSearchingWithQuery NoSearch fieldValue
-                , searchEntities appContext filter_ fieldValue
+                , searchBoth appContext filter_ fieldValue
                 )
 
             else if fieldValue /= "" then
                 ( toDefinitionSearchSearchingWithQuery NoSearch fieldValue
-                , searchDefinitions appContext filter_ fieldValue
+                , searchBoth appContext filter_ fieldValue
                 )
 
             else
@@ -196,10 +199,19 @@ filterToString filter =
 
 type Msg
     = UpdateFieldValue String
-    | EntitySearchFinished { query : String, results : HttpResult (List EntityMatch) }
+    | EntitySearchFinished
+        { query : String
+        , results : HttpResult (List EntityMatch)
+        }
     | SearchDefinitions Filter String
-    | DefinitionSearchFinished { query : String, results : HttpResult (List DefinitionSearchMatch) }
-    | NameSearchFinished { query : String, results : HttpResult (List String) }
+    | DefinitionSearchFinished
+        { query : String
+        , results : HttpResult (List DefinitionSearchMatch)
+        }
+    | NameSearchFinished
+        { query : String
+        , results : HttpResult (List String)
+        }
     | ClearFilter
     | Keydown KeyboardEvent
     | ShowSearchHelpModal
@@ -236,13 +248,31 @@ update appContext msg model =
 
         EntitySearchFinished res ->
             -- Are we still searching for the same thing?
-            if res.query == model.fieldValue then
+            if res.query == addAtPrefix model.fieldValue then
                 case ( model.search, res.results ) of
-                    ( EntitySearch (Searching q _), Ok matches ) ->
-                        ( { model | search = EntitySearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none, NoOut )
+                    ( EntitySearch (Searching q _) defSearch, Ok matches ) ->
+                        ( { model | search = EntitySearch (Success q (toSearchResults matches)) defSearch }
+                        , Cmd.none
+                        , NoOut
+                        )
 
-                    ( EntitySearch (Searching q _), Err e ) ->
-                        ( { model | search = EntitySearch (Failure q e) }, Cmd.none, NoOut )
+                    ( EntitySearch (Searching q _) defSearch, Err e ) ->
+                        ( { model | search = EntitySearch (Failure q e) defSearch }
+                        , Cmd.none
+                        , NoOut
+                        )
+
+                    ( DefinitionSearch defSearch (Searching q _), Ok matches ) ->
+                        ( { model | search = DefinitionSearch defSearch (Success q (toSearchResults matches)) }
+                        , Cmd.none
+                        , NoOut
+                        )
+
+                    ( DefinitionSearch defSearch (Searching q _), Err e ) ->
+                        ( { model | search = DefinitionSearch defSearch (Failure q e) }
+                        , Cmd.none
+                        , NoOut
+                        )
 
                     _ ->
                         ( model, Cmd.none, NoOut )
@@ -254,7 +284,7 @@ update appContext msg model =
             ( { model
                 | search = toDefinitionSearchSearchingWithQuery model.search query
               }
-            , searchDefinitions appContext filter query
+            , searchBoth appContext filter query
             , NoOut
             )
 
@@ -269,13 +299,25 @@ update appContext msg model =
                             model.fieldValue
             in
             -- Are we still searching for the same thing?
-            if res.query == val || res.query == model.fieldValue then
+            if res.query == val || res.query == removeAtPrefix model.fieldValue then
                 case ( model.search, res.results ) of
-                    ( DefinitionSearch (Searching q _), Ok matches ) ->
-                        ( { model | search = DefinitionSearch (Success q (matches |> List.take 8 |> SearchResults.fromList)) }, Cmd.none, NoOut )
+                    ( DefinitionSearch (Searching q _) entitySearch, Ok matches ) ->
+                        ( { model | search = DefinitionSearch (Success q (toSearchResults matches)) entitySearch }
+                        , Cmd.none
+                        , NoOut
+                        )
 
-                    ( DefinitionSearch (Searching q _), Err e ) ->
-                        ( { model | search = DefinitionSearch (Failure q e) }, Cmd.none, NoOut )
+                    ( DefinitionSearch (Searching q _) entitySearch, Err e ) ->
+                        ( { model | search = DefinitionSearch (Failure q e) entitySearch }, Cmd.none, NoOut )
+
+                    ( EntitySearch entitySearch (Searching q _), Ok matches ) ->
+                        ( { model | search = EntitySearch entitySearch (Success q (toSearchResults matches)) }
+                        , Cmd.none
+                        , NoOut
+                        )
+
+                    ( EntitySearch entitySearch (Searching q _), Err e ) ->
+                        ( { model | search = EntitySearch entitySearch (Failure q e) }, Cmd.none, NoOut )
 
                     _ ->
                         ( model, Cmd.none, NoOut )
@@ -297,12 +339,12 @@ update appContext msg model =
                                     |> Maybe.map
                                         (\q_ ->
                                             ( toDefinitionSearchSearchingWithQuery model.search q_
-                                            , searchDefinitions appContext model.filter q_
+                                            , searchBoth appContext model.filter q_
                                             )
                                         )
                                     |> Maybe.withDefault
                                         ( toDefinitionSearchSearchingWithQuery model.search model.fieldValue
-                                        , searchDefinitions appContext model.filter model.fieldValue
+                                        , searchBoth appContext model.filter model.fieldValue
                                         )
                         in
                         ( { model | nameSearch = Success q results, search = search }, cmd, NoOut )
@@ -348,22 +390,22 @@ update appContext msg model =
 
                 Sequence _ ArrowUp ->
                     case model.search of
-                        EntitySearch s ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsPrev s) }, cmd, NoOut )
+                        EntitySearch s d ->
+                            ( { newModel | search = EntitySearch (Search.searchResultsPrev s) d }, cmd, NoOut )
 
-                        DefinitionSearch s ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsPrev s) }, cmd, NoOut )
+                        DefinitionSearch s e ->
+                            ( { newModel | search = DefinitionSearch (Search.searchResultsPrev s) e }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
 
                 Sequence _ ArrowDown ->
                     case model.search of
-                        EntitySearch s ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsNext s) }, cmd, NoOut )
+                        EntitySearch s d ->
+                            ( { newModel | search = EntitySearch (Search.searchResultsNext s) d }, cmd, NoOut )
 
-                        DefinitionSearch s ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsNext s) }, cmd, NoOut )
+                        DefinitionSearch s e ->
+                            ( { newModel | search = DefinitionSearch (Search.searchResultsNext s) e }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
@@ -372,7 +414,7 @@ update appContext msg model =
                     let
                         navCmd =
                             case model.search of
-                                EntitySearch s ->
+                                EntitySearch s _ ->
                                     case Maybe.andThen SearchResults.focus (Search.searchResults s) of
                                         Just (UserMatch u) ->
                                             Route.navigate appContext.navKey (Route.userProfile u.handle)
@@ -383,7 +425,7 @@ update appContext msg model =
                                         _ ->
                                             Cmd.none
 
-                                DefinitionSearch s ->
+                                DefinitionSearch s _ ->
                                     case Maybe.andThen SearchResults.focus (Search.searchResults s) of
                                         Just d ->
                                             let
@@ -434,7 +476,7 @@ update appContext msg model =
                             in
                             ( model_
                             , Cmd.batch
-                                [ searchDefinitions appContext model.filter val
+                                [ searchBoth appContext model.filter val
                                 , searchNamesCmd
                                 , updateQuery model_.fieldValue model_.filter
                                 ]
@@ -443,7 +485,7 @@ update appContext msg model =
 
                         _ ->
                             case model.search of
-                                EntitySearch s ->
+                                EntitySearch s _ ->
                                     case Search.searchResultsFocus s of
                                         Just (UserMatch u) ->
                                             let
@@ -523,6 +565,11 @@ update appContext msg model =
 -- UPDATE HELPERS
 
 
+toSearchResults : List a -> SearchResults.SearchResults a
+toSearchResults matches =
+    matches |> List.take 8 |> SearchResults.fromList
+
+
 updateForValue : AppContext -> Model -> String -> ( Model, Cmd Msg )
 updateForValue appContext model value =
     let
@@ -546,7 +593,7 @@ updateForValue appContext model value =
         let
             ( filter, val, search_ ) =
                 case model.search of
-                    EntitySearch s ->
+                    EntitySearch s _ ->
                         case Search.searchResultsFocus s of
                             Just (UserMatch u) ->
                                 ( UserFilter u.handle, "", NoSearch )
@@ -576,7 +623,7 @@ updateForValue appContext model value =
             , search = toEntitySearchSearchingWithQuery model.search value
             , nameSearch = Search.empty
           }
-        , searchEntities appContext model.filter value
+        , searchBoth appContext model.filter value
         )
 
     else if hasEnoughChars && String.startsWith "#" value then
@@ -597,7 +644,7 @@ updateForValue appContext model value =
             , search = toDefinitionSearchSearchingWithQuery model.search value
             , nameSearch = Search.empty
           }
-        , searchDefinitions appContext model.filter value
+        , searchBoth appContext model.filter value
         )
 
     else if hasEnoughChars then
@@ -607,7 +654,7 @@ updateForValue appContext model value =
                     Nothing ->
                         ( toDefinitionSearchSearchingWithQuery model.search value
                         , model.nameSearch
-                        , searchDefinitions appContext model.filter value
+                        , searchBoth appContext model.filter value
                         )
 
                     Just searchNamesCmd_ ->
@@ -630,6 +677,32 @@ isCapitalized s =
 
 
 -- EFFECTS
+
+
+addAtPrefix : String -> String
+addAtPrefix s =
+    if String.startsWith "@" s then
+        s
+
+    else
+        "@" ++ s
+
+
+removeAtPrefix : String -> String
+removeAtPrefix s =
+    if String.startsWith "@" s then
+        String.dropLeft 1 s
+
+    else
+        s
+
+
+searchBoth : AppContext -> Filter -> String -> Cmd Msg
+searchBoth appContext filter query =
+    Cmd.batch
+        [ searchEntities appContext filter (addAtPrefix query)
+        , searchDefinitions appContext filter (removeAtPrefix query)
+        ]
 
 
 searchEntities : AppContext -> Filter -> String -> Cmd Msg
@@ -759,34 +832,44 @@ searchNames appContext filter query =
 isMainSearchSearching : MainSearch -> Bool
 isMainSearchSearching search =
     case search of
-        EntitySearch s ->
+        EntitySearch s _ ->
             Search.isSearching s
 
-        DefinitionSearch s ->
+        DefinitionSearch s _ ->
             Search.isSearching s
 
         _ ->
             False
 
 
+
+{- TODO, search the secondary -}
+
+
 toEntitySearchSearchingWithQuery : MainSearch -> String -> MainSearch
 toEntitySearchSearchingWithQuery search query =
     case search of
-        EntitySearch s ->
-            EntitySearch (s |> Search.toSearching |> Search.withQuery query)
+        EntitySearch e d ->
+            EntitySearch (e |> Search.toSearching |> Search.withQuery query) d
 
-        _ ->
-            EntitySearch (Searching query Nothing)
+        DefinitionSearch d _ ->
+            EntitySearch (Searching query Nothing) d
+
+        NoSearch ->
+            EntitySearch (Searching query Nothing) (Searching query Nothing)
 
 
 toDefinitionSearchSearchingWithQuery : MainSearch -> String -> MainSearch
 toDefinitionSearchSearchingWithQuery search query =
     case search of
-        DefinitionSearch s ->
-            DefinitionSearch (s |> Search.toSearching |> Search.withQuery query)
+        DefinitionSearch d e ->
+            DefinitionSearch (d |> Search.toSearching |> Search.withQuery query) e
 
-        _ ->
-            DefinitionSearch (Searching query Nothing)
+        EntitySearch e _ ->
+            DefinitionSearch (Searching query Nothing) e
+
+        NoSearch ->
+            DefinitionSearch (Searching query Nothing) (Searching query Nothing)
 
 
 valueWithFocusedName : String -> SearchResults.SearchResults String -> String
@@ -1037,18 +1120,96 @@ viewDefinitionMatch keyboardShortcut def isFocused =
         )
 
 
-viewSearchSheet : (a -> Bool -> Html Msg) -> Search a -> Html Msg
-viewSearchSheet viewMatch search =
+definitionSearchSummary : Search DefinitionSearchMatch -> Maybe { numDefinitions : Int }
+definitionSearchSummary search =
+    case search of
+        Success _ matches ->
+            Just { numDefinitions = SearchResults.length matches }
+
+        _ ->
+            Nothing
+
+
+viewEntitySearchSummary : Search EntityMatch -> Maybe (Html Msg)
+viewEntitySearchSummary search =
+    let
+        isProject m =
+            case m of
+                ProjectMatch _ ->
+                    True
+
+                _ ->
+                    False
+
+        isUser m =
+            case m of
+                UserMatch _ ->
+                    True
+
+                _ ->
+                    False
+    in
+    case search of
+        Success _ matches ->
+            let
+                numProjects =
+                    matches
+                        |> SearchResults.toList
+                        |> List.filter isProject
+                        |> List.length
+
+                numUsers =
+                    matches
+                        |> SearchResults.toList
+                        |> List.filter isUser
+                        |> List.length
+            in
+            Just
+                (div
+                    [ class "secondary-matches-summary" ]
+                    [ text
+                        ("There were "
+                            ++ String.fromInt numProjects
+                            ++ " project matches, and "
+                            ++ String.fromInt numUsers
+                            ++ " user matches."
+                        )
+                    ]
+                )
+
+        _ ->
+            Nothing
+
+
+viewSearchSheet :
+    (a -> Bool -> Html Msg)
+    -> Search a
+    -> (b -> Bool -> Html Msg)
+    -> Maybe (Html Msg)
+    -> Search b
+    -> Html Msg
+viewSearchSheet viewMatch search viewSecondaryMatch secondarySummary secondarySearch =
     let
         viewSheet matches =
             if SearchResults.isEmpty matches then
-                div
-                    [ class "main-result-sheet empty-state" ]
-                    [ text "No matches found" ]
+                case secondarySearch of
+                    Success _ secondaryMatches ->
+                        if SearchResults.isEmpty secondaryMatches then
+                            viewEmptySheet
+
+                        else
+                            viewEmpty
+                                ("No definitions matched the query, but " ++ String.fromInt (SearchResults.length secondaryMatches) ++ " users or projects did")
+                                (div [ class "result-matches" ] (SearchResults.mapToList viewSecondaryMatch secondaryMatches))
+
+                    _ ->
+                        viewEmptySheet
 
             else
-                div [ class "main-result-sheet" ]
-                    (SearchResults.mapToList viewMatch matches)
+                viewSheet_
+                    [ div [ class "result-matches" ] (SearchResults.mapToList viewMatch matches)
+                    , Maybe.withDefault UI.nothing secondarySummary
+                    ]
     in
     case search of
         NotAsked _ ->
@@ -1063,7 +1224,25 @@ viewSearchSheet viewMatch search =
             viewSheet matches
 
         Failure _ err ->
-            div [ class "main-result-sheet" ] [ text (Util.httpErrorToString err) ]
+            viewSheet_ [ text (Util.httpErrorToString err) ]
+
+
+viewEmptySheet : Html Msg
+viewEmptySheet =
+    viewSheet_ [ div [ class "empty-state" ] [ text "No matches found" ] ]
+
+
+viewSheet_ : List (Html Msg) -> Html Msg
+viewSheet_ content =
+    div [ class "main-result-sheet" ] content
+
+
+viewEmpty : String -> Html Msg -> Html Msg
+viewEmpty label secondary =
+    viewSheet_
+        [ div [ class "empty-state_small" ] [ text label ]
+        , secondary
+        ]
 
 
 viewMainSearch : KeyboardShortcut.Model -> MainSearch -> Html Msg
@@ -1072,11 +1251,69 @@ viewMainSearch keyboardShortcut mainSearch =
         NoSearch ->
             UI.nothing
 
-        EntitySearch s ->
-            viewSearchSheet (viewEntityMatch keyboardShortcut) s
+        EntitySearch entitySearch defSearch ->
+            let
+                viewEntitySearchSheet matches =
+                    if SearchResults.isEmpty matches then
+                        case defSearch of
+                            Success _ defMatches ->
+                                if SearchResults.isEmpty defMatches then
+                                    viewEmptySheet
 
-        DefinitionSearch s ->
-            viewSearchSheet (viewDefinitionMatch keyboardShortcut) s
+                                else
+                                    viewEmpty
+                                        ("No users or projects matched the query, but "
+                                            ++ String.fromInt (SearchResults.length defMatches)
+                                            ++ " definitions did"
+                                        )
+                                        (div [ class "result-matches" ]
+                                            (SearchResults.mapToList
+                                                (viewDefinitionMatch keyboardShortcut)
+                                                defMatches
+                                            )
+                                        )
+
+                            _ ->
+                                viewEmptySheet
+
+                    else
+                        let
+                            definitionSearchSummary_ =
+                                defSearch
+                                    |> definitionSearchSummary
+                                    |> Maybe.map
+                                        (\{ numDefinitions } ->
+                                            text (String.fromInt numDefinitions ++ " " ++ pluralize "definition" "definitions" numDefinitions)
+                                        )
+                                    |> Maybe.withDefault UI.nothing
+                        in
+                        viewSheet_
+                            [ div [ class "result-matches" ] (SearchResults.mapToList (viewEntityMatch keyboardShortcut) matches)
+                            , definitionSearchSummary_
+                            ]
+            in
+            case entitySearch of
+                NotAsked _ ->
+                    UI.nothing
+
+                Searching _ matches ->
+                    matches
+                        |> Maybe.map viewEntitySearchSheet
+                        |> Maybe.withDefault UI.nothing
+
+                Success _ matches ->
+                    viewEntitySearchSheet matches
+
+                Failure _ err ->
+                    viewSheet_ [ text (Util.httpErrorToString err) ]
+
+        DefinitionSearch defSearch entitySearch ->
+            viewSearchSheet
+                (viewDefinitionMatch keyboardShortcut)
+                defSearch
+                (viewEntityMatch keyboardShortcut)
+                (viewEntitySearchSummary entitySearch)
+                entitySearch
 
 
 viewSearchHelpModal : AppContext -> Html Msg
