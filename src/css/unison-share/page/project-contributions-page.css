@@ -51,18 +51,10 @@
       & .contribution-row_info {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 0.25rem;
         font-size: var(--font-size-medium);
       }
     }
-  }
-}
-
-@media only screen and (--u-viewport_max-sm) {
-  .project-contributions-page
-    .project-contributions
-    .contribution-row
-    .contribution-row_info {
-    flex-direction: columm;
   }
 }
