@@ -57,3 +57,9 @@
     }
   }
 }
+
+@media only screen and (--u-viewport_max-sm) {
+  .project-contributions .contribution-row .contribution-row_info {
+    flex-direction: columm;
+  }
+}
