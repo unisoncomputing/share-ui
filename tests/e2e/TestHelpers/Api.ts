@@ -2,7 +2,9 @@
 import { Page } from "@playwright/test";
 import {
   project,
+  type ContributionDiffConfig,
   contributionTimeline,
+  contributionDiff,
   userDetails,
   org,
   contribution,
@@ -280,6 +282,22 @@ async function getProjectContributionMergeCheck_(
   });
 }
 
+async function getProjectContributionDiff(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  cfg: ContributionDiffConfig,
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+  const data = contributionDiff(projectRef, cfg);
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}/diff`,
+    status: 200,
+    data: data,
+  });
+}
+
 // -- UTIL
 
 type Response = {
@@ -318,5 +336,6 @@ export {
   getProjectContributionTimeline_,
   getProjectContributionMergeCheck,
   getProjectContributionMergeCheck_,
+  getProjectContributionDiff,
   get,
 };
