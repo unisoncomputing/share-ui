@@ -5,6 +5,7 @@ import Html.Attributes exposing (class, classList)
 import Lib.HttpApi exposing (HttpApi)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Time
+import UI
 import UI.ActionMenu as ActionMenu
 import UI.AnchoredOverlay as AnchoredOverlay
 import UI.AppHeader exposing (AppHeader, AppTitle(..))
@@ -120,6 +121,7 @@ type alias AppHeaderContext msg =
     , toggleHelpAndResourcesMenuMsg : msg
     , toggleAccountMenuMsg : msg
     , toggleCreateAccountMenuMsg : msg
+    , showNewOrgModal : msg
     , showKeyboardShortcutsModalMsg : msg
     }
 
@@ -277,21 +279,21 @@ view ctx appHeader_ =
                               ]
                             )
 
-                        SignedIn sesh ->
+                        SignedIn account ->
                             let
                                 nav =
                                     case activeNavItem of
                                         Catalog ->
-                                            Navigation.empty |> Navigation.withItems [] navItems.catalog [ navItems.profile sesh.handle ]
+                                            Navigation.empty |> Navigation.withItems [] navItems.catalog [ navItems.profile account.handle ]
 
                                         Profile ->
-                                            Navigation.empty |> Navigation.withItems [ navItems.catalog ] (navItems.profile sesh.handle) []
+                                            Navigation.empty |> Navigation.withItems [ navItems.catalog ] (navItems.profile account.handle) []
 
                                         _ ->
-                                            Navigation.empty |> Navigation.withNoSelectedItems [ navItems.catalog, navItems.profile sesh.handle ]
+                                            Navigation.empty |> Navigation.withNoSelectedItems [ navItems.catalog, navItems.profile account.handle ]
 
                                 avatar =
-                                    Avatar.avatar sesh.avatarUrl (Maybe.map (String.left 1) sesh.name)
+                                    Avatar.avatar account.avatarUrl (Maybe.map (String.left 1) account.name)
                                         |> Avatar.view
 
                                 viewAccountMenuTrigger isOpen =
@@ -306,6 +308,16 @@ view ctx appHeader_ =
                                     div [ classList [ ( "account-menu-trigger", True ), ( "account-menu_is-open", isOpen ) ] ]
                                         [ avatar, Icon.view chevron ]
 
+                                newOrgButton =
+                                    if account.isSuperAdmin then
+                                        Button.iconThenLabel ctx.showNewOrgModal Icon.largePlus "New Org"
+                                            |> Button.small
+                                            |> Button.positive
+                                            |> Button.view
+
+                                    else
+                                        UI.nothing
+
                                 accountMenu =
                                     ActionMenu.items
                                         (ActionMenu.optionItem Icon.cog "Account Settings" Link.account)
@@ -315,7 +327,7 @@ view ctx appHeader_ =
                                         |> ActionMenu.view
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
-                            ( nav, [ helpAndResources, accountMenu ] )
+                            ( nav, [ newOrgButton, helpAndResources, accountMenu ] )
             in
             UI.AppHeader.appHeader (appTitle (Click.href "/"))
                 |> UI.AppHeader.withNavigation navigation

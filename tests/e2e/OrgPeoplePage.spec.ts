@@ -25,7 +25,7 @@ test.describe("without being signed in", () => {
     await expect(handle).toBeVisible();
 
     const title = page.getByText("You're not authorized to view this page");
-    expect(title).toBeVisible();
+    await expect(title).toBeVisible();
   });
 });
 
@@ -48,7 +48,7 @@ test.describe("without org:manage permission", () => {
     await expect(handle).toBeVisible();
 
     const title = page.getByText("You're not authorized to view this page");
-    expect(title).toBeVisible();
+    await expect(title).toBeVisible();
   });
 });
 
