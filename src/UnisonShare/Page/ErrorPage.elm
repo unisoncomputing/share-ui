@@ -17,7 +17,7 @@ view : Session -> Http.Error -> String -> String -> PageLayout msg
 view session error entityName className =
     let
         errorDetails =
-            if Session.isUnisonMember session then
+            if Session.isSuperAdmin session then
                 details [] [ summary [] [ text "Error Details" ], div [] [ text (Util.httpErrorToString error) ] ]
 
             else

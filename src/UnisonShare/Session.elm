@@ -7,6 +7,7 @@ module UnisonShare.Session exposing
     , isOrganizationMember
     , isProjectOwner
     , isSignedIn
+    , isSuperAdmin
     , isUnisonMember
     )
 
@@ -39,6 +40,16 @@ isSignedIn session =
 
         SignedIn _ ->
             True
+
+
+isSuperAdmin : Session -> Bool
+isSuperAdmin session =
+    case session of
+        Anonymous ->
+            False
+
+        SignedIn account_ ->
+            account_.isSuperAdmin
 
 
 isProjectOwner : ProjectRef -> Session -> Bool

@@ -5,6 +5,7 @@ function account(handle: string) {
     ...user(),
     handle,
     completedTours: ["welcome-terms"],
+    isSuperadmin: faker.datatype.boolean(),
     organizationMemberships: [],
     primaryEmail: faker.internet.email(),
   };
