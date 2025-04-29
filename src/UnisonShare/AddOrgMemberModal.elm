@@ -1,4 +1,4 @@
-module UnisonShare.AddProjectCollaboratorModal exposing (..)
+module UnisonShare.AddOrgMemberModal exposing (..)
 
 import Html exposing (Html, div, h3, text)
 import Html.Attributes exposing (class, classList)
@@ -8,6 +8,7 @@ import Json.Decode.Extra exposing (when)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
+import Lib.UserHandle exposing (UserHandle)
 import Lib.Util exposing (decodeTag)
 import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
@@ -22,23 +23,22 @@ import UI.ProfileSnippet as ProfileSnippet
 import UI.StatusBanner as StatusBanner
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
-import UnisonShare.Project.ProjectRef exposing (ProjectRef)
-import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
-import UnisonShare.ProjectRole as ProjectRole exposing (ProjectRole(..))
+import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
+import UnisonShare.OrgRole as OrgRole exposing (OrgRole(..))
 import UnisonShare.Session as Session
 import UnisonShare.User as User exposing (UserSummaryWithId)
 
 
-type alias PotentialProjectCollaborator =
-    { user : UserSummaryWithId, role : ProjectRole }
+type alias PotentialOrgMember =
+    { user : UserSummaryWithId, role : OrgRole }
 
 
 type Model
     = FindUser (Search UserSummaryWithId)
-    | AssignRole PotentialProjectCollaborator
-    | Saving PotentialProjectCollaborator
-    | Failure Http.Error PotentialProjectCollaborator
-    | Success PotentialProjectCollaborator
+    | AssignRole PotentialOrgMember
+    | Saving PotentialOrgMember
+    | Failure Http.Error PotentialOrgMember
+    | Success PotentialOrgMember
 
 
 init : Model
@@ -56,20 +56,20 @@ type Msg
     | PerformSearch String
     | FetchUsersFinished String (HttpResult (List UserSummaryWithId))
     | SelectUser UserSummaryWithId
-    | SetRole ProjectRole
-    | AddCollaborator
-    | AddCollaboratorFinished (HttpResult ())
+    | SetRole OrgRole
+    | AddMember
+    | AddMemberFinished (HttpResult ())
     | BackToFindUser
 
 
 type OutMsg
     = NoOutMsg
     | RequestCloseModal
-    | AddedCollaborator ProjectCollaborator
+    | AddedMember OrgMember
 
 
-update : AppContext -> ProjectRef -> List ProjectCollaborator -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
-update appContext projectRef currentCollaborators msg model =
+update : AppContext -> UserHandle -> List OrgMember -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
+update appContext orgHandle currentMembers msg model =
     case msg of
         CloseModal ->
             ( model, Cmd.none, RequestCloseModal )
@@ -109,8 +109,16 @@ update appContext projectRef currentCollaborators msg model =
             case ( appContext.session, model, users ) of
                 ( Session.SignedIn account, FindUser search, Ok users_ ) ->
                     let
+                        userHandles m =
+                            case m of
+                                OrgMember.UserMember { user } ->
+                                    Just user.handle
+
+                                _ ->
+                                    Nothing
+
                         usersToIgnore =
-                            account.handle :: List.map (.user >> .handle) currentCollaborators
+                            account.handle :: List.filterMap userHandles currentMembers
 
                         model_ =
                             if Search.queryEquals q search then
@@ -139,21 +147,21 @@ update appContext projectRef currentCollaborators msg model =
                 _ ->
                     ( model, Cmd.none, NoOutMsg )
 
-        AddCollaborator ->
+        AddMember ->
             case model of
-                AssignRole collab ->
-                    ( Saving collab, addCollaborator appContext projectRef collab, NoOutMsg )
+                AssignRole member ->
+                    ( Saving member, addMember appContext orgHandle member, NoOutMsg )
 
                 _ ->
                     ( model, Cmd.none, NoOutMsg )
 
-        AddCollaboratorFinished res ->
+        AddMemberFinished res ->
             case ( model, res ) of
-                ( Saving collab, Ok _ ) ->
-                    ( Success collab, Cmd.none, AddedCollaborator { user = collab.user, roles = [ collab.role ] } )
+                ( Saving member, Ok _ ) ->
+                    ( Success member, Cmd.none, AddedMember (OrgMember.UserMember { user = member.user, roles = [ member.role ] }) )
 
-                ( Saving collab, Err e ) ->
-                    ( Failure e collab, Cmd.none, NoOutMsg )
+                ( Saving member, Err e ) ->
+                    ( Failure e member, Cmd.none, NoOutMsg )
 
                 _ ->
                     ( model, Cmd.none, NoOutMsg )
@@ -187,10 +195,10 @@ fetchUsers appContext query =
         |> HttpApi.perform appContext.api
 
 
-addCollaborator : AppContext -> ProjectRef -> PotentialProjectCollaborator -> Cmd Msg
-addCollaborator appContext projectRef collab =
-    ShareApi.createProjectRoleAssignment projectRef [ { user = collab.user, roles = [ collab.role ] } ]
-        |> HttpApi.toRequestWithEmptyResponse AddCollaboratorFinished
+addMember : AppContext -> UserHandle -> PotentialOrgMember -> Cmd Msg
+addMember appContext orgHandle member =
+    ShareApi.createOrgRoleAssignment orgHandle [ OrgMember.UserMember { user = member.user, roles = [ member.role ] } ]
+        |> HttpApi.toRequestWithEmptyResponse AddMemberFinished
         |> HttpApi.perform appContext.api
 
 
@@ -208,8 +216,8 @@ view model =
     let
         modal_ c =
             Modal.content c
-                |> Modal.modal "add-project-collaborator-modal" CloseModal
-                |> Modal.withHeader "Add collaborator"
+                |> Modal.modal "add-org-member-modal" CloseModal
+                |> Modal.withHeader "Add member"
 
         modal =
             case model of
@@ -256,10 +264,11 @@ view model =
                 AssignRole { user, role } ->
                     let
                         options =
-                            NEL.singleton (RadioField.option "Admin" "Full role, including sensitive and destructive actions." Admin)
-                                |> NEL.cons (RadioField.option "Maintain" "Read, download, merge and write." Maintainer)
-                                |> NEL.cons (RadioField.option "Contributor" "Read, download, and create branches and contributions." Contributor)
-                                |> NEL.cons (RadioField.option "View" "Read, download project. Nothing else." Viewer)
+                            NEL.singleton Admin
+                                |> NEL.cons Maintainer
+                                |> NEL.cons Contributor
+                                |> NEL.cons Viewer
+                                |> NEL.map (\r -> RadioField.option (OrgRole.toString r) (OrgRole.description r) r)
                     in
                     modal_
                         (div [ class "assign-role" ]
@@ -278,43 +287,43 @@ view model =
                         |> Modal.withActions
                             [ Button.button CloseModal "Cancel"
                                 |> Button.subdued
-                            , Button.button AddCollaborator ("Add " ++ User.name user)
+                            , Button.button AddMember ("Add " ++ User.name user)
                                 |> Button.emphasized
                             ]
 
-                Saving collab ->
+                Saving member ->
                     modal_
                         (div []
                             [ text
                                 ("Adding "
-                                    ++ User.name collab.user
+                                    ++ User.name member.user
                                     ++ " with "
-                                    ++ ProjectRole.toString collab.role
+                                    ++ OrgRole.toString member.role
                                     ++ " role"
                                 )
                             ]
                         )
 
-                Failure _ collab ->
+                Failure _ member ->
                     modal_
                         (div []
                             [ text
                                 ("Failed to add "
-                                    ++ User.name collab.user
+                                    ++ User.name member.user
                                     ++ " with "
-                                    ++ ProjectRole.toString collab.role
+                                    ++ OrgRole.toString member.role
                                     ++ " role"
                                 )
                             ]
                         )
 
-                Success collab ->
+                Success member ->
                     modal_
                         (StatusBanner.good
                             ("Successfully added "
-                                ++ User.name collab.user
+                                ++ User.name member.user
                                 ++ " with "
-                                ++ ProjectRole.toString collab.role
+                                ++ OrgRole.toString member.role
                                 ++ " role"
                             )
                         )

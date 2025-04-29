@@ -5,7 +5,7 @@ function button(page: Page, label: string) {
 }
 
 function navItem(page: Page, label: string) {
-  return page.locator(".nav-item_full-label").getByText(label);
+  return page.locator(".min-md .nav-item_full-label").getByText(label);
 }
 
 export { button, navItem };

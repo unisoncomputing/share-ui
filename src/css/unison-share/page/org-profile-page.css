@@ -1,0 +1,39 @@
+.org-profile-page .org-profile_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-profile-page .org-profile_main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.org-profile-page .projects {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.org-profile-page .project {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.org-profile-page .project .project-summary {
+  font-size: var(--font-size-medium);
+  margin-left: 2rem;
+}
+
+.org-profile-page .project .tags {
+  margin-left: 2rem;
+}
+
+@media only screen and (--u-viewport_max-md) {
+  .org-profile-page .org-profile-page_page-content {
+    flex-direction: column;
+  }
+}

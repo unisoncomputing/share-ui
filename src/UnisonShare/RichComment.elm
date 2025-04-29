@@ -2,12 +2,12 @@ module UnisonShare.RichComment exposing (..)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
-import Markdown
 import RemoteData exposing (RemoteData(..), WebData)
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff.ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
+import UnisonShare.Markdown as Markdown
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
 import Url exposing (Url)
@@ -129,7 +129,7 @@ viewCommentPart : CommentPart -> Html Msg
 viewCommentPart cp =
     case cp of
         Text t ->
-            Markdown.toHtml [] t
+            Markdown.view t
 
         EmbedContributionChangeLine { url, changeLine } ->
             case changeLine of
@@ -137,7 +137,7 @@ viewCommentPart cp =
                     div [] [ text "Some changeline snippet" ]
 
                 _ ->
-                    Markdown.toHtml [] (Url.toString url)
+                    Markdown.view (Url.toString url)
 
 
 view : Model -> Html Msg

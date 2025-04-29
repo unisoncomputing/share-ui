@@ -1,5 +1,6 @@
 module UnisonShare.Route exposing
     ( CodeRoute(..)
+    , OrgRoute(..)
     , ProjectContributionRoute(..)
     , ProjectRoute(..)
     , Route(..)
@@ -12,6 +13,9 @@ module UnisonShare.Route exposing
     , definition
     , fromUrl
     , navigate
+    , orgPeople
+    , orgProfile
+    , orgSettings
     , privacyPolicy
     , projectBranch
     , projectBranchDefinition
@@ -82,9 +86,13 @@ type CodeRoute
 
 
 type UserRoute
-    = UserProfile
-    | UserContributions
+    = UserContributions
     | UserCode CodeRoute
+
+
+type OrgRoute
+    = OrgPeople
+    | OrgSettings
 
 
 type ProjectContributionRoute
@@ -108,7 +116,9 @@ type ProjectRoute
 type Route
     = Catalog
     | Account
+    | Profile UserHandle
     | User UserHandle UserRoute
+    | Org UserHandle OrgRoute
     | Project ProjectRef ProjectRoute
     | TermsOfService
     | AcceptTerms (Maybe Url)
@@ -140,7 +150,22 @@ cloud =
 
 userProfile : UserHandle -> Route
 userProfile handle_ =
-    User handle_ UserProfile
+    Profile handle_
+
+
+orgProfile : UserHandle -> Route
+orgProfile handle_ =
+    Profile handle_
+
+
+orgPeople : UserHandle -> Route
+orgPeople handle_ =
+    Org handle_ OrgPeople
+
+
+orgSettings : UserHandle -> Route
+orgSettings handle_ =
+    Org handle_ OrgSettings
 
 
 userCode : UserHandle -> CodeRoute -> Route
@@ -303,7 +328,9 @@ toRoute queryString =
         [ b homeParser
         , b catalogParser
         , b accountParser
+        , b profileParser
         , b userParser
+        , b orgParser
         , b (projectParser queryString) -- Specifically comes _after_ userParser because project slugs share the url space with user pages
         , b termsOfServiceParser
         , b (acceptTermsParser queryString)
@@ -413,6 +440,11 @@ viewModeQueryParamParser =
         ]
 
 
+profileParser : Parser Route
+profileParser =
+    b (succeed Profile |. slash |= userHandle |. end)
+
+
 userParser : Parser Route
 userParser =
     let
@@ -421,16 +453,31 @@ userParser =
 
         userContrib h =
             User h UserContributions
-
-        userProfile_ h =
-            User h UserProfile
     in
     oneOf
-        [ b (succeed userProfile_ |. slash |= userHandle |. end)
-        , b (succeed userContrib |. slash |= userHandle |. slash |. s "p" |. slash |. s "contributions" |. end)
+        [ b (succeed userContrib |. slash |= userHandle |. slash |. s "p" |. slash |. s "contributions" |. end)
         , b (succeed userCode_ |. slash |= userHandle |. slash |. s "code" |. slash |= codeParser)
         , b (succeed userCode_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "code" |. slash |= codeParser)
         ]
+
+
+orgParser : Parser Route
+orgParser =
+    let
+        orgPeople_ h =
+            Org h OrgPeople
+
+        orgSettings_ h =
+            Org h OrgSettings
+    in
+    oneOf
+        [ b (succeed orgPeople_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "people" |. end)
+        , b (succeed orgSettings_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "settings" |. end)
+        ]
+
+
+
+-- b (succeed userProfile_ |. slash |= userHandle |. end)
 
 
 projectParser : Maybe String -> Parser Route
@@ -661,7 +708,7 @@ toUrlPattern r =
         Account ->
             "account"
 
-        User _ UserProfile ->
+        Profile _ ->
             ":handle"
 
         User _ (UserCode codeRoute) ->
@@ -669,6 +716,12 @@ toUrlPattern r =
 
         User _ UserContributions ->
             ":handle/p/contributions"
+
+        Org _ OrgPeople ->
+            ":handle/p/people"
+
+        Org _ OrgSettings ->
+            ":handle/p/settings"
 
         Project _ ProjectOverview ->
             ":handle/:project-slug"
@@ -813,7 +866,7 @@ toUrlString route =
                 Account ->
                     ( [ "account" ], [] )
 
-                User handle_ UserProfile ->
+                Profile handle_ ->
                     ( [ UserHandle.toString handle_ ], [] )
 
                 User handle_ (UserCode codeRoute) ->
@@ -821,6 +874,12 @@ toUrlString route =
 
                 User handle_ UserContributions ->
                     ( [ UserHandle.toString handle_, "p", "contributions" ], [] )
+
+                Org handle_ OrgPeople ->
+                    ( [ UserHandle.toString handle_, "p", "people" ], [] )
+
+                Org handle_ OrgSettings ->
+                    ( [ UserHandle.toString handle_, "p", "settings" ], [] )
 
                 Project projectRef_ ProjectOverview ->
                     ( ProjectRef.toUrlPath projectRef_, [] )

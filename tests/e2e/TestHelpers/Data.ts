@@ -3,8 +3,9 @@ import { faker } from "@faker-js/faker";
 function account(handle: string) {
   return {
     ...user(),
-    handle,
+    handle: handle.replace("@", ""),
     completedTours: ["welcome-terms"],
+    isSuperadmin: false,
     organizationMemberships: [],
     primaryEmail: faker.internet.email(),
   };
@@ -17,9 +18,41 @@ function user(handle?: string) {
 
   return {
     avatarUrl: faker.image.avatar(),
-    handle: handle_,
+    handle: handle_.replace("@", ""),
     name: `${firstName} ${lastName}`,
     userId: faker.string.uuid(),
+    kind: "user",
+  };
+}
+
+function userDetails(handle?: string) {
+  const firstName = faker.person.firstName();
+  const lastName = faker.person.lastName();
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+
+  return {
+    avatarUrl: faker.image.avatar(),
+    handle: handle_.replace("@", ""),
+    name: `${firstName} ${lastName}`,
+    userId: faker.string.uuid(),
+    website: faker.internet.url(),
+    location: null,
+    bio: faker.person.bio(),
+    pronouns: null,
+    kind: "user",
+  };
+}
+
+function org(handle?: string) {
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+
+  return {
+    avatarUrl: faker.image.avatar(),
+    handle: handle_.replace("@", ""),
+    name: faker.company.name(),
+    orgId: faker.string.uuid(),
+    kind: "org",
+    permissions: [],
   };
 }
 
@@ -29,8 +62,19 @@ function projectRef(handle?: string) {
   return `@${handle_}/${slug}`;
 }
 
-function project(projectRef: string) {
-  const [handle, slug] = projectRef.split("/");
+function branchRef(handle?: string) {
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+  const slug = faker.lorem.slug(2);
+  return `@${handle_}/${slug}`;
+}
+
+function hash() {
+  return `#${faker.string.alphanumeric(256)}`;
+}
+
+function project(ref?: string) {
+  const ref_ = ref ? ref : projectRef();
+  const [handle, slug] = ref_.split("/");
 
   return {
     createdAt: faker.date.past(),
@@ -121,11 +165,106 @@ function contributionTimeline(events?: unknown[]) {
   };
 }
 
+function changeLine() {
+  return {
+    contents: {
+      contents: {
+        fullName: "data.Map.fromListWithKey",
+        newHash: hash(),
+        newTag: "Plain",
+        oldHash: hash(),
+        oldTag: "Plain",
+        shortName: "fromListWithKey",
+      },
+      tag: "Updated",
+    },
+    tag: "Plain",
+  };
+}
+
+type DiffErrorCulprit = "new" | "old";
+
+type DiffErrorDetails =
+  | { errorKind: "impossibleError"; isOldOrNewBranch: DiffErrorCulprit }
+  | {
+      errorKind: "constructorAlias";
+      isOldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+      constructorName1: string;
+      constructorName2: string;
+    }
+  | {
+      errorKind: "missingConstructorName";
+      isOldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+    }
+  | {
+      errorKind: "nestedDeclAlias";
+      isOldOrNewBranch: DiffErrorCulprit;
+      constructorName1: string;
+      constructorName2: string;
+    }
+  | {
+      errorKind: "strayConstructor";
+      isOldOrNewBranch: DiffErrorCulprit;
+      constructorName: string;
+    };
+
+type ContributionDiffConfig =
+  | { diffKind: "ok" }
+  | { diffKind: "computing" }
+  | { diffKind: "error"; error: DiffErrorDetails };
+
+function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
+  switch (cfg.diffKind) {
+    case "ok":
+      return {
+        diffKind: "ok",
+        diff: {
+          defns: {
+            changes: [changeLine(), changeLine(), changeLine()],
+            children: [],
+          },
+          libdeps: [],
+        },
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+      };
+    case "computing":
+      return {
+        diffKind: "computing",
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+      };
+    case "error":
+      return {
+        diffKind: "error",
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+        error: cfg.error,
+      };
+  }
+}
+
 export {
   projectRef,
   project,
   account,
+  user,
+  userDetails,
+  org,
   contribution,
   contributionTimeline,
   contributionStatusChangeEvent,
+  contributionDiff,
+  type ContributionDiffConfig,
 };

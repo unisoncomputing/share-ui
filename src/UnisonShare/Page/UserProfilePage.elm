@@ -86,7 +86,7 @@ type OutMsg
     | UpdateUserProfile UserDetails
 
 
-update : AppContext -> UserHandle -> WebData UserDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
+update : AppContext -> UserHandle -> UserDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext handle user msg model =
     case msg of
         NoOp ->
@@ -96,11 +96,11 @@ update appContext handle user msg model =
             ( { model | projects = projects }, Cmd.none, NoOut )
 
         ShowEditProfileModal ->
-            case ( Session.isHandle handle appContext.session, RemoteData.map .bio user ) of
-                ( True, Success (Just b) ) ->
+            case ( Session.isHandle handle appContext.session, user.bio ) of
+                ( True, Just b ) ->
                     ( { model | modal = EditProfileModal (Editing { bio = b }) }, Cmd.none, NoOut )
 
-                ( True, Success Nothing ) ->
+                ( True, Nothing ) ->
                     ( { model | modal = EditProfileModal (Editing { bio = "" }) }, Cmd.none, NoOut )
 
                 _ ->
@@ -130,14 +130,14 @@ update appContext handle user msg model =
                     ( model, Cmd.none, NoOut )
 
         SaveProfileFinished result ->
-            case ( user, model.modal, result ) of
-                ( Success u, EditProfileModal (Saving f), Ok _ ) ->
+            case ( model.modal, result ) of
+                ( EditProfileModal (Saving f), Ok _ ) ->
                     ( { model | modal = NoModal }
                     , Cmd.none
-                    , UpdateUserProfile { u | bio = Just f.bio }
+                    , UpdateUserProfile { user | bio = Just f.bio }
                     )
 
-                ( _, EditProfileModal (Saving f), Err e ) ->
+                ( EditProfileModal (Saving f), Err e ) ->
                     ( { model | modal = EditProfileModal (SaveFailed f e) }
                     , Cmd.none
                     , NoOut

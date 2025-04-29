@@ -59,7 +59,7 @@
       text-transform: capitalize;
     }
 
-    & .branches {
+    & .branch {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -108,15 +108,23 @@
     & .page-title {
       flex: 1;
 
-      & .page-title_default-title .text {
-        gap: 0.5rem;
+      & h1 {
+        font-size: 1.25rem;
       }
     }
 
-    & .page-title_description {
+    & .page-title_description .from-to {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.75rem;
+      gap: 0.25rem;
+
+      & .branch {
+        gap: 0.25rem;
+
+        & .copy-on-click {
+          display: none;
+        }
+      }
     }
 
     & .page-title_right-side {

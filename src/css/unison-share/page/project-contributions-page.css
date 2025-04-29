@@ -51,6 +51,7 @@
       & .contribution-row_info {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 0.25rem;
         font-size: var(--font-size-medium);
       }

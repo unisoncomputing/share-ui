@@ -5,7 +5,6 @@ import Http
 import Lib.HttpApi as HttpApi
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import RemoteData exposing (RemoteData(..), WebData)
-import Tuple
 import UI.EmptyState as EmptyState
 import UI.EmptyStateCard as EmptyStateCard
 import UI.Icon as Icon
@@ -21,7 +20,6 @@ import UnisonShare.AppHeader as AppHeader
 import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Page.CodePage as CodePage
 import UnisonShare.Page.UserContributionsPage as UserContributionsPage
-import UnisonShare.Page.UserProfilePage as UserProfilePage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Route as Route exposing (CodeRoute, UserRoute(..))
 import UnisonShare.Session as Session
@@ -34,8 +32,7 @@ import UnisonShare.UserPageHeader as UserPageHeader
 
 
 type SubPage
-    = Profile UserProfilePage.Model
-    | Code CodePage.Model
+    = Code CodePage.Model
     | Contributions UserContributionsPage.Model
 
 
@@ -54,13 +51,6 @@ init appContext handle userRoute =
 
         ( subPage, cmd ) =
             case userRoute of
-                UserProfile ->
-                    let
-                        ( profilePage, profileCmd ) =
-                            UserProfilePage.init appContext handle
-                    in
-                    ( Profile profilePage, Cmd.map UserProfilePageMsg profileCmd )
-
                 UserCode codeRoute ->
                     let
                         ( codePage, codePageCmd ) =
@@ -93,7 +83,6 @@ init appContext handle userRoute =
 type Msg
     = FetchUserFinished (WebData UserDetails)
     | ToggleMobileNav
-    | UserProfilePageMsg UserProfilePage.Msg
     | CodePageMsg CodePage.Msg
     | UserContributionsPageMsg UserContributionsPage.Msg
 
@@ -108,21 +97,6 @@ update appContext handle route msg model =
             ( { model | mobileNavIsOpen = not model.mobileNavIsOpen }, Cmd.none )
 
         -- Sub msgs
-        ( Profile profilePage, UserProfilePageMsg userProfilePageMsg ) ->
-            let
-                ( profilePage_, profileCmd, out ) =
-                    UserProfilePage.update appContext handle model.user userProfilePageMsg profilePage
-
-                user =
-                    case out of
-                        UserProfilePage.NoOut ->
-                            model.user
-
-                        UserProfilePage.UpdateUserProfile u ->
-                            RemoteData.map (\_ -> u) model.user
-            in
-            ( { model | subPage = Profile profilePage_, user = user }, Cmd.map UserProfilePageMsg profileCmd )
-
         ( Code codePage, CodePageMsg codePageMsg ) ->
             let
                 codeBrowsingContext =
@@ -161,18 +135,6 @@ updateSubPage appContext handle model route =
             CodeBrowsingContext.UserCode handle
     in
     case route of
-        UserProfile ->
-            case model.subPage of
-                Profile _ ->
-                    ( model, Cmd.none )
-
-                _ ->
-                    let
-                        ( profilePage, profileCmd ) =
-                            UserProfilePage.init appContext handle
-                    in
-                    ( { model | subPage = Profile profilePage }, Cmd.map UserProfilePageMsg profileCmd )
-
         UserCode codeRoute ->
             case model.subPage of
                 Code codeSubPage ->
@@ -303,9 +265,6 @@ viewLoadingPage appContext subPage handle =
     let
         ( page, pageId ) =
             case subPage of
-                Profile _ ->
-                    ( UserProfilePage.viewLoadingPage, "user-profile-page" )
-
                 Code _ ->
                     ( PageLayout.sidebarLeftContentLayout
                         appContext.operatingSystem
@@ -335,6 +294,7 @@ view appContext handle model =
 
         userProfilePageHeader activeNavItem user =
             UserPageHeader.view
+                appContext.session
                 ToggleMobileNav
                 model.mobileNavIsOpen
                 activeNavItem
@@ -353,29 +313,6 @@ view appContext handle model =
 
         Success user ->
             case model.subPage of
-                Profile profilePage ->
-                    let
-                        ( page, modal ) =
-                            UserProfilePage.view appContext.session user profilePage
-                                |> Tuple.mapFirst (PageLayout.map UserProfilePageMsg)
-                                |> Tuple.mapFirst PageLayout.view
-                                |> Tuple.mapSecond (Maybe.map (Html.map UserProfilePageMsg))
-
-                        activeNavItem =
-                            if isSignedInUser appContext model then
-                                AppHeader.Profile
-
-                            else
-                                AppHeader.None
-                    in
-                    { pageId = "user-page user-profile-page"
-                    , title = handle_
-                    , appHeader = AppHeader.appHeader activeNavItem
-                    , pageHeader = Just (userProfilePageHeader UserPageHeader.UserProfile user)
-                    , page = page
-                    , modal = modal
-                    }
-
                 Contributions contributionsPage ->
                     { pageId = "user-page user-contributions-page"
                     , title = handle_ ++ " | Contributions"
