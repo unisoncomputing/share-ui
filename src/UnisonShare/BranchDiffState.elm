@@ -102,8 +102,8 @@ decodeDiffError =
 decodeCulprit : Decoder DiffErrorCulprit
 decodeCulprit =
     Decode.oneOf
-        [ whenFieldIs "isOldOrNewBranch" "new" (Decode.succeed SourceBranch)
-        , whenFieldIs "isOldOrNewBranch" "old" (Decode.succeed TargetBranch)
+        [ whenFieldIs "oldOrNewBranch" "new" (Decode.succeed SourceBranch)
+        , whenFieldIs "oldOrNewBranch" "old" (Decode.succeed TargetBranch)
         ]
 
 

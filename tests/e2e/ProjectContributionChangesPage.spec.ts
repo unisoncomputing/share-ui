@@ -51,7 +51,7 @@ test.describe("When the branch diff couldn't be computed", () => {
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
         tag: "error",
-        error: { tag: "impossibleError", isOldOrNewBranch: "new" },
+        error: { tag: "impossibleError", oldOrNewBranch: "new" },
       });
       await page.goto(
         `http://localhost:1234/${projectRef}/contributions/${contrib.number}/changes`,
@@ -76,7 +76,7 @@ test.describe("When the branch diff couldn't be computed", () => {
         tag: "error",
         error: {
           tag: "constructorAlias",
-          isOldOrNewBranch: "new",
+          oldOrNewBranch: "new",
           typeName,
           constructorName1,
           constructorName2,
@@ -108,7 +108,7 @@ test.describe("When the branch diff couldn't be computed", () => {
         tag: "error",
         error: {
           tag: "missingConstructorName",
-          isOldOrNewBranch: "new",
+          oldOrNewBranch: "new",
           typeName,
         },
       });
@@ -139,7 +139,7 @@ test.describe("When the branch diff couldn't be computed", () => {
         tag: "error",
         error: {
           tag: "nestedDeclAlias",
-          isOldOrNewBranch: "new",
+          oldOrNewBranch: "new",
           constructorName1,
           constructorName2,
         },
@@ -175,7 +175,7 @@ test.describe("When the branch diff couldn't be computed", () => {
         tag: "error",
         error: {
           tag: "strayConstructor",
-          isOldOrNewBranch: "new",
+          oldOrNewBranch: "new",
           constructorName,
         },
       });
