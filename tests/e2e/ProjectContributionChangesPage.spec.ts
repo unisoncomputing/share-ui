@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 test.describe("When the branch diff is still computing", () => {
   test.beforeEach(async ({ page }) => {
     await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-      diffKind: "computing",
+      tag: "computing",
     });
     await page.goto(
       `http://localhost:1234/${projectRef}/contributions/${contrib.number}/changes`,
@@ -32,7 +32,7 @@ test.describe("When the branch diff is still computing", () => {
 test.describe("When the branch diff is computed", () => {
   test.beforeEach(async ({ page }) => {
     await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-      diffKind: "ok",
+      tag: "ok",
     });
     await page.goto(
       `http://localhost:1234/${projectRef}/contributions/${contrib.number}/changes`,
@@ -50,8 +50,8 @@ test.describe("When the branch diff couldn't be computed", () => {
   test.describe('error: "ImpossibleError"', () => {
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-        diffKind: "error",
-        error: { errorKind: "impossibleError", isOldOrNewBranch: "new" },
+        tag: "error",
+        error: { tag: "impossibleError", isOldOrNewBranch: "new" },
       });
       await page.goto(
         `http://localhost:1234/${projectRef}/contributions/${contrib.number}/changes`,
@@ -73,9 +73,9 @@ test.describe("When the branch diff couldn't be computed", () => {
     const constructorName2 = faker.lorem.word();
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-        diffKind: "error",
+        tag: "error",
         error: {
-          errorKind: "constructorAlias",
+          tag: "constructorAlias",
           isOldOrNewBranch: "new",
           typeName,
           constructorName1,
@@ -105,9 +105,9 @@ test.describe("When the branch diff couldn't be computed", () => {
     const typeName = faker.lorem.word();
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-        diffKind: "error",
+        tag: "error",
         error: {
-          errorKind: "missingConstructorName",
+          tag: "missingConstructorName",
           isOldOrNewBranch: "new",
           typeName,
         },
@@ -136,9 +136,9 @@ test.describe("When the branch diff couldn't be computed", () => {
     const constructorName2 = faker.lorem.word();
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-        diffKind: "error",
+        tag: "error",
         error: {
-          errorKind: "nestedDeclAlias",
+          tag: "nestedDeclAlias",
           isOldOrNewBranch: "new",
           constructorName1,
           constructorName2,
@@ -172,9 +172,9 @@ test.describe("When the branch diff couldn't be computed", () => {
     const constructorName = faker.lorem.word();
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
-        diffKind: "error",
+        tag: "error",
         error: {
-          errorKind: "strayConstructor",
+          tag: "strayConstructor",
           isOldOrNewBranch: "new",
           constructorName,
         },

@@ -185,42 +185,43 @@ function changeLine() {
 type DiffErrorCulprit = "new" | "old";
 
 type DiffErrorDetails =
-  | { errorKind: "impossibleError"; isOldOrNewBranch: DiffErrorCulprit }
+  | { tag: "impossibleError"; isOldOrNewBranch: DiffErrorCulprit }
   | {
-      errorKind: "constructorAlias";
-      isOldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "constructorAlias";
+    isOldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      errorKind: "missingConstructorName";
-      isOldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-    }
+    tag: "missingConstructorName";
+    isOldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+  }
   | {
-      errorKind: "nestedDeclAlias";
-      isOldOrNewBranch: DiffErrorCulprit;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "nestedDeclAlias";
+    isOldOrNewBranch: DiffErrorCulprit;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      errorKind: "strayConstructor";
-      isOldOrNewBranch: DiffErrorCulprit;
-      constructorName: string;
-    };
+    tag: "strayConstructor";
+    isOldOrNewBranch: DiffErrorCulprit;
+    constructorName: string;
+  };
 
 type ContributionDiffConfig =
-  | { diffKind: "ok" }
-  | { diffKind: "computing" }
-  | { diffKind: "error"; error: DiffErrorDetails };
+  | { tag: "ok" }
+  | { tag: "computing" }
+  | { tag: "error"; error: DiffErrorDetails };
 
 function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
-  switch (cfg.diffKind) {
+  switch (cfg.tag) {
     case "ok":
       return {
-        diffKind: "ok",
+        tag: "done",
         diff: {
+          tag: "ok",
           defns: {
             changes: [changeLine(), changeLine(), changeLine()],
             children: [],
@@ -235,7 +236,7 @@ function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
       };
     case "computing":
       return {
-        diffKind: "computing",
+        tag: "computing",
         newRef: branchRef(),
         newRefHash: hash(),
         oldRef: "main",
@@ -244,13 +245,16 @@ function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
       };
     case "error":
       return {
-        diffKind: "error",
+        tag: "done",
+        diff: {
+          tag: "error",
+          error: cfg.error,
+        },
         newRef: branchRef(),
         newRefHash: hash(),
         oldRef: "main",
         oldRefHash: hash(),
         project: projectRef,
-        error: cfg.error,
       };
   }
 }

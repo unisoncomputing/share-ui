@@ -115,7 +115,7 @@ decode numTries =
     in
     Decode.oneOf
         [ whenTagIs "computing" (Decode.succeed (Computing { numTries = numTries }))
-        , whenPathIs [ "diff", "tag" ] "ok" (Decode.map Computed (Decode.field "diff" BranchDiff.decode))
+        , whenPathIs [ "diff", "tag" ] "ok" (Decode.map Computed BranchDiff.decode)
         , whenPathIs [ "diff", "tag" ]
             "error"
             (Decode.map2 makeUncomputable
