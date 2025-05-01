@@ -170,6 +170,21 @@ account =
     toClick Route.account
 
 
+notificationsAll : Click msg
+notificationsAll =
+    toClick Route.notificationsAll
+
+
+notificationsUnread : Click msg
+notificationsUnread =
+    toClick Route.notificationsUnread
+
+
+notificationsArchive : Click msg
+notificationsArchive =
+    toClick Route.notificationsArchive
+
+
 orgProfile : UserHandle -> Click msg
 orgProfile =
     Route.orgProfile >> toClick
