@@ -47,6 +47,7 @@ import UnisonShare.Page.AppErrorPage as AppErrorPage
 import UnisonShare.Page.CatalogPage as CatalogPage
 import UnisonShare.Page.CloudPage as CloudPage
 import UnisonShare.Page.NotFoundPage as NotFoundPage
+import UnisonShare.Page.NotificationsPage as NotificationsPage
 import UnisonShare.Page.OrgPage as OrgPage
 import UnisonShare.Page.PrivacyPolicyPage as PrivacyPolicyPage
 import UnisonShare.Page.ProfilePage as ProfilePage
@@ -71,6 +72,7 @@ import WhatsNew exposing (WhatsNew)
 type Page
     = Catalog CatalogPage.Model
     | Account AccountPage.Model
+    | Notifications NotificationsPage.Model
     | Profile UserHandle ProfilePage.Model
     | User UserHandle Route.UserRoute UserPage.Model
     | Org UserHandle Route.OrgRoute OrgPage.Model
@@ -135,6 +137,13 @@ init appContext route =
                             AccountPage.init
                     in
                     ( Account account, Cmd.none )
+
+                Route.Notifications r ->
+                    let
+                        ( notifications, notificationsCmd ) =
+                            NotificationsPage.init appContext r
+                    in
+                    ( Notifications notifications, Cmd.map NotificationsPageMsg notificationsCmd )
 
                 Route.Profile handle ->
                     let
@@ -226,6 +235,7 @@ type Msg
     | OrgPageMsg OrgPage.Msg
     | ProjectPageMsg ProjectPage.Msg
     | AccountPageMsg AccountPage.Msg
+    | NotificationsPageMsg NotificationsPage.Msg
     | AcceptTermsPageMsg AcceptTermsPage.Msg
     | NewOrgModalMsg NewOrgModal.Msg
 
@@ -284,6 +294,13 @@ update msg ({ appContext } as model) =
 
                         Route.Account ->
                             ( { model_ | page = Account AccountPage.init }, Cmd.none )
+
+                        Route.Notifications r ->
+                            let
+                                ( notifications, cmd ) =
+                                    NotificationsPage.init appContext_ r
+                            in
+                            ( { model_ | page = Notifications notifications }, Cmd.map NotificationsPageMsg cmd )
 
                         Route.Profile handle ->
                             let
@@ -765,6 +782,9 @@ view model =
 
                         Session.Anonymous ->
                             NotFoundPage.view
+
+                Notifications notifications ->
+                    AppDocument.map NotificationsPageMsg (NotificationsPage.view appContext notifications)
 
                 Profile _ profile ->
                     AppDocument.map ProfilePageMsg (ProfilePage.view appContext profile)

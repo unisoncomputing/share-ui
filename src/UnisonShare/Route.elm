@@ -1,5 +1,6 @@
 module UnisonShare.Route exposing
     ( CodeRoute(..)
+    , NotificationsRoute(..)
     , OrgRoute(..)
     , ProjectContributionRoute(..)
     , ProjectRoute(..)
@@ -13,6 +14,9 @@ module UnisonShare.Route exposing
     , definition
     , fromUrl
     , navigate
+    , notificationsAll
+    , notificationsArchive
+    , notificationsUnread
     , orgPeople
     , orgProfile
     , orgSettings
@@ -113,6 +117,12 @@ type ProjectRoute
     | ProjectSettings
 
 
+type NotificationsRoute
+    = NotificationsAll
+    | NotificationsUnread
+    | NotificationsArchive
+
+
 type Route
     = Catalog
     | Account
@@ -120,6 +130,7 @@ type Route
     | User UserHandle UserRoute
     | Org UserHandle OrgRoute
     | Project ProjectRef ProjectRoute
+    | Notifications NotificationsRoute
     | TermsOfService
     | AcceptTerms (Maybe Url)
     | PrivacyPolicy
@@ -141,6 +152,21 @@ catalog =
 account : Route
 account =
     Account
+
+
+notificationsAll : Route
+notificationsAll =
+    Notifications NotificationsAll
+
+
+notificationsUnread : Route
+notificationsUnread =
+    Notifications NotificationsUnread
+
+
+notificationsArchive : Route
+notificationsArchive =
+    Notifications NotificationsArchive
 
 
 cloud : Route
@@ -328,6 +354,7 @@ toRoute queryString =
         [ b homeParser
         , b catalogParser
         , b accountParser
+        , b notificationsParser
         , b profileParser
         , b userParser
         , b orgParser
@@ -354,6 +381,16 @@ catalogParser =
 accountParser : Parser Route
 accountParser =
     succeed Account |. slash |. s "account"
+
+
+notificationsParser : Parser Route
+notificationsParser =
+    oneOf
+        [ b (succeed (Notifications NotificationsAll) |. slash |. s "notifications" |. slash |. s "all")
+        , b (succeed (Notifications NotificationsUnread) |. slash |. s "notifications" |. slash |. s "unread")
+        , b (succeed (Notifications NotificationsArchive) |. slash |. s "notifications" |. slash |. s "archive")
+        , b (succeed (Notifications NotificationsAll) |. slash |. s "notifications")
+        ]
 
 
 termsOfServiceParser : Parser Route
@@ -708,6 +745,15 @@ toUrlPattern r =
         Account ->
             "account"
 
+        Notifications NotificationsAll ->
+            "notifications"
+
+        Notifications NotificationsUnread ->
+            "notifications/unread"
+
+        Notifications NotificationsArchive ->
+            "notifications/archive"
+
         Profile _ ->
             ":handle"
 
@@ -865,6 +911,15 @@ toUrlString route =
 
                 Account ->
                     ( [ "account" ], [] )
+
+                Notifications NotificationsAll ->
+                    ( [ "notifications" ], [] )
+
+                Notifications NotificationsUnread ->
+                    ( [ "notifications", "unread" ], [] )
+
+                Notifications NotificationsArchive ->
+                    ( [ "notifications", "archive" ], [] )
 
                 Profile handle_ ->
                     ( [ UserHandle.toString handle_ ], [] )
