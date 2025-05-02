@@ -188,7 +188,7 @@ session =
 -- ORG ROLE ASSIGNMENTS (COLLABORATORS)
 
 
-createOrg : { a | handle : UserHandle, primaryEmail : String } -> String -> UserHandle -> Bool -> Endpoint
+createOrg : { a | handle : UserHandle } -> String -> UserHandle -> Bool -> Endpoint
 createOrg owner name orgHandle isCommercial =
     let
         body =
@@ -197,7 +197,6 @@ createOrg owner name orgHandle isCommercial =
                 , ( "handle", Encode.string (UserHandle.toUnprefixedString orgHandle) )
                 , ( "isCommercial", Encode.bool isCommercial )
                 , ( "owner", Encode.string (UserHandle.toUnprefixedString owner.handle) )
-                , ( "email", Encode.string owner.primaryEmail )
                 ]
     in
     POST
