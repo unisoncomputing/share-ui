@@ -1,17 +1,17 @@
 port module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 
-import Code.BranchRef exposing (BranchRef)
+import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
-import Html exposing (Html, code, div, pre, span, strong, text)
+import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
 import Json.Decode as Decode
-import Lib.HttpApi as HttpApi
+import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
 import List.Nonempty as NEL
@@ -25,8 +25,10 @@ import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.Placeholder as Placeholder
 import UI.StatusBanner as StatusBanner
+import UI.StatusIndicator as StatusIndicator
 import UI.TabList as TabList
 import UI.Tooltip as Tooltip
+import UnisonShare.Account as Account
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
@@ -34,12 +36,14 @@ import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
+import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
+import UnisonShare.Session as Session
 import Url
 
 
@@ -48,7 +52,7 @@ import Url
 
 
 type alias Model =
-    { branchDiff : WebData BranchDiff
+    { branchDiff : BranchDiffState
     , changedDefinitions : ChangedDefinitions
     , urlFocusedChangeLineId : Maybe ChangeLineId
     }
@@ -62,7 +66,7 @@ type alias DiffBranches =
 
 init : AppContext -> ProjectRef -> ContributionRef -> Maybe ChangeLineId -> ( Model, Cmd Msg )
 init appContext projectRef contribRef changeLineId =
-    ( { branchDiff = Loading
+    ( { branchDiff = BranchDiffState.Loading
       , changedDefinitions = ChangedDefinitions.empty
       , urlFocusedChangeLineId = changeLineId
       }
@@ -75,7 +79,7 @@ init appContext projectRef contribRef changeLineId =
 
 
 type Msg
-    = FetchBranchDiffFinished (WebData BranchDiff)
+    = FetchBranchDiffFinished (HttpResult BranchDiffState)
     | ExpandChangeDetails ChangeLine
     | ToggleChangeDetails ChangeLine
     | FetchDefinitionDiffFinished ChangeLine (WebData DefinitionDiff)
@@ -87,43 +91,44 @@ type Msg
 update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model, Cmd Msg )
 update appContext projectRef contribRef msg model =
     case msg of
-        FetchBranchDiffFinished branchDiff ->
+        FetchBranchDiffFinished branchDiffState ->
             let
-                branchDiff_ =
-                    RemoteData.map
-                        (\bd ->
-                            { bd
-                                | lines = BranchDiff.condense bd.lines
-                            }
-                        )
-                        branchDiff
+                ( branchDiffState_, cmd ) =
+                    case branchDiffState of
+                        Ok (BranchDiffState.Computed bd) ->
+                            let
+                                expandCmd =
+                                    model.urlFocusedChangeLineId
+                                        |> Maybe.andThen (\changeLineId -> BranchDiff.changeLineById changeLineId bd)
+                                        |> Maybe.map (\changeLine -> Util.delayMsg 500 (ExpandChangeDetails changeLine))
+                                        |> Maybe.withDefault Cmd.none
+                            in
+                            ( BranchDiffState.Computed { bd | lines = BranchDiff.condense bd.lines }, expandCmd )
 
-                cmd =
-                    case ( model.urlFocusedChangeLineId, branchDiff_ ) of
-                        ( Just changeLineId, Success bd ) ->
-                            case BranchDiff.changeLineById changeLineId bd of
-                                Just changeLine ->
-                                    Util.delayMsg 500 (ExpandChangeDetails changeLine)
+                        Ok bds ->
+                            ( bds, Cmd.none )
 
-                                Nothing ->
-                                    Cmd.none
-
-                        _ ->
-                            Cmd.none
+                        Err e ->
+                            ( BranchDiffState.Failure e, Cmd.none )
             in
-            ( { model | branchDiff = branchDiff_ }, cmd )
+            ( { model | branchDiff = branchDiffState_ }, cmd )
 
         ExpandChangeDetails changeLine ->
             case model.branchDiff of
-                Success branchDiff ->
-                    expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine
+                BranchDiffState.Computed branchDiff ->
+                    expandAndScrollTo appContext
+                        projectRef
+                        contribRef
+                        model
+                        branchDiff
+                        changeLine
 
                 _ ->
                     ( model, Cmd.none )
 
         ToggleChangeDetails changeLine ->
             case model.branchDiff of
-                Success branchDiff ->
+                BranchDiffState.Computed branchDiff ->
                     if ChangedDefinitions.isExpanded model.changedDefinitions changeLine then
                         ( { model
                             | changedDefinitions =
@@ -292,7 +297,7 @@ scrollTo changeLineId =
 fetchBranchDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
 fetchBranchDiff appContext projectRef contributionRef =
     ShareApi.projectContributionDiff projectRef contributionRef
-        |> HttpApi.toRequest BranchDiff.decode (RemoteData.fromResult >> FetchBranchDiffFinished)
+        |> HttpApi.toRequest (BranchDiffState.decode 1) FetchBranchDiffFinished
         |> HttpApi.perform appContext.api
 
 
@@ -786,33 +791,57 @@ viewLoadingPage =
         ]
 
 
-viewErrorPage : ContributionRef -> Http.Error -> PageContent Msg
-viewErrorPage _ _ =
+viewErrorPage : AppContext -> ContributionRef -> Http.Error -> PageContent Msg
+viewErrorPage appContext _ err =
+    let
+        errorDetails =
+            case appContext.session of
+                Session.SignedIn account ->
+                    if Account.isUnisonMember account then
+                        text (Util.httpErrorToString err)
+
+                    else
+                        UI.nothing
+
+                _ ->
+                    UI.nothing
+    in
     PageContent.oneColumn
         [ div [ class "project-contribution-changes-page" ]
             [ StatusBanner.bad
                 "Something broke on our end and we couldn't show the contribution changes. Please try again."
+            , errorDetails
             ]
         ]
 
 
 view : AppContext -> ProjectRef -> ContributionDetails -> Model -> PageContent Msg
 view appContext projectRef contribution model =
+    let
+        tabs =
+            TabList.tabList
+                [ TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref)
+                ]
+                (TabList.tab "Changes (beta preview)" (Link.projectContributionChanges projectRef contribution.ref))
+                []
+                |> TabList.view
+    in
     case model.branchDiff of
-        NotAsked ->
+        BranchDiffState.Loading ->
             viewLoadingPage
 
-        Loading ->
-            viewLoadingPage
-
-        Success diff ->
+        BranchDiffState.Computing _ ->
             PageContent.oneColumn
-                [ TabList.tabList
-                    [ TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref)
-                    ]
-                    (TabList.tab "Changes (beta preview)" (Link.projectContributionChanges projectRef contribution.ref))
-                    []
-                    |> TabList.view
+                [ tabs
+                , div [ class "project-contribution-changes-page" ] [ StatusBanner.working "The contribution diff is still being computed..." ]
+                ]
+
+        BranchDiffState.Reloading _ ->
+            viewLoadingPage
+
+        BranchDiffState.Computed diff ->
+            PageContent.oneColumn
+                [ tabs
                 , div [ class "project-contribution-changes-page" ]
                     [ StatusBanner.info "The contribution changes page is currently in a beta preview. Stay tuned for improvements and the upcoming full release."
                     , viewBranchDiff appContext
@@ -822,5 +851,70 @@ view appContext projectRef contribution model =
                     ]
                 ]
 
-        Failure e ->
-            viewErrorPage contribution.ref e
+        BranchDiffState.Uncomputable err ->
+            let
+                culprit =
+                    case err.culprit of
+                        BranchDiffState.TargetBranch ->
+                            BranchRef.toString contribution.targetBranchRef
+
+                        BranchDiffState.SourceBranch ->
+                            BranchRef.toString contribution.sourceBranchRef
+
+                errorDetails =
+                    case err.error of
+                        BranchDiffState.ConstructorAlias { typeName, constructorName1, constructorName2 } ->
+                            Just
+                                [ text "The type "
+                                , FQN.view typeName
+                                , text " has a constructor alias: "
+                                , FQN.view constructorName1
+                                , text " and "
+                                , FQN.view constructorName2
+                                , text " on the "
+                                , strong [] [ text culprit ]
+                                , text " branch."
+                                ]
+
+                        BranchDiffState.MissingConstructorName { typeName } ->
+                            Just [ text "The type ", FQN.view typeName, text " is missing a constructor name on the ", strong [] [ text culprit ], text " branch." ]
+
+                        BranchDiffState.NestedDeclAlias { constructorName1, constructorName2 } ->
+                            Just
+                                [ text "On the "
+                                , strong [] [ text culprit ]
+                                , text " branch, the type "
+                                , FQN.view constructorName1
+                                , text " is an alias of "
+                                , FQN.view constructorName2
+                                , text "."
+                                , br [] []
+                                , text "It's nested under an alias of itself. Please separate them or delete one copy."
+                                ]
+
+                        BranchDiffState.StrayConstructor { constructorName } ->
+                            Just [ text "The constructor ", FQN.view constructorName, text " is orphaned on the ", strong [] [ text culprit ], text " branch." ]
+
+                        _ ->
+                            Nothing
+            in
+            PageContent.oneColumn
+                [ tabs
+                , div [ class "project-contribution-changes-page" ]
+                    [ Card.card
+                        [ h2 []
+                            [ StatusIndicator.bad |> StatusIndicator.view
+                            , text "Unfortunately the contribution diff could not be computed."
+                            ]
+                        , errorDetails
+                            |> Maybe.map (p [])
+                            |> Maybe.withDefault UI.nothing
+                        ]
+                        |> Card.withClassName "contribution-diff_uncomputable"
+                        |> Card.asContainedWithFade
+                        |> Card.view
+                    ]
+                ]
+
+        BranchDiffState.Failure e ->
+            viewErrorPage appContext contribution.ref e
