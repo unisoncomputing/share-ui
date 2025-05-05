@@ -7,7 +7,7 @@ import Code.Perspective as Perspective exposing (Perspective)
 import Code.Version exposing (Version)
 import Html exposing (Html, text)
 import Lib.HttpApi as HttpApi exposing (HttpApi)
-import Lib.UserHandle exposing (UserHandle)
+import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
@@ -138,6 +138,19 @@ login api returnTo =
                 |> Url.percentEncode
     in
     Click.externalHref_ Click.Self (HttpApi.baseApiUrl api ++ "login?return_to=" ++ returnTo_)
+
+
+{-| Basically same as `login` (since both signup and login are the same in the oauth world), but includes a new handle set by the user
+-}
+finishSignup : HttpApi -> UserHandle -> Click msg
+finishSignup api handle =
+    let
+        handle_ =
+            handle
+                |> UserHandle.toUnprefixedString
+                |> Url.percentEncode
+    in
+    Click.externalHref_ Click.Self (HttpApi.baseApiUrl api ++ "login?handle=" ++ handle_)
 
 
 logout : HttpApi -> Url -> Click msg

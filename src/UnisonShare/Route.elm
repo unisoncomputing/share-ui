@@ -12,6 +12,7 @@ module UnisonShare.Route exposing
     , cloud
     , codeRoot
     , definition
+    , finishSignup
     , fromUrl
     , navigate
     , notificationsAll
@@ -66,6 +67,7 @@ import Code.UrlParsers
         , reference
         , s
         , slash
+        , unprefixedUserHandle
         , userHandle
         , version
         )
@@ -138,6 +140,7 @@ type Route
     | Cloud
     | NotFound String
     | Error AppError
+    | FinishSignup UserHandle
 
 
 
@@ -344,6 +347,11 @@ ucmConnected =
     UcmConnected
 
 
+finishSignup : UserHandle -> Route
+finishSignup handle_ =
+    FinishSignup handle_
+
+
 
 -- PARSE ----------------------------------------------------------------------
 
@@ -363,6 +371,7 @@ toRoute queryString =
         , b (acceptTermsParser queryString)
         , b privacyPolicyParser
         , b ucmConnectedParser
+        , b (finishSignupParser queryString)
         , b cloudParser
         , b (errorParser queryString)
         ]
@@ -439,6 +448,20 @@ privacyPolicyParser =
 ucmConnectedParser : Parser Route
 ucmConnectedParser =
     succeed UcmConnected |. slash |. s "ucm-connected"
+
+
+finishSignupParser : Maybe String -> Parser Route
+finishSignupParser queryString =
+    let
+        handleQueryParamParser : Parser UserHandle
+        handleQueryParamParser =
+            b (succeed identity |. s "conflictingHandle" |. symbol "=" |= unprefixedUserHandle |. end)
+    in
+    queryString
+        |> Maybe.withDefault ""
+        |> Parser.run handleQueryParamParser
+        |> Result.map (\h -> succeed (FinishSignup h) |. slash |. s "finish-signup")
+        |> Result.withDefault (Parser.problem "Missing handle in querystring")
 
 
 cloudParser : Parser Route
@@ -817,6 +840,9 @@ toUrlPattern r =
         UcmConnected ->
             "ucm-connected"
 
+        FinishSignup _ ->
+            "finish-signup"
+
         Cloud ->
             "cloud"
 
@@ -997,6 +1023,9 @@ toUrlString route =
 
                 UcmConnected ->
                     ( [ "ucm-connected" ], [] )
+
+                FinishSignup handle ->
+                    ( [ "finish-signup" ], [ string "handle" (UserHandle.toUnprefixedString handle) ] )
 
                 Cloud ->
                     ( [ "cloud" ], [] )

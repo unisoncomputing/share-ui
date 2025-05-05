@@ -46,6 +46,7 @@ import UnisonShare.Page.AccountPage as AccountPage
 import UnisonShare.Page.AppErrorPage as AppErrorPage
 import UnisonShare.Page.CatalogPage as CatalogPage
 import UnisonShare.Page.CloudPage as CloudPage
+import UnisonShare.Page.FinishSignupPage as FinishSignupPage
 import UnisonShare.Page.NotFoundPage as NotFoundPage
 import UnisonShare.Page.NotificationsPage as NotificationsPage
 import UnisonShare.Page.OrgPage as OrgPage
@@ -81,6 +82,7 @@ type Page
     | AcceptTerms (Maybe Url) AcceptTermsPage.Model
     | PrivacyPolicy
     | UcmConnected
+    | FinishSignup UserHandle FinishSignupPage.Model
     | Cloud
     | Error AppError
     | NotFound
@@ -185,6 +187,9 @@ init appContext route =
                 Route.UcmConnected ->
                     ( UcmConnected, Cmd.none )
 
+                Route.FinishSignup handle ->
+                    ( FinishSignup handle FinishSignupPage.init, Cmd.none )
+
                 Route.Cloud ->
                     ( Cloud, Cmd.none )
 
@@ -237,6 +242,7 @@ type Msg
     | AccountPageMsg AccountPage.Msg
     | NotificationsPageMsg NotificationsPage.Msg
     | AcceptTermsPageMsg AcceptTermsPage.Msg
+    | FinishSignupPageMsg FinishSignupPage.Msg
     | NewOrgModalMsg NewOrgModal.Msg
 
 
@@ -393,6 +399,9 @@ update msg ({ appContext } as model) =
                         Route.UcmConnected ->
                             ( { model_ | page = UcmConnected }, Cmd.none )
 
+                        Route.FinishSignup conflictingHandle ->
+                            ( { model_ | page = FinishSignup conflictingHandle FinishSignupPage.init }, Cmd.none )
+
                         Route.Cloud ->
                             ( { model_ | page = Cloud }, Cmd.none )
 
@@ -546,6 +555,13 @@ update msg ({ appContext } as model) =
                     AcceptTermsPage.update appContext atMsg continueUrl acceptTerms
             in
             ( { model | page = AcceptTerms continueUrl acceptTerms_ }, Cmd.map AcceptTermsPageMsg acceptTermsCmd )
+
+        ( FinishSignup conflictingHandle finishSignup, FinishSignupPageMsg fsMsg ) ->
+            let
+                ( finishSignup_, finishSignupCmd ) =
+                    FinishSignupPage.update appContext conflictingHandle fsMsg finishSignup
+            in
+            ( { model | page = FinishSignup conflictingHandle finishSignup_ }, Cmd.map FinishSignupPageMsg finishSignupCmd )
 
         ( _, NewOrgModalMsg newOrgMsg ) ->
             case ( model.appModal, appContext.session ) of
@@ -816,6 +832,16 @@ view model =
 
                         Session.SignedIn a ->
                             UcmConnectedPage.view a
+
+                FinishSignup conflictingHandle finishSignup ->
+                    case appContext.session of
+                        Session.Anonymous ->
+                            finishSignup
+                                |> FinishSignupPage.view appContext conflictingHandle
+                                |> AppDocument.map FinishSignupPageMsg
+
+                        Session.SignedIn _ ->
+                            NotFoundPage.view
 
                 Cloud ->
                     CloudPage.view session
