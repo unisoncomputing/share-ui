@@ -12,6 +12,7 @@ import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Divider as Divider
 import UI.Form.Checkbox as Checkbox
+import UI.Icon as Icon
 import UI.Nudge as Nudge
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
@@ -284,6 +285,9 @@ viewNotification appContext selection notification =
             , div [ class "notification-row_details" ]
                 [ div [ class "notification-row_details_context-and-subject" ]
                     [ projectListing
+                    , Icon.dot
+                        |> Icon.withClass "notification-row_details_sep"
+                        |> Icon.view
                     , span [ class "notification-row_details_subject" ]
                         [ subject ]
                     ]
