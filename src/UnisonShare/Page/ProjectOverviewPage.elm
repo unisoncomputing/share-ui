@@ -481,7 +481,7 @@ viewLoadingPage projectRef =
                 , visibility = Project.Public
                 }
                 |> ProjectListing.huge
-                |> ProjectListing.subdued
+                |> ProjectListing.verySubdued
                 |> ProjectListing.view
 
         content =
