@@ -15,7 +15,9 @@ test.describe("without being signed in", () => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
 
-    await expect(page.locator(".signed-in-nav_desktop .button").getByText("New Org")).not.toBeVisible();
+    await expect(
+      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+    ).not.toBeVisible();
   });
 });
 
@@ -28,6 +30,8 @@ test.describe("while being signed in", () => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
 
-    await expect(page.locator(".signed-in-nav_desktop .button").getByText("New Org")).toBeVisible();
+    await expect(
+      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+    ).toBeVisible();
   });
 });

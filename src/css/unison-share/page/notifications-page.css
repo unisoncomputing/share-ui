@@ -1,4 +1,18 @@
 .notifications-page {
+  & .notifications_selection-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+
+    & .notifications_selection-controls_controls {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.25rem;
+    }
+  }
+
   & .notifications {
     display: flex;
     flex-direction: column;

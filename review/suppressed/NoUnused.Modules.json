@@ -10,7 +10,6 @@
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/AppDocument.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Banner.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/ExternalLinkIcon.elm" },
-    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Form/CheckboxField.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/Toolbar.elm" },
     { "count": 1, "filePath": "src/UnisonShare/RichComment.elm" }
   ]

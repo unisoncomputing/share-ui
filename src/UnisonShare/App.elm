@@ -73,7 +73,7 @@ import WhatsNew exposing (WhatsNew)
 type Page
     = Catalog CatalogPage.Model
     | Account AccountPage.Model
-    | Notifications NotificationsPage.Model
+    | Notifications Route.NotificationsRoute NotificationsPage.Model
     | Profile UserHandle ProfilePage.Model
     | User UserHandle Route.UserRoute UserPage.Model
     | Org UserHandle Route.OrgRoute OrgPage.Model
@@ -145,7 +145,7 @@ init appContext route =
                         ( notifications, notificationsCmd ) =
                             NotificationsPage.init appContext r
                     in
-                    ( Notifications notifications, Cmd.map NotificationsPageMsg notificationsCmd )
+                    ( Notifications r notifications, Cmd.map NotificationsPageMsg notificationsCmd )
 
                 Route.Profile handle ->
                     let
@@ -306,7 +306,7 @@ update msg ({ appContext } as model) =
                                 ( notifications, cmd ) =
                                     NotificationsPage.init appContext_ r
                             in
-                            ( { model_ | page = Notifications notifications }, Cmd.map NotificationsPageMsg cmd )
+                            ( { model_ | page = Notifications r notifications }, Cmd.map NotificationsPageMsg cmd )
 
                         Route.Profile handle ->
                             let
@@ -545,6 +545,20 @@ update msg ({ appContext } as model) =
                             AccountPage.update appContext a aMsg m
                     in
                     ( { model | page = Account accountM }, Cmd.map AccountPageMsg cmd )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( Notifications notificationsRoute notifications, NotificationsPageMsg nMsg ) ->
+            case appContext.session of
+                Session.SignedIn _ ->
+                    let
+                        ( notifications_, cmd ) =
+                            NotificationsPage.update appContext notificationsRoute nMsg notifications
+                    in
+                    ( { model | page = Notifications notificationsRoute notifications_ }
+                    , Cmd.map NotificationsPageMsg cmd
+                    )
 
                 _ ->
                     ( model, Cmd.none )
@@ -799,7 +813,7 @@ view model =
                         Session.Anonymous ->
                             NotFoundPage.view
 
-                Notifications notifications ->
+                Notifications _ notifications ->
                     AppDocument.map NotificationsPageMsg (NotificationsPage.view appContext notifications)
 
                 Profile _ profile ->

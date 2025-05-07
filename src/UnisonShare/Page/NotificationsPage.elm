@@ -8,10 +8,12 @@ import Set exposing (Set)
 import UI
 import UI.Avatar as Avatar
 import UI.AvatarStack as AvatarStack
+import UI.Button as Button exposing (Button)
 import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Divider as Divider
 import UI.Form.Checkbox as Checkbox
+import UI.Form.CheckboxField as CheckboxField
 import UI.Icon as Icon
 import UI.Nudge as Nudge
 import UI.PageContent as PageContent
@@ -93,7 +95,7 @@ init appContext route =
                       , participants = []
                       , isUnread = False
                       }
-                    , { id = "ghjhj"
+                    , { id = "ghjhj2132"
                       , projectRef = ProjectRef.unsafeFromString "hojberg" "html"
                       , title = "a third thing"
                       , subject = ContributionSubject (ContributionRef.unsafeFromString "1234")
@@ -125,7 +127,7 @@ init appContext route =
 
 
 type Msg
-    = SelectAll
+    = ToggleSelectAll
     | FetchAllNotificationsFinished (WebData PaginatedNotifications)
     | ToggleSelection Notification
     | MarkSelectionAsUnread
@@ -137,12 +139,61 @@ type Msg
 update : AppContext -> NotificationsRoute -> Msg -> Model -> ( Model, Cmd Msg )
 update _ _ msg model =
     case msg of
-        SelectAll ->
+        ToggleSelectAll ->
             let
                 selectAll_ state =
-                    { state | selection = AllNotifications }
+                    let
+                        selection =
+                            case state.selection of
+                                AllNotifications ->
+                                    NoSelection
+
+                                _ ->
+                                    AllNotifications
+                    in
+                    { state | selection = selection }
             in
             ( updateSubPageState selectAll_ model, Cmd.none )
+
+        ToggleSelection notification ->
+            let
+                toggleSelection state =
+                    case state.selection of
+                        NoSelection ->
+                            { state | selection = SubsetSelected (Set.singleton notification.id) }
+
+                        AllNotifications ->
+                            let
+                                updateSelections notifications =
+                                    notifications
+                                        |> (\(Paginated { items }) -> items)
+                                        |> List.map .id
+                                        |> List.filter (\nid -> nid /= notification.id)
+                                        |> Set.fromList
+
+                                selections_ =
+                                    state.notifications
+                                        |> RemoteData.map updateSelections
+                                        |> RemoteData.withDefault Set.empty
+                            in
+                            { state | selection = SubsetSelected selections_ }
+
+                        SubsetSelected selections ->
+                            if Set.member notification.id selections then
+                                let
+                                    selections_ =
+                                        Set.remove notification.id selections
+                                in
+                                if Set.isEmpty selections_ then
+                                    { state | selection = NoSelection }
+
+                                else
+                                    { state | selection = SubsetSelected selections_ }
+
+                            else
+                                { state | selection = SubsetSelected (Set.insert notification.id selections) }
+            in
+            ( updateSubPageState toggleSelection model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -278,7 +329,9 @@ viewNotification appContext selection notification =
         ]
         [ div [ class "notification-row_selection-and-details" ]
             [ div [ class "notification-row_selection" ]
-                [ Checkbox.checkbox_ (Just (ToggleSelection notification)) isSelected_
+                [ Checkbox.checkbox_
+                    (Just (ToggleSelection notification))
+                    isSelected_
                     |> Checkbox.view
                 , unreadDot
                 ]
@@ -334,9 +387,29 @@ view_ appContext selection paginatedNotifications =
             text "TODO"
 
 
-viewSelectionControls : Html Msg
-viewSelectionControls =
-    div [ class "notification_selection-controls" ] []
+viewSelectionControls : NotificationSelection -> List (Button Msg) -> Html Msg
+viewSelectionControls selection controls =
+    let
+        isChecked =
+            selection == AllNotifications
+
+        controls_ =
+            case selection of
+                NoSelection ->
+                    UI.nothing
+
+                _ ->
+                    div [ class "notifications_selection-controls_controls" ]
+                        (List.map
+                            (Button.small >> Button.emphasized >> Button.view)
+                            controls
+                        )
+    in
+    div [ class "notifications_selection-controls" ]
+        [ CheckboxField.field "Select All" ToggleSelectAll isChecked
+            |> CheckboxField.view
+        , controls_
+        ]
 
 
 tabs : { all : TabList.Tab Msg, unread : TabList.Tab Msg, archive : TabList.Tab Msg }
@@ -350,20 +423,32 @@ tabs =
 view : AppContext -> Model -> AppDocument Msg
 view appContext model =
     let
-        ( tabList, content ) =
+        ( tabList, selectionControls, content ) =
             case model of
                 All state ->
                     ( TabList.tabList [] tabs.all [ tabs.unread, tabs.archive ]
+                    , viewSelectionControls state.selection
+                        [ Button.button MarkSelectionAsUnread "Mark as unread"
+                        , Button.button MarkSelectionAsRead "Mark as read"
+                        , Button.button ArchiveSelection "Archive"
+                        ]
                     , view_ appContext state.selection state.notifications
                     )
 
                 Unread state ->
                     ( TabList.tabList [ tabs.all ] tabs.unread [ tabs.archive ]
+                    , viewSelectionControls state.selection
+                        [ Button.button MarkSelectionAsRead "Mark as read"
+                        , Button.button ArchiveSelection "Archive"
+                        ]
                     , view_ appContext state.selection state.notifications
                     )
 
                 Archive state ->
                     ( TabList.tabList [ tabs.all, tabs.unread ] tabs.archive []
+                    , viewSelectionControls state.selection
+                        [ Button.button ArchiveSelection "Unarchive"
+                        ]
                     , view_ appContext state.selection state.notifications
                     )
     in
@@ -376,6 +461,7 @@ view appContext model =
             (PageContent.oneColumn
                 [ h1 [] [ text "Notifications" ]
                 , TabList.view tabList
+                , selectionControls
                 , content
                 ]
             )
