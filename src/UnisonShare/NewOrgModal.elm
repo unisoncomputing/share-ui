@@ -334,7 +334,7 @@ view model =
                     PublicOrg
                 )
                 (RadioField.option "Commercial Org"
-                    "Supports both public and private projects. Selecting this will open a support ticket for the enablement of private projects."
+                    "Supports both public and private projects. Selecting this will open a support ticket to enable private projects."
                     CommercialOrg
                 )
 

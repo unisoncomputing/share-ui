@@ -97,7 +97,7 @@ decodeSummary =
             , pronouns = Nothing
             , completedTours = Maybe.withDefault [] completedTours
             , organizationMemberships = organizationMemberships
-            , isSuperAdmin = isSuperAdmin
+            , isSuperAdmin = Maybe.withDefault False isSuperAdmin
             , primaryEmail = primaryEmail
             }
     in
@@ -107,5 +107,5 @@ decodeSummary =
         (maybe (field "avatarUrl" decodeUrl))
         (maybe (field "completedTours" (Decode.list Tour.decode)))
         (field "organizationMemberships" (Decode.list (Decode.map OrganizationMembership UserHandle.decodeUnprefixed)))
-        (field "isSuperadmin" Decode.bool)
+        (maybe (field "isSuperadmin" Decode.bool))
         (field "primaryEmail" string)
