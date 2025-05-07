@@ -285,7 +285,7 @@ view ctx appHeader_ =
                             in
                             ( nav
                             , [ div
-                                    [ class "sign-in-nav" ]
+                                    [ class "sign-in-nav sign-in-nav_desktop" ]
                                     [ helpAndResources False
                                     , signIn
                                     , createAccount
@@ -347,7 +347,7 @@ view ctx appHeader_ =
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
                             ( nav
-                            , [ div [ class "signed-in-nav" ] [ newOrgButton, helpAndResources False, accountMenu ]
+                            , [ div [ class "signed-in-nav signed-in-nav_desktop" ] [ newOrgButton, helpAndResources False, accountMenu ]
                               , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
                               ]
                             )
