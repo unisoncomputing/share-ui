@@ -66,6 +66,16 @@ function projectRef(handle?: string) {
   return `@${handle_}/${slug}`;
 }
 
+function branchRef(handle?: string) {
+  const handle_ = handle ? handle : faker.lorem.slug(1);
+  const slug = faker.lorem.slug(2);
+  return `@${handle_}/${slug}`;
+}
+
+function hash() {
+  return `#${faker.string.alphanumeric(256)}`;
+}
+
 function project(ref?: string) {
   const ref_ = ref ? ref : projectRef();
   const [handle, slug] = ref_.split("/");
@@ -159,6 +169,100 @@ function contributionTimeline(events?: unknown[]) {
   };
 }
 
+function changeLine() {
+  return {
+    contents: {
+      contents: {
+        fullName: "data.Map.fromListWithKey",
+        newHash: hash(),
+        newTag: "Plain",
+        oldHash: hash(),
+        oldTag: "Plain",
+        shortName: "fromListWithKey",
+      },
+      tag: "Updated",
+    },
+    tag: "Plain",
+  };
+}
+
+type DiffErrorCulprit = "new" | "old";
+
+type DiffErrorDetails =
+  | { tag: "impossibleError"; oldOrNewBranch: DiffErrorCulprit }
+  | {
+      tag: "constructorAlias";
+      oldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+      constructorName1: string;
+      constructorName2: string;
+    }
+  | {
+      tag: "missingConstructorName";
+      oldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+    }
+  | {
+      tag: "nestedDeclAlias";
+      oldOrNewBranch: DiffErrorCulprit;
+      constructorName1: string;
+      constructorName2: string;
+    }
+  | {
+      tag: "strayConstructor";
+      oldOrNewBranch: DiffErrorCulprit;
+      constructorName: string;
+    };
+
+type ContributionDiffConfig =
+  | { tag: "ok" }
+  | { tag: "computing" }
+  | { tag: "error"; error: DiffErrorDetails };
+
+function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
+  switch (cfg.tag) {
+    case "ok":
+      return {
+        tag: "done",
+        diff: {
+          tag: "ok",
+          defns: {
+            changes: [changeLine(), changeLine(), changeLine()],
+            children: [],
+          },
+          libdeps: [],
+        },
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+      };
+    case "computing":
+      return {
+        tag: "computing",
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+      };
+    case "error":
+      return {
+        tag: "done",
+        diff: {
+          tag: "error",
+          error: cfg.error,
+        },
+        newRef: branchRef(),
+        newRefHash: hash(),
+        oldRef: "main",
+        oldRefHash: hash(),
+        project: projectRef,
+      };
+  }
+}
+
 export {
   projectRef,
   project,
@@ -170,4 +274,6 @@ export {
   contribution,
   contributionTimeline,
   contributionStatusChangeEvent,
+  contributionDiff,
+  type ContributionDiffConfig,
 };

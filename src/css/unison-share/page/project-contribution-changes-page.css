@@ -436,6 +436,17 @@
   bottom: 1.25rem;
 }
 
+.project-contribution-changes-page .contribution-diff_uncomputable {
+  padding: 1.5rem;
+  & h2 {
+    font-size: 1.25rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
+
 @container (max-width: 1199px) {
   .project-contribution-changes-page .definition-changes {
     & .definition-change.card .diff-side-by-side {
