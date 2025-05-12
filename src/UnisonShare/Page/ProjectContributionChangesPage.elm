@@ -844,7 +844,15 @@ view appContext projectRef contribution model =
         BranchDiffState.Computing _ ->
             PageContent.oneColumn
                 [ tabs
-                , div [ class "project-contribution-changes-page" ] [ StatusBanner.working "The contribution diff is still being computed..." ]
+                , div [ class "project-contribution-changes-page" ]
+                    [ Card.card
+                        [ StatusBanner.working "The contribution diff is still being computed..."
+                        , p [] [ text "Unison Share will never show a stale diff, and sometimes it takes a minute or two to compute. You can try refreshing this page." ]
+                        ]
+                        |> Card.withClassName "contribution-diff_uncomputable"
+                        |> Card.asContainedWithFade
+                        |> Card.view
+                    ]
                 ]
 
         BranchDiffState.Reloading _ ->
