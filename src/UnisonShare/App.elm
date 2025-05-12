@@ -46,7 +46,9 @@ import UnisonShare.Page.AccountPage as AccountPage
 import UnisonShare.Page.AppErrorPage as AppErrorPage
 import UnisonShare.Page.CatalogPage as CatalogPage
 import UnisonShare.Page.CloudPage as CloudPage
+import UnisonShare.Page.FinishSignupPage as FinishSignupPage
 import UnisonShare.Page.NotFoundPage as NotFoundPage
+import UnisonShare.Page.NotificationsPage as NotificationsPage
 import UnisonShare.Page.OrgPage as OrgPage
 import UnisonShare.Page.PrivacyPolicyPage as PrivacyPolicyPage
 import UnisonShare.Page.ProfilePage as ProfilePage
@@ -71,6 +73,7 @@ import WhatsNew exposing (WhatsNew)
 type Page
     = Catalog CatalogPage.Model
     | Account AccountPage.Model
+    | Notifications Route.NotificationsRoute NotificationsPage.Model
     | Profile UserHandle ProfilePage.Model
     | User UserHandle Route.UserRoute UserPage.Model
     | Org UserHandle Route.OrgRoute OrgPage.Model
@@ -79,6 +82,7 @@ type Page
     | AcceptTerms (Maybe Url) AcceptTermsPage.Model
     | PrivacyPolicy
     | UcmConnected
+    | FinishSignup UserHandle FinishSignupPage.Model
     | Cloud
     | Error AppError
     | NotFound
@@ -136,6 +140,13 @@ init appContext route =
                     in
                     ( Account account, Cmd.none )
 
+                Route.Notifications r ->
+                    let
+                        ( notifications, notificationsCmd ) =
+                            NotificationsPage.init appContext r
+                    in
+                    ( Notifications r notifications, Cmd.map NotificationsPageMsg notificationsCmd )
+
                 Route.Profile handle ->
                     let
                         ( profile, profileCmd ) =
@@ -175,6 +186,9 @@ init appContext route =
 
                 Route.UcmConnected ->
                     ( UcmConnected, Cmd.none )
+
+                Route.FinishSignup handle ->
+                    ( FinishSignup handle FinishSignupPage.init, Cmd.none )
 
                 Route.Cloud ->
                     ( Cloud, Cmd.none )
@@ -226,7 +240,9 @@ type Msg
     | OrgPageMsg OrgPage.Msg
     | ProjectPageMsg ProjectPage.Msg
     | AccountPageMsg AccountPage.Msg
+    | NotificationsPageMsg NotificationsPage.Msg
     | AcceptTermsPageMsg AcceptTermsPage.Msg
+    | FinishSignupPageMsg FinishSignupPage.Msg
     | NewOrgModalMsg NewOrgModal.Msg
 
 
@@ -284,6 +300,13 @@ update msg ({ appContext } as model) =
 
                         Route.Account ->
                             ( { model_ | page = Account AccountPage.init }, Cmd.none )
+
+                        Route.Notifications r ->
+                            let
+                                ( notifications, cmd ) =
+                                    NotificationsPage.init appContext_ r
+                            in
+                            ( { model_ | page = Notifications r notifications }, Cmd.map NotificationsPageMsg cmd )
 
                         Route.Profile handle ->
                             let
@@ -375,6 +398,9 @@ update msg ({ appContext } as model) =
 
                         Route.UcmConnected ->
                             ( { model_ | page = UcmConnected }, Cmd.none )
+
+                        Route.FinishSignup conflictingHandle ->
+                            ( { model_ | page = FinishSignup conflictingHandle FinishSignupPage.init }, Cmd.none )
 
                         Route.Cloud ->
                             ( { model_ | page = Cloud }, Cmd.none )
@@ -523,12 +549,33 @@ update msg ({ appContext } as model) =
                 _ ->
                     ( model, Cmd.none )
 
+        ( Notifications notificationsRoute notifications, NotificationsPageMsg nMsg ) ->
+            case appContext.session of
+                Session.SignedIn _ ->
+                    let
+                        ( notifications_, cmd ) =
+                            NotificationsPage.update appContext notificationsRoute nMsg notifications
+                    in
+                    ( { model | page = Notifications notificationsRoute notifications_ }
+                    , Cmd.map NotificationsPageMsg cmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         ( AcceptTerms continueUrl acceptTerms, AcceptTermsPageMsg atMsg ) ->
             let
                 ( acceptTerms_, acceptTermsCmd ) =
                     AcceptTermsPage.update appContext atMsg continueUrl acceptTerms
             in
             ( { model | page = AcceptTerms continueUrl acceptTerms_ }, Cmd.map AcceptTermsPageMsg acceptTermsCmd )
+
+        ( FinishSignup conflictingHandle finishSignup, FinishSignupPageMsg fsMsg ) ->
+            let
+                ( finishSignup_, finishSignupCmd ) =
+                    FinishSignupPage.update appContext conflictingHandle fsMsg finishSignup
+            in
+            ( { model | page = FinishSignup conflictingHandle finishSignup_ }, Cmd.map FinishSignupPageMsg finishSignupCmd )
 
         ( _, NewOrgModalMsg newOrgMsg ) ->
             case ( model.appModal, appContext.session ) of
@@ -766,6 +813,9 @@ view model =
                         Session.Anonymous ->
                             NotFoundPage.view
 
+                Notifications _ notifications ->
+                    AppDocument.map NotificationsPageMsg (NotificationsPage.view appContext notifications)
+
                 Profile _ profile ->
                     AppDocument.map ProfilePageMsg (ProfilePage.view appContext profile)
 
@@ -796,6 +846,16 @@ view model =
 
                         Session.SignedIn a ->
                             UcmConnectedPage.view a
+
+                FinishSignup conflictingHandle finishSignup ->
+                    case appContext.session of
+                        Session.Anonymous ->
+                            finishSignup
+                                |> FinishSignupPage.view appContext conflictingHandle
+                                |> AppDocument.map FinishSignupPageMsg
+
+                        Session.SignedIn _ ->
+                            NotFoundPage.view
 
                 Cloud ->
                     CloudPage.view session

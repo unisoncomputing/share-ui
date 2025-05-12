@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { button } from "./TestHelpers/Page";
 import * as API from "./TestHelpers/Api";
 
 test.beforeEach(async ({ page }) => {
@@ -16,7 +15,9 @@ test.describe("without being signed in", () => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
 
-    await expect(button(page, "New Org")).not.toBeVisible();
+    await expect(
+      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+    ).not.toBeVisible();
   });
 });
 
@@ -29,6 +30,8 @@ test.describe("while being signed in", () => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
 
-    await expect(button(page, "New Org")).toBeVisible();
+    await expect(
+      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+    ).toBeVisible();
   });
 });

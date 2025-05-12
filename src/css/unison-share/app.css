@@ -112,12 +112,15 @@ body:has(#modal-overlay) {
   text-decoration: underline;
 }
 
-#app-header .sign-in-nav {
+#app-header .sign-in-nav,
+#app-header .signed-in-nav {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
-#app-header .sign-in-nav_mobile {
+#app-header .sign-in-nav_mobile,
+#app-header .signed-in-nav_mobile {
   display: none;
 }
 
@@ -233,11 +236,13 @@ body:has(#modal-overlay) {
     top: 1rem;
   }
 
-  #app-header .sign-in-nav {
+  #app-header .sign-in-nav,
+  #app-header .signed-in-nav {
     display: none;
   }
 
-  #app-header .sign-in-nav_mobile {
+  #app-header .sign-in-nav_mobile,
+  #app-header .signed-in-nav_mobile {
     display: flex;
   }
 }

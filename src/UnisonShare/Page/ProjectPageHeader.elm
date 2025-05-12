@@ -40,7 +40,7 @@ empty project =
             , content =
                 ProjectListing.projectListing project
                     |> ProjectListing.large
-                    |> ProjectListing.subdued
+                    |> ProjectListing.verySubdued
                     |> ProjectListing.view
             }
     in

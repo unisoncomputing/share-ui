@@ -193,7 +193,7 @@ view ctx appHeader_ =
                     else
                         Nudge.empty
 
-                helpAndResources =
+                helpAndResourcesItems =
                     ActionMenu.items
                         (ActionMenu.titleItem "Whats new?")
                         (whatsNewItems
@@ -207,7 +207,18 @@ view ctx appHeader_ =
                                , ActionMenu.optionItem Icon.github "Unison on GitHub" Link.github
                                ]
                         )
-                        |> ActionMenu.fromButton ctx.toggleHelpAndResourcesMenuMsg "Help & Resources"
+
+                helpAndResources isMobile =
+                    let
+                        button =
+                            if isMobile then
+                                ActionMenu.fromIconButton ctx.toggleHelpAndResourcesMenuMsg Icon.questionmark helpAndResourcesItems
+
+                            else
+                                ActionMenu.fromButton ctx.toggleHelpAndResourcesMenuMsg "Help & Resources" helpAndResourcesItems
+                    in
+                    button
+                        |> ActionMenu.withButtonIcon Icon.questionmark
                         |> ActionMenu.shouldBeOpen (isHelpAndResourcesMenuOpen ctx.openedAppHeaderMenu)
                         |> ActionMenu.withButtonIcon Icon.questionmark
                         |> ActionMenu.withNudge nudge
@@ -225,7 +236,6 @@ view ctx appHeader_ =
                                 signIn =
                                     Button.button_ (loginLink ctx.currentUrl) "Sign In"
                                         |> Button.small
-                                        |> Button.emphasized
                                         |> Button.view
 
                                 createAccountSheet =
@@ -274,8 +284,17 @@ view ctx appHeader_ =
                                             Navigation.empty |> Navigation.withNoSelectedItems [ navItems.catalog ]
                             in
                             ( nav
-                            , [ div [ class "sign-in-nav" ] [ helpAndResources, signIn, createAccount ]
-                              , div [ class "sign-in-nav sign-in-nav_mobile" ] [ signIn, createAccount ]
+                            , [ div
+                                    [ class "sign-in-nav sign-in-nav_desktop" ]
+                                    [ helpAndResources False
+                                    , signIn
+                                    , createAccount
+                                    ]
+                              , div [ class "sign-in-nav sign-in-nav_mobile" ]
+                                    [ helpAndResources True
+                                    , signIn
+                                    , createAccount
+                                    ]
                               ]
                             )
 
@@ -327,7 +346,11 @@ view ctx appHeader_ =
                                         |> ActionMenu.view
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
-                            ( nav, [ newOrgButton, helpAndResources, accountMenu ] )
+                            ( nav
+                            , [ div [ class "signed-in-nav signed-in-nav_desktop" ] [ newOrgButton, helpAndResources False, accountMenu ]
+                              , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
+                              ]
+                            )
             in
             UI.AppHeader.appHeader (appTitle (Click.href "/"))
                 |> UI.AppHeader.withNavigation navigation

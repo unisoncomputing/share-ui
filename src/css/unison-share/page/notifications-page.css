@@ -1,0 +1,87 @@
+.notifications-page {
+  & .notifications_selection-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+
+    & .notifications_selection-controls_controls {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.25rem;
+    }
+  }
+
+  & .notifications {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+
+    & .notification-row {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+
+      &.notification-row_unread {
+        color: var(--u-color_interactive);
+      }
+
+      & .notification-row_selection-and-details {
+        display: flex;
+        flex-direction: row;
+        gap: 1.5rem;
+
+        & .notification-row_selection {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.85rem;
+          height: 100%;
+          margin-top: 0.1875rem; /* yuck... */
+        }
+
+        & .notification-row_details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          & .notification-row_details_context-and-subject {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            line-height: 1;
+            gap: 0.15rem;
+            color: var(--u-color_text_subdued);
+
+            & .notification-row_details_sep {
+              font-size: var(--font-size-large);
+              color: var(--u-color_text_very-subdued);
+            }
+
+            & .notification-row_details_subject {
+              font-size: var(--font-size-medium);
+            }
+
+            & .notification-row_subject-ref {
+              font-family: var(--font-monospace);
+            }
+          }
+
+          & .notification-row_details_title {
+            font-size: var(--font-size-base);
+            font-weight: bold;
+          }
+        }
+      }
+
+      & .notification-row_date {
+        font-size: var(--font-size-medium);
+        color: var(--u-color_text_subdued);
+      }
+    }
+  }
+}

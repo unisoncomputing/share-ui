@@ -1,5 +1,6 @@
 module UnisonShare.Route exposing
     ( CodeRoute(..)
+    , NotificationsRoute(..)
     , OrgRoute(..)
     , ProjectContributionRoute(..)
     , ProjectRoute(..)
@@ -11,8 +12,12 @@ module UnisonShare.Route exposing
     , cloud
     , codeRoot
     , definition
+    , finishSignup
     , fromUrl
     , navigate
+    , notificationsAll
+    , notificationsArchive
+    , notificationsUnread
     , orgPeople
     , orgProfile
     , orgSettings
@@ -62,6 +67,7 @@ import Code.UrlParsers
         , reference
         , s
         , slash
+        , unprefixedUserHandle
         , userHandle
         , version
         )
@@ -113,6 +119,12 @@ type ProjectRoute
     | ProjectSettings
 
 
+type NotificationsRoute
+    = NotificationsAll
+    | NotificationsUnread
+    | NotificationsArchive
+
+
 type Route
     = Catalog
     | Account
@@ -120,6 +132,7 @@ type Route
     | User UserHandle UserRoute
     | Org UserHandle OrgRoute
     | Project ProjectRef ProjectRoute
+    | Notifications NotificationsRoute
     | TermsOfService
     | AcceptTerms (Maybe Url)
     | PrivacyPolicy
@@ -127,6 +140,7 @@ type Route
     | Cloud
     | NotFound String
     | Error AppError
+    | FinishSignup UserHandle
 
 
 
@@ -141,6 +155,21 @@ catalog =
 account : Route
 account =
     Account
+
+
+notificationsAll : Route
+notificationsAll =
+    Notifications NotificationsAll
+
+
+notificationsUnread : Route
+notificationsUnread =
+    Notifications NotificationsUnread
+
+
+notificationsArchive : Route
+notificationsArchive =
+    Notifications NotificationsArchive
 
 
 cloud : Route
@@ -318,6 +347,11 @@ ucmConnected =
     UcmConnected
 
 
+finishSignup : UserHandle -> Route
+finishSignup handle_ =
+    FinishSignup handle_
+
+
 
 -- PARSE ----------------------------------------------------------------------
 
@@ -328,6 +362,7 @@ toRoute queryString =
         [ b homeParser
         , b catalogParser
         , b accountParser
+        , b notificationsParser
         , b profileParser
         , b userParser
         , b orgParser
@@ -336,6 +371,7 @@ toRoute queryString =
         , b (acceptTermsParser queryString)
         , b privacyPolicyParser
         , b ucmConnectedParser
+        , b (finishSignupParser queryString)
         , b cloudParser
         , b (errorParser queryString)
         ]
@@ -354,6 +390,16 @@ catalogParser =
 accountParser : Parser Route
 accountParser =
     succeed Account |. slash |. s "account"
+
+
+notificationsParser : Parser Route
+notificationsParser =
+    oneOf
+        [ b (succeed (Notifications NotificationsAll) |. slash |. s "notifications" |. slash |. s "all")
+        , b (succeed (Notifications NotificationsUnread) |. slash |. s "notifications" |. slash |. s "unread")
+        , b (succeed (Notifications NotificationsArchive) |. slash |. s "notifications" |. slash |. s "archive")
+        , b (succeed (Notifications NotificationsAll) |. slash |. s "notifications")
+        ]
 
 
 termsOfServiceParser : Parser Route
@@ -402,6 +448,20 @@ privacyPolicyParser =
 ucmConnectedParser : Parser Route
 ucmConnectedParser =
     succeed UcmConnected |. slash |. s "ucm-connected"
+
+
+finishSignupParser : Maybe String -> Parser Route
+finishSignupParser queryString =
+    let
+        handleQueryParamParser : Parser UserHandle
+        handleQueryParamParser =
+            b (succeed identity |. s "conflictingHandle" |. symbol "=" |= unprefixedUserHandle |. end)
+    in
+    queryString
+        |> Maybe.withDefault ""
+        |> Parser.run handleQueryParamParser
+        |> Result.map (\h -> succeed (FinishSignup h) |. slash |. s "finish-signup")
+        |> Result.withDefault (Parser.problem "Missing handle in querystring")
 
 
 cloudParser : Parser Route
@@ -708,6 +768,15 @@ toUrlPattern r =
         Account ->
             "account"
 
+        Notifications NotificationsAll ->
+            "notifications"
+
+        Notifications NotificationsUnread ->
+            "notifications/unread"
+
+        Notifications NotificationsArchive ->
+            "notifications/archive"
+
         Profile _ ->
             ":handle"
 
@@ -770,6 +839,9 @@ toUrlPattern r =
 
         UcmConnected ->
             "ucm-connected"
+
+        FinishSignup _ ->
+            "finish-signup"
 
         Cloud ->
             "cloud"
@@ -866,6 +938,15 @@ toUrlString route =
                 Account ->
                     ( [ "account" ], [] )
 
+                Notifications NotificationsAll ->
+                    ( [ "notifications" ], [] )
+
+                Notifications NotificationsUnread ->
+                    ( [ "notifications", "unread" ], [] )
+
+                Notifications NotificationsArchive ->
+                    ( [ "notifications", "archive" ], [] )
+
                 Profile handle_ ->
                     ( [ UserHandle.toString handle_ ], [] )
 
@@ -942,6 +1023,9 @@ toUrlString route =
 
                 UcmConnected ->
                     ( [ "ucm-connected" ], [] )
+
+                FinishSignup handle ->
+                    ( [ "finish-signup" ], [ string "handle" (UserHandle.toUnprefixedString handle) ] )
 
                 Cloud ->
                     ( [ "cloud" ], [] )

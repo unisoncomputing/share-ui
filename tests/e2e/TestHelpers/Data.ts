@@ -11,10 +11,14 @@ function account(handle: string) {
   };
 }
 
+function userHandle() {
+  return faker.lorem.slug(1);
+}
+
 function user(handle?: string) {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
-  const handle_ = handle ? handle : faker.lorem.slug(1);
+  const handle_ = handle ? handle : userHandle();
 
   return {
     avatarUrl: faker.image.avatar(),
@@ -265,6 +269,7 @@ export {
   account,
   user,
   userDetails,
+  userHandle,
   org,
   contribution,
   contributionTimeline,
