@@ -3,7 +3,7 @@ module UnisonShare.BranchDiffState exposing (..)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Http
 import Json.Decode as Decode exposing (Decoder)
-import Lib.Util exposing (whenFieldIs, whenPathIs)
+import Lib.Decode.Helpers exposing (whenFieldIs, whenPathIs)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
 
 

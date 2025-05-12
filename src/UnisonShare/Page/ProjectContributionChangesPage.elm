@@ -11,6 +11,7 @@ import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
 import Json.Decode as Decode
+import Lib.Decode.Helpers exposing (failInvalid)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
@@ -338,7 +339,7 @@ fetchSyntax appContext projectRef branchRef changeLine fieldPrefix name =
                     -- Syntax)). We just want the syntax part and only the first
                     -- one (disregarding naming collisions)
                     |> Decode.map (List.map Tuple.second >> List.head)
-                    |> Decode.andThen (Util.decodeFailInvalid "No valid definitions returned")
+                    |> Decode.andThen (failInvalid "No valid definitions returned")
                 )
     in
     ShareApi.projectBranchDefinitionByName projectRef branchRef name

@@ -26,8 +26,8 @@ import Code.ProjectSlug as ProjectSlug exposing (ProjectSlug)
 import Html exposing (Html, label, span, text)
 import Html.Attributes exposing (class, title)
 import Json.Decode as Decode
+import Lib.Decode.Helpers exposing (failInvalid)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util as Util
 import UI.Click as Click exposing (Click)
 
 
@@ -162,4 +162,4 @@ decode =
                     Nothing
     in
     Decode.map fromString_ Decode.string
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid ProjectRef")
+        |> Decode.andThen (failInvalid "Invalid ProjectRef")

@@ -5,8 +5,8 @@ import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
+import Lib.String.Helpers exposing (unicodeLength)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util exposing (unicodeStringLength)
 import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
 import Set
@@ -180,7 +180,7 @@ viewEditProfileModal profileForm =
         form_ f =
             form [ class "description-form" ]
                 [ TextField.field UpdateBioField "Bio" f.bio
-                    |> TextField.withHelpText (String.fromInt (unicodeStringLength f.bio) ++ "/400 characters.")
+                    |> TextField.withHelpText (String.fromInt (unicodeLength f.bio) ++ "/400 characters.")
                     |> TextField.withRows 7
                     |> TextField.withMaxlength 400
                     |> TextField.withAutofocus

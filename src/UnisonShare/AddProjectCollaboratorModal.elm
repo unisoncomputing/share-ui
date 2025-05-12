@@ -5,10 +5,10 @@ import Html.Attributes exposing (class, classList)
 import Http
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
+import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
-import Lib.Util exposing (decodeTag)
 import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
 import UI
@@ -178,7 +178,7 @@ fetchUsers appContext query =
 
         decodeMatch =
             Decode.oneOf
-                [ when decodeTag ((==) "User") (Decode.map Just User.decodeSummaryWithId)
+                [ when tag ((==) "User") (Decode.map Just User.decodeSummaryWithId)
                 , Decode.succeed Nothing
                 ]
     in

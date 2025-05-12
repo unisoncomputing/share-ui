@@ -2,7 +2,7 @@ module UnisonShare.Notification exposing (..)
 
 import Json.Decode as Decode exposing (field, string)
 import Json.Decode.Pipeline exposing (required)
-import Lib.Util exposing (whenFieldIs)
+import Lib.Decode.Helpers exposing (whenFieldIs)
 import UI.DateTime as DateTime exposing (DateTime)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)

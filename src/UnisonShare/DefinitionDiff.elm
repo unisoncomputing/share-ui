@@ -8,7 +8,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
-import Lib.Util exposing (decodeNonEmptyList)
+import Lib.Decode.Helpers exposing (nonEmptyList)
 import List.Nonempty as NEL
 import UI.Tooltip as Tooltip
 
@@ -187,7 +187,7 @@ view toSyntaxConfig defDiff =
 
 decodeDiffSyntaxSegments : Decode.Decoder DiffSyntaxSegments
 decodeDiffSyntaxSegments =
-    decodeNonEmptyList SyntaxSegment.decode
+    nonEmptyList SyntaxSegment.decode
 
 
 decodeSegment : Decode.Decoder DiffSegment
@@ -260,7 +260,7 @@ decodeDiff definitionType =
                 diff
     in
     Decode.succeed mkDiff
-        |> requiredAt [ "diff", "contents" ] (decodeNonEmptyList decodeSegment)
+        |> requiredAt [ "diff", "contents" ] (nonEmptyList decodeSegment)
         |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
         |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
 

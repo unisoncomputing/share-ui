@@ -1,8 +1,8 @@
 module UnisonShare.Account exposing (..)
 
 import Json.Decode as Decode exposing (field, maybe, string)
+import Lib.Decode.Helpers exposing (url)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util exposing (decodeUrl)
 import UI.Avatar as Avatar exposing (Avatar)
 import UI.Icon as Icon
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
@@ -104,7 +104,7 @@ decodeSummary =
     Decode.map7 makeSummary
         (field "handle" UserHandle.decodeUnprefixed)
         (maybe (field "name" string))
-        (maybe (field "avatarUrl" decodeUrl))
+        (maybe (field "avatarUrl" url))
         (maybe (field "completedTours" (Decode.list Tour.decode)))
         (field "organizationMemberships" (Decode.list (Decode.map OrganizationMembership UserHandle.decodeUnprefixed)))
         (maybe (field "isSuperadmin" Decode.bool))

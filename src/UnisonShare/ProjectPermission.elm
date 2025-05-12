@@ -1,7 +1,7 @@
 module UnisonShare.ProjectPermission exposing (..)
 
 import Json.Decode as Decode
-import Lib.Util as Util
+import Lib.Decode.Helpers exposing (failInvalid)
 
 
 type ProjectPermission
@@ -37,7 +37,7 @@ fromString raw =
 decode : Decode.Decoder ProjectPermission
 decode =
     decodeMaybe
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid ProjectPermission")
+        |> Decode.andThen (failInvalid "Invalid ProjectPermission")
 
 
 decodeMaybe : Decode.Decoder (Maybe ProjectPermission)

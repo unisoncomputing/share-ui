@@ -17,7 +17,8 @@ import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.Util as Util exposing (unicodeStringLength)
+import Lib.String.Helpers exposing (unicodeLength)
+import Lib.Util as Util
 import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
@@ -194,7 +195,7 @@ update appContext projectRef project msg model =
                 EditDescriptionModal (Editing f) ->
                     let
                         form =
-                            if unicodeStringLength s <= 100 then
+                            if unicodeLength s <= 100 then
                                 Editing { f | summary = s }
 
                             else
@@ -560,7 +561,7 @@ viewEditDescriptionModal descriptionForm =
             form [ class "description-form" ]
                 [ p [] [ text "Describe your project with a brief summary and topic tags." ]
                 , TextField.field UpdateSummaryField "Summary" f.summary
-                    |> TextField.withHelpText (String.fromInt (unicodeStringLength f.summary) ++ "/100 characters.")
+                    |> TextField.withHelpText (String.fromInt (unicodeLength f.summary) ++ "/100 characters.")
                     |> TextField.withRows 2
                     |> TextField.withMaxlength 100
                     |> TextField.withAutofocus

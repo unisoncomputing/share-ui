@@ -13,7 +13,7 @@ module UnisonShare.Contribution.ContributionRef exposing
     )
 
 import Json.Decode as Decode
-import Lib.Util as Util
+import Lib.Decode.Helpers exposing (failInvalid)
 import Parser exposing (Parser)
 
 
@@ -87,10 +87,10 @@ equals (ContributionRef a) (ContributionRef b) =
 decodeString : Decode.Decoder ContributionRef
 decodeString =
     Decode.map fromString Decode.string
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid ContributionRef")
+        |> Decode.andThen (failInvalid "Invalid ContributionRef")
 
 
 decode : Decode.Decoder ContributionRef
 decode =
     Decode.map fromInt Decode.int
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid ContributionRef")
+        |> Decode.andThen (failInvalid "Invalid ContributionRef")

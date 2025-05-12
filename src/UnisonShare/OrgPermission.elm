@@ -1,7 +1,7 @@
 module UnisonShare.OrgPermission exposing (..)
 
 import Json.Decode as Decode
-import Lib.Util as Util
+import Lib.Decode.Helpers exposing (failInvalid)
 
 
 type OrgPermission
@@ -41,7 +41,7 @@ fromString raw =
 decode : Decode.Decoder OrgPermission
 decode =
     decodeMaybe
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid OrgPermission")
+        |> Decode.andThen (failInvalid "Invalid OrgPermission")
 
 
 decodeMaybe : Decode.Decoder (Maybe OrgPermission)

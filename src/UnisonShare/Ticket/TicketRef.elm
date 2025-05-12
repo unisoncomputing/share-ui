@@ -13,7 +13,7 @@ module UnisonShare.Ticket.TicketRef exposing
     )
 
 import Json.Decode as Decode
-import Lib.Util as Util
+import Lib.Decode.Helpers exposing (failInvalid)
 import Parser exposing (Parser)
 
 
@@ -87,10 +87,10 @@ equals (TicketRef a) (TicketRef b) =
 decodeString : Decode.Decoder TicketRef
 decodeString =
     Decode.map fromString Decode.string
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid TicketRef")
+        |> Decode.andThen (failInvalid "Invalid TicketRef")
 
 
 decode : Decode.Decoder TicketRef
 decode =
     Decode.map fromInt Decode.int
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid TicketRef")
+        |> Decode.andThen (failInvalid "Invalid TicketRef")

@@ -3,7 +3,7 @@ module UnisonShare.OrgMember exposing (..)
 import Json.Decode as Decode exposing (string)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
-import Lib.Util as Util
+import Lib.Decode.Helpers exposing (failInvalid)
 import UnisonShare.OrgRole as OrgRole exposing (OrgRole)
 import UnisonShare.User as User exposing (UserSummaryWithId)
 
@@ -56,7 +56,7 @@ decodeMaybe =
 decode : Decode.Decoder OrgMember
 decode =
     decodeMaybe
-        |> Decode.andThen (Util.decodeFailInvalid "Invalid Org Member")
+        |> Decode.andThen (failInvalid "Invalid Org Member")
 
 
 {-| soft fail when encountering unknown member types

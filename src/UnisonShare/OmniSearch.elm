@@ -44,11 +44,12 @@ import Html.Events exposing (onInput)
 import Json.Decode as Decode exposing (nullable, string)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
+import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Search as Search exposing (Search(..))
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util as Util exposing (decodeTag)
+import Lib.Util as Util
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
 import Regex
@@ -646,9 +647,9 @@ searchEntities appContext _ query =
 
         decodeMatch =
             Decode.oneOf
-                [ when decodeTag ((==) "User") (Decode.map UserMatch User.decodeSummary)
-                , when decodeTag ((==) "Org") (Decode.map UserMatch User.decodeSummary)
-                , when decodeTag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
+                [ when tag ((==) "User") (Decode.map UserMatch User.decodeSummary)
+                , when tag ((==) "Org") (Decode.map UserMatch User.decodeSummary)
+                , when tag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
                 ]
     in
     ShareApi.search query

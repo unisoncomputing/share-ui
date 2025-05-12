@@ -12,8 +12,8 @@ module UnisonShare.User exposing
 
 import Json.Decode as Decode exposing (field, maybe, nullable, string)
 import Json.Decode.Pipeline exposing (required)
+import Lib.Decode.Helpers exposing (url)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Lib.Util exposing (decodeUrl)
 import UI.Avatar as Avatar exposing (Avatar)
 import UI.Icon as Icon
 import Url exposing (Url)
@@ -76,7 +76,7 @@ decodeSummary =
     Decode.map3 makeSummary
         (field "handle" UserHandle.decodeUnprefixed)
         (maybe (field "name" string))
-        (maybe (field "avatarUrl" decodeUrl))
+        (maybe (field "avatarUrl" url))
 
 
 decodeSummaryWithId : Decode.Decoder UserSummaryWithId
@@ -94,7 +94,7 @@ decodeSummaryWithId =
         (field "userId" string)
         (field "handle" UserHandle.decodeUnprefixed)
         (maybe (field "name" string))
-        (maybe (field "avatarUrl" decodeUrl))
+        (maybe (field "avatarUrl" url))
 
 
 decodeDetails : Decode.Decoder UserDetails
@@ -113,8 +113,8 @@ decodeDetails =
     Decode.succeed makeDetails
         |> required "handle" UserHandle.decodeUnprefixed
         |> required "name" (nullable string)
-        |> required "avatarUrl" (nullable decodeUrl)
+        |> required "avatarUrl" (nullable url)
         |> required "pronouns" (nullable string)
         |> required "bio" (nullable string)
         |> required "location" (nullable string)
-        |> required "website" (nullable decodeUrl)
+        |> required "website" (nullable url)

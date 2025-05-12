@@ -6,7 +6,7 @@ import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode exposing (Decoder, field, oneOf)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
-import Lib.Util exposing (decodeNonEmptyList, decodeTag)
+import Lib.Decode.Helpers exposing (nonEmptyList, tag)
 import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
@@ -329,21 +329,21 @@ decode_ type_ =
                 }
     in
     oneOf
-        [ when decodeTag
+        [ when tag
             ((==) "Added")
             (Decode.succeed added_
                 |> requiredAt [ "contents", "hash" ] Hash.decode
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
             )
-        , when decodeTag
+        , when tag
             ((==) "Removed")
             (Decode.succeed removed_
                 |> requiredAt [ "contents", "hash" ] Hash.decode
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
             )
-        , when decodeTag
+        , when tag
             ((==) "Updated")
             (Decode.succeed updated_
                 |> requiredAt [ "contents", "oldHash" ] Hash.decode
@@ -351,23 +351,23 @@ decode_ type_ =
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
             )
-        , when decodeTag
+        , when tag
             ((==) "RenamedFrom")
             (Decode.succeed renamedFrom_
                 |> requiredAt [ "contents", "hash" ] Hash.decode
-                |> requiredAt [ "contents", "oldNames" ] (decodeNonEmptyList FQN.decode)
+                |> requiredAt [ "contents", "oldNames" ] (nonEmptyList FQN.decode)
                 |> requiredAt [ "contents", "newShortName" ] FQN.decode
                 |> requiredAt [ "contents", "newFullName" ] FQN.decode
             )
-        , when decodeTag
+        , when tag
             ((==) "Aliased")
             (Decode.succeed aliased_
                 |> requiredAt [ "contents", "hash" ] Hash.decode
                 |> requiredAt [ "contents", "aliasShortName" ] FQN.decode
                 |> requiredAt [ "contents", "aliasFullName" ] FQN.decode
-                |> requiredAt [ "contents", "otherNames" ] (decodeNonEmptyList FQN.decode)
+                |> requiredAt [ "contents", "otherNames" ] (nonEmptyList FQN.decode)
             )
-        , when decodeTag
+        , when tag
             ((==) "Propagated")
             (Decode.succeed propagated_
                 |> requiredAt [ "contents", "oldHash" ] Hash.decode
@@ -381,11 +381,11 @@ decode_ type_ =
 decode : Decoder ChangeLine
 decode =
     oneOf
-        [ when decodeTag ((==) "Plain") (field "contents" (decode_ Term))
-        , when decodeTag ((==) "Data") (field "contents" (decode_ Type))
-        , when decodeTag ((==) "Ability") (field "contents" (decode_ Ability))
-        , when decodeTag ((==) "Doc") (field "contents" (decode_ Doc))
-        , when decodeTag ((==) "Test") (field "contents" (decode_ Test))
-        , when decodeTag ((==) "DataConstructor") (field "contents" (decode_ DataConstructor))
-        , when decodeTag ((==) "AbilityConstructor") (field "contents" (decode_ AbilityConstructor))
+        [ when tag ((==) "Plain") (field "contents" (decode_ Term))
+        , when tag ((==) "Data") (field "contents" (decode_ Type))
+        , when tag ((==) "Ability") (field "contents" (decode_ Ability))
+        , when tag ((==) "Doc") (field "contents" (decode_ Doc))
+        , when tag ((==) "Test") (field "contents" (decode_ Test))
+        , when tag ((==) "DataConstructor") (field "contents" (decode_ DataConstructor))
+        , when tag ((==) "AbilityConstructor") (field "contents" (decode_ AbilityConstructor))
         ]
