@@ -816,6 +816,16 @@ viewErrorPage appContext _ err =
         ]
 
 
+viewCulprit : ContributionDetails -> BranchDiffState.DiffErrorCulprit -> Html msg
+viewCulprit contribution culprit =
+    case culprit of
+        BranchDiffState.TargetBranch ->
+            strong [] [ text (BranchRef.toString contribution.targetBranchRef) ]
+
+        BranchDiffState.SourceBranch ->
+            strong [] [ text (BranchRef.toString contribution.sourceBranchRef) ]
+
+
 view : AppContext -> ProjectRef -> ContributionDetails -> Model -> PageContent Msg
 view appContext projectRef contribution model =
     let
@@ -852,19 +862,11 @@ view appContext projectRef contribution model =
                     ]
                 ]
 
-        BranchDiffState.Uncomputable err ->
+        BranchDiffState.Uncomputable error ->
             let
-                culprit =
-                    case err.culprit of
-                        BranchDiffState.TargetBranch ->
-                            BranchRef.toString contribution.targetBranchRef
-
-                        BranchDiffState.SourceBranch ->
-                            BranchRef.toString contribution.sourceBranchRef
-
                 errorDetails =
-                    case err.error of
-                        BranchDiffState.ConstructorAlias { typeName, constructorName1, constructorName2 } ->
+                    case error of
+                        BranchDiffState.ConstructorAlias { culprit, typeName, constructorName1, constructorName2 } ->
                             Just
                                 [ text "The type "
                                 , FQN.view typeName
@@ -873,17 +875,23 @@ view appContext projectRef contribution model =
                                 , text " and "
                                 , FQN.view constructorName2
                                 , text " on the "
-                                , strong [] [ text culprit ]
+                                , viewCulprit contribution culprit
                                 , text " branch."
                                 ]
 
-                        BranchDiffState.MissingConstructorName { typeName } ->
-                            Just [ text "The type ", FQN.view typeName, text " is missing a constructor name on the ", strong [] [ text culprit ], text " branch." ]
+                        BranchDiffState.MissingConstructorName { culprit, typeName } ->
+                            Just
+                                [ text "The type "
+                                , FQN.view typeName
+                                , text " is missing a constructor name on the "
+                                , viewCulprit contribution culprit
+                                , text " branch."
+                                ]
 
-                        BranchDiffState.NestedDeclAlias { constructorName1, constructorName2 } ->
+                        BranchDiffState.NestedDeclAlias { culprit, constructorName1, constructorName2 } ->
                             Just
                                 [ text "On the "
-                                , strong [] [ text culprit ]
+                                , viewCulprit contribution culprit
                                 , text " branch, the type "
                                 , FQN.view constructorName1
                                 , text " is an alias of "
@@ -893,8 +901,14 @@ view appContext projectRef contribution model =
                                 , text "It's nested under an alias of itself. Please separate them or delete one copy."
                                 ]
 
-                        BranchDiffState.StrayConstructor { constructorName } ->
-                            Just [ text "The constructor ", FQN.view constructorName, text " is orphaned on the ", strong [] [ text culprit ], text " branch." ]
+                        BranchDiffState.StrayConstructor { culprit, constructorName } ->
+                            Just
+                                [ text "The constructor "
+                                , FQN.view constructorName
+                                , text " is orphaned on the "
+                                , viewCulprit contribution culprit
+                                , text " branch."
+                                ]
 
                         _ ->
                             Nothing

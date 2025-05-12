@@ -51,7 +51,7 @@ test.describe("When the branch diff couldn't be computed", () => {
     test.beforeEach(async ({ page }) => {
       await API.getProjectContributionDiff(page, projectRef, contrib.number, {
         tag: "error",
-        error: { tag: "impossibleError", oldOrNewBranch: "new" },
+        error: { tag: "impossibleError" },
       });
       await page.goto(
         `http://localhost:1234/${projectRef}/contributions/${contrib.number}/changes`,

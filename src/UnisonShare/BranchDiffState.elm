@@ -15,16 +15,19 @@ type DiffErrorCulprit
 type DiffError
     = ImpossibleError
     | ConstructorAlias
-        { typeName : FQN
+        { culprit : DiffErrorCulprit
+        , typeName : FQN
         , constructorName1 : FQN
         , constructorName2 : FQN
         }
-    | MissingConstructorName { typeName : FQN }
+    | MissingConstructorName { culprit : DiffErrorCulprit, typeName : FQN }
     | NestedDeclAlias
-        { constructorName1 : FQN
+        { culprit : DiffErrorCulprit
+        , constructorName1 : FQN
         , constructorName2 : FQN
         }
-    | StrayConstructor { constructorName : FQN }
+    | StrayConstructor { culprit : DiffErrorCulprit, constructorName : FQN }
+    | LibFoundAtUnexpectedPath
     | UnknownError
 
 
@@ -33,10 +36,7 @@ type BranchDiffState
     | Computing { numTries : Int }
     | Reloading { numtries : Int }
     | Computed BranchDiff
-    | Uncomputable
-        { culprit : DiffErrorCulprit
-        , error : DiffError
-        }
+    | Uncomputable DiffError
     | Failure Http.Error
 
 
@@ -52,49 +52,57 @@ whenTagIs val =
 decodeDiffError : Decoder DiffError
 decodeDiffError =
     let
-        makeConstructorAlias typeName ctor1 ctor2 =
+        makeConstructorAlias culprit typeName ctor1 ctor2 =
             ConstructorAlias
-                { typeName = typeName
+                { culprit = culprit
+                , typeName = typeName
                 , constructorName1 = ctor1
                 , constructorName2 = ctor2
                 }
 
-        makeMissingConstructorName typeName =
+        makeMissingConstructorName culprit typeName =
             MissingConstructorName
-                { typeName = typeName }
+                { culprit = culprit, typeName = typeName }
 
-        makeNestedDeclAlias ctor1 ctor2 =
+        makeNestedDeclAlias culprit ctor1 ctor2 =
             NestedDeclAlias
-                { constructorName1 = ctor1
+                { culprit = culprit
+                , constructorName1 = ctor1
                 , constructorName2 = ctor2
                 }
 
-        makeStrayConstructor ctor =
+        makeStrayConstructor culprit ctor =
             StrayConstructor
-                { constructorName = ctor
-                }
+                { culprit = culprit, constructorName = ctor }
     in
     Decode.oneOf
-        [ whenTagIs "impossibleError" (Decode.succeed ImpossibleError)
+        [ whenTagIs "impossibleError"
+            (Decode.succeed ImpossibleError)
         , whenTagIs "constructorAlias"
-            (Decode.map3 makeConstructorAlias
+            (Decode.map4 makeConstructorAlias
+                decodeCulprit
                 (Decode.field "typeName" FQN.decode)
                 (Decode.field "constructorName1" FQN.decode)
                 (Decode.field "constructorName2" FQN.decode)
             )
         , whenTagIs "missingConstructorName"
-            (Decode.map makeMissingConstructorName
+            (Decode.map2 makeMissingConstructorName
+                decodeCulprit
                 (Decode.field "typeName" FQN.decode)
             )
         , whenTagIs "nestedDeclAlias"
-            (Decode.map2 makeNestedDeclAlias
+            (Decode.map3 makeNestedDeclAlias
+                decodeCulprit
                 (Decode.field "constructorName1" FQN.decode)
                 (Decode.field "constructorName2" FQN.decode)
             )
         , whenTagIs "strayConstructor"
-            (Decode.map makeStrayConstructor
+            (Decode.map2 makeStrayConstructor
+                decodeCulprit
                 (Decode.field "constructorName" FQN.decode)
             )
+        , whenTagIs "libFoundAtUnexpectedPath"
+            (Decode.succeed LibFoundAtUnexpectedPath)
         , Decode.succeed UnknownError
         ]
 
@@ -109,17 +117,10 @@ decodeCulprit =
 
 decode : Int -> Decoder BranchDiffState
 decode numTries =
-    let
-        makeUncomputable culprit error =
-            Uncomputable { culprit = culprit, error = error }
-    in
     Decode.oneOf
         [ whenTagIs "computing" (Decode.succeed (Computing { numTries = numTries }))
         , whenPathIs [ "diff", "tag" ] "ok" (Decode.map Computed BranchDiff.decode)
         , whenPathIs [ "diff", "tag" ]
             "error"
-            (Decode.map2 makeUncomputable
-                (Decode.at [ "diff", "error" ] decodeCulprit)
-                (Decode.at [ "diff", "error" ] decodeDiffError)
-            )
+            (Decode.map Uncomputable (Decode.at [ "diff", "error" ] decodeDiffError))
         ]
