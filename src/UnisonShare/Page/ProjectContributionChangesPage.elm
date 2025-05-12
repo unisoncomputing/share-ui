@@ -910,6 +910,11 @@ view appContext projectRef contribution model =
                                 , text " branch."
                                 ]
 
+                        BranchDiffState.LibFoundAtUnexpectedPath ->
+                            Just
+                                [ text "lib namespace found at unexpected path."
+                                ]
+
                         _ ->
                             Nothing
             in
