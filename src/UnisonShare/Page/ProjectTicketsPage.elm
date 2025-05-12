@@ -153,7 +153,7 @@ viewPageTitle session project =
             PageTitle.title "Tickets"
 
         canSubmit =
-            Project.canView project || (Session.isSignedIn session && Project.isPublic project)
+            Session.isSignedIn session && (Project.canView project || Project.isPublic project)
     in
     if canSubmit then
         pt

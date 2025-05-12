@@ -34,7 +34,7 @@ import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
-import UnisonShare.Session as Session
+import UnisonShare.Session as Session exposing (Session)
 
 
 
@@ -222,8 +222,8 @@ fetchBranches doneMsg appContext projectRef params =
 -- VIEW
 
 
-viewPageTitle : ProjectDetails -> Maybe RecentBranches -> PageTitle.PageTitle Msg
-viewPageTitle project recentBranches =
+viewPageTitle : Session -> ProjectDetails -> Maybe RecentBranches -> PageTitle.PageTitle Msg
+viewPageTitle session project recentBranches =
     let
         pt =
             PageTitle.title "Contributions"
@@ -236,8 +236,11 @@ viewPageTitle project recentBranches =
 
         button =
             Button.iconThenLabel ShowSubmitContributionModal Icon.merge "Submit contribution"
+
+        canContribute =
+            Session.isSignedIn session && (Project.canContribute project || hasRecentContributorBranches)
     in
-    if Project.canContribute project || hasRecentContributorBranches then
+    if canContribute then
         pt
             |> PageTitle.withRightSide
                 [ button
@@ -394,7 +397,7 @@ viewPageContent appContext project recentBranches tab contributions =
                     |> Card.view
     in
     PageContent.oneColumn [ TabList.view tabList, card ]
-        |> PageContent.withPageTitle (viewPageTitle project recentBranches)
+        |> PageContent.withPageTitle (viewPageTitle appContext.session project recentBranches)
 
 
 view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
