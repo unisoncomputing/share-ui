@@ -447,6 +447,10 @@
   }
 }
 
+.project-contribution-changes-page .contribution-diff_computing .refresh-message {
+  font-size: var(--font-size-medium);
+}
+
 @container (max-width: 1199px) {
   .project-contribution-changes-page .definition-changes {
     & .definition-change.card .diff-side-by-side {

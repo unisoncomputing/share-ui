@@ -847,9 +847,13 @@ view appContext projectRef contribution model =
                 , div [ class "project-contribution-changes-page" ]
                     [ Card.card
                         [ StatusBanner.working "The contribution diff is still being computed..."
-                        , p [] [ text "Unison Share will never show a stale diff, and sometimes it takes a minute or two to compute. You can try refreshing this page." ]
+                        , p [ class "refresh-message" ]
+                            [ text "Unison Share will never show a stale diff, and sometimes it takes a minute or two to compute."
+                            , br [] []
+                            , text "You can try refreshing this page."
+                            ]
                         ]
-                        |> Card.withClassName "contribution-diff_uncomputable"
+                        |> Card.withClassName "contribution-diff_computing"
                         |> Card.asContainedWithFade
                         |> Card.view
                     ]
