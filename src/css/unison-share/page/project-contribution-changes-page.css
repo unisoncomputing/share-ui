@@ -447,8 +447,11 @@
   }
 }
 
-.project-contribution-changes-page .contribution-diff_computing .refresh-message {
-  font-size: var(--font-size-medium);
+.project-contribution-changes-page .contribution-diff_computing {
+  padding: 1.5rem;
+  & .refresh-message {
+    font-size: var(--font-size-medium);
+  }
 }
 
 @container (max-width: 1199px) {
