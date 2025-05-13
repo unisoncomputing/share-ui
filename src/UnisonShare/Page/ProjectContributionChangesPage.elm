@@ -833,7 +833,7 @@ view appContext projectRef contribution model =
             TabList.tabList
                 [ TabList.tab "Overview" (Link.projectContribution projectRef contribution.ref)
                 ]
-                (TabList.tab "Changes (beta preview)" (Link.projectContributionChanges projectRef contribution.ref))
+                (TabList.tab "Changes" (Link.projectContributionChanges projectRef contribution.ref))
                 []
                 |> TabList.view
     in
@@ -866,8 +866,7 @@ view appContext projectRef contribution model =
             PageContent.oneColumn
                 [ tabs
                 , div [ class "project-contribution-changes-page" ]
-                    [ StatusBanner.info "The contribution changes page is currently in a beta preview. Stay tuned for improvements and the upcoming full release."
-                    , viewBranchDiff appContext
+                    [ viewBranchDiff appContext
                         projectRef
                         model.changedDefinitions
                         diff
