@@ -49,7 +49,7 @@
           flex-direction: column;
           gap: 0.5rem;
 
-          & .notification-row_details_context-and-subject {
+          & .notification-row_details_context-and-event {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -62,11 +62,11 @@
               color: var(--u-color_text_very-subdued);
             }
 
-            & .notification-row_details_subject {
+            & .notification-row_details_event {
               font-size: var(--font-size-medium);
             }
 
-            & .notification-row_subject-ref {
+            & .notification-row_event-ref {
               font-family: var(--font-monospace);
             }
           }

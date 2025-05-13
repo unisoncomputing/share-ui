@@ -141,11 +141,16 @@ init appContext route =
                     ( Account account, Cmd.none )
 
                 Route.Notifications r ->
-                    let
-                        ( notifications, notificationsCmd ) =
-                            NotificationsPage.init appContext r
-                    in
-                    ( Notifications r notifications, Cmd.map NotificationsPageMsg notificationsCmd )
+                    case appContext.session of
+                        Session.SignedIn account ->
+                            let
+                                ( notifications, notificationsCmd ) =
+                                    NotificationsPage.init appContext r account
+                            in
+                            ( Notifications r notifications, Cmd.map NotificationsPageMsg notificationsCmd )
+
+                        Session.Anonymous ->
+                            ( NotFound, Cmd.none )
 
                 Route.Profile handle ->
                     let
@@ -302,11 +307,16 @@ update msg ({ appContext } as model) =
                             ( { model_ | page = Account AccountPage.init }, Cmd.none )
 
                         Route.Notifications r ->
-                            let
-                                ( notifications, cmd ) =
-                                    NotificationsPage.init appContext_ r
-                            in
-                            ( { model_ | page = Notifications r notifications }, Cmd.map NotificationsPageMsg cmd )
+                            case appContext.session of
+                                Session.SignedIn account ->
+                                    let
+                                        ( notifications, cmd ) =
+                                            NotificationsPage.init appContext_ r account
+                                    in
+                                    ( { model_ | page = Notifications r notifications }, Cmd.map NotificationsPageMsg cmd )
+
+                                Session.Anonymous ->
+                                    ( { model | page = NotFound }, Cmd.none )
 
                         Route.Profile handle ->
                             let
@@ -551,10 +561,10 @@ update msg ({ appContext } as model) =
 
         ( Notifications notificationsRoute notifications, NotificationsPageMsg nMsg ) ->
             case appContext.session of
-                Session.SignedIn _ ->
+                Session.SignedIn account ->
                     let
                         ( notifications_, cmd ) =
-                            NotificationsPage.update appContext notificationsRoute nMsg notifications
+                            NotificationsPage.update appContext notificationsRoute account nMsg notifications
                     in
                     ( { model | page = Notifications notificationsRoute notifications_ }
                     , Cmd.map NotificationsPageMsg cmd
