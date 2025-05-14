@@ -2,11 +2,10 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
-import Html exposing (Html, div, h1, h4, p, span, strong, text)
+import Html exposing (Html, div, h1, h4, span, strong, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi
-import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
 import UI
@@ -21,6 +20,7 @@ import UI.Icon as Icon
 import UI.Nudge as Nudge
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
+import UI.Placeholder as Placeholder
 import UI.TabList as TabList
 import UnisonShare.Account exposing (Account)
 import UnisonShare.Api as ShareApi
@@ -28,6 +28,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Contribution.ContributionRef as ContributionRef
+import UnisonShare.ErrorCard as ErrorCard
 import UnisonShare.Link as Link
 import UnisonShare.Notification as Notification exposing (Notification)
 import UnisonShare.PageFooter as PageFooter
@@ -375,24 +376,32 @@ viewNotifications appContext selection notifications =
         )
 
 
+viewLoading : Html msg
+viewLoading =
+    Card.card (Placeholder.texts5 |> List.map Placeholder.view)
+        |> Card.asContained
+        |> Card.view
+
+
 view_ : AppContext -> NotificationSelection -> WebData PaginatedNotifications -> Html Msg
 view_ appContext selection paginatedNotifications =
     case paginatedNotifications of
         NotAsked ->
-            text "TODO: Loading State"
+            viewLoading
 
         Loading ->
-            text "TODO: Loading State"
+            viewLoading
 
         Success (Paginated { items }) ->
-            div []
-                [ Card.card [ viewNotifications appContext selection items ]
-                    |> Card.asContained
-                    |> Card.view
-                ]
+            Card.card [ viewNotifications appContext selection items ]
+                |> Card.asContained
+                |> Card.view
 
         Failure e ->
-            div [] [ text "TODO: Error State", p [] [ text (Util.httpErrorToString e) ] ]
+            ErrorCard.view appContext.session
+                e
+                "Notifications"
+                "notifications-page_error"
 
 
 viewSelectionControls : NotificationSelection -> List (Button Msg) -> Html Msg
