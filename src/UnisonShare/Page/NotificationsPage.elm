@@ -2,7 +2,7 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
-import Html exposing (Html, div, h1, h4, span, strong, text)
+import Html exposing (Html, div, h1, h2, h4, span, strong, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi
@@ -14,6 +14,8 @@ import UI.Button as Button exposing (Button)
 import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Divider as Divider
+import UI.EmptyState as EmptyState
+import UI.EmptyStateCard as EmptyStateCard
 import UI.Form.Checkbox as Checkbox
 import UI.Form.CheckboxField as CheckboxField
 import UI.Icon as Icon
@@ -393,9 +395,15 @@ view_ appContext selection paginatedNotifications =
             viewLoading
 
         Success (Paginated { items }) ->
-            Card.card [ viewNotifications appContext selection items ]
-                |> Card.asContained
-                |> Card.view
+            if List.isEmpty items then
+                EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.bell)
+                    |> EmptyState.withContent [ h2 [] [ text "You have no notifications" ] ]
+                    |> EmptyStateCard.view
+
+            else
+                Card.card [ viewNotifications appContext selection items ]
+                    |> Card.asContained
+                    |> Card.view
 
         Failure e ->
             ErrorCard.view appContext.session
