@@ -21,10 +21,17 @@ type alias Project a =
 
 
 type IsFaved
-    = Unknown
+    = FavUnknown
     | Faved
     | NotFaved
     | JustFaved
+
+
+type IsSubscribed
+    = SubUnknown
+    | Subscribed
+    | NotSubscribed
+    | JustSubscribed
 
 
 type ProjectVisibility
@@ -52,6 +59,7 @@ type alias ProjectDetails =
         , numOpenTickets : Int
         , releaseDownloads : ReleaseDownloads
         , isFaved : IsFaved
+        , isSubscribed : IsSubscribed
         , latestVersion : Maybe Version
         , defaultBranch : Maybe BranchRef
         , permissions : List ProjectPermission
@@ -118,8 +126,8 @@ toggleFav ({ numFavs } as project) =
                 NotFaved ->
                     ( JustFaved, numFavs + 1 )
 
-                Unknown ->
-                    ( Unknown, numFavs )
+                FavUnknown ->
+                    ( FavUnknown, numFavs )
     in
     { project | isFaved = isFaved_, numFavs = numFavs_ }
 
@@ -141,6 +149,45 @@ isFavedFromBool b =
 
     else
         NotFaved
+
+
+toggleSubscription : ProjectDetails -> ProjectDetails
+toggleSubscription project =
+    let
+        isSubscribed_ =
+            case project.isSubscribed of
+                Subscribed ->
+                    NotSubscribed
+
+                JustSubscribed ->
+                    NotSubscribed
+
+                NotSubscribed ->
+                    JustSubscribed
+
+                SubUnknown ->
+                    SubUnknown
+    in
+    { project | isSubscribed = isSubscribed_ }
+
+
+isSubscribed : ProjectDetails -> Bool
+isSubscribed p =
+    isSubscribedToBool p.isSubscribed
+
+
+isSubscribedToBool : IsSubscribed -> Bool
+isSubscribedToBool isSubscribed_ =
+    isSubscribed_ == Subscribed || isSubscribed_ == JustSubscribed
+
+
+isSubscribedFromBool : Bool -> IsSubscribed
+isSubscribedFromBool b =
+    if b then
+        Subscribed
+
+    else
+        NotSubscribed
 
 
 visibilityToString : ProjectVisibility -> String
@@ -214,10 +261,15 @@ decodeIsFaved =
     Decode.map isFavedFromBool bool
 
 
+decodeIsSubscribed : Decode.Decoder IsSubscribed
+decodeIsSubscribed =
+    Decode.map isSubscribedFromBool bool
+
+
 decodeDetails : Decode.Decoder ProjectDetails
 decodeDetails =
     let
-        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch permissions createdAt updatedAt isPremiumProject =
+        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ isSubscribed_ latestVersion defaultBranch permissions createdAt updatedAt isPremiumProject =
             let
                 ref_ =
                     ProjectRef.projectRef handle_ slug_
@@ -231,6 +283,7 @@ decodeDetails =
             , numOpenTickets = numOpenTickets
             , releaseDownloads = releaseDownloads
             , isFaved = isFaved_
+            , isSubscribed = isSubscribed_
             , latestVersion = latestVersion
             , defaultBranch = defaultBranch
             , permissions = permissions
@@ -249,7 +302,8 @@ decodeDetails =
         |> optional "numActiveContributions" int 0
         |> optional "numOpenTickets" int 0
         |> required "releaseDownloads" ReleaseDownloads.decode
-        |> optional "isFaved" decodeIsFaved Unknown
+        |> optional "isFaved" decodeIsFaved FavUnknown
+        |> optional "isSubscribed" decodeIsSubscribed SubUnknown
         |> required "latestRelease" (nullable Version.decode)
         |> required "defaultBranch" (nullable BranchRef.decode)
         |> required "permissions" ProjectPermission.decodeList
@@ -301,6 +355,6 @@ decodeSummary =
         |> required "summary" (nullable string)
         |> required "tags" (Decode.list string)
         |> required "numFavs" int
-        |> optional "isFaved" decodeIsFaved Unknown
+        |> optional "isFaved" decodeIsFaved FavUnknown
         |> required "createdAt" DateTime.decode
         |> required "updatedAt" DateTime.decode
