@@ -2,6 +2,7 @@ module UnisonShare.Page.ProjectPageHeader exposing (..)
 
 import Html exposing (Html, div, label, text)
 import Html.Attributes exposing (class)
+import UI
 import UI.AnchoredOverlay exposing (AnchoredOverlay)
 import UI.Button as Button
 import UI.Click as Click exposing (Click)
@@ -112,8 +113,8 @@ allNavItems project switchBranch =
     }
 
 
-viewRightSide : Session -> msg -> msg -> ProjectDetails -> List (Html msg)
-viewRightSide session toggleFavMsg useProjectButtonClickMsg project =
+viewRightSide : Session -> msg -> msg -> msg -> ProjectDetails -> List (Html msg)
+viewRightSide session toggleFavMsg toggleSubscriptionMsg useProjectButtonClickMsg project =
     let
         viewKpi icon num description =
             div
@@ -137,6 +138,33 @@ viewRightSide session toggleFavMsg useProjectButtonClickMsg project =
                 icon
                 p.numFavs
                 "Total number of favorites"
+
+        subscribeButton_ iconOnly icon label =
+            if iconOnly then
+                Button.icon toggleSubscriptionMsg icon
+
+            else
+                Button.iconThenLabel toggleSubscriptionMsg icon label
+
+        subscribeButton iconOnly p =
+            case ( session, p.isSubscribed ) of
+                ( Session.SignedIn _, Project.NotSubscribed ) ->
+                    subscribeButton_ iconOnly Icon.bellSlash "Subscribe"
+                        |> Button.outlined
+                        |> Button.view
+
+                ( Session.SignedIn _, Project.Subscribed ) ->
+                    subscribeButton_ iconOnly Icon.bell "Unsubscribe"
+                        |> Button.outlined
+                        |> Button.view
+
+                ( Session.SignedIn _, Project.JustSubscribed ) ->
+                    subscribeButton_ iconOnly Icon.bell "Unsubscribe"
+                        |> Button.outlined
+                        |> Button.view
+
+                _ ->
+                    UI.nothing
 
         viewFav p =
             case ( session, p.isFaved ) of
@@ -170,20 +198,27 @@ viewRightSide session toggleFavMsg useProjectButtonClickMsg project =
         -}
         ]
     , div [ class "min-lg" ]
-        [ Button.iconThenLabel useProjectButtonClickMsg Icon.download "Use Project"
-            |> Button.positive
-            |> Button.view
+        [ div [ class "actions" ]
+            [ subscribeButton False project
+            , Button.iconThenLabel useProjectButtonClickMsg Icon.download "Use Project"
+                |> Button.positive
+                |> Button.view
+            ]
         ]
     , div [ class "max-lg" ]
-        [ Button.icon useProjectButtonClickMsg Icon.download
-            |> Button.positive
-            |> Button.view
+        [ div [ class "actions" ]
+            [ subscribeButton True project
+            , Button.icon useProjectButtonClickMsg Icon.download
+                |> Button.positive
+                |> Button.view
+            ]
         ]
     ]
 
 
 type alias ProjectPageHeaderConfig msg =
     { toggleFavMsg : msg
+    , toggleSubscriptionMsg : msg
     , useProjectButtonClickMsg : msg
     , mobileNavToggleMsg : msg
     , mobileNavIsOpen : Bool
@@ -299,6 +334,7 @@ projectPageHeader session config project =
                         (viewRightSide
                             session
                             config.toggleFavMsg
+                            config.toggleSubscriptionMsg
                             config.useProjectButtonClickMsg
                             project
                         )
