@@ -4,6 +4,7 @@ import Code.BranchRef as BranchRef exposing (BranchRef)
 import Json.Decode as Decode exposing (field, string)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
+import Json.Encode as Encode
 import Lib.Decode.Helpers exposing (maybeAt, whenFieldIs)
 import UI.DateTime as DateTime exposing (DateTime)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
@@ -55,6 +56,30 @@ type alias Notification =
 isUnread : Notification -> Bool
 isUnread notification =
     notification.status == Unread
+
+
+
+-- ENCODE
+
+
+statusToString : NotificationStatus -> String
+statusToString status =
+    case status of
+        Read ->
+            "read"
+
+        Unread ->
+            "uread"
+
+        Archived ->
+            "archived"
+
+
+encodeStatus : NotificationStatus -> Encode.Value
+encodeStatus status =
+    status
+        |> statusToString
+        |> Encode.string
 
 
 

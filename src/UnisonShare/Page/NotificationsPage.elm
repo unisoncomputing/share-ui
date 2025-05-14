@@ -209,22 +209,22 @@ updateSubPageState f model =
 
 fetchNotifications : AppContext -> Account a -> Cmd Msg
 fetchNotifications appContext account =
-    fetchNotifications_ appContext account
+    fetchNotifications_ appContext account Nothing
 
 
 fetchUnreadNotifications : AppContext -> Account a -> Cmd Msg
 fetchUnreadNotifications appContext account =
-    fetchNotifications_ appContext account
+    fetchNotifications_ appContext account (Just Notification.Unread)
 
 
 fetchArchivedNotifications : AppContext -> Account a -> Cmd Msg
 fetchArchivedNotifications appContext account =
-    fetchNotifications_ appContext account
+    fetchNotifications_ appContext account (Just Notification.Archived)
 
 
-fetchNotifications_ : AppContext -> Account a -> Cmd Msg
-fetchNotifications_ appContext account =
-    ShareApi.notifications account
+fetchNotifications_ : AppContext -> Account a -> Maybe Notification.NotificationStatus -> Cmd Msg
+fetchNotifications_ appContext account status =
+    ShareApi.notifications account status
         |> HttpApi.toRequest
             (Decode.field "notifications" (Decode.list Notification.decode))
             (RemoteData.fromResult >> FetchAllNotificationsFinished)

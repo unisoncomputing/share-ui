@@ -24,6 +24,7 @@ import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DefinitionDiff as DefinitionDiff
+import UnisonShare.Notification as Notification exposing (NotificationStatus)
 import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
 import UnisonShare.OrgRole as OrgRole
 import UnisonShare.Project as Project exposing (ProjectVisibility)
@@ -188,8 +189,17 @@ session =
 -- NOTIFICATIONS
 
 
-notifications : Account a -> Endpoint
-notifications account =
+notifications : Account a -> Maybe NotificationStatus -> Endpoint
+notifications account status =
+    let
+        queryParams =
+            case status of
+                Just s ->
+                    [ string "status" (Notification.statusToString s) ]
+
+                Nothing ->
+                    []
+    in
     GET
         { path =
             [ "users"
@@ -197,7 +207,7 @@ notifications account =
             , "notifications"
             , "hub"
             ]
-        , queryParams = []
+        , queryParams = queryParams
         }
 
 
