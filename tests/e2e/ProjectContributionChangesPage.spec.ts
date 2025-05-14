@@ -5,7 +5,7 @@ import { contribution } from "./TestHelpers/Data";
 import * as API from "./TestHelpers/Api";
 
 const projectRef = "@unison/base";
-const contrib = contribution(projectRef);
+const contrib = { ...contribution(projectRef), status: "in_review" };
 
 test.beforeEach(async ({ page }) => {
   await API.getWebsiteFeed(page);
