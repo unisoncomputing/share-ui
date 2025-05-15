@@ -218,10 +218,10 @@ update appContext projectRef project msg model =
                             fetchProjectContributions appContext projectRef ContributionStatus.InReview
 
                         Merged _ ->
-                            fetchProjectContributions appContext projectRef ContributionStatus.InReview
+                            fetchProjectContributions appContext projectRef ContributionStatus.Merged
 
                         Archived _ ->
-                            fetchProjectContributions appContext projectRef ContributionStatus.InReview
+                            fetchProjectContributions appContext projectRef ContributionStatus.Archived
             in
             ( { model | tab = tab }, cmd )
 
