@@ -18,7 +18,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
-import UnisonShare.Org as Org exposing (OrgSummary)
+import UnisonShare.Org as Org exposing (OrgDetails)
 import UnisonShare.OrgPageHeader as OrgPageHeader
 import UnisonShare.Page.OrgProfilePage as OrgProfilePage
 import UnisonShare.Page.UserProfilePage as UserProfilePage
@@ -33,7 +33,7 @@ import UnisonShare.UserPageHeader as UserPageHeader
 
 type Profile
     = User UserDetails
-    | Org OrgSummary
+    | Org OrgDetails
 
 
 type Model
@@ -44,7 +44,7 @@ type Model
         , mobileNavIsOpen : Bool
         }
     | OrgProfile
-        { org : OrgSummary
+        { org : OrgDetails
         , page : OrgProfilePage.Model
         , mobileNavIsOpen : Bool
         }
@@ -144,7 +144,7 @@ fetchProfile appContext handle =
     let
         decode =
             Decode.oneOf
-                [ when (Decode.field "kind" Decode.string) ((==) "org") (Decode.map Org Org.decodeSummary)
+                [ when (Decode.field "kind" Decode.string) ((==) "org") (Decode.map Org Org.decodeDetails)
                 , when (Decode.field "kind" Decode.string) ((==) "user") (Decode.map User User.decodeDetails)
                 ]
     in

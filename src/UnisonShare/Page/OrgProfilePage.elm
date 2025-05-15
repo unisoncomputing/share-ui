@@ -20,7 +20,7 @@ import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
-import UnisonShare.Org exposing (OrgSummary)
+import UnisonShare.Org exposing (OrgDetails)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectSummary)
 import UnisonShare.Project.ProjectListing as ProjectListing
@@ -69,7 +69,7 @@ type Msg
     | CloseModal
 
 
-update : AppContext -> UserHandle -> OrgSummary -> Msg -> Model -> ( Model, Cmd Msg )
+update : AppContext -> UserHandle -> OrgDetails -> Msg -> Model -> ( Model, Cmd Msg )
 update _ _ _ msg model =
     case msg of
         NoOp ->
@@ -140,7 +140,7 @@ viewProjects projects_ =
 
 
 view_ :
-    OrgSummary
+    OrgDetails
     -> WebData (List ProjectSummary)
     -> PageContent Msg
 view_ org projects =
@@ -178,7 +178,7 @@ viewLoadingPage =
         |> PageLayout.withSubduedBackground
 
 
-view : OrgSummary -> Model -> PageLayout.PageLayout Msg
+view : OrgDetails -> Model -> PageLayout.PageLayout Msg
 view org model =
     PageLayout.centeredNarrowLayout
         (view_ org model.projects)

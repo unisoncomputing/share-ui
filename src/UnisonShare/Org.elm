@@ -1,5 +1,6 @@
 module UnisonShare.Org exposing
     ( Org
+    , OrgDetails
     , OrgSummary
     , OrgWithPermissions
     , can
@@ -9,13 +10,15 @@ module UnisonShare.Org exposing
     , canDelete
     , canManage
     , canView
+    , decodeDetails
     , decodeSummary
     , name
     , toAvatar
     )
 
-import Json.Decode as Decode exposing (field, maybe, string)
-import Lib.Decode.Helpers exposing (url)
+import Json.Decode as Decode exposing (string)
+import Json.Decode.Pipeline exposing (required, requiredAt)
+import Lib.Decode.Helpers exposing (maybeAt, url)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Avatar as Avatar exposing (Avatar)
 import UI.Icon as Icon
@@ -32,6 +35,10 @@ type alias Org u =
 
 
 type alias OrgSummary =
+    Org {}
+
+
+type alias OrgDetails =
     Org { permissions : List OrgPermission }
 
 
@@ -97,18 +104,33 @@ canChangeOwner org =
 -- DECODE
 
 
-decodeSummary : Decode.Decoder OrgSummary
-decodeSummary =
+decodeDetails : Decode.Decoder OrgDetails
+decodeDetails =
     let
-        makeSummary handle name_ avatarUrl permissions =
+        makeDetails handle name_ avatarUrl permissions =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
             , permissions = permissions
             }
     in
-    Decode.map4 makeSummary
-        (field "handle" UserHandle.decodeUnprefixed)
-        (maybe (field "name" string))
-        (maybe (field "avatarUrl" url))
-        (field "permissions" OrgPermission.decodeList)
+    Decode.succeed makeDetails
+        |> requiredAt [ "user", "handle" ] UserHandle.decodeUnprefixed
+        |> maybeAt [ "user", "name" ] string
+        |> maybeAt [ "user", "avatarUrl" ] url
+        |> required "permissions" OrgPermission.decodeList
+
+
+decodeSummary : Decode.Decoder OrgSummary
+decodeSummary =
+    let
+        makeSummary handle name_ avatarUrl =
+            { handle = handle
+            , name = name_
+            , avatarUrl = avatarUrl
+            }
+    in
+    Decode.succeed makeSummary
+        |> requiredAt [ "user", "handle" ] UserHandle.decodeUnprefixed
+        |> maybeAt [ "user", "name" ] string
+        |> maybeAt [ "user", "avatarUrl" ] url
