@@ -46,10 +46,14 @@ type ContribitionsModal
     | SubmitContributionModal ProjectContributionFormModal.Model
 
 
+type alias Contributions =
+    WebData (List ContributionSummary)
+
+
 type Tab
-    = InReview
-    | Merged
-    | Archived
+    = InReview Contributions
+    | Merged Contributions
+    | Archived Contributions
 
 
 type alias RecentBranches =
@@ -59,8 +63,7 @@ type alias RecentBranches =
 
 
 type alias Model =
-    { contributions : WebData (List ContributionSummary)
-    , modal : ContribitionsModal
+    { modal : ContribitionsModal
     , tab : Tab
     , recentBranches : Maybe RecentBranches
     }
@@ -95,13 +98,12 @@ init appContext projectRef =
                 Session.Anonymous ->
                     ( Nothing, [] )
     in
-    ( { contributions = Loading
-      , modal = NoModal
-      , tab = InReview
+    ( { modal = NoModal
+      , tab = InReview Loading
       , recentBranches = recentBranches
       }
     , Cmd.batch
-        (fetchProjectContributions appContext projectRef :: recentBranchesCmds)
+        (fetchProjectContributions appContext projectRef ContributionStatus.InReview :: recentBranchesCmds)
     )
 
 
@@ -110,20 +112,35 @@ init appContext projectRef =
 
 
 type Msg
-    = FetchContributionsFinished (WebData (List ContributionSummary))
+    = FetchContributionsFinished ContributionStatus.ContributionStatus (WebData (List ContributionSummary))
     | FetchOwnContributorBranchesFinished (WebData (List BranchSummary))
     | FetchProjectBranchesFinished (WebData (List BranchSummary))
     | ShowSubmitContributionModal
     | ProjectContributionFormModalMsg ProjectContributionFormModal.Msg
     | CloseModal
-    | ChangeTab Tab
+    | ChangeTab (Contributions -> Tab)
 
 
 update : AppContext -> ProjectRef -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
 update appContext projectRef project msg model =
     case msg of
-        FetchContributionsFinished contributions ->
-            ( { model | contributions = contributions }, Cmd.none )
+        FetchContributionsFinished status contributions ->
+            let
+                tab =
+                    case ( status, model.tab ) of
+                        ( ContributionStatus.InReview, InReview _ ) ->
+                            InReview contributions
+
+                        ( ContributionStatus.Merged, Merged _ ) ->
+                            Merged contributions
+
+                        ( ContributionStatus.Archived, Archived _ ) ->
+                            Archived contributions
+
+                        _ ->
+                            model.tab
+            in
+            ( { model | tab = tab }, Cmd.none )
 
         FetchOwnContributorBranchesFinished contribBranches ->
             let
@@ -166,18 +183,21 @@ update appContext projectRef project msg model =
                         ( projectContributionFormModal, cmd, out ) =
                             ProjectContributionFormModal.update appContext p account formMsg formModel
 
-                        ( modal, contributions ) =
-                            case out of
-                                ProjectContributionFormModal.None ->
-                                    ( SubmitContributionModal projectContributionFormModal, model.contributions )
+                        ( modal, tab ) =
+                            case ( out, model.tab ) of
+                                ( ProjectContributionFormModal.None, _ ) ->
+                                    ( SubmitContributionModal projectContributionFormModal, model.tab )
 
-                                ProjectContributionFormModal.RequestToCloseModal ->
-                                    ( NoModal, model.contributions )
+                                ( ProjectContributionFormModal.RequestToCloseModal, _ ) ->
+                                    ( NoModal, model.tab )
 
-                                ProjectContributionFormModal.Saved c ->
-                                    ( NoModal, RemoteData.map (\cs -> c :: cs) model.contributions )
+                                ( ProjectContributionFormModal.Saved c, InReview contributions ) ->
+                                    ( NoModal, InReview (RemoteData.map (\cs -> c :: cs) contributions) )
+
+                                ( ProjectContributionFormModal.Saved _, _ ) ->
+                                    ( NoModal, model.tab )
                     in
-                    ( { model | modal = modal, contributions = contributions }
+                    ( { model | modal = modal, tab = tab }
                     , Cmd.map ProjectContributionFormModalMsg cmd
                     )
 
@@ -188,19 +208,34 @@ update appContext projectRef project msg model =
             ( { model | modal = NoModal }, Cmd.none )
 
         ChangeTab t ->
-            ( { model | tab = t }, Cmd.none )
+            let
+                tab =
+                    t Loading
+
+                cmd =
+                    case tab of
+                        InReview _ ->
+                            fetchProjectContributions appContext projectRef ContributionStatus.InReview
+
+                        Merged _ ->
+                            fetchProjectContributions appContext projectRef ContributionStatus.Merged
+
+                        Archived _ ->
+                            fetchProjectContributions appContext projectRef ContributionStatus.Archived
+            in
+            ( { model | tab = tab }, cmd )
 
 
 
 -- EFFECTS
 
 
-fetchProjectContributions : AppContext -> ProjectRef -> Cmd Msg
-fetchProjectContributions appContext projectRef =
-    ShareApi.projectContributions projectRef
+fetchProjectContributions : AppContext -> ProjectRef -> ContributionStatus.ContributionStatus -> Cmd Msg
+fetchProjectContributions appContext projectRef status =
+    ShareApi.projectContributions projectRef status
         |> HttpApi.toRequest
             (Decode.field "items" (Decode.list Contribution.decodeSummary))
-            (RemoteData.fromResult >> FetchContributionsFinished)
+            (RemoteData.fromResult >> FetchContributionsFinished status)
         |> HttpApi.perform appContext.api
 
 
@@ -343,35 +378,32 @@ viewPageContent appContext project recentBranches tab contributions =
                 |> EmptyState.withContent [ h2 [] [ text text_ ] ]
                 |> EmptyStateCard.view
 
-        ( tabList, status, emptyState ) =
+        ( tabList, emptyState ) =
             case tab of
-                InReview ->
+                InReview _ ->
                     ( TabList.tabList []
                         (TabList.tab "In Review" (Click.onClick (ChangeTab InReview)))
                         [ TabList.tab "Merged" (Click.onClick (ChangeTab Merged))
                         , TabList.tab "Archived" (Click.onClick (ChangeTab Archived))
                         ]
-                    , ContributionStatus.InReview
                     , viewEmptyState Icon.conversation "There are currently no open contributions in review."
                     )
 
-                Merged ->
+                Merged _ ->
                     ( TabList.tabList
                         [ TabList.tab "In Review" (Click.onClick (ChangeTab InReview)) ]
                         (TabList.tab "Merged" (Click.onClick (ChangeTab Merged)))
                         [ TabList.tab "Archived" (Click.onClick (ChangeTab Archived)) ]
-                    , ContributionStatus.Merged
                     , viewEmptyState Icon.merge "There are currently no merged contributions."
                     )
 
-                Archived ->
+                Archived _ ->
                     ( TabList.tabList
                         [ TabList.tab "In Review" (Click.onClick (ChangeTab InReview))
                         , TabList.tab "Merged" (Click.onClick (ChangeTab Merged))
                         ]
                         (TabList.tab "Archived" (Click.onClick (ChangeTab Archived)))
                         []
-                    , ContributionStatus.Archived
                     , viewEmptyState Icon.archive "There are currently no archived contributions."
                     )
 
@@ -382,7 +414,6 @@ viewPageContent appContext project recentBranches tab contributions =
 
         content =
             contributions
-                |> List.filter (\c -> c.status == status)
                 |> List.map (viewContributionRow appContext project.ref)
                 |> List.intersperse (Divider.view divider)
 
@@ -402,14 +433,26 @@ viewPageContent appContext project recentBranches tab contributions =
 
 view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project model =
-    case model.contributions of
+    let
+        contributions =
+            case model.tab of
+                InReview contribs ->
+                    contribs
+
+                Merged contribs ->
+                    contribs
+
+                Archived contribs ->
+                    contribs
+    in
+    case contributions of
         NotAsked ->
             ( viewLoadingPage, Nothing )
 
         Loading ->
             ( viewLoadingPage, Nothing )
 
-        Success contributions ->
+        Success contribs ->
             let
                 modal =
                     case ( model.modal, model.recentBranches ) of
@@ -423,7 +466,7 @@ view appContext project model =
                             Nothing
             in
             ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext project model.recentBranches model.tab contributions)
+                (viewPageContent appContext project model.recentBranches model.tab contribs)
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
             , modal

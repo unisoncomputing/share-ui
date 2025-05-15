@@ -727,15 +727,15 @@ projectContributionTimeline projectRef contribRef =
         }
 
 
-projectContributions : ProjectRef -> Endpoint
-projectContributions projectRef =
+projectContributions : ProjectRef -> ContributionStatus -> Endpoint
+projectContributions projectRef contributionStatus =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
     in
     GET
         { path = [ "users", handle, "projects", slug, "contributions" ]
-        , queryParams = []
+        , queryParams = [ string "status" (ContributionStatus.toApiString contributionStatus) ]
         }
 
 
