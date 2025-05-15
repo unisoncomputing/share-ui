@@ -51,9 +51,12 @@ function org(handle?: string) {
   const handle_ = handle ? handle : faker.lorem.slug(1);
 
   return {
-    avatarUrl: faker.image.avatar(),
-    handle: handle_.replace("@", ""),
-    name: faker.company.name(),
+    user: {
+      avatarUrl: faker.image.avatar(),
+      handle: handle_.replace("@", ""),
+      name: faker.company.name(),
+      userId: faker.string.uuid(),
+    },
     orgId: faker.string.uuid(),
     kind: "org",
     permissions: [],

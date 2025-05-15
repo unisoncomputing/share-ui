@@ -183,6 +183,14 @@
       font-size: var(--font-size-base);
     }
 
+    & .org-match .profile-snippet {
+      gap: 0.625rem;
+    }
+
+    & .org-match .profile-snippet_handle {
+      font-size: var(--font-size-base);
+    }
+
     & .project-match .summary {
       color: var(--u-color_text_subdued);
       font-size: var(--font-size-small);

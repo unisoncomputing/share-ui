@@ -66,6 +66,11 @@
   width: var(--avatar-size);
   height: var(--avatar-size);
   border-radius: calc(var(--avatar-size) / 2);
+  font-size: var(--font-size-extra-large);
+  line-height: 1;
+  background: var(--u-color_info_element);
+  padding-bottom: 6px;
+  color: var(--u-color_info_text);
 }
 
 #welcome-tour-modal .membership-tenets {

@@ -14,7 +14,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
-import UnisonShare.Org as Org exposing (OrgSummary)
+import UnisonShare.Org as Org exposing (OrgDetails)
 import UnisonShare.OrgPageHeader as OrgPageHeader
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.Page.OrgPeoplePage as OrgPeoplePage
@@ -32,7 +32,7 @@ type SubPage
 
 
 type alias Model =
-    { org : WebData OrgSummary
+    { org : WebData OrgDetails
     , subPage : SubPage
     , mobileNavIsOpen : Bool
     }
@@ -66,7 +66,7 @@ init appContext orgHandle route =
 
 
 type Msg
-    = FetchOrgFinished (WebData OrgSummary)
+    = FetchOrgFinished (WebData OrgDetails)
     | ToggleMobileNav
     | OrgPeoplePageMsg OrgPeoplePage.Msg
 
@@ -103,7 +103,7 @@ updateSubPage _ _ model _ =
 fetchOrg : AppContext -> UserHandle -> Cmd Msg
 fetchOrg appContext handle =
     ShareApi.org handle
-        |> HttpApi.toRequest Org.decodeSummary (RemoteData.fromResult >> FetchOrgFinished)
+        |> HttpApi.toRequest Org.decodeDetails (RemoteData.fromResult >> FetchOrgFinished)
         |> HttpApi.perform appContext.api
 
 
