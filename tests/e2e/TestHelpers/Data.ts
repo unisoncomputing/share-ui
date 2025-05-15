@@ -51,9 +51,12 @@ function org(handle?: string) {
   const handle_ = handle ? handle : faker.lorem.slug(1);
 
   return {
-    avatarUrl: faker.image.avatar(),
-    handle: handle_.replace("@", ""),
-    name: faker.company.name(),
+    user: {
+      avatarUrl: faker.image.avatar(),
+      handle: handle_.replace("@", ""),
+      name: faker.company.name(),
+      userId: faker.string.uuid(),
+    },
     orgId: faker.string.uuid(),
     kind: "org",
     permissions: [],
@@ -70,6 +73,12 @@ function branchRef(handle?: string) {
   const handle_ = handle ? handle : faker.lorem.slug(1);
   const slug = faker.lorem.slug(2);
   return `@${handle_}/${slug}`;
+}
+
+function branchSlugOf(branchRef: string) {
+  const parts = branchRef.split("/");
+
+  return parts[parts.length - 1];
 }
 
 function hash() {
@@ -113,6 +122,12 @@ function project(ref?: string) {
   };
 }
 
+type ContributionStatus = "draft" | "in_review" | "merged" | "closed";
+
+function contributionStatus(): ContributionStatus {
+  return faker.helpers.arrayElement(["draft", "in_review", "merged", "closed"]);
+}
+
 function contribution(projectRef: string, contribRef?: number) {
   const author = user();
 
@@ -126,7 +141,7 @@ function contribution(projectRef: string, contribRef?: number) {
     number: contribRef || faker.number.int(100),
     projectRef: projectRef,
     sourceBranchRef: `@${author.handle}/${faker.lorem.slug()}`,
-    status: "in_review",
+    status: contributionStatus(),
     targetBranchRef: "main",
     title: faker.lorem.sentences(1),
     updatedAt: faker.date.past(),
@@ -263,6 +278,120 @@ function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
   }
 }
 
+type NotificationEventKind =
+  | "projectContributionCreated"
+  | "projectBranchUpdated";
+
+function notificationEventKind(): NotificationEventKind {
+  return faker.helpers.arrayElement([
+    "projectContributionCreated",
+    "projectBranchUpdated",
+  ]);
+}
+
+function notificationEventPayload(kind?: NotificationEventKind) {
+  const kind_ = !!kind ? kind : notificationEventKind();
+
+  switch (kind_) {
+    case "projectContributionCreated": {
+      const projectRef_ = projectRef();
+      const [projectHandle, projectSlug] = projectRef_.split("/");
+      const sourceBranchRef_ = branchRef();
+      const targetBranchRef_ = branchRef();
+
+      return {
+        author: user(),
+        contributionId: faker.string.uuid(),
+        description: faker.lorem.paragraphs(),
+        number: faker.number.int(100),
+        status: contributionStatus(),
+        title: faker.lorem.sentences(1),
+        mergeSourceBranch: {
+          branchContributorHandle: null,
+          branchContributorUserId: null,
+          branchId: faker.string.uuid(),
+          branchName: branchSlugOf(sourceBranchRef_),
+          branchShortHand: sourceBranchRef_,
+        },
+        mergeTargetBranch: {
+          branchContributorHandle: null,
+          branchContributorUserId: null,
+          branchId: faker.string.uuid(),
+          branchName: branchSlugOf(targetBranchRef_),
+          branchShortHand: targetBranchRef_,
+        },
+        project: {
+          projectId: faker.string.uuid(),
+          projectOwnerHandle: projectHandle,
+          projectOwnerUserId: faker.string.uuid(),
+          projectShortHand: projectRef_,
+          projectSlug: projectSlug,
+        },
+      };
+    }
+    case "projectBranchUpdated": {
+      const projectRef_ = projectRef();
+      const [projectHandle, projectSlug] = projectRef_.split("/");
+      const branchRef_ = branchRef();
+      const contributor = user();
+
+      return {
+        branch: {
+          branchContributorHandle: contributor.handle,
+          branchContributorUserId: contributor.userId,
+          branchId: faker.string.uuid(),
+          branchName: branchSlugOf(branchRef_),
+          branchShortHand: branchRef_,
+        },
+        project: {
+          projectId: faker.string.uuid(),
+          projectOwnerHandle: projectHandle,
+          projectOwnerUserId: faker.string.uuid(),
+          projectShortHand: projectRef_,
+          projectSlug: projectSlug,
+        },
+      };
+    }
+  }
+}
+
+function notificationEvent(kind?: NotificationEventKind) {
+  const actor = {
+    info: user(),
+    kind: "user",
+  };
+
+  const kind_ = !!kind ? kind : notificationEventKind();
+
+  return {
+    actor: actor,
+    data: {
+      kind: kind_,
+      payload: notificationEventPayload(kind_),
+    },
+    id: faker.string.uuid(),
+    occurredAt: faker.date.past(),
+    scope: {
+      info: user(),
+      kind: "user",
+    },
+  };
+}
+
+type NotificationStatus = "unread" | "read" | "archived";
+
+function notificationStatus(): NotificationStatus {
+  return faker.helpers.arrayElement(["unread", "read", "archived"]);
+}
+
+function notification(kind?: NotificationEventKind) {
+  return {
+    event: notificationEvent(kind),
+    id: faker.string.uuid(),
+    status: notificationStatus(),
+  };
+}
+
 export {
   projectRef,
   project,
@@ -275,5 +404,8 @@ export {
   contributionTimeline,
   contributionStatusChangeEvent,
   contributionDiff,
+  notification,
+  notificationEvent,
+  notificationEventPayload,
   type ContributionDiffConfig,
 };

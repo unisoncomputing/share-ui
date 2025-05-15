@@ -68,6 +68,7 @@ import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
+import UnisonShare.Org as Org
 import UnisonShare.Project as Project
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
@@ -86,6 +87,7 @@ type alias ProjectSearchMatch =
 type EntityMatch
     = ProjectMatch ProjectSearchMatch
     | UserMatch User.UserSummary
+    | OrgMatch Org.OrgSummary
 
 
 type DefinitionMatchType
@@ -647,9 +649,9 @@ searchEntities appContext _ query =
 
         decodeMatch =
             Decode.oneOf
-                [ when tag ((==) "User") (Decode.map UserMatch User.decodeSummary)
-                , when tag ((==) "Org") (Decode.map UserMatch User.decodeSummary)
-                , when tag ((==) "Project") (Decode.map ProjectMatch decodeProjectSearchMatch)
+                [ when tag ((==) "user") (Decode.map UserMatch User.decodeSummary)
+                , when tag ((==) "org") (Decode.map OrgMatch Org.decodeSummary)
+                , when tag ((==) "project") (Decode.map ProjectMatch decodeProjectSearchMatch)
                 ]
     in
     ShareApi.search query
@@ -931,6 +933,17 @@ viewEntityMatch keyboardShortcut match isFocused =
                 , keyboardShortcuts
                 ]
                 (Link.userProfile u.handle)
+
+        OrgMatch o ->
+            Click.view
+                [ class "match org-match"
+                , classList [ ( "focused", isFocused ) ]
+                ]
+                [ ProfileSnippet.profileSnippet o
+                    |> ProfileSnippet.view
+                , keyboardShortcuts
+                ]
+                (Link.orgProfile o.handle)
 
         ProjectMatch p ->
             let

@@ -18,11 +18,13 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Maybe.Extra as MaybeE
 import Regex
 import Set exposing (Set)
+import UnisonShare.Account exposing (Account)
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DefinitionDiff as DefinitionDiff
+import UnisonShare.Notification as Notification exposing (NotificationStatus)
 import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
 import UnisonShare.OrgRole as OrgRole
 import UnisonShare.Project as Project exposing (ProjectVisibility)
@@ -181,6 +183,32 @@ is likely to grow to include data not needed for Session.
 session : Endpoint
 session =
     GET { path = [ "account" ], queryParams = [] }
+
+
+
+-- NOTIFICATIONS
+
+
+notifications : Account a -> Maybe NotificationStatus -> Endpoint
+notifications account status =
+    let
+        queryParams =
+            case status of
+                Just s ->
+                    [ string "status" (Notification.statusToString s) ]
+
+                Nothing ->
+                    []
+    in
+    GET
+        { path =
+            [ "users"
+            , UserHandle.toUnprefixedString account.handle
+            , "notifications"
+            , "hub"
+            ]
+        , queryParams = queryParams
+        }
 
 
 

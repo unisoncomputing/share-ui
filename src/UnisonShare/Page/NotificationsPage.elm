@@ -1,34 +1,41 @@
 module UnisonShare.Page.NotificationsPage exposing (..)
 
+import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
-import Html exposing (Html, div, h1, h4, span, strong, text)
+import Html exposing (Html, div, h1, h2, h4, span, strong, text)
 import Html.Attributes exposing (class, classList)
+import Json.Decode as Decode
+import Lib.HttpApi as HttpApi
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
 import UI
 import UI.Avatar as Avatar
-import UI.AvatarStack as AvatarStack
 import UI.Button as Button exposing (Button)
 import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Divider as Divider
+import UI.EmptyState as EmptyState
+import UI.EmptyStateCard as EmptyStateCard
 import UI.Form.Checkbox as Checkbox
 import UI.Form.CheckboxField as CheckboxField
 import UI.Icon as Icon
 import UI.Nudge as Nudge
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
+import UI.Placeholder as Placeholder
 import UI.TabList as TabList
+import UnisonShare.Account exposing (Account)
+import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Contribution.ContributionRef as ContributionRef
+import UnisonShare.ErrorCard as ErrorCard
 import UnisonShare.Link as Link
-import UnisonShare.Notification exposing (Notification, NotificationSubject(..))
+import UnisonShare.Notification as Notification exposing (Notification)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project.ProjectRef as ProjectRef
 import UnisonShare.Route exposing (NotificationsRoute(..))
-import UnisonShare.Ticket.TicketRef as TicketRef
 
 
 
@@ -70,56 +77,23 @@ type alias Model =
     SubPage
 
 
-init : AppContext -> NotificationsRoute -> ( Model, Cmd Msg )
-init appContext route =
+init : AppContext -> NotificationsRoute -> Account a -> ( Model, Cmd Msg )
+init appContext route account =
     let
-        notifications =
-            Paginated
-                { cursor = "asdf"
-                , perPage = 12
-                , total = 512
-                , items =
-                    [ { id = "asdf"
-                      , projectRef = ProjectRef.unsafeFromString "unison" "base"
-                      , title = "some notification title"
-                      , subject = TicketSubject (TicketRef.unsafeFromString "1234")
-                      , occurredAt = DateTime.unsafeFromISO8601 "2025-05-05T19:22:03.038Z"
-                      , participants = []
-                      , isUnread = True
-                      }
-                    , { id = "ghjhj"
-                      , projectRef = ProjectRef.unsafeFromString "hojberg" "html"
-                      , title = "something else"
-                      , subject = ContributionSubject (ContributionRef.unsafeFromString "1234")
-                      , occurredAt = DateTime.unsafeFromISO8601 "2025-05-03T19:22:03.038Z"
-                      , participants = []
-                      , isUnread = False
-                      }
-                    , { id = "ghjhj2132"
-                      , projectRef = ProjectRef.unsafeFromString "hojberg" "html"
-                      , title = "a third thing"
-                      , subject = ContributionSubject (ContributionRef.unsafeFromString "1234")
-                      , occurredAt = DateTime.unsafeFromISO8601 "2025-05-02T19:22:03.038Z"
-                      , participants = []
-                      , isUnread = False
-                      }
-                    ]
-                }
-
         subPageState =
-            { notifications = Success notifications
+            { notifications = Loading
             , selection = NoSelection
             }
     in
     case route of
         NotificationsAll ->
-            ( All subPageState, fetchNotifications appContext )
+            ( All subPageState, fetchNotifications appContext account )
 
         NotificationsUnread ->
-            ( Unread subPageState, fetchUnreadNotifications appContext )
+            ( Unread subPageState, fetchUnreadNotifications appContext account )
 
         NotificationsArchive ->
-            ( Archive subPageState, fetchArchivedNotifications appContext )
+            ( Archive subPageState, fetchArchivedNotifications appContext account )
 
 
 
@@ -128,7 +102,7 @@ init appContext route =
 
 type Msg
     = ToggleSelectAll
-    | FetchAllNotificationsFinished (WebData PaginatedNotifications)
+    | FetchAllNotificationsFinished (WebData (List Notification))
     | ToggleSelection Notification
     | MarkSelectionAsUnread
     | MarkSelectionAsRead
@@ -136,8 +110,8 @@ type Msg
     | UnarchiveSelection
 
 
-update : AppContext -> NotificationsRoute -> Msg -> Model -> ( Model, Cmd Msg )
-update _ _ msg model =
+update : AppContext -> NotificationsRoute -> Account a -> Msg -> Model -> ( Model, Cmd Msg )
+update _ _ _ msg model =
     case msg of
         ToggleSelectAll ->
             let
@@ -195,6 +169,23 @@ update _ _ msg model =
             in
             ( updateSubPageState toggleSelection model, Cmd.none )
 
+        FetchAllNotificationsFinished notifications ->
+            let
+                toPaginatedNotifications notifications_ =
+                    Paginated
+                        { cursor = "TODO"
+                        , perPage = 24
+                        , total = 200
+                        , items = notifications_
+                        }
+
+                updateNotifications _ =
+                    { notifications = RemoteData.map toPaginatedNotifications notifications
+                    , selection = NoSelection
+                    }
+            in
+            ( updateSubPageState updateNotifications model, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -216,43 +207,47 @@ updateSubPageState f model =
 -- EFFECTS
 
 
-fetchNotifications : AppContext -> Cmd Msg
-fetchNotifications appContext =
-    fetchNotifications_ appContext
+fetchNotifications : AppContext -> Account a -> Cmd Msg
+fetchNotifications appContext account =
+    fetchNotifications_ appContext account Nothing
 
 
-fetchUnreadNotifications : AppContext -> Cmd Msg
-fetchUnreadNotifications appContext =
-    fetchNotifications_ appContext
+fetchUnreadNotifications : AppContext -> Account a -> Cmd Msg
+fetchUnreadNotifications appContext account =
+    fetchNotifications_ appContext account (Just Notification.Unread)
 
 
-fetchArchivedNotifications : AppContext -> Cmd Msg
-fetchArchivedNotifications appContext =
-    fetchNotifications_ appContext
+fetchArchivedNotifications : AppContext -> Account a -> Cmd Msg
+fetchArchivedNotifications appContext account =
+    fetchNotifications_ appContext account (Just Notification.Archived)
 
 
-fetchNotifications_ : AppContext -> Cmd Msg
-fetchNotifications_ _ =
+fetchNotifications_ : AppContext -> Account a -> Maybe Notification.NotificationStatus -> Cmd Msg
+fetchNotifications_ appContext account status =
+    ShareApi.notifications account status
+        |> HttpApi.toRequest
+            (Decode.field "notifications" (Decode.list Notification.decode))
+            (RemoteData.fromResult >> FetchAllNotificationsFinished)
+        |> HttpApi.perform appContext.api
+
+
+markNotificationsAsRead : AppContext -> Account a -> Cmd Msg
+markNotificationsAsRead _ _ =
     Cmd.none
 
 
-markNotificationsAsRead : AppContext -> Cmd Msg
-markNotificationsAsRead _ =
+markNotificationsAsUnread : AppContext -> Account a -> Cmd Msg
+markNotificationsAsUnread _ _ =
     Cmd.none
 
 
-markNotificationsAsUnread : AppContext -> Cmd Msg
-markNotificationsAsUnread _ =
+archiveNotifications : AppContext -> Account a -> Cmd Msg
+archiveNotifications _ _ =
     Cmd.none
 
 
-archiveNotifications : AppContext -> Cmd Msg
-archiveNotifications _ =
-    Cmd.none
-
-
-unarchiveNotifications : AppContext -> Cmd Msg
-unarchiveNotifications _ =
+unarchiveNotifications : AppContext -> Account a -> Cmd Msg
+unarchiveNotifications _ _ =
     Cmd.none
 
 
@@ -276,22 +271,31 @@ isSelected selection notification =
 viewNotification : AppContext -> NotificationSelection -> Notification -> Html Msg
 viewNotification appContext selection notification =
     let
-        subject =
-            case notification.subject of
-                TicketSubject ticketRef ->
-                    span []
-                        [ text "Ticket: "
-                        , strong [ class "notification-row_subject-ref" ] [ text (TicketRef.toString ticketRef) ]
+        ( title, event, projectRef ) =
+            case notification.event.data of
+                Notification.ProjectBranchUpdated eventData ->
+                    ( "Branch update"
+                    , span []
+                        [ text "Branch: "
+                        , strong [ class "notification-row_event-ref" ] [ text (BranchRef.toString eventData.branchRef) ]
                         ]
+                    , eventData.projectRef
+                    )
 
-                ContributionSubject contributionRef ->
-                    span []
+                Notification.ProjectContributionCreated eventData ->
+                    ( "New contribution"
+                    , span []
                         [ text "Contribution: "
-                        , strong [ class "notification-row_subject-ref" ] [ text (ContributionRef.toString contributionRef) ]
+                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
                         ]
+                    , eventData.projectRef
+                    )
+
+        isUnread =
+            Notification.isUnread notification
 
         unreadDot =
-            if notification.isUnread then
+            if isUnread then
                 Nudge.nudge
                     |> Nudge.emphasized
                     |> Nudge.view
@@ -302,17 +306,18 @@ viewNotification appContext selection notification =
         isSelected_ =
             isSelected selection notification
 
-        avatars =
-            notification.participants
-                |> List.map (\u -> Avatar.avatar u.avatarUrl u.name)
-                |> AvatarStack.view
+        actor =
+            notification.event.actor
+                |> Maybe.map (\u -> Avatar.avatar u.avatarUrl u.name)
+                |> Maybe.map Avatar.view
+                |> Maybe.withDefault UI.nothing
 
         projectListing =
-            notification.projectRef
+            projectRef
                 |> ProjectRef.toProjectName
                 |> ProjectNameListing.projectNameListing
                 |> (\pl ->
-                        if notification.isUnread then
+                        if isUnread then
                             pl
 
                         else
@@ -323,7 +328,7 @@ viewNotification appContext selection notification =
     div
         [ class "notification-row"
         , classList
-            [ ( "notification-row_unread", notification.isUnread )
+            [ ( "notification-row_unread", isUnread )
             , ( "notification-row_selected", isSelected_ )
             ]
         ]
@@ -336,25 +341,25 @@ viewNotification appContext selection notification =
                 , unreadDot
                 ]
             , div [ class "notification-row_details" ]
-                [ div [ class "notification-row_details_context-and-subject" ]
+                [ div [ class "notification-row_details_context-and-event" ]
                     [ projectListing
                     , Icon.dot
                         |> Icon.withClass "notification-row_details_sep"
                         |> Icon.view
-                    , span [ class "notification-row_details_subject" ]
-                        [ subject ]
+                    , span [ class "notification-row_details_event" ]
+                        [ event ]
                     ]
                 , h4 [ class "notification-row_details_title" ]
-                    [ text notification.title
+                    [ text title
                     ]
                 ]
             ]
-        , div [ class "notification-row_participants" ] [ avatars ]
+        , div [ class "notification-row_participants" ] [ actor ]
         , div [ class "notification-row_date" ]
             [ DateTime.view
                 (DateTime.DistanceFrom appContext.now)
                 appContext.timeZone
-                notification.occurredAt
+                notification.event.occurredAt
             ]
         ]
 
@@ -373,18 +378,38 @@ viewNotifications appContext selection notifications =
         )
 
 
+viewLoading : Html msg
+viewLoading =
+    Card.card (Placeholder.texts5 |> List.map Placeholder.view)
+        |> Card.asContained
+        |> Card.view
+
+
 view_ : AppContext -> NotificationSelection -> WebData PaginatedNotifications -> Html Msg
 view_ appContext selection paginatedNotifications =
     case paginatedNotifications of
+        NotAsked ->
+            viewLoading
+
+        Loading ->
+            viewLoading
+
         Success (Paginated { items }) ->
-            div []
-                [ Card.card [ viewNotifications appContext selection items ]
+            if List.isEmpty items then
+                EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.bell)
+                    |> EmptyState.withContent [ h2 [] [ text "You have no notifications" ] ]
+                    |> EmptyStateCard.view
+
+            else
+                Card.card [ viewNotifications appContext selection items ]
                     |> Card.asContained
                     |> Card.view
-                ]
 
-        _ ->
-            text "TODO"
+        Failure e ->
+            ErrorCard.view appContext.session
+                e
+                "Notifications"
+                "notifications-page_error"
 
 
 viewSelectionControls : NotificationSelection -> List (Button Msg) -> Html Msg

@@ -17,7 +17,7 @@ test.describe("without being signed in", () => {
     page,
   }) => {
     const projectRef = "@unison/base";
-    const contrib = contribution(projectRef);
+    const contrib = { ...contribution(projectRef), status: "in_review" };
     await API.getProject(page, projectRef);
     await API.getProjectContribution(page, projectRef, contrib.number, contrib);
     await API.getProjectContributionTimeline(page, projectRef, contrib.number);
@@ -56,7 +56,7 @@ test.describe("without being signed in", () => {
 
   test("can *not* view a private project contribution", async ({ page }) => {
     const projectRef = "@bob/private-project";
-    const contrib = contribution(projectRef);
+    const contrib = { ...contribution(projectRef), status: "in_review" };
     await API.getProject_(page, projectRef, { status: 404 });
     await API.getProjectContribution_(page, projectRef, contrib.number, {
       data: contrib,
@@ -112,7 +112,7 @@ test.describe("while signed in", () => {
   test.describe("with another user's private project and `project:view` permission", () => {
     test("can view a contribution (but can't merge)", async ({ page }) => {
       const projectRef = "@bob/private-project";
-      const contrib = contribution(projectRef);
+      const contrib = { ...contribution(projectRef), status: "in_review" };
       await API.getProject(page, projectRef, {
         visibility: "private",
         permissions: ["project:view"],
@@ -167,7 +167,7 @@ test.describe("while signed in", () => {
       page,
     }) => {
       const projectRef = "@bob/private-project";
-      const contrib = contribution(projectRef);
+      const contrib = { ...contribution(projectRef), status: "in_review" };
       await API.getProject(page, projectRef, {
         visibility: "private",
         permissions: ["project:maintain"],

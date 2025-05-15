@@ -10,6 +10,7 @@ import {
   contribution,
   user,
   account,
+  notification,
 } from "./Data";
 
 async function getWebsiteFeed(page: Page) {
@@ -298,6 +299,20 @@ async function getProjectContributionDiff(
   });
 }
 
+// /users/:handle/notifications
+
+async function getNotificationsHub(page: Page, handle: string) {
+  const data = {
+    notifications: [notification(), notification(), notification()],
+  };
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/notifications/hub`,
+    status: 200,
+    data: data,
+  });
+}
+
 // -- UTIL
 
 type Response = {
@@ -337,5 +352,6 @@ export {
   getProjectContributionMergeCheck,
   getProjectContributionMergeCheck_,
   getProjectContributionDiff,
+  getNotificationsHub,
   get,
 };
