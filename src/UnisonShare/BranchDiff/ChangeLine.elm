@@ -73,6 +73,16 @@ matchesId id cl =
     toChangeLineId cl == Just id
 
 
+isPropagated : ChangeLine -> Bool
+isPropagated cl =
+    case cl of
+        Propagated _ _ ->
+            True
+
+        _ ->
+            False
+
+
 byId : ChangeLineId -> ChangeLine -> Maybe ChangeLine
 byId id cl =
     case cl of

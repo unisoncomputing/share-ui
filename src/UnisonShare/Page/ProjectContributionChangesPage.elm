@@ -449,8 +449,7 @@ viewDiffTreeNode projectRef changedDefinitions changeLine =
             view_ type_ (viewTitle aliasShortName)
 
         ChangeLine.Namespace ns ->
-            div [ class "change-line namespace" ]
-                (viewNamespaceLine projectRef changedDefinitions ns)
+            viewNamespaceLine projectRef changedDefinitions ns
 
 
 viewContributionChangesGroup : ProjectRef -> ChangedDefinitions -> List ChangeLine -> Html Msg
@@ -458,11 +457,20 @@ viewContributionChangesGroup projectRef changedDefinitions lines =
     div [ class "contribution-changes-group" ] (List.map (viewDiffTreeNode projectRef changedDefinitions) lines)
 
 
-viewNamespaceLine : ProjectRef -> ChangedDefinitions -> ChangeLine.NamespaceLineItem -> List (Html Msg)
+viewNamespaceLine : ProjectRef -> ChangedDefinitions -> ChangeLine.NamespaceLineItem -> Html Msg
 viewNamespaceLine projectRef changedDefinitions { name, lines } =
-    [ div [ class "namespace-info" ] [ Icon.view Icon.folder, FQN.view name ]
-    , viewContributionChangesGroup projectRef changedDefinitions lines
-    ]
+    let
+        allPropagated =
+            List.all ChangeLine.isPropagated lines
+    in
+    if allPropagated then
+        UI.nothing
+
+    else
+        div [ class "change-line namespace" ]
+            [ div [ class "namespace-info" ] [ Icon.view Icon.folder, FQN.view name ]
+            , viewContributionChangesGroup projectRef changedDefinitions lines
+            ]
 
 
 viewFailedToLoadExpandedContent : Http.Error -> Html msg
