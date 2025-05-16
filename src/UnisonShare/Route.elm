@@ -80,6 +80,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
+import UnisonShare.Paginated as Paginated exposing (PageCursorParam(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import Url exposing (Url)
@@ -120,9 +121,9 @@ type ProjectRoute
 
 
 type NotificationsRoute
-    = NotificationsAll
-    | NotificationsUnread
-    | NotificationsArchive
+    = NotificationsAll PageCursorParam
+    | NotificationsUnread PageCursorParam
+    | NotificationsArchive PageCursorParam
 
 
 type Route
@@ -157,19 +158,19 @@ account =
     Account
 
 
-notificationsAll : Route
-notificationsAll =
-    Notifications NotificationsAll
+notificationsAll : PageCursorParam -> Route
+notificationsAll cursorParam =
+    Notifications (NotificationsAll cursorParam)
 
 
-notificationsUnread : Route
-notificationsUnread =
-    Notifications NotificationsUnread
+notificationsUnread : PageCursorParam -> Route
+notificationsUnread cursorParam =
+    Notifications (NotificationsUnread cursorParam)
 
 
-notificationsArchive : Route
-notificationsArchive =
-    Notifications NotificationsArchive
+notificationsArchive : PageCursorParam -> Route
+notificationsArchive cursorParam =
+    Notifications (NotificationsArchive cursorParam)
 
 
 cloud : Route
@@ -362,7 +363,7 @@ toRoute queryString =
         [ b homeParser
         , b catalogParser
         , b accountParser
-        , b notificationsParser
+        , b (notificationsParser queryString)
         , b profileParser
         , b userParser
         , b orgParser
@@ -392,13 +393,31 @@ accountParser =
     succeed Account |. slash |. s "account"
 
 
-notificationsParser : Parser Route
-notificationsParser =
+notificationsParser : Maybe String -> Parser Route
+notificationsParser queryString =
+    let
+        cursorParser =
+            Parser.chompUntilEndOr "&"
+                |> Parser.getChompedString
+                |> Parser.map Paginated.PageCursor
+
+        paginationCursorParser =
+            oneOf
+                [ b (succeed PrevPage |. s "prev" |. symbol "=" |= cursorParser |. end)
+                , b (succeed NextPage |. s "next" |. symbol "=" |= cursorParser |. end)
+                ]
+
+        paginationCursor =
+            queryString
+                |> Maybe.withDefault ""
+                |> Parser.run paginationCursorParser
+                |> Result.withDefault NoPageCursor
+    in
     oneOf
-        [ b (succeed (Notifications NotificationsAll) |. slash |. s "notifications" |. slash |. s "all")
-        , b (succeed (Notifications NotificationsUnread) |. slash |. s "notifications" |. slash |. s "unread")
-        , b (succeed (Notifications NotificationsArchive) |. slash |. s "notifications" |. slash |. s "archive")
-        , b (succeed (Notifications NotificationsAll) |. slash |. s "notifications")
+        [ b (succeed (Notifications (NotificationsAll paginationCursor)) |. slash |. s "notifications" |. slash |. s "all")
+        , b (succeed (Notifications (NotificationsUnread paginationCursor)) |. slash |. s "notifications" |. slash |. s "unread")
+        , b (succeed (Notifications (NotificationsArchive paginationCursor)) |. slash |. s "notifications" |. slash |. s "archive")
+        , b (succeed (Notifications (NotificationsAll paginationCursor)) |. slash |. s "notifications")
         ]
 
 
@@ -768,13 +787,13 @@ toUrlPattern r =
         Account ->
             "account"
 
-        Notifications NotificationsAll ->
+        Notifications (NotificationsAll _) ->
             "notifications"
 
-        Notifications NotificationsUnread ->
+        Notifications (NotificationsUnread _) ->
             "notifications/unread"
 
-        Notifications NotificationsArchive ->
+        Notifications (NotificationsArchive _) ->
             "notifications/archive"
 
         Profile _ ->
@@ -930,6 +949,17 @@ toUrlString route =
                 Definition params ref ->
                     perspectiveParamsToPath params True ++ refPath ref
 
+        paginationCursorToQueryParams cursor =
+            case cursor of
+                NoPageCursor ->
+                    []
+
+                PrevPage (Paginated.PageCursor cursor_) ->
+                    [ string "prev" cursor_ ]
+
+                NextPage (Paginated.PageCursor cursor_) ->
+                    [ string "next" cursor_ ]
+
         ( path, queryParams ) =
             case route of
                 Catalog ->
@@ -938,14 +968,14 @@ toUrlString route =
                 Account ->
                     ( [ "account" ], [] )
 
-                Notifications NotificationsAll ->
-                    ( [ "notifications" ], [] )
+                Notifications (NotificationsAll cursor) ->
+                    ( [ "notifications" ], paginationCursorToQueryParams cursor )
 
-                Notifications NotificationsUnread ->
-                    ( [ "notifications", "unread" ], [] )
+                Notifications (NotificationsUnread cursor) ->
+                    ( [ "notifications", "unread" ], paginationCursorToQueryParams cursor )
 
-                Notifications NotificationsArchive ->
-                    ( [ "notifications", "archive" ], [] )
+                Notifications (NotificationsArchive cursor) ->
+                    ( [ "notifications", "archive" ], paginationCursorToQueryParams cursor )
 
                 Profile handle_ ->
                     ( [ UserHandle.toString handle_ ], [] )

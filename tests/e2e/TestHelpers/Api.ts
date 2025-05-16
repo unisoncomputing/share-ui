@@ -1,4 +1,5 @@
 // Backend API Stubs
+import { faker } from "@faker-js/faker";
 import { Page } from "@playwright/test";
 import {
   project,
@@ -303,7 +304,9 @@ async function getProjectContributionDiff(
 
 async function getNotificationsHub(page: Page, handle: string) {
   const data = {
-    notifications: [notification(), notification(), notification()],
+    prevCursor: null,
+    nextCursor: faker.lorem.slug(1),
+    items: [notification(), notification(), notification()],
   };
 
   return get(page, {
