@@ -460,10 +460,18 @@ viewContributionChangesGroup projectRef changedDefinitions lines =
 viewNamespaceLine : ProjectRef -> ChangedDefinitions -> ChangeLine.NamespaceLineItem -> Html Msg
 viewNamespaceLine projectRef changedDefinitions { name, lines } =
     let
-        allPropagated =
-            List.all ChangeLine.isPropagated lines
+        isDeeplyPropagated cl =
+            case cl of
+                ChangeLine.Propagated _ _ ->
+                    True
+
+                ChangeLine.Namespace ns ->
+                    List.all isDeeplyPropagated ns.lines
+
+                _ ->
+                    False
     in
-    if allPropagated then
+    if List.all isDeeplyPropagated lines then
         UI.nothing
 
     else
