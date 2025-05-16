@@ -27,6 +27,7 @@ import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.Notification as Notification exposing (NotificationStatus)
 import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
 import UnisonShare.OrgRole as OrgRole
+import UnisonShare.Paginated as Paginated exposing (PageCursorParam(..))
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
@@ -189,15 +190,26 @@ session =
 -- NOTIFICATIONS
 
 
-notifications : Account a -> Maybe NotificationStatus -> Endpoint
-notifications account status =
+notifications : Account a -> Maybe NotificationStatus -> PageCursorParam -> Endpoint
+notifications account status paginationCursor =
     let
-        queryParams =
+        statusQueryParams =
             case status of
                 Just s ->
                     [ string "status" (Notification.statusToString s) ]
 
                 Nothing ->
+                    []
+
+        paginationQueryParams =
+            case paginationCursor of
+                PrevPage c ->
+                    [ string "prevCursor" (Paginated.cursorToString c) ]
+
+                NextPage c ->
+                    [ string "nextCursor" (Paginated.cursorToString c) ]
+
+                NoPageCursor ->
                     []
     in
     GET
@@ -207,7 +219,7 @@ notifications account status =
             , "notifications"
             , "hub"
             ]
-        , queryParams = queryParams
+        , queryParams = statusQueryParams ++ paginationQueryParams
         }
 
 

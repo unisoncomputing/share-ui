@@ -2,9 +2,10 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
-import Html exposing (Html, div, h1, h2, h4, span, strong, text)
+import Html exposing (Html, div, footer, h1, h2, h4, span, strong, text)
 import Html.Attributes exposing (class, classList)
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (string)
+import Json.Decode.Pipeline exposing (optional, required)
 import Lib.HttpApi as HttpApi
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
@@ -12,6 +13,7 @@ import UI
 import UI.Avatar as Avatar
 import UI.Button as Button exposing (Button)
 import UI.Card as Card
+import UI.Click as Click
 import UI.DateTime as DateTime
 import UI.Divider as Divider
 import UI.EmptyState as EmptyState
@@ -34,21 +36,13 @@ import UnisonShare.ErrorCard as ErrorCard
 import UnisonShare.Link as Link
 import UnisonShare.Notification as Notification exposing (Notification)
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated exposing (PageCursor(..), PageCursorParam, Paginated(..))
 import UnisonShare.Project.ProjectRef as ProjectRef
 import UnisonShare.Route exposing (NotificationsRoute(..))
 
 
 
 -- MODEL
-
-
-type Paginated a
-    = Paginated
-        { cursor : String
-        , perPage : Int
-        , total : Int
-        , items : List a
-        }
 
 
 type alias PaginatedNotifications =
@@ -86,14 +80,20 @@ init appContext route account =
             }
     in
     case route of
-        NotificationsAll ->
-            ( All subPageState, fetchNotifications appContext account )
+        NotificationsAll cursor ->
+            ( All subPageState
+            , fetchNotifications appContext account cursor
+            )
 
-        NotificationsUnread ->
-            ( Unread subPageState, fetchUnreadNotifications appContext account )
+        NotificationsUnread cursor ->
+            ( Unread subPageState
+            , fetchUnreadNotifications appContext account cursor
+            )
 
-        NotificationsArchive ->
-            ( Archive subPageState, fetchArchivedNotifications appContext account )
+        NotificationsArchive cursor ->
+            ( Archive subPageState
+            , fetchArchivedNotifications appContext account cursor
+            )
 
 
 
@@ -102,7 +102,7 @@ init appContext route account =
 
 type Msg
     = ToggleSelectAll
-    | FetchAllNotificationsFinished (WebData (List Notification))
+    | FetchAllNotificationsFinished (WebData PaginatedNotifications)
     | ToggleSelection Notification
     | MarkSelectionAsUnread
     | MarkSelectionAsRead
@@ -171,16 +171,8 @@ update _ _ _ msg model =
 
         FetchAllNotificationsFinished notifications ->
             let
-                toPaginatedNotifications notifications_ =
-                    Paginated
-                        { cursor = "TODO"
-                        , perPage = 24
-                        , total = 200
-                        , items = notifications_
-                        }
-
                 updateNotifications _ =
-                    { notifications = RemoteData.map toPaginatedNotifications notifications
+                    { notifications = notifications
                     , selection = NoSelection
                     }
             in
@@ -207,26 +199,36 @@ updateSubPageState f model =
 -- EFFECTS
 
 
-fetchNotifications : AppContext -> Account a -> Cmd Msg
-fetchNotifications appContext account =
-    fetchNotifications_ appContext account Nothing
+fetchNotifications : AppContext -> Account a -> PageCursorParam -> Cmd Msg
+fetchNotifications appContext account paginationCursor =
+    fetchNotifications_ appContext account Nothing paginationCursor
 
 
-fetchUnreadNotifications : AppContext -> Account a -> Cmd Msg
-fetchUnreadNotifications appContext account =
-    fetchNotifications_ appContext account (Just Notification.Unread)
+fetchUnreadNotifications : AppContext -> Account a -> PageCursorParam -> Cmd Msg
+fetchUnreadNotifications appContext account paginationCursor =
+    fetchNotifications_ appContext account (Just Notification.Unread) paginationCursor
 
 
-fetchArchivedNotifications : AppContext -> Account a -> Cmd Msg
-fetchArchivedNotifications appContext account =
-    fetchNotifications_ appContext account (Just Notification.Archived)
+fetchArchivedNotifications : AppContext -> Account a -> PageCursorParam -> Cmd Msg
+fetchArchivedNotifications appContext account paginationCursor =
+    fetchNotifications_ appContext account (Just Notification.Archived) paginationCursor
 
 
-fetchNotifications_ : AppContext -> Account a -> Maybe Notification.NotificationStatus -> Cmd Msg
-fetchNotifications_ appContext account status =
-    ShareApi.notifications account status
+fetchNotifications_ : AppContext -> Account a -> Maybe Notification.NotificationStatus -> PageCursorParam -> Cmd Msg
+fetchNotifications_ appContext account status paginationCursorParam =
+    let
+        mkPaginated prev next items =
+            Paginated { prev = prev, next = next, items = items }
+
+        decode =
+            Decode.succeed mkPaginated
+                |> optional "prevCursor" (Decode.map (PageCursor >> Just) string) Nothing
+                |> optional "nextCursor" (Decode.map (PageCursor >> Just) string) Nothing
+                |> required "items" (Decode.list Notification.decode)
+    in
+    ShareApi.notifications account status paginationCursorParam
         |> HttpApi.toRequest
-            (Decode.field "notifications" (Decode.list Notification.decode))
+            decode
             (RemoteData.fromResult >> FetchAllNotificationsFinished)
         |> HttpApi.perform appContext.api
 
@@ -385,8 +387,8 @@ viewLoading =
         |> Card.view
 
 
-view_ : AppContext -> NotificationSelection -> WebData PaginatedNotifications -> Html Msg
-view_ appContext selection paginatedNotifications =
+view_ : AppContext -> Model -> NotificationSelection -> WebData PaginatedNotifications -> Html Msg
+view_ appContext model selection paginatedNotifications =
     case paginatedNotifications of
         NotAsked ->
             viewLoading
@@ -394,16 +396,19 @@ view_ appContext selection paginatedNotifications =
         Loading ->
             viewLoading
 
-        Success (Paginated { items }) ->
+        Success (Paginated { prev, next, items }) ->
             if List.isEmpty items then
                 EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.bell)
                     |> EmptyState.withContent [ h2 [] [ text "You have no notifications" ] ]
                     |> EmptyStateCard.view
 
             else
-                Card.card [ viewNotifications appContext selection items ]
-                    |> Card.asContained
-                    |> Card.view
+                div []
+                    [ Card.card [ viewNotifications appContext selection items ]
+                        |> Card.asContained
+                        |> Card.view
+                    , viewPaginationControls model { prev = prev, next = next }
+                    ]
 
         Failure e ->
             ErrorCard.view appContext.session
@@ -439,10 +444,52 @@ viewSelectionControls selection controls =
 
 tabs : { all : TabList.Tab Msg, unread : TabList.Tab Msg, archive : TabList.Tab Msg }
 tabs =
-    { all = TabList.tab "All" Link.notificationsAll
-    , unread = TabList.tab "Unread" Link.notificationsUnread
-    , archive = TabList.tab "Archive" Link.notificationsArchive
+    { all = TabList.tab "All" (Link.notificationsAll Paginated.NoPageCursor)
+    , unread = TabList.tab "Unread" (Link.notificationsUnread Paginated.NoPageCursor)
+    , archive = TabList.tab "Archive" (Link.notificationsArchive Paginated.NoPageCursor)
     }
+
+
+viewPaginationControls : Model -> { prev : Maybe PageCursor, next : Maybe PageCursor } -> Html Msg
+viewPaginationControls model cursors =
+    let
+        link =
+            case model of
+                All _ ->
+                    Link.notificationsAll
+
+                Unread _ ->
+                    Link.notificationsUnread
+
+                Archive _ ->
+                    Link.notificationsArchive
+
+        paginationButton icon click =
+            Button.icon_ click icon
+
+        buttons =
+            case ( cursors.prev, cursors.next ) of
+                ( Just prev, Just next ) ->
+                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
+                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
+                    ]
+
+                ( Just prev, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+
+                ( Nothing, Just next ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
+                    ]
+
+                ( Nothing, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+    in
+    footer [ class "pagination-controls" ] (List.map (Button.small >> Button.view) buttons)
 
 
 view : AppContext -> Model -> AppDocument Msg
@@ -457,7 +504,7 @@ view appContext model =
                         , Button.button MarkSelectionAsRead "Mark as read"
                         , Button.button ArchiveSelection "Archive"
                         ]
-                    , view_ appContext state.selection state.notifications
+                    , view_ appContext model state.selection state.notifications
                     )
 
                 Unread state ->
@@ -466,7 +513,7 @@ view appContext model =
                         [ Button.button MarkSelectionAsRead "Mark as read"
                         , Button.button ArchiveSelection "Archive"
                         ]
-                    , view_ appContext state.selection state.notifications
+                    , view_ appContext model state.selection state.notifications
                     )
 
                 Archive state ->
@@ -474,7 +521,7 @@ view appContext model =
                     , viewSelectionControls state.selection
                         [ Button.button ArchiveSelection "Unarchive"
                         ]
-                    , view_ appContext state.selection state.notifications
+                    , view_ appContext model state.selection state.notifications
                     )
     in
     { pageId = "notifications-page"
@@ -486,8 +533,10 @@ view appContext model =
             (PageContent.oneColumn
                 [ h1 [] [ text "Notifications" ]
                 , TabList.view tabList
-                , selectionControls
-                , content
+                , div [ class "notifications-page_content" ]
+                    [ selectionControls
+                    , content
+                    ]
                 ]
             )
             PageFooter.pageFooter

@@ -13,6 +13,12 @@
     }
   }
 
+  & .notifications-page_content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   & .notifications {
     display: flex;
     flex-direction: column;
@@ -83,5 +89,13 @@
         color: var(--u-color_text_subdued);
       }
     }
+  }
+
+  & .pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
   }
 }
