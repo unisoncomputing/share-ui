@@ -43,10 +43,21 @@ summary branchDiff =
                     let
                         nested =
                             go lines
+
+                        -- This matters because we ignore Propagated, which can be nested quite deep.
+                        countNamespaceAsInclusiveOfChanges =
+                            if acc.numChanges == nested.numChanges then
+                                0
+
+                            else
+                                1
                     in
                     { numChanges = acc.numChanges + nested.numChanges
-                    , numNamespaceChanges = acc.numNamespaceChanges + nested.numNamespaceChanges + 1
+                    , numNamespaceChanges = acc.numNamespaceChanges + nested.numNamespaceChanges + countNamespaceAsInclusiveOfChanges
                     }
+
+                Propagated _ _ ->
+                    acc
 
                 _ ->
                     { acc | numChanges = acc.numChanges + 1 }
