@@ -31,29 +31,30 @@ size branchDiff =
     branchDiff |> summary |> .numChanges
 
 
-summary : BranchDiff -> { numChanges : Int, numNamespaceChanges : Int }
+summary : BranchDiff -> { numChanges : Int, numNamespaceChanges : Int, namespaces : List String }
 summary branchDiff =
     let
         go lines =
-            List.foldl f { numChanges = 0, numNamespaceChanges = 0 } lines
+            List.foldl f { numChanges = 0, numNamespaceChanges = 0, namespaces = [] } lines
 
         f changeLine acc =
             case changeLine of
-                Namespace { lines } ->
+                Namespace { name, lines } ->
                     let
                         nested =
                             go lines
 
                         -- This matters because we ignore Propagated, which can be nested quite deep.
-                        countNamespaceAsInclusiveOfChanges =
+                        ( countNamespaceAsInclusiveOfChanges, namespaces ) =
                             if acc.numChanges == nested.numChanges then
-                                0
+                                ( 0, [] )
 
                             else
-                                1
+                                ( 1, [ FQN.toString name ] )
                     in
                     { numChanges = acc.numChanges + nested.numChanges
-                    , numNamespaceChanges = acc.numNamespaceChanges + countNamespaceAsInclusiveOfChanges
+                    , numNamespaceChanges = acc.numNamespaceChanges + nested.numNamespaceChanges + countNamespaceAsInclusiveOfChanges
+                    , namespaces = acc.namespaces ++ nested.namespaces ++ namespaces
                     }
 
                 Propagated _ _ ->

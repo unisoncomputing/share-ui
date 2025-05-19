@@ -753,10 +753,17 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
 
 
 viewBranchDiff : AppContext -> ProjectRef -> ChangedDefinitions -> BranchDiff -> Html Msg
-viewBranchDiff _ projectRef changedDefinitions diff =
+viewBranchDiff appContext projectRef changedDefinitions diff =
     let
         summary =
             BranchDiff.summary diff
+
+        namespaceDebug =
+            if Session.isSuperAdmin appContext.session then
+                div [] (summary.namespaces |> List.map text |> List.intersperse (text ", "))
+
+            else
+                UI.nothing
 
         -- There's no reason to show a tree with a single element...
         tree =
@@ -777,6 +784,7 @@ viewBranchDiff _ projectRef changedDefinitions diff =
             , text " across "
             , text (pluralize "namespace" "namespaces" summary.numNamespaceChanges)
             ]
+        , namespaceDebug
         , div [ class "branch-diff-content-cards" ]
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
