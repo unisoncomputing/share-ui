@@ -18,7 +18,7 @@ import UI.StatusIndicator as StatusIndicator
 import UnisonShare.Account exposing (AccountSummary)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
-import UnisonShare.Org as Org exposing (OrgDetails)
+import UnisonShare.Org as Org exposing (OrgSummary)
 
 
 type OrgType
@@ -46,7 +46,7 @@ type alias Model =
     , potentialHandle : OrgHandle
     , orgType : OrgType
     , validity : Validity
-    , save : WebData OrgDetails
+    , save : WebData OrgSummary
     }
 
 
@@ -72,13 +72,13 @@ type Msg
     | CheckHandleAvailability UserHandle
     | HandleAvailabilityCheckFinished UserHandle Bool
     | Save
-    | SaveFinished (HttpResult OrgDetails)
+    | SaveFinished (HttpResult OrgSummary)
 
 
 type OutMsg
     = NoOutMsg
     | RequestCloseModal
-    | AddedOrg OrgDetails
+    | AddedOrg OrgSummary
 
 
 update : AppContext -> AccountSummary -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
@@ -294,7 +294,7 @@ checkHandleAvailability appContext h =
 saveOrg : AppContext -> AccountSummary -> String -> UserHandle -> OrgType -> Cmd Msg
 saveOrg appContext account name handle orgType =
     ShareApi.createOrg account name handle (orgType == CommercialOrg)
-        |> HttpApi.toRequest Org.decodeDetails SaveFinished
+        |> HttpApi.toRequest Org.decodeSummary SaveFinished
         |> HttpApi.perform appContext.api
 
 
