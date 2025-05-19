@@ -594,18 +594,18 @@ update msg ({ appContext } as model) =
                         ( newOrg_, cmd, out ) =
                             NewOrgModal.update appContext account newOrgMsg newOrg
 
-                        appModal =
+                        ( appModal, navCmd ) =
                             case out of
                                 NewOrgModal.NoOutMsg ->
-                                    NewOrg newOrg_
+                                    ( NewOrg newOrg_, Cmd.none )
 
                                 NewOrgModal.RequestCloseModal ->
-                                    NoModal
+                                    ( NoModal, Cmd.none )
 
-                                NewOrgModal.AddedOrg _ ->
-                                    NoModal
+                                NewOrgModal.AddedOrg addedOrg ->
+                                    ( NoModal, Route.navigate appContext.navKey (Route.orgProfile addedOrg.handle) )
                     in
-                    ( { model | appModal = appModal }, Cmd.map NewOrgModalMsg cmd )
+                    ( { model | appModal = appModal }, Cmd.batch [ Cmd.map NewOrgModalMsg cmd, navCmd ] )
 
                 _ ->
                     ( model, Cmd.none )
