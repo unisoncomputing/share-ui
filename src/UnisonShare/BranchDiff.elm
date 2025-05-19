@@ -53,7 +53,7 @@ summary branchDiff =
                                 1
                     in
                     { numChanges = acc.numChanges + nested.numChanges
-                    , numNamespaceChanges = acc.numNamespaceChanges + nested.numNamespaceChanges + countNamespaceAsInclusiveOfChanges
+                    , numNamespaceChanges = acc.numNamespaceChanges + countNamespaceAsInclusiveOfChanges
                     }
 
                 Propagated _ _ ->
