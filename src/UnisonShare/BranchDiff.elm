@@ -31,6 +31,8 @@ size branchDiff =
     branchDiff |> summary |> .numChanges
 
 
+{-| TODO. This includes a bug in numNamespaceChanges...
+-}
 summary : BranchDiff -> { numChanges : Int, numNamespaceChanges : Int, namespaces : List String }
 summary branchDiff =
     let

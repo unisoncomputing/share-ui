@@ -758,13 +758,6 @@ viewBranchDiff appContext projectRef changedDefinitions diff =
         summary =
             BranchDiff.summary diff
 
-        namespaceDebug =
-            if Session.isSuperAdmin appContext.session then
-                div [] (summary.namespaces |> List.map text |> List.intersperse (text ", "))
-
-            else
-                UI.nothing
-
         -- There's no reason to show a tree with a single element...
         tree =
             if BranchDiff.size diff > 1 then
@@ -781,10 +774,7 @@ viewBranchDiff appContext projectRef changedDefinitions diff =
     div [ class "branch-diff-content" ]
         [ strong []
             [ text (pluralize "change" "changes" summary.numChanges)
-            , text " across "
-            , text (pluralize "namespace" "namespaces" summary.numNamespaceChanges)
             ]
-        , namespaceDebug
         , div [ class "branch-diff-content-cards" ]
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
