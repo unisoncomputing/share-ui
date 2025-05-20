@@ -752,8 +752,8 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
     go branchDiff.lines
 
 
-viewBranchDiff : AppContext -> ProjectRef -> ChangedDefinitions -> BranchDiff -> Html Msg
-viewBranchDiff appContext projectRef changedDefinitions diff =
+viewBranchDiff : ProjectRef -> ChangedDefinitions -> BranchDiff -> Html Msg
+viewBranchDiff projectRef changedDefinitions diff =
     let
         summary =
             BranchDiff.summary diff
@@ -879,12 +879,9 @@ view appContext projectRef contribution model =
         BranchDiffState.Computed diff ->
             PageContent.oneColumn
                 [ tabs
-                , div [ class "project-contribution-changes-page" ]
-                    [ viewBranchDiff appContext
-                        projectRef
-                        model.changedDefinitions
-                        diff
-                    ]
+                , div
+                    [ class "project-contribution-changes-page" ]
+                    [ viewBranchDiff projectRef model.changedDefinitions diff ]
                 ]
 
         BranchDiffState.Uncomputable error ->
