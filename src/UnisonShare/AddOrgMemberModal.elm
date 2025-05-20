@@ -186,7 +186,7 @@ fetchUsers appContext query =
 
         decodeMatch =
             Decode.oneOf
-                [ when tag ((==) "User") (Decode.map Just User.decodeSummaryWithId)
+                [ when tag ((==) "user") (Decode.map Just User.decodeSummaryWithId)
                 , Decode.succeed Nothing
                 ]
     in
