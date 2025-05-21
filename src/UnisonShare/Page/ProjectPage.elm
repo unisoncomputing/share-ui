@@ -283,11 +283,17 @@ update appContext projectRef route msg model =
 
                 ( Settings settings, Success _ ) ->
                     let
-                        ( settings_, settingsCmd ) =
+                        ( fetchingCollabs, fetchingCollabsCmd ) =
                             ProjectSettingsPage.fetchProjectCollaborators appContext projectRef settings
+
+                        ( fetchingOwner, fetchingOwnerCmd ) =
+                            ProjectSettingsPage.fetchProjectOwner appContext projectRef fetchingCollabs
                     in
-                    ( { modelWithProject | subPage = Settings settings_ }
-                    , Cmd.map ProjectSettingsPageMsg settingsCmd
+                    ( { modelWithProject | subPage = Settings fetchingOwner }
+                    , Cmd.batch
+                        [ Cmd.map ProjectSettingsPageMsg fetchingCollabsCmd
+                        , Cmd.map ProjectSettingsPageMsg fetchingOwnerCmd
+                        ]
                     )
 
                 _ ->

@@ -26,11 +26,12 @@ import UnisonShare.OrgPermission as OrgPermission exposing (OrgPermission)
 import Url exposing (Url)
 
 
-type alias Org u =
-    { u
+type alias Org o =
+    { o
         | handle : UserHandle
         , name : Maybe String
         , avatarUrl : Maybe Url
+        , isCommercial : Bool
     }
 
 
@@ -107,11 +108,12 @@ canChangeOwner org =
 decodeDetails : Decode.Decoder OrgDetails
 decodeDetails =
     let
-        makeDetails handle name_ avatarUrl permissions =
+        makeDetails handle name_ avatarUrl permissions isCommercial =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
             , permissions = permissions
+            , isCommercial = isCommercial
             }
     in
     Decode.succeed makeDetails
@@ -119,18 +121,21 @@ decodeDetails =
         |> maybeAt [ "user", "name" ] string
         |> maybeAt [ "user", "avatarUrl" ] url
         |> required "permissions" OrgPermission.decodeList
+        |> required "isCommercial" Decode.bool
 
 
 decodeSummary : Decode.Decoder OrgSummary
 decodeSummary =
     let
-        makeSummary handle name_ avatarUrl =
+        makeSummary handle name_ avatarUrl isCommercial =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
+            , isCommercial = isCommercial
             }
     in
     Decode.succeed makeSummary
         |> requiredAt [ "user", "handle" ] UserHandle.decodeUnprefixed
         |> maybeAt [ "user", "name" ] string
         |> maybeAt [ "user", "avatarUrl" ] url
+        |> required "isCommercial" Decode.bool
