@@ -4,7 +4,9 @@ import Html exposing (Html, div, footer, h2, text)
 import Html.Attributes exposing (class)
 import Http exposing (Error)
 import Json.Decode as Decode
+import Lib.Decode.Helpers exposing (whenKindIs)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
+import Lib.UserHandle exposing (UserHandle)
 import Lib.Util as Util
 import List.Nonempty as NEL
 import RemoteData exposing (RemoteData(..), WebData)
@@ -24,12 +26,14 @@ import UI.StatusBanner as StatusBanner
 import UnisonShare.AddProjectCollaboratorModal as AddProjectCollaboratorModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Org as Org exposing (OrgSummary)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectDetails, ProjectVisibility(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.ProjectRole as ProjectRole
 import UnisonShare.Session as Session exposing (Session)
+import UnisonShare.User as User exposing (UserSummary)
 
 
 
@@ -57,21 +61,28 @@ type Modal
     | AddCollaboratorModal AddProjectCollaboratorModal.Model
 
 
+type ProjectOwner
+    = UserOwner UserSummary
+    | OrgOwner OrgSummary
+
+
 type alias Model =
     { collaborators : WebData (List ProjectCollaborator)
+    , owner : WebData ProjectOwner
     , modal : Modal
     , form : Form
     }
 
 
 {-| Unlike `init` this doesn't fetch collaboratos, as doing so eventually
-requires the project from the parent ProjectPage to be fetched and would cause
-a race condition. `init` it self is only used when switching between project
-subpages when the project data is already fetched.
+requires the project (because of `update`) from the parent ProjectPage to be
+fetched and would cause a race condition. `init` itself is only used when
+switching between project subpages when the project data is already fetched.
 -}
 preInit : Model
 preInit =
     { collaborators = NotAsked
+    , owner = NotAsked
     , modal = NoModal
     , form = NoChanges
     }
@@ -86,10 +97,14 @@ project pages.
 init : AppContext -> ProjectRef -> ( Model, Cmd Msg )
 init appContext projectRef =
     ( { collaborators = Loading
+      , owner = Loading
       , modal = NoModal
       , form = NoChanges
       }
-    , fetchCollaborators appContext projectRef
+    , Cmd.batch
+        [ fetchOwner appContext (ProjectRef.handle projectRef)
+        , fetchCollaborators appContext projectRef
+        ]
     )
 
 
@@ -99,6 +114,7 @@ init appContext projectRef =
 
 type Msg
     = FetchCollaboratorsFinished (WebData (List ProjectCollaborator))
+    | FetchOwnerFinished (WebData ProjectOwner)
     | UpdateVisibility ProjectVisibility
     | DiscardChanges
     | SaveChanges
@@ -128,7 +144,10 @@ update appContext project msg model =
                         |> RemoteData.map
                             (List.filter (\collab -> not (List.member ProjectRole.Owner collab.roles)))
             in
-            ( { model | collaborators = withoutOwner, form = NoChanges }, Cmd.none, None )
+            ( { model | collaborators = withoutOwner }, Cmd.none, None )
+
+        ( FetchOwnerFinished owner, _ ) ->
+            ( { model | owner = owner }, Cmd.none, None )
 
         ( UpdateVisibility newVisibility, WithChanges c ) ->
             if newVisibility /= project.visibility then
@@ -218,6 +237,11 @@ fetchProjectCollaborators appContext projectRef model =
     ( { model | collaborators = Loading }, fetchCollaborators appContext projectRef )
 
 
+fetchProjectOwner : AppContext -> ProjectRef -> Model -> ( Model, Cmd Msg )
+fetchProjectOwner appContext projectRef model =
+    ( { model | owner = Loading }, fetchOwner appContext (ProjectRef.handle projectRef) )
+
+
 
 -- EFFECTS
 
@@ -228,6 +252,20 @@ fetchCollaborators appContext projectRef =
         |> HttpApi.toRequest
             (Decode.field "role_assignments" (Decode.list ProjectCollaborator.decode))
             (RemoteData.fromResult >> FetchCollaboratorsFinished)
+        |> HttpApi.perform appContext.api
+
+
+fetchOwner : AppContext -> UserHandle -> Cmd Msg
+fetchOwner appContext handle =
+    let
+        decode =
+            Decode.oneOf
+                [ whenKindIs "org" (Decode.map OrgOwner Org.decodeSummary)
+                , whenKindIs "user" (Decode.map UserOwner User.decodeSummary)
+                ]
+    in
+    ShareApi.user handle
+        |> HttpApi.toRequest decode (RemoteData.fromResult >> FetchOwnerFinished)
         |> HttpApi.perform appContext.api
 
 
@@ -366,13 +404,21 @@ viewPageContent project model =
                 SaveFailed { visibility } _ ->
                     visibility
 
+        privateDescription =
+            case model.owner of
+                Success (OrgOwner org) ->
+                    "Only members of " ++ Org.name org ++ " can see and download this project."
+
+                _ ->
+                    "Only you can see and download this project."
+
         projectVisibilityField =
             RadioField.field "project-visibility"
                 UpdateVisibility
                 (NEL.Nonempty
                     (RadioField.option
                         "Private"
-                        "Only you can see and download this project."
+                        privateDescription
                         Private
                     )
                     [ RadioField.option
@@ -384,10 +430,39 @@ viewPageContent project model =
                 activeVisiblityValue
 
         form =
+            let
+                overlay_ =
+                    div [ class "disabled-overlay" ] []
+
+                ( overlay, message_ ) =
+                    case model.owner of
+                        NotAsked ->
+                            ( overlay_, UI.nothing )
+
+                        Loading ->
+                            ( overlay_, UI.nothing )
+
+                        Success (UserOwner _) ->
+                            ( UI.nothing, UI.nothing )
+
+                        Success (OrgOwner org) ->
+                            if org.isCommercial then
+                                ( UI.nothing, UI.nothing )
+
+                            else
+                                ( overlay_
+                                , div [ class "collaborators_empty-state_text" ]
+                                    [ Icon.view Icon.bulb, text "Public organizations only support public projects" ]
+                                )
+
+                        Failure _ ->
+                            ( overlay_, StatusBanner.bad "An unexpected error occurred, please try again." )
+            in
             Card.card
-                [ div [ class "form" ]
-                    [ h2 []
-                        [ text "Project Visibility" ]
+                [ h2 [] [ text "Project Visibility" ]
+                , message_
+                , div [ class "form" ]
+                    [ overlay
                     , RadioField.view projectVisibilityField
                     ]
                 ]
@@ -441,11 +516,9 @@ viewPageContent project model =
 
             else
                 PageContent.withPageTitle pageTitle
-    in
-    PageContent.oneColumn
-        [ div [ class "settings-content", class stateClass ]
-            [ viewCollaborators model
-            , form
+
+        formAndActions =
+            [ form
             , footer [ class "actions" ]
                 [ message
                 , div [ class "buttons" ]
@@ -454,6 +527,10 @@ viewPageContent project model =
                     ]
                 ]
             ]
+    in
+    PageContent.oneColumn
+        [ div [ class "settings-content", class stateClass ]
+            (viewCollaborators model :: formAndActions)
         ]
         |> pageTitle_
 

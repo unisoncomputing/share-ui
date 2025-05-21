@@ -1,11 +1,23 @@
 .project-settings-page .settings-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
-.project-settings-page .settings-content .card {
+.project-settings-page .settings-content .card,
+.project-settings-page .settings-content .card .form {
   position: relative;
+}
+
+.project-settings-page .settings-content .disabled-overlay {
+  background: var(--u-color_container);
+  border-radius: var(--border-radius-base);
+  opacity: 0.75;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .project-settings-page .settings-content h2 {

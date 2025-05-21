@@ -60,6 +60,7 @@ function org(handle?: string) {
     orgId: faker.string.uuid(),
     kind: "org",
     permissions: [],
+    isCommercial: false,
   };
 }
 
