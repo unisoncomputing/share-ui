@@ -47,23 +47,19 @@ export default defineConfig({
       use: { ...devices["Desktop Safari"] },
     },
 
-    /*
-    TODO: re-enable when we understand how to direct tests for mobile (for instance some element worth checking on desktop might be hidden on mobile and visa versa).
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: "Mobile Safari",
+      use: { ...devices["iPhone 12"] },
+    },
+    {
+      name: "Mobile Safari",
+      use: { ...devices["iPhone 14"] },
     },
 
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 14'] },
+      name: "Mobile Chrome",
+      use: { ...devices["Pixel 5"] },
     },
-
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    */
   ],
 
   webServer: {
