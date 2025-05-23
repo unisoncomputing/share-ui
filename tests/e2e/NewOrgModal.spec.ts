@@ -14,7 +14,7 @@ test.describe("without being signed in", () => {
   test("can *NOT* see the 'New Org' button", async ({ page, isMobile }) => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
-    await expect(page).toHaveScreenshot({ maxDiffPixels: 100 });
+    await expect(page).toHaveScreenshot("no-new-org-button.png");
 
     if (isMobile) {
       await expect(
@@ -36,7 +36,7 @@ test.describe("while being signed in", () => {
   test("can see the 'New Org' button", async ({ page, isMobile }) => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
-    await expect(page).toHaveScreenshot({ maxDiffPixels: 100 });
+    await expect(page).toHaveScreenshot("new-org-button.png");
 
     if (isMobile) {
       await expect(
