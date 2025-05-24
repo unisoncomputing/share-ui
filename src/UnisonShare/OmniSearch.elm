@@ -64,6 +64,7 @@ import UI.KeyboardShortcut.Key as Key exposing (Key(..))
 import UI.KeyboardShortcut.KeyboardEvent as KeyboardEvent exposing (KeyboardEvent)
 import UI.Modal as Modal
 import UI.ProfileSnippet as ProfileSnippet
+import UI.StatusBanner as StatusBanner
 import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
@@ -73,6 +74,7 @@ import UnisonShare.Project as Project
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
+import UnisonShare.Session as Session
 import UnisonShare.User as User
 
 
@@ -1051,8 +1053,8 @@ viewDefinitionMatch keyboardShortcut def isFocused =
         )
 
 
-viewSearchSheet : (a -> Bool -> Html Msg) -> Search a -> Html Msg
-viewSearchSheet viewMatch search =
+viewSearchSheet : AppContext -> (a -> Bool -> Html Msg) -> Search a -> Html Msg
+viewSearchSheet appContext viewMatch search =
     let
         viewSheet matches =
             if SearchResults.isEmpty matches then
@@ -1077,20 +1079,25 @@ viewSearchSheet viewMatch search =
             viewSheet matches
 
         Failure _ err ->
-            div [ class "main-result-sheet" ] [ text (Util.httpErrorToString err) ]
+            if Session.isSuperAdmin appContext.session then
+                div [ class "main-result-sheet" ] [ text (Util.httpErrorToString err) ]
+
+            else
+                -- TODO: Improve the quality of this error messaging
+                div [ class "main-result-sheet" ] [ StatusBanner.bad "Unexpected error occurred while searching" ]
 
 
-viewMainSearch : KeyboardShortcut.Model -> MainSearch -> Html Msg
-viewMainSearch keyboardShortcut mainSearch =
+viewMainSearch : AppContext -> KeyboardShortcut.Model -> MainSearch -> Html Msg
+viewMainSearch appContext keyboardShortcut mainSearch =
     case mainSearch of
         NoSearch ->
             UI.nothing
 
         EntitySearch s ->
-            viewSearchSheet (viewEntityMatch keyboardShortcut) s
+            viewSearchSheet appContext (viewEntityMatch keyboardShortcut) s
 
         DefinitionSearch s ->
-            viewSearchSheet (viewDefinitionMatch keyboardShortcut) s
+            viewSearchSheet appContext (viewDefinitionMatch keyboardShortcut) s
 
 
 viewSearchHelpModal : AppContext -> Html Msg
@@ -1251,7 +1258,7 @@ view appContext model =
     ( Html.node "search"
         [ class "omni-search", tabindex 0, classList [ ( "searching", isSearching ) ], keyboardEvent ]
         [ viewField model isSearching
-        , viewMainSearch model.keyboardShortcut model.search
+        , viewMainSearch appContext model.keyboardShortcut model.search
         ]
     , modal
     )
