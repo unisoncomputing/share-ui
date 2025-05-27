@@ -2,3 +2,5 @@
 # This helps prevent users from sneaking in malicious changes to CI workflows.
 
 /.github/ @unisoncomputing/share
+/src/UnisonShare/Route.elm @unisoncomputing/share
+/src/UnisonShare/Link.elm @unisoncomputing/share
