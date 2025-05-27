@@ -1,6 +1,6 @@
 module UnisonShare.NewOrgModal exposing (..)
 
-import Html exposing (Html, div, form)
+import Html exposing (Html, br, div, form, span, strong, text)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
@@ -9,7 +9,6 @@ import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Normalize as StringN
 import UI.Button as Button
-import UI.Form.RadioField as RadioField
 import UI.Form.TextField as TextField
 import UI.Icon as Icon
 import UI.Modal as Modal
@@ -18,6 +17,7 @@ import UI.StatusIndicator as StatusIndicator
 import UnisonShare.Account exposing (AccountSummary)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Link as Link
 import UnisonShare.Org as Org exposing (OrgSummary)
 
 
@@ -221,7 +221,7 @@ update appContext account msg model =
         SaveFinished res ->
             case res of
                 Ok org ->
-                    ( { model | save = Success org }, Util.delayMsg 1500 CloseModal, NoOutMsg )
+                    ( { model | save = Success org }, Cmd.none, AddedOrg org )
 
                 Err e ->
                     ( { model | save = Failure e }, Cmd.none, NoOutMsg )
@@ -327,17 +327,20 @@ handleToString orgHandle =
 view : Model -> Html Msg
 view model =
     let
-        orgTypeOptions =
-            RadioField.options2
-                (RadioField.option "Public Org"
-                    "Only allows public projects."
-                    PublicOrg
-                )
-                (RadioField.option "Commercial Org"
-                    "Supports both public and private projects. Selecting this will open a support ticket to enable private projects."
-                    CommercialOrg
-                )
-
+        {-
+              orgTypeOptions =
+                  RadioField.options2
+                      (RadioField.option "Public Org"
+                          "Only allows public projects."
+                          PublicOrg
+                      )
+                      (RadioField.option "Commercial Org"
+                          "Supports both public and private projects. Selecting this will open a support ticket to enable private projects."
+                          CommercialOrg
+                      )
+                 |> RadioField.field "org-type" UpdateOrgType orgTypeOptions model.orgType |> RadioField.view
+           orgTypeOptions =
+        -}
         handleField =
             TextField.fieldWithoutLabel UpdateHandle "Handle, e.g. @unison" (handleToString model.potentialHandle)
                 |> TextField.withHelpText "The unique identifier of the organization and used in URLs and project references like @unison/base."
@@ -381,7 +384,11 @@ view model =
                         |> TextField.withAutofocus
                         |> TextField.view
                     , TextField.view handleField_
-                    , RadioField.field "org-type" UpdateOrgType orgTypeOptions model.orgType |> RadioField.view
+                    , StatusBanner.info_
+                        (span
+                            []
+                            [ strong [] [ text "Organizations by default only allow for public projects." ], br [] [], text "To enable private projects, please reach out to Unison sales (", Link.salesEmail |> Link.view "hello@unison.cloud", text " or on ", Link.discord |> Link.view "Discord", text ") after creating the Organization." ]
+                        )
                     ]
                 ]
 
