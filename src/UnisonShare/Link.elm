@@ -34,6 +34,11 @@ link url =
     Click.externalHref url
 
 
+salesEmail : Click msg
+salesEmail =
+    Click.externalHref "mailto:hello@unison.cloud"
+
+
 unisonCloudWebsite : Click msg
 unisonCloudWebsite =
     Click.externalHref "https://unison.cloud"
