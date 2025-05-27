@@ -21,6 +21,7 @@ import UI.Tag as Tag
 import UnisonShare.Api as ShareApi exposing (ProjectBranchesKindFilter)
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 
 
@@ -85,7 +86,7 @@ update appContext projectRef msg model =
                     { kind = model.branchKindFilter
                     , searchQuery = Just query
                     , limit = 10
-                    , cursor = Nothing
+                    , cursor = Paginated.NoPageCursor
                     }
                 , NoOutMsg
                 )
