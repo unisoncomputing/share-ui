@@ -11,6 +11,7 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
+import UnisonShare.Paginated exposing (PageCursorParam)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route exposing (Route)
 import UnisonShare.Ticket.TicketRef exposing (TicketRef)
@@ -183,19 +184,19 @@ account =
     toClick Route.account
 
 
-notificationsAll : Click msg
-notificationsAll =
-    toClick Route.notificationsAll
+notificationsAll : PageCursorParam -> Click msg
+notificationsAll cursor =
+    toClick (Route.notificationsAll cursor)
 
 
-notificationsUnread : Click msg
-notificationsUnread =
-    toClick Route.notificationsUnread
+notificationsUnread : PageCursorParam -> Click msg
+notificationsUnread cursor =
+    toClick (Route.notificationsUnread cursor)
 
 
-notificationsArchive : Click msg
-notificationsArchive =
-    toClick Route.notificationsArchive
+notificationsArchive : PageCursorParam -> Click msg
+notificationsArchive cursor =
+    toClick (Route.notificationsArchive cursor)
 
 
 orgProfile : UserHandle -> Click msg
