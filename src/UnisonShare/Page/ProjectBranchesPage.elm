@@ -123,7 +123,8 @@ fetchBranches appContext projectRef =
             { kind = ShareApi.AllBranches Nothing
             , searchQuery = Nothing
             , limit = 100
-            , cursor = Nothing
+            , nextCursor = Nothing
+            , prevCursor = Nothing
             }
     in
     ShareApi.projectBranches projectRef params

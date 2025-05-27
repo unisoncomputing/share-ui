@@ -389,14 +389,16 @@ fetchRecentBranches appContext currentUser projectRef =
             { kind = ShareApi.ContributorBranches (Just currentUser.handle)
             , searchQuery = Nothing
             , limit = 3
-            , cursor = Nothing
+            , nextCursor = Nothing
+            , prevCursor = Nothing
             }
 
         projectBranchesParams =
             { kind = ShareApi.ProjectBranches
             , searchQuery = Nothing
             , limit = 3
-            , cursor = Nothing
+            , nextCursor = Nothing
+            , prevCursor = Nothing
             }
     in
     Task.map2

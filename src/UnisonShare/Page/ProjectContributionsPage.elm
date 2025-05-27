@@ -82,7 +82,8 @@ init appContext projectRef =
                             { kind = ShareApi.ContributorBranches (Just a.handle)
                             , searchQuery = Nothing
                             , limit = 3
-                            , cursor = Nothing
+                            , nextCursor = Nothing
+                            , prevCursor = Nothing
                             }
                       , fetchBranches FetchProjectBranchesFinished
                             appContext
@@ -90,7 +91,8 @@ init appContext projectRef =
                             { kind = ShareApi.ProjectBranches
                             , searchQuery = Nothing
                             , limit = 3
-                            , cursor = Nothing
+                            , nextCursor = Nothing
+                            , prevCursor = Nothing
                             }
                       ]
                     )

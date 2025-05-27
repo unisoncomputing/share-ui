@@ -79,7 +79,8 @@ update appContext projectRef msg model =
                                 { kind = ShareApi.ContributorBranches (Just handle)
                                 , searchQuery = Nothing
                                 , limit = 3
-                                , cursor = Nothing
+                                , nextCursor = Nothing
+                                , prevCursor = Nothing
                                 }
                             , Just RemoteData.Loading
                             )
@@ -96,7 +97,8 @@ update appContext projectRef msg model =
                     { kind = ShareApi.ProjectBranches
                     , searchQuery = Nothing
                     , limit = 3
-                    , cursor = Nothing
+                    , nextCursor = Nothing
+                    , prevCursor = Nothing
                     }
             in
             ( Open sheet

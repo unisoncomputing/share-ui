@@ -85,7 +85,8 @@ update appContext projectRef msg model =
                     { kind = model.branchKindFilter
                     , searchQuery = Just query
                     , limit = 10
-                    , cursor = Nothing
+                    , nextCursor = Nothing
+                    , prevCursor = Nothing
                     }
                 , NoOutMsg
                 )
