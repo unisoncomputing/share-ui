@@ -1,6 +1,6 @@
 module UnisonShare.Page.OrgProfilePage exposing (..)
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, div, h2, text)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
@@ -12,15 +12,19 @@ import Set
 import UI
 import UI.Card as Card
 import UI.Divider as Divider
+import UI.EmptyState as EmptyState
+import UI.EmptyStateCard as EmptyStateCard
+import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.PageLayout as PageLayout
 import UI.PageTitle as PageTitle
+import UI.Placeholder as Placeholder
 import UI.ProfileSnippet as ProfileSnippet
 import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
-import UnisonShare.Org exposing (OrgDetails)
+import UnisonShare.Org as Org exposing (OrgDetails)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectSummary)
 import UnisonShare.Project.ProjectListing as ProjectListing
@@ -99,11 +103,13 @@ fetchProjects appContext handle =
 -- VIEW
 
 
-viewProjects : List ProjectSummary -> Html msg
-viewProjects projects_ =
+viewProjects : OrgDetails -> List ProjectSummary -> Html msg
+viewProjects org projects_ =
     case projects_ of
         [] ->
-            UI.nothing
+            EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.pencilRuler)
+                |> EmptyState.withContent [ h2 [] [ text (Org.name org ++ " doesn't have any projects yet.") ] ]
+                |> EmptyStateCard.view
 
         projects ->
             let
@@ -147,7 +153,7 @@ view_ org projects =
     let
         pageContent =
             [ projects
-                |> RemoteData.map viewProjects
+                |> RemoteData.map (viewProjects org)
                 |> RemoteData.withDefault UI.nothing
             ]
 
@@ -168,10 +174,9 @@ viewLoadingPage =
     let
         content =
             PageContent.oneColumn
-                [ div [ class "org-profile-page_page-content" ]
-                    [ div [ class "org-profile_main-content" ]
-                        [ text "" ]
-                    ]
+                [ Card.card (Placeholder.texts5 |> List.map Placeholder.view)
+                    |> Card.asContainedWithFade
+                    |> Card.view
                 ]
     in
     PageLayout.centeredNarrowLayout content PageFooter.pageFooter

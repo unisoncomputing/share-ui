@@ -5,7 +5,6 @@ import Html.Attributes exposing (class, classList)
 import Lib.HttpApi exposing (HttpApi)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Time
-import UI
 import UI.ActionMenu as ActionMenu
 import UI.AnchoredOverlay as AnchoredOverlay
 import UI.AppHeader exposing (AppHeader, AppTitle(..))
@@ -270,14 +269,10 @@ view ctx appHeader_ =
                                         [ avatar, Icon.view chevron ]
 
                                 newOrgButton =
-                                    if account.isSuperAdmin then
-                                        Button.iconThenLabel ctx.showNewOrgModal Icon.largePlus "New Org"
-                                            |> Button.small
-                                            |> Button.positive
-                                            |> Button.view
-
-                                    else
-                                        UI.nothing
+                                    Button.iconThenLabel ctx.showNewOrgModal Icon.largePlus "New Org"
+                                        |> Button.small
+                                        |> Button.positive
+                                        |> Button.view
 
                                 accountMenu =
                                     ActionMenu.items
