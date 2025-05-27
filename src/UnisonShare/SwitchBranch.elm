@@ -13,6 +13,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
 import UnisonShare.Link as Link
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.SearchBranchSheet as SearchBranchSheet
 import UnisonShare.Session as Session
@@ -79,7 +80,7 @@ update appContext projectRef msg model =
                                 { kind = ShareApi.ContributorBranches (Just handle)
                                 , searchQuery = Nothing
                                 , limit = 3
-                                , cursor = Nothing
+                                , cursor = Paginated.NoPageCursor
                                 }
                             , Just RemoteData.Loading
                             )
@@ -96,7 +97,7 @@ update appContext projectRef msg model =
                     { kind = ShareApi.ProjectBranches
                     , searchQuery = Nothing
                     , limit = 3
-                    , cursor = Nothing
+                    , cursor = Paginated.NoPageCursor
                     }
             in
             ( Open sheet

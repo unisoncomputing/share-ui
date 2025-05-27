@@ -179,7 +179,8 @@ function timelineCommentEvent() {
 
 function contributionTimeline(events?: unknown[]) {
   return {
-    cursor: faker.string.uuid(),
+    prevCursor: faker.string.uuid(),
+    nextCursor: faker.string.uuid(),
     items: events || [
       contributionStatusChangeEvent(),
       timelineCommentEvent(),

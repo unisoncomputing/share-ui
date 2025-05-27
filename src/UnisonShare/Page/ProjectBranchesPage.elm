@@ -28,6 +28,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary exposing (BranchSummary)
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Session as Session exposing (Session)
@@ -123,7 +124,7 @@ fetchBranches appContext projectRef =
             { kind = ShareApi.AllBranches Nothing
             , searchQuery = Nothing
             , limit = 100
-            , cursor = Nothing
+            , cursor = Paginated.NoPageCursor
             }
     in
     ShareApi.projectBranches projectRef params
