@@ -309,7 +309,8 @@ fetchLatestBranches appContext projectRef =
         { kind = ShareApi.ProjectBranches
         , searchQuery = Nothing
         , limit = 3
-        , cursor = Nothing
+        , prevCursor = Nothing
+        , nextCursor = Nothing
         }
         |> HttpApi.toRequest (Decode.field "items" (Decode.list BranchSummary.decode))
             (RemoteData.fromResult >> FetchLatestBranchesFinished)

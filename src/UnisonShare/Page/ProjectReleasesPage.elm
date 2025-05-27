@@ -423,7 +423,8 @@ fetchReleaseDrafts appContext projectRef =
             { kind = ShareApi.ProjectBranches
             , searchQuery = Just "releases/drafts/"
             , limit = 10
-            , cursor = Nothing
+            , nextCursor = Nothing
+            , prevCursor = Nothing
             }
     in
     ShareApi.projectBranches projectRef params

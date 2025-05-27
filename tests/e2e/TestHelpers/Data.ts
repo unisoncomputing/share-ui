@@ -179,7 +179,8 @@ function timelineCommentEvent() {
 
 function contributionTimeline(events?: unknown[]) {
   return {
-    cursor: faker.string.uuid(),
+    prevCursor: faker.string.uuid(),
+    nextCursor: faker.string.uuid(),
     items: events || [
       contributionStatusChangeEvent(),
       timelineCommentEvent(),
@@ -210,28 +211,28 @@ type DiffErrorCulprit = "new" | "old";
 type DiffErrorDetails =
   | { tag: "impossibleError" }
   | {
-      tag: "constructorAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "constructorAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "missingConstructorName";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-    }
+    tag: "missingConstructorName";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+  }
   | {
-      tag: "nestedDeclAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "nestedDeclAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "strayConstructor";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName: string;
-    };
+    tag: "strayConstructor";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName: string;
+  };
 
 type ContributionDiffConfig =
   | { tag: "ok" }

@@ -79,7 +79,8 @@ init appContext handle =
             { searchQuery = Nothing
             , projectRef = Nothing
             , limit = 100
-            , cursor = Nothing
+            , prevCursor = Nothing
+            , nextCursor = Nothing
             }
 
         model =
@@ -137,7 +138,8 @@ update appContext handle msg model =
                                 { searchQuery = Just query
                                 , projectRef = Nothing
                                 , limit = 100
-                                , cursor = Nothing
+                                , prevCursor = Nothing
+                                , nextCursor = Nothing
                                 }
                         in
                         fetchContributions (FetchSearchResultsFinished query) appContext handle params

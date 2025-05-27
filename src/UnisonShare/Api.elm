@@ -77,7 +77,8 @@ type alias UserBranchesParams =
     { searchQuery : Maybe String
     , projectRef : Maybe ProjectRef
     , limit : Int
-    , cursor : Maybe String
+    , nextCursor : Maybe String
+    , prevCursor : Maybe String
     }
 
 
@@ -86,8 +87,12 @@ userBranches handle params =
     let
         queryParams =
             int "limit" params.limit
-                :: (params.cursor
-                        |> Maybe.map (string "cursor")
+                :: (params.nextCursor
+                        |> Maybe.map (string "nextCursor")
+                        |> MaybeE.toList
+                   )
+                ++ (params.prevCursor
+                        |> Maybe.map (string "prevCursor")
                         |> MaybeE.toList
                    )
                 ++ (params.searchQuery
@@ -363,7 +368,8 @@ type alias ProjectBranchesParams =
     { kind : ProjectBranchesKindFilter
     , searchQuery : Maybe String
     , limit : Int
-    , cursor : Maybe String
+    , nextCursor : Maybe String
+    , prevCursor : Maybe String
     }
 
 
@@ -389,8 +395,12 @@ projectBranches projectRef params =
 
         queryParams =
             [ kind, int "limit" params.limit ]
-                ++ (params.cursor
-                        |> Maybe.map (string "cursor")
+                ++ (params.nextCursor
+                        |> Maybe.map (string "nextCursor")
+                        |> MaybeE.toList
+                   )
+                ++ (params.prevCursor
+                        |> Maybe.map (string "prevCursor")
                         |> MaybeE.toList
                    )
                 ++ (params.searchQuery
