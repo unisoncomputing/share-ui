@@ -7,7 +7,7 @@ import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
-import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
+import Html exposing (Html, br, code, div, h2, h3, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
 import Json.Decode as Decode
@@ -37,6 +37,7 @@ import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
+import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
@@ -752,6 +753,29 @@ viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
     go branchDiff.lines
 
 
+viewLibDep : LibDep -> Html msg
+viewLibDep dep =
+    let
+        viewCard content =
+            Card.card
+                content
+                |> Card.withClassName "lib-dep"
+                |> Card.asContained
+                |> Card.view
+    in
+    case dep of
+        LibDep.Added { name } ->
+            viewCard [ text "Added: ", strong [] [ text name ] ]
+
+        LibDep.Removed { name } ->
+            viewCard [ text "Removed: ", strong [] [ text name ] ]
+
+
+viewLibDeps : List LibDep -> List (Html msg)
+viewLibDeps deps =
+    List.map viewLibDep deps
+
+
 viewBranchDiff : ProjectRef -> ChangedDefinitions -> BranchDiff -> Html Msg
 viewBranchDiff projectRef changedDefinitions diff =
     let
@@ -778,7 +802,9 @@ viewBranchDiff projectRef changedDefinitions diff =
         , div [ class "branch-diff-content-cards" ]
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
-                (viewChangedDefinitionsCards projectRef changedDefinitions diff)
+                (viewLibDeps diff.libDeps
+                    ++ viewChangedDefinitionsCards projectRef changedDefinitions diff
+                )
             ]
         ]
 
