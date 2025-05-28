@@ -31,6 +31,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (Project)
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef as ProjectRef
@@ -79,7 +80,7 @@ init appContext handle =
             { searchQuery = Nothing
             , projectRef = Nothing
             , limit = 100
-            , cursor = Nothing
+            , cursor = Paginated.NoPageCursor
             }
 
         model =
@@ -137,7 +138,7 @@ update appContext handle msg model =
                                 { searchQuery = Just query
                                 , projectRef = Nothing
                                 , limit = 100
-                                , cursor = Nothing
+                                , cursor = Paginated.NoPageCursor
                                 }
                         in
                         fetchContributions (FetchSearchResultsFinished query) appContext handle params

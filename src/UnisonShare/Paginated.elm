@@ -1,5 +1,7 @@
 module UnisonShare.Paginated exposing (..)
 
+import Url.Builder exposing (QueryParameter, string)
+
 
 type PageCursorParam
     = NoPageCursor
@@ -22,3 +24,24 @@ type Paginated a
 cursorToString : PageCursor -> String
 cursorToString (PageCursor c) =
     c
+
+
+toQueryParam : PageCursorParam -> Maybe QueryParameter
+toQueryParam param =
+    case param of
+        NoPageCursor ->
+            Nothing
+
+        PrevPage c ->
+            Just (string "cursor" (cursorToString c))
+
+        NextPage c ->
+            Just (string "cursor" (cursorToString c))
+
+
+toQueryParams : PageCursorParam -> List QueryParameter
+toQueryParams param =
+    param
+        |> toQueryParam
+        |> Maybe.map List.singleton
+        |> Maybe.withDefault []

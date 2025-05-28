@@ -31,6 +31,7 @@ import UnisonShare.Contribution.ContributionRef as ContributionRef
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
@@ -82,7 +83,7 @@ init appContext projectRef =
                             { kind = ShareApi.ContributorBranches (Just a.handle)
                             , searchQuery = Nothing
                             , limit = 3
-                            , cursor = Nothing
+                            , cursor = Paginated.NoPageCursor
                             }
                       , fetchBranches FetchProjectBranchesFinished
                             appContext
@@ -90,7 +91,7 @@ init appContext projectRef =
                             { kind = ShareApi.ProjectBranches
                             , searchQuery = Nothing
                             , limit = 3
-                            , cursor = Nothing
+                            , cursor = Paginated.NoPageCursor
                             }
                       ]
                     )

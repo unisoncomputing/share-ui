@@ -42,6 +42,7 @@ import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Project.Release as Release exposing (Release)
@@ -423,7 +424,7 @@ fetchReleaseDrafts appContext projectRef =
             { kind = ShareApi.ProjectBranches
             , searchQuery = Just "releases/drafts/"
             , limit = 10
-            , cursor = Nothing
+            , cursor = Paginated.NoPageCursor
             }
     in
     ShareApi.projectBranches projectRef params

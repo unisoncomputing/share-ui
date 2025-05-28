@@ -25,6 +25,7 @@ import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
 import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Project.Release as Release exposing (Release)
 import UnisonShare.SearchBranchSheet as SearchBranchSheet
@@ -309,7 +310,7 @@ fetchLatestBranches appContext projectRef =
         { kind = ShareApi.ProjectBranches
         , searchQuery = Nothing
         , limit = 3
-        , cursor = Nothing
+        , cursor = Paginated.NoPageCursor
         }
         |> HttpApi.toRequest (Decode.field "items" (Decode.list BranchSummary.decode))
             (RemoteData.fromResult >> FetchLatestBranchesFinished)
