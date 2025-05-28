@@ -4,7 +4,7 @@ import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode exposing (Decoder)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Pipeline exposing (required, requiredAt)
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine(..))
@@ -148,11 +148,11 @@ changeLineById changeLineId branchDiff =
 decode : Decoder BranchDiff
 decode =
     let
-        mk oldRef oldRefHash newRef newRefHash changes children =
+        mk oldRef oldRefHash newRef newRefHash changes children libDeps =
             { oldBranch = { ref = oldRef, hash = oldRefHash }
             , newBranch = { ref = newRef, hash = newRefHash }
             , lines = changes ++ children
-            , libDeps = [] -- libDeps
+            , libDeps = libDeps
             }
 
         {- TODO backwards compat to support the new nesting with `defns` to be deployed before backend is ready -}
@@ -175,7 +175,4 @@ decode =
         |> required "newRefHash" Hash.decode
         |> required "diff" changeLines
         |> required "diff" namespaces
-
-
-
--- |> required "libdeps" LibDep.decodeList
+        |> requiredAt [ "diff", "libdeps" ] LibDep.decodeList

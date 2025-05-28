@@ -758,8 +758,8 @@ viewLibDep dep =
     let
         viewCard content =
             Card.card
-                content
-                |> Card.withClassName "lib-dep"
+                [ div [ class "definition-change-header" ] [ div [ class "change-line" ] content ] ]
+                |> Card.withClassName "definition-change lib-dep"
                 |> Card.asContained
                 |> Card.view
 
@@ -774,24 +774,37 @@ viewLibDep dep =
                         ]
                         [ Icon.view Icon.largeDot ]
                     )
+
+        viewTitle name =
+            let
+                fqn =
+                    FQN.fromList [ "lib", name ]
+            in
+            div [ class "change-title" ] [ FQN.view fqn ]
     in
     case dep of
         LibDep.Added { name } ->
             viewCard
-                [ changeIcon "added"
+                [ changeIcon "Added"
                 , div [ class "def-icon-anchor" ]
                     [ Tooltip.text "Lib dependency"
                         |> Tooltip.tooltip
                         |> Tooltip.withArrow Tooltip.Start
                         |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
                     ]
-                , strong [] [ text name ]
+                , div [ class "change-info" ] [ viewTitle name ]
                 ]
 
         LibDep.Removed { name } ->
             viewCard
-                [ changeIcon "removed"
-                , strong [] [ text name ]
+                [ changeIcon "Removed"
+                , div [ class "def-icon-anchor" ]
+                    [ Tooltip.text "Lib dependency"
+                        |> Tooltip.tooltip
+                        |> Tooltip.withArrow Tooltip.Start
+                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
+                    ]
+                , div [ class "change-info" ] [ viewTitle name ]
                 ]
 
 

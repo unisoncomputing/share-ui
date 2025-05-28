@@ -367,6 +367,7 @@
     & .icon.ability-constructor,
     & .icon.data-constructor,
     & .icon.doc,
+    & .icon.book,
     & .icon.test {
       color: var(--u-color_icon_subdued);
     }
@@ -380,7 +381,7 @@
       }
     }
 
-    & .change-title:hover .fully-qualified-name_segment {
+    & a.change-title:hover .fully-qualified-name_segment {
       color: var(--u-color_interactive);
     }
   }

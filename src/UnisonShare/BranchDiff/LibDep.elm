@@ -1,13 +1,12 @@
 module UnisonShare.BranchDiff.LibDep exposing (..)
 
-import Code.Hash as Hash exposing (Hash)
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (required)
 import Lib.Decode.Helpers exposing (failInvalid, whenTagIs)
 
 
 type alias LibDepInfo =
-    { hash : Hash, name : String }
+    { name : String }
 
 
 type LibDep
@@ -18,24 +17,22 @@ type LibDep
 decodeMaybe : Decode.Decoder (Maybe LibDep)
 decodeMaybe =
     let
-        makeAdded hash name =
-            Added { hash = hash, name = name }
+        makeAdded name =
+            Added { name = name }
 
-        makeRemoved hash name =
-            Removed { hash = hash, name = name }
+        makeRemoved name =
+            Removed { name = name }
     in
     Decode.oneOf
         [ whenTagIs "Added"
             (Decode.map Just
                 (Decode.succeed makeAdded
-                    |> required "hash" Hash.decode
                     |> required "name" Decode.string
                 )
             )
         , whenTagIs "Removed"
             (Decode.map Just
                 (Decode.succeed makeRemoved
-                    |> required "hash" Hash.decode
                     |> required "name" Decode.string
                 )
             )
