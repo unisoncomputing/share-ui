@@ -148,11 +148,11 @@ changeLineById changeLineId branchDiff =
 decode : Decoder BranchDiff
 decode =
     let
-        mk oldRef oldRefHash newRef newRefHash changes children libDeps =
+        mk oldRef oldRefHash newRef newRefHash changes children =
             { oldBranch = { ref = oldRef, hash = oldRefHash }
             , newBranch = { ref = newRef, hash = newRefHash }
             , lines = changes ++ children
-            , libDeps = libDeps
+            , libDeps = [] -- libDeps
             }
 
         {- TODO backwards compat to support the new nesting with `defns` to be deployed before backend is ready -}
@@ -175,4 +175,7 @@ decode =
         |> required "newRefHash" Hash.decode
         |> required "diff" changeLines
         |> required "diff" namespaces
-        |> required "libdeps" LibDep.decodeList
+
+
+
+-- |> required "libdeps" LibDep.decodeList

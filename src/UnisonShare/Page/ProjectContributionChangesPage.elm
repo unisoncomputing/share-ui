@@ -762,13 +762,37 @@ viewLibDep dep =
                 |> Card.withClassName "lib-dep"
                 |> Card.asContained
                 |> Card.view
+
+        changeIcon type_ =
+            Tooltip.text type_
+                |> Tooltip.tooltip
+                |> Tooltip.withArrow Tooltip.Start
+                |> Tooltip.view
+                    (span
+                        [ class "change-icon"
+                        , class (String.toLower type_)
+                        ]
+                        [ Icon.view Icon.largeDot ]
+                    )
     in
     case dep of
         LibDep.Added { name } ->
-            viewCard [ text "Added: ", strong [] [ text name ] ]
+            viewCard
+                [ changeIcon "added"
+                , div [ class "def-icon-anchor" ]
+                    [ Tooltip.text "Lib dependency"
+                        |> Tooltip.tooltip
+                        |> Tooltip.withArrow Tooltip.Start
+                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
+                    ]
+                , strong [] [ text name ]
+                ]
 
         LibDep.Removed { name } ->
-            viewCard [ text "Removed: ", strong [] [ text name ] ]
+            viewCard
+                [ changeIcon "removed"
+                , strong [] [ text name ]
+                ]
 
 
 viewLibDeps : List LibDep -> List (Html msg)
