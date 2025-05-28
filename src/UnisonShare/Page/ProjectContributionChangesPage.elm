@@ -7,7 +7,7 @@ import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
-import Html exposing (Html, br, code, div, h2, h3, p, pre, span, strong, text)
+import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
 import Json.Decode as Decode

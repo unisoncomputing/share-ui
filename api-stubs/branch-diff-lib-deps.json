@@ -3964,9 +3964,7 @@
                       }
                     ]
                   ],
-                  "termNames": [
-                    "encodeHtmlEntities"
-                  ]
+                  "termNames": ["encodeHtmlEntities"]
                 },
                 "right": {
                   "bestTermName": "encodeHtmlEntities",
@@ -5985,9 +5983,7 @@
                       }
                     ]
                   ],
-                  "termNames": [
-                    "encodeHtmlEntities"
-                  ]
+                  "termNames": ["encodeHtmlEntities"]
                 }
               },
               "fullName": "encodeHtmlEntities",
@@ -9273,9 +9269,7 @@
                       }
                     ]
                   ],
-                  "termNames": [
-                    "toText"
-                  ]
+                  "termNames": ["toText"]
                 },
                 "right": {
                   "bestTermName": "toText",
@@ -11068,9 +11062,7 @@
                       }
                     ]
                   ],
-                  "termNames": [
-                    "toText"
-                  ]
+                  "termNames": ["toText"]
                 }
               },
               "fullName": "toText",
@@ -12033,9 +12025,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "Attribute.toText"
-                        ]
+                        "termNames": ["Attribute.toText"]
                       },
                       "right": {
                         "bestTermName": "Attribute.toText",
@@ -12598,9 +12588,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "Attribute.toText"
-                        ]
+                        "termNames": ["Attribute.toText"]
                       }
                     },
                     "fullName": "Attribute.toText",
@@ -13520,9 +13508,7 @@
                                   }
                                 ]
                               ],
-                              "termNames": [
-                                "Attribute.toText.doc"
-                              ]
+                              "termNames": ["Attribute.toText.doc"]
                             },
                             "right": {
                               "bestTermName": "Attribute.toText.doc",
@@ -14058,9 +14044,7 @@
                                   }
                                 ]
                               ],
-                              "termNames": [
-                                "Attribute.toText.doc"
-                              ]
+                              "termNames": ["Attribute.toText.doc"]
                             }
                           },
                           "fullName": "Attribute.toText.doc",
@@ -17523,9 +17507,7 @@
                           "tag": "UserObject"
                         },
                         "termDocs": [],
-                        "termNames": [
-                          "encodeHtmlEntities.tests.ex1"
-                        ]
+                        "termNames": ["encodeHtmlEntities.tests.ex1"]
                       },
                       "right": {
                         "bestTermName": "encodeHtmlEntities.tests.ex1",
@@ -17723,9 +17705,7 @@
                           "tag": "UserObject"
                         },
                         "termDocs": [],
-                        "termNames": [
-                          "encodeHtmlEntities.tests.ex1"
-                        ]
+                        "termNames": ["encodeHtmlEntities.tests.ex1"]
                       }
                     },
                     "fullName": "encodeHtmlEntities.tests.ex1",
@@ -19038,9 +19018,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "toText.doc"
-                        ]
+                        "termNames": ["toText.doc"]
                       },
                       "right": {
                         "bestTermName": "toText.doc",
@@ -19847,9 +19825,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "toText.doc"
-                        ]
+                        "termNames": ["toText.doc"]
                       }
                     },
                     "fullName": "toText.doc",
@@ -20370,9 +20346,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "up.Text.trimLines"
-                        ]
+                        "termNames": ["up.Text.trimLines"]
                       },
                       "right": {
                         "bestTermName": "trimLines",
@@ -20677,9 +20651,7 @@
                             }
                           ]
                         ],
-                        "termNames": [
-                          "up.Text.trimLines"
-                        ]
+                        "termNames": ["up.Text.trimLines"]
                       }
                     },
                     "fullName": "up.Text.trimLines",
