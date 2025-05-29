@@ -198,8 +198,8 @@ viewErrorPage appContext subPage handle error =
     }
 
 
-viewLoadingPage : AppContext -> SubPage -> UserHandle -> AppDocument msg
-viewLoadingPage appContext subPage handle =
+viewLoadingPage : SubPage -> UserHandle -> AppDocument msg
+viewLoadingPage subPage handle =
     let
         ( page, pageId ) =
             case subPage of
@@ -239,10 +239,10 @@ view appContext handle model =
     in
     case model.user of
         NotAsked ->
-            viewLoadingPage appContext model.subPage handle
+            viewLoadingPage model.subPage handle
 
         Loading ->
-            viewLoadingPage appContext model.subPage handle
+            viewLoadingPage model.subPage handle
 
         Failure e ->
             viewErrorPage appContext model.subPage handle e
