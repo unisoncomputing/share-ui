@@ -31,7 +31,7 @@ view =
     in
     { pageId = "privacy-policy"
     , title = "Privacy Policy"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing

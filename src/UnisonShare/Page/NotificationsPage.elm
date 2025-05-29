@@ -526,7 +526,7 @@ view appContext model =
     in
     { pageId = "notifications-page"
     , title = "Notifications"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page =
         PageLayout.centeredNarrowLayout

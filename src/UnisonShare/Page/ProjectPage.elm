@@ -29,7 +29,6 @@ import UI.PageLayout as PageLayout
 import UI.Sidebar as Sidebar
 import UI.StatusBanner as StatusBanner
 import UI.StatusIndicator as StatusIndicator
-import UI.ViewMode as ViewMode exposing (ViewMode)
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
@@ -64,7 +63,7 @@ import UnisonShare.UcmCommand as UcmCommand
 type SubPage
     = Overview ProjectOverviewPage.Model
     | Branches ProjectBranchesPage.Model
-    | Code BranchRef ViewMode CodePage.Model
+    | Code BranchRef CodePage.Model
     | Release Version ProjectReleasePage.Model
     | Releases ProjectReleasesPage.Model
     | Contribution ContributionRef ProjectContributionPage.Model
@@ -112,7 +111,7 @@ init appContext projectRef route =
                     in
                     ( Branches branchesPage, Cmd.map ProjectBranchesPageMsg branchesCmd )
 
-                ProjectBranch branchRef vm codeRoute ->
+                ProjectBranch branchRef codeRoute ->
                     let
                         codeBrowsingContext =
                             CodeBrowsingContext.project projectRef branchRef
@@ -120,7 +119,7 @@ init appContext projectRef route =
                         ( codePage, codePageCmd ) =
                             CodePage.init appContext codeBrowsingContext codeRoute
                     in
-                    ( Code branchRef vm codePage, Cmd.map CodePageMsg codePageCmd )
+                    ( Code branchRef codePage, Cmd.map CodePageMsg codePageCmd )
 
                 ProjectContribution contribRef contribRoute ->
                     let
@@ -430,14 +429,14 @@ update appContext projectRef route msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( Code branchRef viewMode codePage, CodePageMsg codePageMsg ) ->
+        ( Code branchRef codePage, CodePageMsg codePageMsg ) ->
             case route of
-                Route.ProjectBranch _ _ cr ->
+                Route.ProjectBranch _ cr ->
                     let
                         ( codePage_, codePageCmd ) =
-                            CodePage.update appContext (codeBrowsingContext branchRef) viewMode cr codePageMsg codePage
+                            CodePage.update appContext (codeBrowsingContext branchRef) cr codePageMsg codePage
                     in
-                    ( { model | subPage = Code branchRef viewMode codePage_ }
+                    ( { model | subPage = Code branchRef codePage_ }
                     , Cmd.map CodePageMsg codePageCmd
                     )
 
@@ -650,12 +649,12 @@ updateSubPage appContext projectRef model route =
         codeBrowsingContext br =
             CodeBrowsingContext.project projectRef br
 
-        newCodePage branchRef vm codeRoute =
+        newCodePage branchRef codeRoute =
             let
                 ( codePage, codePageCmd ) =
                     CodePage.init appContext (codeBrowsingContext branchRef) codeRoute
             in
-            ( { model | subPage = Code branchRef vm codePage }
+            ( { model | subPage = Code branchRef codePage }
             , Cmd.map CodePageMsg codePageCmd
             )
     in
@@ -684,23 +683,23 @@ updateSubPage appContext projectRef model route =
                     in
                     ( { model | subPage = Branches branchesPage }, Cmd.map ProjectBranchesPageMsg branchesCmd )
 
-        ProjectBranch branchRef vm codeRoute ->
+        ProjectBranch branchRef codeRoute ->
             case model.subPage of
-                Code oldBranchRef _ codeSubPage ->
+                Code oldBranchRef codeSubPage ->
                     if BranchRef.equals oldBranchRef branchRef then
                         let
                             ( codePage, codePageCmd ) =
                                 CodePage.updateSubPage appContext (codeBrowsingContext branchRef) codeRoute codeSubPage
                         in
-                        ( { model | subPage = Code branchRef vm codePage }
+                        ( { model | subPage = Code branchRef codePage }
                         , Cmd.map CodePageMsg codePageCmd
                         )
 
                     else
-                        newCodePage branchRef vm codeRoute
+                        newCodePage branchRef codeRoute
 
                 _ ->
-                    newCodePage branchRef vm codeRoute
+                    newCodePage branchRef codeRoute
 
         ProjectContribution contribRef contribRoute ->
             let
@@ -843,7 +842,7 @@ subscriptions model =
         Overview _ ->
             Sub.map ProjectOverviewPageMsg ProjectOverviewPage.subscriptions
 
-        Code _ _ ucp ->
+        Code _ ucp ->
             Sub.map CodePageMsg (CodePage.subscriptions ucp)
 
         _ ->
@@ -1146,7 +1145,7 @@ viewErrorPage appContext subPage projectRef error =
                         PageFooter.pageFooter
                         |> PageLayout.withSubduedBackground
 
-                Code _ _ _ ->
+                Code _ _ ->
                     PageLayout.sidebarLeftContentLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -1198,7 +1197,7 @@ viewErrorPage appContext subPage projectRef error =
     in
     { pageId = "project-page project-page-error"
     , title = "Error loading " ++ ProjectRef.toString projectRef
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just pageHeader
     , page = PageLayout.view page
     , modal = Nothing
@@ -1216,7 +1215,7 @@ viewLoadingPage appContext subPage projectRef =
                 Branches _ ->
                     ( ProjectBranchesPage.viewLoadingPage projectRef, "project-branches-page" )
 
-                Code _ _ _ ->
+                Code _ _ ->
                     ( PageLayout.sidebarLeftContentLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -1272,7 +1271,7 @@ viewLoadingPage appContext subPage projectRef =
     in
     { pageId = "project-page project-page-loading " ++ pageId
     , title = "Loading " ++ ProjectRef.toString projectRef
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just (ProjectPageHeader.loading projectRef)
     , page = PageLayout.view page
     , modal = Nothing
@@ -1322,7 +1321,7 @@ viewProjectEmptyState session project modal =
     in
     { pageId = "project-page project-page-empty"
     , title = ProjectRef.toString project.ref
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just (ProjectPageHeader.disabled project.ref)
     , page = PageLayout.view page
     , modal = modal
@@ -1351,14 +1350,14 @@ view appContext projectRef model =
         title =
             ProjectRef.toString projectRef
 
-        appHeader vm =
-            AppHeader.withViewMode vm (AppHeader.appHeader AppHeader.None)
+        appHeader =
+            AppHeader.appHeader
 
         modal pageModal =
             case ( model.project, model.modal ) of
                 ( Success p, UseProjectModal ) ->
                     case model.subPage of
-                        Code br _ _ ->
+                        Code br _ ->
                             Just (viewUseProjectModal p (Just br))
 
                         _ ->
@@ -1398,7 +1397,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-overview-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader ProjectPageHeader.Overview
@@ -1419,7 +1418,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-branches-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader ProjectPageHeader.NoActiveNavItem
@@ -1430,17 +1429,14 @@ view appContext projectRef model =
                             , modal = modal (Maybe.map (Html.map ProjectBranchesPageMsg) modal_)
                             }
 
-                        Code branchRef viewMode_ codePage ->
+                        Code branchRef codePage ->
                             let
                                 ( codePage_, modal_ ) =
-                                    CodePage.view appContext
-                                        CodePageMsg
-                                        viewMode_
-                                        codePage
+                                    CodePage.view appContext CodePageMsg codePage
                             in
                             { pageId = "project-page code-page"
                             , title = title
-                            , appHeader = appHeader viewMode_
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader ProjectPageHeader.DocsAndCode
@@ -1462,7 +1458,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-release-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1481,7 +1477,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-releases-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1504,7 +1500,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-contribution-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1526,7 +1522,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-contributions-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1549,7 +1545,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-ticket-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1571,7 +1567,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-tickets-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader
@@ -1590,7 +1586,7 @@ view appContext projectRef model =
                             in
                             { pageId = "project-page project-settings-page"
                             , title = title
-                            , appHeader = appHeader ViewMode.Regular
+                            , appHeader = appHeader
                             , pageHeader =
                                 Just
                                     (pageHeader

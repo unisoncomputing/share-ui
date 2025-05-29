@@ -34,7 +34,7 @@ view =
     in
     { pageId = "terms-of-service"
     , title = "Terms of Service"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing

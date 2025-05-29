@@ -145,7 +145,7 @@ viewErrorPage appContext handle error =
     in
     { pageId = "org-page org-page-error"
     , title = UserHandle.toString handle ++ " | Error"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just (OrgPageHeader.error handle)
     , page = PageLayout.view page
     , modal = Nothing
@@ -156,7 +156,7 @@ viewLoadingPage : AppContext -> SubPage -> UserHandle -> AppDocument msg
 viewLoadingPage _ _ handle =
     { pageId = "org-page org-page_loading "
     , title = UserHandle.toString handle ++ " | Loading..."
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just OrgPageHeader.loading
     , page =
         PageLayout.centeredNarrowLayout (PageContent.oneColumn [ text "" ])
@@ -204,7 +204,7 @@ view appContext handle model =
                         in
                         { pageId = pageId
                         , title = UserHandle.toString handle ++ " | " ++ pageTitle
-                        , appHeader = AppHeader.appHeader AppHeader.None
+                        , appHeader = AppHeader.appHeader
                         , pageHeader = Just (orgPageHeader activeNavItem)
                         , page = page
                         , modal = modal

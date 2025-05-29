@@ -634,9 +634,6 @@ subscriptions model =
     let
         sub =
             case model.page of
-                User _ _ up ->
-                    Sub.map UserPageMsg (UserPage.subscriptions up)
-
                 Project _ _ pp ->
                     Sub.map ProjectPageMsg (ProjectPage.subscriptions pp)
 

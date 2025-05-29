@@ -62,7 +62,7 @@ view appContext appError =
     in
     { pageId = "error-page"
     , title = "Something went wrong 😞"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing

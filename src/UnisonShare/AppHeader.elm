@@ -17,7 +17,6 @@ import UI.Icon as Icon
 import UI.Navigation as Navigation exposing (NavItem)
 import UI.Nudge as Nudge
 import UI.Sizing as Sizing
-import UI.ViewMode as ViewMode exposing (ViewMode)
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
 import Url exposing (Url)
@@ -25,17 +24,8 @@ import WhatsNew exposing (WhatsNew)
 
 
 type AppHeader
-    = Disabled ViewMode
+    = Disabled
     | AppHeader
-        { activeNavItem : ActiveNavItem
-        , viewMode : ViewMode
-        }
-
-
-type ActiveNavItem
-    = None
-    | Catalog
-    | Profile
 
 
 
@@ -44,39 +34,12 @@ type ActiveNavItem
 
 empty : AppHeader
 empty =
-    Disabled ViewMode.Regular
+    Disabled
 
 
-appHeader : ActiveNavItem -> AppHeader
-appHeader activeNavItem =
-    empty |> withActiveNavItem activeNavItem
-
-
-
--- MODIFY
-
-
-withViewMode : ViewMode -> AppHeader -> AppHeader
-withViewMode vm appHeader_ =
-    case appHeader_ of
-        Disabled _ ->
-            Disabled vm
-
-        AppHeader a ->
-            AppHeader { a | viewMode = vm }
-
-
-withActiveNavItem : ActiveNavItem -> AppHeader -> AppHeader
-withActiveNavItem activeNavItem appHeader_ =
-    case appHeader_ of
-        Disabled vm ->
-            AppHeader
-                { activeNavItem = activeNavItem
-                , viewMode = vm
-                }
-
-        AppHeader a ->
-            AppHeader { a | activeNavItem = activeNavItem }
+appHeader : AppHeader
+appHeader =
+    AppHeader
 
 
 
@@ -144,10 +107,10 @@ isCreateAccountMenuOpen openedAppHeaderMenu =
 view : AppHeaderContext msg -> AppHeader -> Html msg
 view ctx appHeader_ =
     case appHeader_ of
-        Disabled viewMode ->
-            viewBlank viewMode
+        Disabled ->
+            viewBlank
 
-        AppHeader { activeNavItem, viewMode } ->
+        AppHeader ->
             let
                 whatsNewItemsLoading =
                     [ ActionMenu.loadingItem
@@ -229,7 +192,7 @@ view ctx appHeader_ =
                 loginLink =
                     Link.login ctx.api
 
-                ( navigation, rightSide ) =
+                rightSide =
                     case ctx.session of
                         Anonymous ->
                             let
@@ -274,43 +237,22 @@ view ctx appHeader_ =
                                         )
                                         |> AnchoredOverlay.withSheet_ (isCreateAccountMenuOpen ctx.openedAppHeaderMenu) createAccountSheet
                                         |> AnchoredOverlay.view
-
-                                nav =
-                                    case activeNavItem of
-                                        Catalog ->
-                                            Navigation.empty |> Navigation.withItems [] navItems.catalog []
-
-                                        _ ->
-                                            Navigation.empty |> Navigation.withNoSelectedItems [ navItems.catalog ]
                             in
-                            ( nav
-                            , [ div
-                                    [ class "sign-in-nav sign-in-nav_desktop" ]
-                                    [ helpAndResources False
-                                    , signIn
-                                    , createAccount
-                                    ]
-                              , div [ class "sign-in-nav sign-in-nav_mobile" ]
-                                    [ helpAndResources True
-                                    , signIn
-                                    , createAccount
-                                    ]
-                              ]
-                            )
+                            [ div
+                                [ class "sign-in-nav sign-in-nav_desktop" ]
+                                [ helpAndResources False
+                                , signIn
+                                , createAccount
+                                ]
+                            , div [ class "sign-in-nav sign-in-nav_mobile" ]
+                                [ helpAndResources True
+                                , signIn
+                                , createAccount
+                                ]
+                            ]
 
                         SignedIn account ->
                             let
-                                nav =
-                                    case activeNavItem of
-                                        Catalog ->
-                                            Navigation.empty |> Navigation.withItems [] navItems.catalog [ navItems.profile account.handle ]
-
-                                        Profile ->
-                                            Navigation.empty |> Navigation.withItems [ navItems.catalog ] (navItems.profile account.handle) []
-
-                                        _ ->
-                                            Navigation.empty |> Navigation.withNoSelectedItems [ navItems.catalog, navItems.profile account.handle ]
-
                                 avatar =
                                     Avatar.avatar account.avatarUrl (Maybe.map (String.left 1) account.name)
                                         |> Avatar.view
@@ -339,29 +281,26 @@ view ctx appHeader_ =
 
                                 accountMenu =
                                     ActionMenu.items
-                                        (ActionMenu.optionItem Icon.cog "Account Settings" Link.account)
-                                        [ ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.api ctx.currentUrl) ]
+                                        (ActionMenu.optionItem Icon.user "Profile" (Link.userProfile account.handle))
+                                        [ ActionMenu.optionItem Icon.cog "Account Settings" Link.account
+                                        , ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.api ctx.currentUrl)
+                                        ]
                                         |> ActionMenu.fromCustom ctx.toggleAccountMenuMsg viewAccountMenuTrigger
                                         |> ActionMenu.shouldBeOpen (isAccountMenuOpen ctx.openedAppHeaderMenu)
                                         |> ActionMenu.view
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
-                            ( nav
-                            , [ div [ class "signed-in-nav signed-in-nav_desktop" ] [ newOrgButton, helpAndResources False, accountMenu ]
-                              , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
-                              ]
-                            )
+                            [ div [ class "signed-in-nav signed-in-nav_desktop" ] [ newOrgButton, helpAndResources False, accountMenu ]
+                            , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
+                            ]
             in
             UI.AppHeader.appHeader (appTitle (Click.href "/"))
-                |> UI.AppHeader.withNavigation navigation
                 |> UI.AppHeader.withRightSide rightSide
-                |> UI.AppHeader.withViewMode viewMode
                 |> UI.AppHeader.view
 
 
-viewBlank : ViewMode -> Html msg
-viewBlank viewMode =
+viewBlank : Html msg
+viewBlank =
     appTitle Click.Disabled
         |> UI.AppHeader.appHeader
-        |> UI.AppHeader.withViewMode viewMode
         |> UI.AppHeader.view

@@ -72,15 +72,6 @@
   flex-grow: 1;
 }
 
-.code-page .sidebar .perspective-actions .download,
-.code-page .sidebar .perspective-actions .download .button {
-  flex-grow: 1;
-}
-
-.code-page .sidebar .perspective-actions .download .button .icon {
-  flex-grow: 0;
-}
-
 .code-page .sidebar .perspective-actions .tooltip {
   margin-left: -0.3rem;
   margin-top: 0.5rem;

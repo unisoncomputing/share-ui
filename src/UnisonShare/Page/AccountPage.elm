@@ -325,7 +325,7 @@ view account model =
     in
     { pageId = "account"
     , title = "Account"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = modal

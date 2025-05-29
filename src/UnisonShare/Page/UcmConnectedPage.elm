@@ -40,7 +40,7 @@ view account =
     in
     { pageId = "ucm-connected"
     , title = "UCM Connected"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing

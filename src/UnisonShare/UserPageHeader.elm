@@ -12,8 +12,8 @@ import UnisonShare.User exposing (User)
 
 type ActiveNavItem
     = UserProfile
-    | Code
     | Contributions
+    | Code
 
 
 
@@ -58,23 +58,23 @@ view session toggleMobileNavMsg mobileNavIsOpen activeNavItem handle user =
             if Session.isHandle handle session then
                 if activeNavItem == Code then
                     Nav.withItems
-                        []
-                        (Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability)
                         [ Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch ]
+                        (Nav.navItem "Non-project Code (deprecated)" (Link.userCode handle) |> Nav.navItemWithIcon Icon.documentCode)
+                        []
                         Nav.empty
 
                 else if activeNavItem == Contributions then
                     Nav.withItems
-                        [ Nav.navItem "Code" (Link.userCodeRoot handle) |> Nav.navItemWithIcon Icon.ability ]
-                        (Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch)
                         []
+                        (Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch)
+                        [ Nav.navItem "Non-project Code (deprecated)" (Link.userCode handle) |> Nav.navItemWithIcon Icon.documentCode ]
                         Nav.empty
 
                 else
                     Nav.withNoSelectedItems
-                        [ Nav.navItem "Code" (Link.userCodeRoot handle)
-                            |> Nav.navItemWithIcon Icon.ability
-                        , Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch
+                        [ Nav.navItem "Contributions" (Link.userContributions handle) |> Nav.navItemWithIcon Icon.branch
+                        , Nav.navItem "Non-project Code (deprecated)" (Link.userCode handle)
+                            |> Nav.navItemWithIcon Icon.documentCode
                         ]
                         Nav.empty
 
