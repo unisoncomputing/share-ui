@@ -41,7 +41,7 @@ view session =
     in
     { pageId = "cloud-page"
     , title = "Unison Cloud"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing

@@ -317,6 +317,6 @@ view appContext model =
     , title = "Catalog"
     , pageHeader = Nothing
     , page = PageLayout.view page
-    , appHeader = AppHeader.appHeader AppHeader.Catalog
+    , appHeader = AppHeader.appHeader
     , modal = modal
     }

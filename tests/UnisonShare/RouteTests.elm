@@ -8,7 +8,6 @@ import Code.Version as Version
 import Expect
 import Lib.UserHandle as UserHandle
 import Test exposing (..)
-import UI.ViewMode as ViewMode
 import UnisonShare.AppError as AppError
 import UnisonShare.Project.ProjectRef as ProjectRef
 import UnisonShare.Route as Route exposing (CodeRoute(..), ProjectRoute(..), Route(..), UserRoute(..))
@@ -160,67 +159,6 @@ userContributionsRoute =
         ]
 
 
-userCodeRoute : Test
-userCodeRoute =
-    describe "Route.fromUrl : user code route"
-        [ test "Matches /:handle/p/code/latest to UserCode" <|
-            \_ ->
-                let
-                    url =
-                        mkUrl "/@unison/p/code/latest"
-                in
-                Expect.equal
-                    (User (UserHandle.unsafeFromString "unison")
-                        (UserCode
-                            (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
-                        )
-                    )
-                    (Route.fromUrl "" url)
-        , test "Matches /:handle/p/code/latest/namespaces/data/List to UserCode with a perspective" <|
-            \_ ->
-                let
-                    url =
-                        mkUrl "/@unison/p/code/latest/namespaces/data/List"
-                in
-                Expect.equal
-                    (User (UserHandle.unsafeFromString "unison")
-                        (UserCode
-                            (CodeRoot (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List"))))
-                        )
-                    )
-                    (Route.fromUrl "" url)
-        , test "Matches /:handle/p/code/latest/terms/data/List/map to UserCode with a definition" <|
-            \_ ->
-                let
-                    url =
-                        mkUrl "/@unison/p/code/latest/terms/data/List/map"
-                in
-                Expect.equal
-                    (User (UserHandle.unsafeFromString "unison")
-                        (UserCode
-                            (Definition (Perspective.toParams Perspective.relativeRootPerspective) (termRef "data.List.map"))
-                        )
-                    )
-                    (Route.fromUrl "" url)
-        , test "Matches /:handle/p/code/latest/namespaces/data/List/;/terms/map to UserCode with a perspective and definition" <|
-            \_ ->
-                let
-                    url =
-                        mkUrl "/@unison/p/code/latest/namespaces/data/List/;/terms/map"
-                in
-                Expect.equal
-                    (User (UserHandle.unsafeFromString "unison")
-                        (UserCode
-                            (Definition
-                                (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List")))
-                                (termRef "map")
-                            )
-                        )
-                    )
-                    (Route.fromUrl "" url)
-        ]
-
-
 
 -- PROJECTS ROUTE
 
@@ -272,7 +210,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "main")
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
                         )
                     )
@@ -287,7 +224,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "user/branch")
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
                         )
                     )
@@ -302,7 +238,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "releases/drafts/1.2.3")
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
                         )
                     )
@@ -317,7 +252,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "releases/1.2.3")
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams Perspective.relativeRootPerspective))
                         )
                     )
@@ -332,7 +266,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "main")
-                            ViewMode.Regular
                             (CodeRoot (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List"))))
                         )
                     )
@@ -347,7 +280,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "main")
-                            ViewMode.Regular
                             (Definition (Perspective.toParams Perspective.relativeRootPerspective) (termRef "data.List.map"))
                         )
                     )
@@ -362,7 +294,6 @@ projectBranchRoute =
                     (Project (ProjectRef.unsafeFromString "unison" "base")
                         (ProjectBranch
                             (BranchRef.unsafeFromString "main")
-                            ViewMode.Regular
                             (Definition
                                 (Perspective.toParams (Perspective.namespacePerspective (fqn "data.List")))
                                 (termRef "map")

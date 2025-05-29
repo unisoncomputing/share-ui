@@ -1,10 +1,12 @@
 module UnisonShare.Page.UserPage exposing (..)
 
-import Html exposing (h2, text)
+import Html exposing (div, h1, h2, p, text)
+import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import RemoteData exposing (RemoteData(..), WebData)
+import UI.CopyField as CopyField
 import UI.EmptyState as EmptyState
 import UI.EmptyStateCard as EmptyStateCard
 import UI.Icon as Icon
@@ -12,16 +14,14 @@ import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
 import UI.Sidebar as Sidebar
 import UI.StatusMessage as StatusMessage
-import UI.ViewMode as ViewMode
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Page.CodePage as CodePage
 import UnisonShare.Page.UserContributionsPage as UserContributionsPage
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Route as Route exposing (CodeRoute, UserRoute(..))
+import UnisonShare.Route exposing (UserRoute(..))
 import UnisonShare.Session as Session
 import UnisonShare.User as User exposing (UserDetails)
 import UnisonShare.UserPageHeader as UserPageHeader
@@ -32,7 +32,7 @@ import UnisonShare.UserPageHeader as UserPageHeader
 
 
 type SubPage
-    = Code CodePage.Model
+    = Code
     | Contributions UserContributionsPage.Model
 
 
@@ -46,17 +46,10 @@ type alias Model =
 init : AppContext -> UserHandle -> UserRoute -> ( Model, Cmd Msg )
 init appContext handle userRoute =
     let
-        codeBrowsingContext =
-            CodeBrowsingContext.UserCode handle
-
         ( subPage, cmd ) =
             case userRoute of
-                UserCode codeRoute ->
-                    let
-                        ( codePage, codePageCmd ) =
-                            CodePage.init appContext codeBrowsingContext codeRoute
-                    in
-                    ( Code codePage, Cmd.map CodePageMsg codePageCmd )
+                UserCode ->
+                    ( Code, Cmd.none )
 
                 UserContributions ->
                     let
@@ -81,14 +74,15 @@ init appContext handle userRoute =
 
 
 type Msg
-    = FetchUserFinished (WebData UserDetails)
+    = NoOp
+    | FetchUserFinished (WebData UserDetails)
     | ToggleMobileNav
     | CodePageMsg CodePage.Msg
     | UserContributionsPageMsg UserContributionsPage.Msg
 
 
 update : AppContext -> UserHandle -> UserRoute -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext handle route msg model =
+update appContext handle _ msg model =
     case ( model.subPage, msg ) of
         ( _, FetchUserFinished u ) ->
             ( { model | user = u }, Cmd.none )
@@ -97,24 +91,6 @@ update appContext handle route msg model =
             ( { model | mobileNavIsOpen = not model.mobileNavIsOpen }, Cmd.none )
 
         -- Sub msgs
-        ( Code codePage, CodePageMsg codePageMsg ) ->
-            let
-                codeBrowsingContext =
-                    CodeBrowsingContext.UserCode handle
-            in
-            case route of
-                Route.UserCode cr ->
-                    let
-                        ( codePage_, codePageCmd ) =
-                            CodePage.update appContext codeBrowsingContext ViewMode.Regular cr codePageMsg codePage
-                    in
-                    ( { model | subPage = Code codePage_ }
-                    , Cmd.map CodePageMsg codePageCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         ( Contributions contributionsPage, UserContributionsPageMsg userContributionsPageMsg ) ->
             let
                 ( contributionsPage_, contributionsCmd ) =
@@ -130,28 +106,9 @@ update appContext handle route msg model =
 -}
 updateSubPage : AppContext -> UserHandle -> Model -> UserRoute -> ( Model, Cmd Msg )
 updateSubPage appContext handle model route =
-    let
-        codeBrowsingContext =
-            CodeBrowsingContext.UserCode handle
-    in
     case route of
-        UserCode codeRoute ->
-            case model.subPage of
-                Code codeSubPage ->
-                    let
-                        ( codePage, codePageCmd ) =
-                            CodePage.updateSubPage appContext codeBrowsingContext codeRoute codeSubPage
-                    in
-                    ( { model | subPage = Code codePage }
-                    , Cmd.map CodePageMsg codePageCmd
-                    )
-
-                _ ->
-                    let
-                        ( codePage, codePageCmd ) =
-                            CodePage.init appContext codeBrowsingContext codeRoute
-                    in
-                    ( { model | subPage = Code codePage }, Cmd.map CodePageMsg codePageCmd )
+        UserCode ->
+            ( { model | subPage = Code }, Cmd.none )
 
         UserContributions ->
             case model.subPage of
@@ -167,26 +124,7 @@ updateSubPage appContext handle model route =
 
 
 
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model.subPage of
-        Code ucp ->
-            Sub.map CodePageMsg (CodePage.subscriptions ucp)
-
-        _ ->
-            Sub.none
-
-
-
 -- EFFECTS
-
-
-navigateToCode : AppContext -> UserHandle -> CodeRoute -> Cmd Msg
-navigateToCode appContext handle codeRoute =
-    Route.navigate appContext.navKey (Route.userCode handle codeRoute)
 
 
 fetchUser : AppContext -> UserHandle -> Cmd Msg
@@ -219,7 +157,7 @@ viewErrorPage appContext subPage handle error =
     let
         page =
             case ( error, subPage ) of
-                ( Http.BadStatus 404, Code _ ) ->
+                ( Http.BadStatus 404, Code ) ->
                     PageLayout.sidebarEdgeToEdgeLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -238,7 +176,7 @@ viewErrorPage appContext subPage handle error =
                         PageFooter.pageFooter
                         |> PageLayout.withSubduedBackground
 
-                ( _, Code _ ) ->
+                ( _, Code ) ->
                     PageLayout.sidebarEdgeToEdgeLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -253,7 +191,7 @@ viewErrorPage appContext subPage handle error =
     in
     { pageId = "user-page user-page-error"
     , title = UserHandle.toString handle ++ " | Error"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just UserPageHeader.error
     , page = PageLayout.view page
     , modal = Nothing
@@ -265,7 +203,7 @@ viewLoadingPage appContext subPage handle =
     let
         ( page, pageId ) =
             case subPage of
-                Code _ ->
+                Code ->
                     ( PageLayout.sidebarLeftContentLayout
                         appContext.operatingSystem
                         (Sidebar.empty "main-sidebar")
@@ -279,7 +217,7 @@ viewLoadingPage appContext subPage handle =
     in
     { pageId = "user-page user-page_loading " ++ pageId
     , title = UserHandle.toString handle ++ " | Loading..."
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Just UserPageHeader.loading
     , page = PageLayout.view page
     , modal = Nothing
@@ -316,7 +254,7 @@ view appContext handle model =
                 Contributions contributionsPage ->
                     { pageId = "user-page user-contributions-page"
                     , title = handle_ ++ " | Contributions"
-                    , appHeader = AppHeader.appHeader AppHeader.None
+                    , appHeader = AppHeader.appHeader
                     , pageHeader = Just (userProfilePageHeader UserPageHeader.Contributions user)
                     , page =
                         UserContributionsPage.view handle contributionsPage
@@ -325,25 +263,39 @@ view appContext handle model =
                     , modal = Nothing
                     }
 
-                Code codeSubPage ->
+                Code ->
                     let
                         pageTitle =
                             handle_ ++ " | Code"
-
-                        appDoc page modal =
-                            { pageId = "user-page code-page"
-                            , title = pageTitle
-                            , appHeader =
-                                AppHeader.appHeader AppHeader.None
-                            , pageHeader = Just (userProfilePageHeader UserPageHeader.Code user)
-                            , page = PageLayout.view page
-                            , modal = modal
-                            }
-
-                        ( codePage, modal_ ) =
-                            CodePage.view appContext
-                                CodePageMsg
-                                ViewMode.Regular
-                                codeSubPage
                     in
-                    appDoc codePage modal_
+                    { pageId = "user-page code-page"
+                    , title = pageTitle
+                    , appHeader = AppHeader.appHeader
+                    , pageHeader = Just (userProfilePageHeader UserPageHeader.Code user)
+                    , page =
+                        PageLayout.centeredNarrowLayout
+                            (PageContent.oneColumn
+                                [ h1 [] [ text "Non-project Code" ]
+                                , EmptyState.iconCloud
+                                    (EmptyState.IconCenterPiece Icon.documentCode)
+                                    |> EmptyState.withContent
+                                        [ h2 [] [ text "Code outside of projects are deprecated" ]
+                                        , p []
+                                            [ text "If you have any on Unison Share, you can pull it into a new project: " ]
+                                        , div [ class "pull-instructions" ]
+                                            [ CopyField.copyField (\_ -> NoOp) "project.create-empty backup-public"
+                                                |> CopyField.withPrefix "scratch/main>"
+                                                |> CopyField.view
+                                            , CopyField.copyField (\_ -> NoOp) ("pull " ++ UserHandle.toUnprefixedString user.handle ++ ".public")
+                                                |> CopyField.withPrefix "backup-project/main>"
+                                                |> CopyField.view
+                                            ]
+                                        ]
+                                    |> EmptyStateCard.view
+                                ]
+                            )
+                            PageFooter.pageFooter
+                            |> PageLayout.withSubduedBackground
+                            |> PageLayout.view
+                    , modal = Nothing
+                    }

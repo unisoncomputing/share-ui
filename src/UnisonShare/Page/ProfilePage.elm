@@ -188,7 +188,7 @@ viewErrorPage handle error =
     in
     { pageId = "profile-page profile-page-error"
     , title = UserHandle.toString handle ++ " | Error"
-    , appHeader = AppHeader.appHeader AppHeader.None
+    , appHeader = AppHeader.appHeader
     , pageHeader = Nothing
     , page = PageLayout.view page
     , modal = Nothing
@@ -201,7 +201,7 @@ view appContext model =
         appDoc pageId pageHeader pageTitle page modal =
             { pageId = pageId
             , title = pageTitle
-            , appHeader = AppHeader.appHeader AppHeader.None
+            , appHeader = AppHeader.appHeader
             , pageHeader = pageHeader
             , page = PageLayout.view page
             , modal = modal

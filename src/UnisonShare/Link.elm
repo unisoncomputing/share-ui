@@ -219,27 +219,9 @@ userProfile =
     Route.userProfile >> toClick
 
 
-userDefinition : UserHandle -> Perspective -> Reference -> Click msg
-userDefinition handle_ pers ref =
-    toClick (Route.userDefinition handle_ pers ref)
-
-
-userCodeRoot : UserHandle -> Click msg
-userCodeRoot handle_ =
-    let
-        pers =
-            Perspective.relativeRootPerspective
-    in
-    toClick (Route.userCodeRoot handle_ pers)
-
-
-userNamespaceRoot : UserHandle -> FQN -> Click msg
-userNamespaceRoot handle_ namespaceFqn =
-    let
-        pers =
-            Perspective.namespacePerspective namespaceFqn
-    in
-    toClick (Route.userCodeRoot handle_ pers)
+userCode : UserHandle -> Click msg
+userCode =
+    Route.userCode >> toClick
 
 
 userContributions : UserHandle -> Click msg

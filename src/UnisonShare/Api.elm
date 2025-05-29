@@ -1268,9 +1268,6 @@ catalog =
 baseCodePathFromContext : CodeBrowsingContext -> List String
 baseCodePathFromContext context =
     case context of
-        UserCode h ->
-            [ "codebases", UserHandle.toUnprefixedString h ]
-
         ProjectBranch pr br ->
             let
                 ( handle, slug ) =

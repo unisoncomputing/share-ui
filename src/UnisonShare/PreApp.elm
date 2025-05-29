@@ -13,7 +13,6 @@ import UI.DateTime as DateTime
 import UI.Icon as Icon
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout
-import UI.ViewMode as ViewMode
 import UnisonShare.Api as ShareApi
 import UnisonShare.App as App
 import UnisonShare.AppContext as AppContext exposing (Flags)
@@ -140,7 +139,7 @@ subscriptions model =
 viewAppLoading : Html msg
 viewAppLoading =
     div [ id "app" ]
-        [ AppHeader.viewBlank ViewMode.Regular
+        [ AppHeader.viewBlank
         , PageLayout.view
             (PageLayout.centeredLayout
                 PageContent.empty
@@ -171,7 +170,7 @@ viewAppError error =
                     ( "Unison Share is unavailable.", "An error occurred on our end." )
     in
     div [ id "app" ]
-        [ AppHeader.viewBlank ViewMode.Regular
+        [ AppHeader.viewBlank
         , PageLayout.view
             (PageLayout.centeredLayout
                 (PageContent.oneColumn

@@ -1,0 +1,7 @@
+.user-page.code-page .pull-instructions {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}

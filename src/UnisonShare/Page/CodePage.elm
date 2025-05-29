@@ -19,7 +19,6 @@ import UI.KeyboardShortcut.KeyboardEvent as KeyboardEvent exposing (KeyboardEven
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.Sidebar as Sidebar exposing (Sidebar)
-import UI.ViewMode as ViewMode exposing (ViewMode)
 import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Page.CodePageContent as CodePageContent
@@ -126,8 +125,8 @@ type Msg
     | WorkspaceMsg Workspace.Msg
 
 
-update : AppContext -> CodeBrowsingContext -> ViewMode -> CodeRoute -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext context viewMode codeRoute msg model_ =
+update : AppContext -> CodeBrowsingContext -> CodeRoute -> Msg -> Model -> ( Model, Cmd Msg )
+update appContext context codeRoute msg model_ =
     let
         -- Always update the subPage since url/route changes often happens out
         -- of band.
@@ -306,7 +305,7 @@ update appContext context viewMode codeRoute msg model_ =
         ( WorkspacePage workspace, WorkspaceMsg workspaceMsg ) ->
             let
                 ( workspace_, workspaceCmd, outMsg ) =
-                    Workspace.update model.config viewMode workspaceMsg workspace
+                    Workspace.update model.config workspaceMsg workspace
 
                 ( m, outCmd ) =
                     case outMsg of
@@ -477,9 +476,6 @@ navigateToCode appContext context codeRoute =
     let
         route_ =
             case context of
-                UserCode h ->
-                    Route.userCode h codeRoute
-
                 ProjectBranch ps bs ->
                     Route.projectBranch ps bs codeRoute
     in
@@ -507,8 +503,8 @@ subscriptions model =
 -- VIEW
 
 
-viewContent : ViewMode -> Perspective -> CodeContent -> PageContent Msg
-viewContent viewMode perspective content =
+viewContent : Perspective -> CodeContent -> PageContent Msg
+viewContent perspective content =
     case content of
         PerspectivePage readmeCard ->
             PageContent.oneColumn
@@ -520,7 +516,7 @@ viewContent viewMode perspective content =
                 )
 
         WorkspacePage workspace ->
-            PageContent.oneColumn [ Html.map WorkspaceMsg (Workspace.view viewMode workspace) ]
+            PageContent.oneColumn [ Html.map WorkspaceMsg (Workspace.view workspace) ]
 
 
 viewSidebar : Model -> Sidebar Msg
@@ -540,11 +536,11 @@ viewSidebar model =
             { isToggled = model.sidebarToggled, toggleMsg = ToggleSidebar }
 
 
-view : AppContext -> (Msg -> msg) -> ViewMode -> Model -> ( PageLayout msg, Maybe (Html msg) )
-view appContext toMsg viewMode model =
+view : AppContext -> (Msg -> msg) -> Model -> ( PageLayout msg, Maybe (Html msg) )
+view appContext toMsg model =
     let
         content =
-            PageContent.map toMsg (viewContent viewMode model.config.perspective model.content)
+            PageContent.map toMsg (viewContent model.config.perspective model.content)
 
         modal =
             case model.modal of
@@ -554,8 +550,8 @@ view appContext toMsg viewMode model =
                 FinderModal fm ->
                     Just (Html.map toMsg (Html.map FinderMsg (Finder.view fm)))
     in
-    case ( model.content, viewMode ) of
-        ( PerspectivePage _, ViewMode.Regular ) ->
+    case model.content of
+        PerspectivePage _ ->
             ( PageLayout.sidebarLeftContentLayout
                 appContext.operatingSystem
                 (Sidebar.map toMsg (viewSidebar model))
@@ -565,7 +561,7 @@ view appContext toMsg viewMode model =
             , modal
             )
 
-        ( WorkspacePage _, ViewMode.Regular ) ->
+        WorkspacePage _ ->
             ( PageLayout.sidebarLeftContentLayout
                 appContext.operatingSystem
                 (Sidebar.map toMsg (viewSidebar model))
@@ -575,6 +571,3 @@ view appContext toMsg viewMode model =
                 |> PageLayout.withSubduedBackground
             , modal
             )
-
-        ( _, ViewMode.Presentation ) ->
-            ( PageLayout.PresentationLayout content, modal )

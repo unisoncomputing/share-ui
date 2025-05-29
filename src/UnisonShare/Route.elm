@@ -44,9 +44,7 @@ module UnisonShare.Route exposing
     , toUrlString
     , ucmConnected
     , userCode
-    , userCodeRoot
     , userContributions
-    , userDefinition
     , userProfile
     )
 
@@ -75,7 +73,6 @@ import Code.Version as Version exposing (Version)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import List.Nonempty as NEL
 import Parser exposing ((|.), (|=), Parser, oneOf, succeed, symbol)
-import UI.ViewMode as ViewMode exposing (ViewMode)
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
@@ -94,7 +91,7 @@ type CodeRoute
 
 type UserRoute
     = UserContributions
-    | UserCode CodeRoute
+    | UserCode
 
 
 type OrgRoute
@@ -110,7 +107,7 @@ type ProjectContributionRoute
 type ProjectRoute
     = ProjectOverview
     | ProjectBranches
-    | ProjectBranch BranchRef ViewMode CodeRoute
+    | ProjectBranch BranchRef CodeRoute
     | ProjectRelease Version
     | ProjectReleases
     | ProjectTicket TicketRef
@@ -198,27 +195,9 @@ orgSettings handle_ =
     Org handle_ OrgSettings
 
 
-userCode : UserHandle -> CodeRoute -> Route
-userCode handle_ codeRoute =
-    User handle_ (UserCode codeRoute)
-
-
-userDefinition : UserHandle -> Perspective -> Reference -> Route
-userDefinition handle_ pers ref =
-    let
-        pp =
-            Perspective.toParams pers
-    in
-    User handle_ (UserCode (Definition pp ref))
-
-
-userCodeRoot : UserHandle -> Perspective -> Route
-userCodeRoot handle_ pers =
-    let
-        pp =
-            Perspective.toParams pers
-    in
-    User handle_ (UserCode (CodeRoot pp))
+userCode : UserHandle -> Route
+userCode handle_ =
+    User handle_ UserCode
 
 
 userContributions : UserHandle -> Route
@@ -233,7 +212,7 @@ projectOverview projectRef_ =
 
 projectBranch : ProjectRef -> BranchRef -> CodeRoute -> Route
 projectBranch projectRef_ branchRef_ codeRoute =
-    Project projectRef_ (ProjectBranch branchRef_ ViewMode.Regular codeRoute)
+    Project projectRef_ (ProjectBranch branchRef_ codeRoute)
 
 
 projectBranches : ProjectRef -> Route
@@ -292,7 +271,7 @@ projectBranchDefinition projectRef_ branchRef_ pers ref =
         pp =
             Perspective.toParams pers
     in
-    Project projectRef_ (ProjectBranch branchRef_ ViewMode.Regular (Definition pp ref))
+    Project projectRef_ (ProjectBranch branchRef_ (Definition pp ref))
 
 
 projectBranchRoot : ProjectRef -> BranchRef -> Perspective -> Route
@@ -301,7 +280,7 @@ projectBranchRoot projectRef_ branchRef pers =
         pp =
             Perspective.toParams pers
     in
-    Project projectRef_ (ProjectBranch branchRef ViewMode.Regular (CodeRoot pp))
+    Project projectRef_ (ProjectBranch branchRef (CodeRoot pp))
 
 
 definition : Perspective -> Reference -> CodeRoute
@@ -367,7 +346,7 @@ toRoute queryString =
         , b profileParser
         , b userParser
         , b orgParser
-        , b (projectParser queryString) -- Specifically comes _after_ userParser because project slugs share the url space with user pages
+        , b projectParser -- Specifically comes _after_ userParser because project slugs share the url space with user pages
         , b termsOfServiceParser
         , b (acceptTermsParser queryString)
         , b privacyPolicyParser
@@ -510,15 +489,6 @@ errorParser queryString =
     succeed (Error appError) |. slash |. s "error"
 
 
-viewModeQueryParamParser : Parser ViewMode
-viewModeQueryParamParser =
-    oneOf
-        [ b (succeed ViewMode.Regular |. s "viewMode=regular")
-        , b (succeed ViewMode.Presentation |. s "viewMode=presentation")
-        , b (succeed ViewMode.Regular)
-        ]
-
-
 profileParser : Parser Route
 profileParser =
     b (succeed Profile |. slash |= userHandle |. end)
@@ -527,16 +497,16 @@ profileParser =
 userParser : Parser Route
 userParser =
     let
-        userCode_ h c =
-            User h (UserCode c)
+        userCode_ h =
+            User h UserCode
 
         userContrib h =
             User h UserContributions
     in
     oneOf
         [ b (succeed userContrib |. slash |= userHandle |. slash |. s "p" |. slash |. s "contributions" |. end)
-        , b (succeed userCode_ |. slash |= userHandle |. slash |. s "code" |. slash |= codeParser)
-        , b (succeed userCode_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "code" |. slash |= codeParser)
+        , b (succeed userCode_ |. slash |= userHandle |. slash |. s "code" |. end)
+        , b (succeed userCode_ |. slash |= userHandle |. slash |. s "p" |. slash |. s "code" |. end)
         ]
 
 
@@ -555,19 +525,9 @@ orgParser =
         ]
 
 
-
--- b (succeed userProfile_ |. slash |= userHandle |. end)
-
-
-projectParser : Maybe String -> Parser Route
-projectParser queryString =
+projectParser : Parser Route
+projectParser =
     let
-        viewMode =
-            queryString
-                |> Maybe.withDefault ""
-                |> Parser.run viewModeQueryParamParser
-                |> Result.withDefault ViewMode.Regular
-
         projectOverview_ handle slug =
             let
                 ps =
@@ -587,14 +547,14 @@ projectParser queryString =
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectBranch branchRef viewMode c)
+            Project ps (ProjectBranch branchRef c)
 
         projectBranchRoot_ handle slug branchRef =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectBranch branchRef viewMode (CodeRoot (Perspective.ByRoot Perspective.Relative)))
+            Project ps (ProjectBranch branchRef (CodeRoot (Perspective.ByRoot Perspective.Relative)))
 
         projectRelease_ handle slug version_ =
             let
@@ -799,8 +759,8 @@ toUrlPattern r =
         Profile _ ->
             ":handle"
 
-        User _ (UserCode codeRoute) ->
-            ":handle/p/code" ++ codePattern codeRoute
+        User _ UserCode ->
+            ":handle/p/code"
 
         User _ UserContributions ->
             ":handle/p/contributions"
@@ -817,7 +777,7 @@ toUrlPattern r =
         Project _ ProjectBranches ->
             ":handle/:project-slug/branches"
 
-        Project _ (ProjectBranch _ _ codeRoute) ->
+        Project _ (ProjectBranch _ codeRoute) ->
             ":handle/:project-slug/code/:branch-ref/" ++ codePattern codeRoute
 
         Project _ (ProjectRelease _) ->
@@ -980,8 +940,8 @@ toUrlString route =
                 Profile handle_ ->
                     ( [ UserHandle.toString handle_ ], [] )
 
-                User handle_ (UserCode codeRoute) ->
-                    ( [ UserHandle.toString handle_, "p", "code" ] ++ codePath codeRoute, [] )
+                User handle_ UserCode ->
+                    ( [ UserHandle.toString handle_, "p", "code" ], [] )
 
                 User handle_ UserContributions ->
                     ( [ UserHandle.toString handle_, "p", "contributions" ], [] )
@@ -998,7 +958,7 @@ toUrlString route =
                 Project projectRef_ ProjectBranches ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], [] )
 
-                Project projectRef_ (ProjectBranch branchRef vm codeRoute) ->
+                Project projectRef_ (ProjectBranch branchRef codeRoute) ->
                     let
                         path_ =
                             ProjectRef.toUrlPath projectRef_
@@ -1006,11 +966,7 @@ toUrlString route =
                                 :: BranchRef.toUrlPath branchRef
                                 ++ codePath codeRoute
                     in
-                    if ViewMode.isPresentation vm then
-                        ( path_, [ string "viewMode" (ViewMode.toString vm) ] )
-
-                    else
-                        ( path_, [] )
+                    ( path_, [] )
 
                 Project projectRef_ (ProjectRelease v) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "releases", Version.toString v ], [] )

@@ -200,7 +200,6 @@ body:has(#modal-overlay) {
 @media only screen and (--u-viewport_max-md) {
   #app {
     width: 100vw;
-    --app-header-height: 7rem;
     --c-height_announcement: 0rem;
   }
 
@@ -225,15 +224,10 @@ body:has(#modal-overlay) {
     display: none;
   }
 
-  #app-header .navigation {
-    gap: 0;
-    margin-right: 1rem;
-  }
-
   #app-header .right-side {
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: 0.5rem;
+    top: 0.75rem;
   }
 
   #app-header .sign-in-nav,
