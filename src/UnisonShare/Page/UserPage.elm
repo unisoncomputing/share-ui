@@ -204,9 +204,7 @@ viewLoadingPage appContext subPage handle =
         ( page, pageId ) =
             case subPage of
                 Code ->
-                    ( PageLayout.sidebarLeftContentLayout
-                        appContext.operatingSystem
-                        (Sidebar.empty "main-sidebar")
+                    ( PageLayout.centeredNarrowLayout
                         (PageContent.oneColumn [ text "" ])
                         PageFooter.pageFooter
                     , "code-page"
