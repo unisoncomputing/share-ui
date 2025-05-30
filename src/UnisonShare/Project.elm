@@ -57,6 +57,7 @@ type alias ProjectDetails =
         , permissions : List ProjectPermission
         , createdAt : DateTime
         , updatedAt : DateTime
+        , isPremiumProject : Bool
         }
 
 
@@ -216,7 +217,7 @@ decodeIsFaved =
 decodeDetails : Decode.Decoder ProjectDetails
 decodeDetails =
     let
-        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch permissions createdAt updatedAt =
+        makeProjectDetails handle_ slug_ summary tags visibility numFavs numActiveContributions numOpenTickets releaseDownloads isFaved_ latestVersion defaultBranch permissions createdAt updatedAt isPremiumProject =
             let
                 ref_ =
                     ProjectRef.projectRef handle_ slug_
@@ -235,6 +236,7 @@ decodeDetails =
             , permissions = permissions
             , createdAt = createdAt
             , updatedAt = updatedAt
+            , isPremiumProject = isPremiumProject
             }
     in
     Decode.succeed makeProjectDetails
@@ -253,6 +255,7 @@ decodeDetails =
         |> required "permissions" ProjectPermission.decodeList
         |> required "createdAt" DateTime.decode
         |> required "updatedAt" DateTime.decode
+        |> optional "isPremiumProject" Decode.bool False
 
 
 decode : Decode.Decoder (Project {})

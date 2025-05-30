@@ -104,4 +104,5 @@ projectDetails isFaved numFavs =
     , permissions = []
     , createdAt = DateTime.fromPosix (Time.millisToPosix 1)
     , updatedAt = DateTime.fromPosix (Time.millisToPosix 1)
+    , isPremiumProject = False
     }

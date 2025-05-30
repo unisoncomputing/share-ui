@@ -8,6 +8,8 @@ function account(handle: string) {
     isSuperadmin: false,
     organizationMemberships: [],
     primaryEmail: faker.internet.email(),
+    hasUnreadNotifications: false,
+    planTier: "Free",
   };
 }
 
@@ -120,6 +122,7 @@ function project(ref?: string) {
     tags: [],
     updatedAt: faker.date.past(),
     visibility: "public",
+    isPremiumProject: false,
   };
 }
 
