@@ -1,5 +1,8 @@
 import { faker } from "@faker-js/faker";
 
+// Ensures test data is the same between runs (especially useful for screenshot comparisons)
+faker.seed(42);
+
 function account(handle: string) {
   return {
     ...user(),
@@ -21,7 +24,7 @@ function user(handle?: string) {
   const handle_ = handle ? handle : userHandle();
 
   return {
-    avatarUrl: faker.image.avatar(),
+    avatarUrl: faker.image.personPortrait(),
     handle: handle_.replace("@", ""),
     name: `${firstName} ${lastName}`,
     userId: faker.string.uuid(),
@@ -207,28 +210,28 @@ type DiffErrorCulprit = "new" | "old";
 type DiffErrorDetails =
   | { tag: "impossibleError" }
   | {
-      tag: "constructorAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "constructorAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "missingConstructorName";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-    }
+    tag: "missingConstructorName";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+  }
   | {
-      tag: "nestedDeclAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "nestedDeclAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "strayConstructor";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName: string;
-    };
+    tag: "strayConstructor";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName: string;
+  };
 
 type ContributionDiffConfig =
   | { tag: "ok" }
