@@ -81,7 +81,6 @@ import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import Url exposing (Url)
 import Url.Builder exposing (relative, string)
-import Url.Parser exposing ((<?>))
 
 
 type CodeRoute
@@ -482,7 +481,6 @@ finishSignupParser queryString =
     queryString
         |> Maybe.withDefault ""
         |> Parser.run finishSignupQueryParser
-        |> Debug.log "query"
         |> Result.map (\( handle, state ) -> succeed (FinishSignup handle state) |. slash |. s "finish-signup")
         |> Result.withDefault (Parser.problem "Missing handle or state in querystring")
 
