@@ -16,6 +16,7 @@ import UI.Icon as Icon
 import UI.Navigation as Navigation exposing (NavItem)
 import UI.Nudge as Nudge
 import UI.Sizing as Sizing
+import UnisonShare.Account as Account
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
 import Url exposing (Url)
@@ -274,18 +275,36 @@ view ctx appHeader_ =
                                         |> Button.positive
                                         |> Button.view
 
+                                orgs_ =
+                                    account.organizationMemberships
+                                        |> List.map (\(Account.OrganizationMembership h) -> h)
+                                        |> List.map (\h -> ActionMenu.optionItem Icon.factory (UserHandle.toString h) (Link.orgProfile h))
+
+                                orgs =
+                                    if List.isEmpty orgs_ then
+                                        []
+
+                                    else
+                                        ActionMenu.dividerItem :: orgs_ ++ [ ActionMenu.dividerItem ]
+
                                 accountMenu =
                                     ActionMenu.items
-                                        (ActionMenu.optionItem Icon.user "Profile" (Link.userProfile account.handle))
-                                        [ ActionMenu.optionItem Icon.cog "Account Settings" Link.account
-                                        , ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.api ctx.currentUrl)
-                                        ]
+                                        (ActionMenu.optionItem Icon.user (UserHandle.toString account.handle) (Link.userProfile account.handle))
+                                        (orgs
+                                            ++ [ ActionMenu.optionItem Icon.cog "Account Settings" Link.account
+                                               , ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.api ctx.currentUrl)
+                                               ]
+                                        )
                                         |> ActionMenu.fromCustom ctx.toggleAccountMenuMsg viewAccountMenuTrigger
                                         |> ActionMenu.shouldBeOpen (isAccountMenuOpen ctx.openedAppHeaderMenu)
                                         |> ActionMenu.view
                                         |> (\a -> div [ class "account-menu" ] [ a ])
                             in
-                            [ div [ class "signed-in-nav signed-in-nav_desktop" ] [ newOrgButton, helpAndResources False, accountMenu ]
+                            [ div [ class "signed-in-nav signed-in-nav_desktop" ]
+                                [ newOrgButton
+                                , helpAndResources False
+                                , accountMenu
+                                ]
                             , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
                             ]
             in
