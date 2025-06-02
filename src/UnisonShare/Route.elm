@@ -65,7 +65,6 @@ import Code.UrlParsers
         , reference
         , s
         , slash
-        , unprefixedUserHandle
         , userHandle
         , version
         )
@@ -82,6 +81,7 @@ import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import Url exposing (Url)
 import Url.Builder exposing (relative, string)
+import Url.Parser exposing ((<?>))
 
 
 type CodeRoute
@@ -138,7 +138,7 @@ type Route
     | Cloud
     | NotFound String
     | Error AppError
-    | FinishSignup UserHandle
+    | FinishSignup UserHandle String
 
 
 
@@ -327,9 +327,9 @@ ucmConnected =
     UcmConnected
 
 
-finishSignup : UserHandle -> Route
-finishSignup handle_ =
-    FinishSignup handle_
+finishSignup : UserHandle -> String -> Route
+finishSignup handle_ state =
+    FinishSignup handle_ state
 
 
 
@@ -451,15 +451,40 @@ ucmConnectedParser =
 finishSignupParser : Maybe String -> Parser Route
 finishSignupParser queryString =
     let
-        handleQueryParamParser : Parser UserHandle
-        handleQueryParamParser =
-            b (succeed identity |. s "conflictingHandle" |. symbol "=" |= unprefixedUserHandle |. end)
+        userHandleQueryParser : Parser UserHandle
+        userHandleQueryParser =
+            let
+                parseMaybe mhandle =
+                    case mhandle of
+                        Just u ->
+                            Parser.succeed u
+
+                        Nothing ->
+                            Parser.problem "Invalid handle"
+            in
+            Parser.chompUntilEndOr "&"
+                |> Parser.getChompedString
+                |> Parser.map UserHandle.fromUnprefixedString
+                |> Parser.andThen parseMaybe
+
+        stateQueryParser : Parser String
+        stateQueryParser =
+            Parser.chompUntilEndOr "&"
+                |> Parser.getChompedString
+
+        finishSignupQueryParser : Parser ( UserHandle, String )
+        finishSignupQueryParser =
+            oneOf
+                [ b (succeed (\h s -> ( h, s )) |. s "conflictingHandle" |. symbol "=" |= userHandleQueryParser |. symbol "&" |. s "state" |. symbol "=" |= stateQueryParser)
+                , b (succeed (\s h -> ( h, s )) |. s "state" |. symbol "=" |= stateQueryParser |. symbol "&" |. s "conflictingHandle" |. symbol "=" |= userHandleQueryParser)
+                ]
     in
     queryString
         |> Maybe.withDefault ""
-        |> Parser.run handleQueryParamParser
-        |> Result.map (\h -> succeed (FinishSignup h) |. slash |. s "finish-signup")
-        |> Result.withDefault (Parser.problem "Missing handle in querystring")
+        |> Parser.run finishSignupQueryParser
+        |> Debug.log "query"
+        |> Result.map (\( handle, state ) -> succeed (FinishSignup handle state) |. slash |. s "finish-signup")
+        |> Result.withDefault (Parser.problem "Missing handle or state in querystring")
 
 
 cloudParser : Parser Route
@@ -819,7 +844,7 @@ toUrlPattern r =
         UcmConnected ->
             "ucm-connected"
 
-        FinishSignup _ ->
+        FinishSignup _ _ ->
             "finish-signup"
 
         Cloud ->
@@ -1010,8 +1035,8 @@ toUrlString route =
                 UcmConnected ->
                     ( [ "ucm-connected" ], [] )
 
-                FinishSignup handle ->
-                    ( [ "finish-signup" ], [ string "handle" (UserHandle.toUnprefixedString handle) ] )
+                FinishSignup handle state ->
+                    ( [ "finish-signup" ], [ string "handle" (UserHandle.toUnprefixedString handle), string "state" state ] )
 
                 Cloud ->
                     ( [ "cloud" ], [] )

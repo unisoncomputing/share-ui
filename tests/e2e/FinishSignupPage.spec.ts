@@ -13,7 +13,7 @@ test.describe("without being signed in", () => {
 
   test("can view the FinishSignupPage", async ({ page }) => {
     const response = await page.goto(
-      `http://localhost:1234/finish-signup?conflictingHandle=${userHandle()}`,
+      `http://localhost:1234/finish-signup?conflictingHandle=${userHandle()}&state=handle-taken`,
     );
     expect(response?.status()).toBeLessThan(400);
 
@@ -28,7 +28,7 @@ test.describe("when signed in", () => {
 
   test("can *NOT* view the FinishSignupagePage", async ({ page }) => {
     const response = await page.goto(
-      `http://localhost:1234/finish-signup?conflictingHandle=${userHandle()}`,
+      `http://localhost:1234/finish-signup?conflictingHandle=${userHandle()}&state=handle-taken`,
     );
     expect(response?.status()).toBeLessThan(400);
 

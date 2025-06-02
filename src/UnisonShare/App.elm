@@ -192,7 +192,7 @@ init appContext route =
                 Route.UcmConnected ->
                     ( UcmConnected, Cmd.none )
 
-                Route.FinishSignup handle ->
+                Route.FinishSignup handle _ ->
                     ( FinishSignup handle FinishSignupPage.init, Cmd.none )
 
                 Route.Cloud ->
@@ -409,7 +409,7 @@ update msg ({ appContext } as model) =
                         Route.UcmConnected ->
                             ( { model_ | page = UcmConnected }, Cmd.none )
 
-                        Route.FinishSignup conflictingHandle ->
+                        Route.FinishSignup conflictingHandle _ ->
                             ( { model_ | page = FinishSignup conflictingHandle FinishSignupPage.init }, Cmd.none )
 
                         Route.Cloud ->
