@@ -451,8 +451,7 @@ viewPageContent project model =
 
                             else
                                 ( overlay_
-                                , div [ class "collaborators_empty-state_text" ]
-                                    [ Icon.view Icon.bulb, text "Public organizations only support public projects" ]
+                                , StatusBanner.info "Changing visibility is not supported for public organizations."
                                 )
 
                         Failure _ ->
@@ -527,10 +526,17 @@ viewPageContent project model =
                     ]
                 ]
             ]
+
+        collaborators =
+            if Project.isPublic project || project.isPremiumProject then
+                viewCollaborators model
+
+            else
+                UI.nothing
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
-            (viewCollaborators model :: formAndActions)
+            (collaborators :: formAndActions)
         ]
         |> pageTitle_
 
