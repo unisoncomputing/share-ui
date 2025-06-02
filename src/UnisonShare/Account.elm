@@ -1,12 +1,14 @@
 module UnisonShare.Account exposing (..)
 
-import Json.Decode as Decode exposing (field, maybe, string)
+import Json.Decode as Decode exposing (string)
+import Json.Decode.Pipeline exposing (optional, required)
 import Lib.Decode.Helpers exposing (url)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Avatar as Avatar exposing (Avatar)
 import UI.Icon as Icon
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Tour as Tour exposing (Tour)
+import UnisonShare.UnisonPlan as UnisonPlan exposing (UnisonPlan)
 import UnisonShare.User exposing (UserSummary)
 import Url exposing (Url)
 
@@ -21,6 +23,8 @@ type alias Account a =
         , organizationMemberships : List OrganizationMembership
         , isSuperAdmin : Bool
         , primaryEmail : String
+        , plan : UnisonPlan
+        , hasUnreadNotifications : Bool
     }
 
 
@@ -90,22 +94,26 @@ isProjectOwner projectRef account =
 decodeSummary : Decode.Decoder AccountSummary
 decodeSummary =
     let
-        makeSummary handle name_ avatarUrl completedTours organizationMemberships isSuperAdmin primaryEmail =
+        makeSummary handle name_ avatarUrl completedTours organizationMemberships isSuperAdmin primaryEmail plan hasUnreadNotifications =
             { handle = handle
             , name = name_
             , avatarUrl = avatarUrl
             , pronouns = Nothing
             , completedTours = Maybe.withDefault [] completedTours
             , organizationMemberships = organizationMemberships
-            , isSuperAdmin = Maybe.withDefault False isSuperAdmin
+            , isSuperAdmin = isSuperAdmin
             , primaryEmail = primaryEmail
+            , plan = plan
+            , hasUnreadNotifications = hasUnreadNotifications
             }
     in
-    Decode.map7 makeSummary
-        (field "handle" UserHandle.decodeUnprefixed)
-        (maybe (field "name" string))
-        (maybe (field "avatarUrl" url))
-        (maybe (field "completedTours" (Decode.list Tour.decode)))
-        (field "organizationMemberships" (Decode.list (Decode.map OrganizationMembership UserHandle.decodeUnprefixed)))
-        (maybe (field "isSuperadmin" Decode.bool))
-        (field "primaryEmail" string)
+    Decode.succeed makeSummary
+        |> required "handle" UserHandle.decodeUnprefixed
+        |> optional "name" (Decode.map Just string) Nothing
+        |> optional "avatarUrl" (Decode.map Just url) Nothing
+        |> optional "completedTours" (Decode.map Just (Decode.list Tour.decode)) Nothing
+        |> required "organizationMemberships" (Decode.list (Decode.map OrganizationMembership UserHandle.decodeUnprefixed))
+        |> optional "isSuperadmin" Decode.bool False
+        |> required "primaryEmail" string
+        |> required "planTier" UnisonPlan.decode
+        |> required "hasUnreadNotifications" Decode.bool
