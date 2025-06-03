@@ -212,6 +212,22 @@ notifications account status paginationCursor =
         }
 
 
+updateNotificationStatuses : Account a -> List String -> NotificationStatus -> Endpoint
+updateNotificationStatuses account notificationIds status =
+    let
+        body =
+            Encode.object
+                [ ( "notificationIds", Encode.list Encode.string notificationIds )
+                , ( "status", Encode.string (Notification.statusToString status) )
+                ]
+    in
+    PATCH
+        { path = [ "users", UserHandle.toUnprefixedString account.handle, "notifications", "hub" ]
+        , queryParams = []
+        , body = Http.jsonBody body
+        }
+
+
 
 -- ORGS
 -- ORG ROLE ASSIGNMENTS (COLLABORATORS)

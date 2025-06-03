@@ -6,7 +6,7 @@ import Html exposing (Html, div, footer, h1, h2, h4, span, strong, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode exposing (string)
 import Json.Decode.Pipeline exposing (optional, required)
-import Lib.HttpApi as HttpApi
+import Lib.HttpApi as HttpApi exposing (HttpResult)
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
 import UI
@@ -105,9 +105,13 @@ type Msg
     | FetchAllNotificationsFinished (WebData PaginatedNotifications)
     | ToggleSelection Notification
     | MarkSelectionAsUnread
+    | MarkNotificationsAsUnreadFinished (HttpResult ())
     | MarkSelectionAsRead
+    | MarkNotificationsAsReadFinished (HttpResult ())
     | ArchiveSelection
+    | MarkNotificationsAsArchivedFinished (HttpResult ())
     | UnarchiveSelection
+    | MarkNotificationsAsUnarchivedFinished (HttpResult ())
 
 
 update : AppContext -> NotificationsRoute -> Account a -> Msg -> Model -> ( Model, Cmd Msg )
@@ -233,24 +237,50 @@ fetchNotifications_ appContext account status paginationCursorParam =
         |> HttpApi.perform appContext.api
 
 
-markNotificationsAsRead : AppContext -> Account a -> Cmd Msg
-markNotificationsAsRead _ _ =
-    Cmd.none
+markNotificationsAsRead : AppContext -> Account a -> List String -> Cmd Msg
+markNotificationsAsRead appContext account notificationIds =
+    updateNotificationStatuses
+        MarkNotificationsAsReadFinished
+        appContext
+        account
+        notificationIds
+        Notification.Read
 
 
-markNotificationsAsUnread : AppContext -> Account a -> Cmd Msg
-markNotificationsAsUnread _ _ =
-    Cmd.none
+markNotificationsAsUnread : AppContext -> Account a -> List String -> Cmd Msg
+markNotificationsAsUnread appContext account notificationIds =
+    updateNotificationStatuses
+        MarkNotificationsAsUnreadFinished
+        appContext
+        account
+        notificationIds
+        Notification.Unread
 
 
-archiveNotifications : AppContext -> Account a -> Cmd Msg
-archiveNotifications _ _ =
-    Cmd.none
+archiveNotifications : AppContext -> Account a -> List String -> Cmd Msg
+archiveNotifications appContext account notificationIds =
+    updateNotificationStatuses
+        MarkNotificationsAsArchivedFinished
+        appContext
+        account
+        notificationIds
+        Notification.Archived
 
 
-unarchiveNotifications : AppContext -> Account a -> Cmd Msg
-unarchiveNotifications _ _ =
-    Cmd.none
+unarchiveNotifications : AppContext -> Account a -> List String -> Cmd Msg
+unarchiveNotifications appContext account notificationIds =
+    updateNotificationStatuses MarkNotificationsAsUnarchivedFinished
+        appContext
+        account
+        notificationIds
+        Notification.Unread
+
+
+updateNotificationStatuses : (HttpResult () -> Msg) -> AppContext -> Account a -> List String -> Notification.NotificationStatus -> Cmd Msg
+updateNotificationStatuses toMsg appContext account notificationIds status =
+    ShareApi.updateNotificationStatuses account notificationIds status
+        |> HttpApi.toRequestWithEmptyResponse toMsg
+        |> HttpApi.perform appContext.api
 
 
 
