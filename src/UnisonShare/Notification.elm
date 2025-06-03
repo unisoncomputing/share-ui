@@ -69,7 +69,7 @@ statusToString status =
             "read"
 
         Unread ->
-            "uread"
+            "unread"
 
         Archived ->
             "archived"

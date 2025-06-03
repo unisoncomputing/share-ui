@@ -398,8 +398,20 @@ view_ appContext model selection paginatedNotifications =
 
         Success (Paginated { prev, next, items }) ->
             if List.isEmpty items then
+                let
+                    message =
+                        case model of
+                            All _ ->
+                                "You have no notifications"
+
+                            Unread _ ->
+                                "You have no unread notifications"
+
+                            Archive _ ->
+                                "You have no archived notifications"
+                in
                 EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.bell)
-                    |> EmptyState.withContent [ h2 [] [ text "You have no notifications" ] ]
+                    |> EmptyState.withContent [ h2 [] [ text message ] ]
                     |> EmptyStateCard.view
 
             else
