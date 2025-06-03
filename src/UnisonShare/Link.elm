@@ -11,7 +11,7 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
-import UnisonShare.Paginated exposing (PageCursorParam)
+import UnisonShare.Paginated as Paginated exposing (PageCursorParam)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route exposing (Route)
 import UnisonShare.Ticket.TicketRef exposing (TicketRef)
@@ -187,6 +187,11 @@ catalog =
 account : Click msg
 account =
     toClick Route.account
+
+
+notifications : Click msg
+notifications =
+    toClick (Route.notificationsAll Paginated.NoPageCursor)
 
 
 notificationsAll : PageCursorParam -> Click msg
