@@ -1,4 +1,4 @@
-import { Context } from "@netlify/edge-functions";
+import { Config, Context } from "@netlify/edge-functions";
 import ShareAPI from "./common/share-api.ts";
 import {
   SocialContent,
@@ -258,3 +258,8 @@ async function replaceSocialContent(
 }
 
 export default replaceSocialContent;
+
+export const config: Config = {
+  // Silently bypass the error, allowing content to be rendered
+  onError: "bypass",
+};
