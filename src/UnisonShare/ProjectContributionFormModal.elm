@@ -35,6 +35,7 @@ import UnisonShare.Contribution as Contribution exposing (ContributionSummary)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.Link as Link
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.SearchBranchSheet as SearchBranchSheet
@@ -389,14 +390,14 @@ fetchRecentBranches appContext currentUser projectRef =
             { kind = ShareApi.ContributorBranches (Just currentUser.handle)
             , searchQuery = Nothing
             , limit = 3
-            , cursor = Nothing
+            , cursor = Paginated.NoPageCursor
             }
 
         projectBranchesParams =
             { kind = ShareApi.ProjectBranches
             , searchQuery = Nothing
             , limit = 3
-            , cursor = Nothing
+            , cursor = Paginated.NoPageCursor
             }
     in
     Task.map2

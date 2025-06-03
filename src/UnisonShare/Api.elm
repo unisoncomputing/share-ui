@@ -27,7 +27,7 @@ import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.Notification as Notification exposing (NotificationStatus)
 import UnisonShare.OrgMember as OrgMember exposing (OrgMember)
 import UnisonShare.OrgRole as OrgRole
-import UnisonShare.Paginated as Paginated exposing (PageCursorParam(..))
+import UnisonShare.Paginated as Paginated exposing (PageCursorParam)
 import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
@@ -77,7 +77,7 @@ type alias UserBranchesParams =
     { searchQuery : Maybe String
     , projectRef : Maybe ProjectRef
     , limit : Int
-    , cursor : Maybe String
+    , cursor : PageCursorParam
     }
 
 
@@ -86,10 +86,7 @@ userBranches handle params =
     let
         queryParams =
             int "limit" params.limit
-                :: (params.cursor
-                        |> Maybe.map (string "cursor")
-                        |> MaybeE.toList
-                   )
+                :: Paginated.toQueryParams params.cursor
                 ++ (params.searchQuery
                         |> Maybe.map (string "name-prefix")
                         |> MaybeE.toList
@@ -202,15 +199,7 @@ notifications account status paginationCursor =
                     []
 
         paginationQueryParams =
-            case paginationCursor of
-                PrevPage c ->
-                    [ string "prevCursor" (Paginated.cursorToString c) ]
-
-                NextPage c ->
-                    [ string "nextCursor" (Paginated.cursorToString c) ]
-
-                NoPageCursor ->
-                    []
+            Paginated.toQueryParams paginationCursor
     in
     GET
         { path =
@@ -363,7 +352,7 @@ type alias ProjectBranchesParams =
     { kind : ProjectBranchesKindFilter
     , searchQuery : Maybe String
     , limit : Int
-    , cursor : Maybe String
+    , cursor : PageCursorParam
     }
 
 
@@ -389,10 +378,7 @@ projectBranches projectRef params =
 
         queryParams =
             [ kind, int "limit" params.limit ]
-                ++ (params.cursor
-                        |> Maybe.map (string "cursor")
-                        |> MaybeE.toList
-                   )
+                ++ Paginated.toQueryParams params.cursor
                 ++ (params.searchQuery
                         |> Maybe.map (string "name-prefix")
                         |> MaybeE.toList
