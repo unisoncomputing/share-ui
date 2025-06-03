@@ -264,7 +264,7 @@ viewDeleteAccountModal a message confirm =
                     , div [] [ text "We don't yet have an automatic deletion system in place, and are handling it via our support system." ]
                     , Divider.divider |> Divider.small |> Divider.view
                     , TextField.field UpdateDeleteAccountMessage "Delete reason (optional)" message
-                        |> TextField.withPlaceholder "Say a few works aboyt why you're looking to delete your account"
+                        |> TextField.withPlaceholder "Say a few words about why you're looking to delete your account"
                         |> TextField.withRows 4
                         |> TextField.view
                     , action
