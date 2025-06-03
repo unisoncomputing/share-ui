@@ -148,20 +148,32 @@ viewRightSide session toggleFavMsg toggleSubscriptionMsg useProjectButtonClickMs
 
         subscribeButton iconOnly p =
             case ( session, p.isSubscribed ) of
-                ( Session.SignedIn _, Project.NotSubscribed ) ->
-                    subscribeButton_ iconOnly Icon.bellSlash "Subscribe"
-                        |> Button.outlined
-                        |> Button.view
+                ( Session.SignedIn account, Project.NotSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subscribeButton_ iconOnly Icon.bellSlash "Subscribe"
+                            |> Button.outlined
+                            |> Button.view
 
-                ( Session.SignedIn _, Project.Subscribed ) ->
-                    subscribeButton_ iconOnly Icon.bell "Unsubscribe"
-                        |> Button.outlined
-                        |> Button.view
+                    else
+                        UI.nothing
 
-                ( Session.SignedIn _, Project.JustSubscribed ) ->
-                    subscribeButton_ iconOnly Icon.bell "Unsubscribe"
-                        |> Button.outlined
-                        |> Button.view
+                ( Session.SignedIn account, Project.Subscribed ) ->
+                    if account.isSuperAdmin then
+                        subscribeButton_ iconOnly Icon.bell "Unsubscribe"
+                            |> Button.outlined
+                            |> Button.view
+
+                    else
+                        UI.nothing
+
+                ( Session.SignedIn account, Project.JustSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subscribeButton_ iconOnly Icon.bell "Unsubscribe"
+                            |> Button.outlined
+                            |> Button.view
+
+                    else
+                        UI.nothing
 
                 _ ->
                     UI.nothing

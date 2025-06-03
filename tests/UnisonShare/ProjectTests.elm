@@ -153,6 +153,7 @@ projectDetailsForSub isSubscribed =
     , latestVersion = Nothing
     , defaultBranch = Nothing
     , permissions = []
+    , isPremiumProject = True
     , createdAt = DateTime.fromPosix (Time.millisToPosix 1)
     , updatedAt = DateTime.fromPosix (Time.millisToPosix 1)
     }

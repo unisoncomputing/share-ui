@@ -701,21 +701,33 @@ view_ session project model =
         subButton icon label =
             Button.iconThenLabel ToggleProjectSubscription icon label
                 |> Button.outlined
+                |> Button.view
 
         subscription =
             case ( session, project.isSubscribed ) of
-                ( Session.SignedIn _, Project.NotSubscribed ) ->
-                    subButton Icon.bellSlash "Subscribe"
+                ( Session.SignedIn account, Project.NotSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bellSlash "Subscribe"
 
-                ( Session.SignedIn _, Project.Subscribed ) ->
-                    subButton Icon.bell "Subscribed"
+                    else
+                        UI.nothing
 
-                ( Session.SignedIn _, Project.JustSubscribed ) ->
-                    subButton Icon.bell "Subscribed"
+                ( Session.SignedIn account, Project.Subscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bell "Subscribed"
+
+                    else
+                        UI.nothing
+
+                ( Session.SignedIn account, Project.JustSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bell "Subscribed"
+
+                    else
+                        UI.nothing
 
                 _ ->
-                    subButton Icon.bellSlash "Subscribe"
-                        |> Button.disabled
+                    UI.nothing
 
         favKpi icon =
             viewKpi
@@ -758,7 +770,7 @@ view_ session project model =
                    "Total downloads for the last 4 weeks"
                ]
             -}
-            , subscription |> Button.view
+            , subscription
             , Button.iconThenLabel ShowUseProjectModal Icon.download "Use Project"
                 |> Button.medium
                 |> Button.positive
