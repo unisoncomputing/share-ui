@@ -19,6 +19,7 @@ import UI.Sizing as Sizing
 import UnisonShare.Account as Account
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
+import UnisonShare.Util as Util
 import Url exposing (Url)
 import WhatsNew exposing (WhatsNew)
 
@@ -275,6 +276,21 @@ view ctx appHeader_ =
                                         |> Button.positive
                                         |> Button.view
 
+                                notifications =
+                                    if account.hasUnreadNotifications then
+                                        div [ class "notifications" ]
+                                            [ Button.icon_ Link.notifications Icon.bellRing
+                                                |> Button.small
+                                                |> Button.view
+                                            , Nudge.nudge
+                                                |> Nudge.view
+                                            ]
+
+                                    else
+                                        Button.icon_ Link.notifications Icon.bell
+                                            |> Button.small
+                                            |> Button.view
+
                                 orgs_ =
                                     account.organizationMemberships
                                         |> List.map (\(Account.OrganizationMembership h) -> h)
@@ -302,10 +318,16 @@ view ctx appHeader_ =
                             in
                             [ div [ class "signed-in-nav signed-in-nav_desktop" ]
                                 [ newOrgButton
+                                , Util.privateBeta account notifications
                                 , helpAndResources False
                                 , accountMenu
                                 ]
-                            , div [ class "signed-in-nav signed-in-nav_mobile" ] [ newOrgButton, helpAndResources True, accountMenu ]
+                            , div [ class "signed-in-nav signed-in-nav_mobile" ]
+                                [ newOrgButton
+                                , Util.privateBeta account notifications
+                                , helpAndResources True
+                                , accountMenu
+                                ]
                             ]
             in
             UI.AppHeader.appHeader (appTitle (Click.href "/"))

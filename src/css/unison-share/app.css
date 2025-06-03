@@ -158,6 +158,20 @@ body:has(#modal-overlay) {
   margin-top: 1rem;
 }
 
+#app-header .notifications {
+  position: relative;
+}
+
+#app-header .notifications .nudge {
+  position: absolute;
+  right: -0.25rem;
+  top: -0.25rem;
+
+  & .nudge_circle {
+    box-shadow: 0 0 0 4px var(--color-app-header-bg);
+  }
+}
+
 /* -- App Footer ----------------------------------------------------------- */
 
 #app-footer {
