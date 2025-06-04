@@ -120,6 +120,7 @@ type Msg
     | SaveDescriptionFinished (HttpResult ())
     | CloseModal
     | ToggleProjectFav
+    | ToggleProjectSubscription
     | ShowUseProjectModal
     | Keydown KeyboardEvent
     | KeyboardShortcutMsg KeyboardShortcut.Msg
@@ -133,6 +134,7 @@ type OutMsg
       -- opened from multiple places)
     | RequestToShowUseProjectModal
     | RequestToToggleProjectFav
+    | RequestToToggleProjectSubscription
     | ProjectDescriptionUpdated { summary : Maybe String, tags : Set String }
 
 
@@ -260,6 +262,9 @@ update appContext projectRef project msg model =
 
         ToggleProjectFav ->
             ( model, Cmd.none, RequestToToggleProjectFav )
+
+        ToggleProjectSubscription ->
+            ( model, Cmd.none, RequestToToggleProjectSubscription )
 
         ShowUseProjectModal ->
             ( model, Cmd.none, RequestToShowUseProjectModal )
@@ -693,6 +698,37 @@ view_ session project model =
                     )
                 |> KpiTag.view
 
+        subButton icon label =
+            Button.iconThenLabel ToggleProjectSubscription icon label
+                |> Button.outlined
+                |> Button.view
+
+        subscription =
+            case ( session, project.isSubscribed ) of
+                ( Session.SignedIn account, Project.NotSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bellSlash "Subscribe"
+
+                    else
+                        UI.nothing
+
+                ( Session.SignedIn account, Project.Subscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bell "Subscribed"
+
+                    else
+                        UI.nothing
+
+                ( Session.SignedIn account, Project.JustSubscribed ) ->
+                    if account.isSuperAdmin then
+                        subButton Icon.bell "Subscribed"
+
+                    else
+                        UI.nothing
+
+                _ ->
+                    UI.nothing
+
         favKpi icon =
             viewKpi
                 icon
@@ -734,6 +770,7 @@ view_ session project model =
                    "Total downloads for the last 4 weeks"
                ]
             -}
+            , subscription
             , Button.iconThenLabel ShowUseProjectModal Icon.download "Use Project"
                 |> Button.medium
                 |> Button.positive
