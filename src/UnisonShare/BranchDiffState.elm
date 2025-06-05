@@ -27,7 +27,7 @@ type DiffError
         , constructorName2 : FQN
         }
     | StrayConstructor { culprit : DiffErrorCulprit, constructorName : FQN }
-    | LibFoundAtUnexpectedPath
+    | LibFoundAtUnexpectedPath { path : FQN }
     | UnknownError
 
 
@@ -74,6 +74,10 @@ decodeDiffError =
         makeStrayConstructor culprit ctor =
             StrayConstructor
                 { culprit = culprit, constructorName = ctor }
+
+        makeLibFoundAtUnexpectedPath path =
+            LibFoundAtUnexpectedPath
+                { path = path }
     in
     Decode.oneOf
         [ whenTagIs "impossibleError"
@@ -102,7 +106,7 @@ decodeDiffError =
                 (Decode.field "constructorName" FQN.decode)
             )
         , whenTagIs "libFoundAtUnexpectedPath"
-            (Decode.succeed LibFoundAtUnexpectedPath)
+            (Decode.map makeLibFoundAtUnexpectedPath (Decode.field "path" FQN.decode))
         , Decode.succeed UnknownError
         ]
 
