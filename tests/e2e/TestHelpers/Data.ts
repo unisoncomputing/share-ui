@@ -232,6 +232,10 @@ type DiffErrorDetails =
       tag: "strayConstructor";
       oldOrNewBranch: DiffErrorCulprit;
       constructorName: string;
+    }
+  | {
+      tag: "libFoundAtUnexpectedPath";
+      path: string;
     };
 
 type ContributionDiffConfig =
