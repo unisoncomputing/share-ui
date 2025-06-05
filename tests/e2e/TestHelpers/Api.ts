@@ -4,6 +4,7 @@ import { Page } from "@playwright/test";
 import {
   project,
   type ContributionDiffConfig,
+  type Notification,
   contributionTimeline,
   contributionDiff,
   userDetails,
@@ -302,11 +303,22 @@ async function getProjectContributionDiff(
 
 // /users/:handle/notifications
 
-async function getNotificationsHub(page: Page, handle: string) {
+type NotificationsHubData = {
+  prevCursor?: string;
+  nextCursor?: string;
+  items?: Array<Notification>;
+};
+
+async function getNotificationsHub(
+  page: Page,
+  handle: string,
+  data_?: NotificationsHubData,
+) {
   const data = {
     prevCursor: null,
     nextCursor: faker.lorem.slug(1),
     items: [notification(), notification(), notification()],
+    ...(data_ ? data_ : {}),
   };
 
   return get(page, {

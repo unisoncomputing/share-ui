@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import * as API from "./TestHelpers/Api";
 import * as Page from "./TestHelpers/Page";
+import { notification } from "./TestHelpers/Data";
 
 test.describe("when *NOT* signed in", () => {
   test.beforeEach(async ({ page }) => {
@@ -32,5 +33,21 @@ test.describe("when signed in", () => {
   test("can view notifications", async ({ page }) => {
     await Page.goto(page, "/notifications");
     await expect(page.locator(".notification-row")).toHaveCount(3);
+  });
+
+  test("can mark a notification as red", async ({ page }) => {
+    await Page.goto(page, "/notifications");
+
+    await expect(page.locator(".notification-row")).toHaveCount(3);
+    await page.locator(".notification-row:first-child input").click();
+    await expect(Page.button(page, "Mark as read")).toBeVisible();
+
+    await API.getNotificationsHub(page, "@alice", {
+      items: [notification(), notification()],
+    });
+
+    await Page.button(page, "Mark as read").click();
+
+    await expect(page.locator(".notification-row")).toHaveCount(2);
   });
 });

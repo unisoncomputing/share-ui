@@ -17,7 +17,15 @@ function userHandle() {
   return faker.lorem.slug(1);
 }
 
-function user(handle?: string) {
+type User = {
+  avatarUrl: string;
+  handle: string;
+  name: string;
+  userId: string;
+  kind: string;
+};
+
+function user(handle?: string): User {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const handle_ = handle ? handle : userHandle();
@@ -360,7 +368,25 @@ function notificationEventPayload(kind?: NotificationEventKind) {
   }
 }
 
-function notificationEvent(kind?: NotificationEventKind) {
+// TODO
+type NotificationEvent = {
+  actor: {
+    info: User;
+    kind: string;
+  };
+  data: {
+    kind: NotificationEventKind;
+    payload: object;
+  };
+  id: string;
+  occurredAt: Date;
+  scope: {
+    info: User;
+    kind: string;
+  };
+};
+
+function notificationEvent(kind?: NotificationEventKind): NotificationEvent {
   const actor = {
     info: user(),
     kind: "user",
@@ -389,7 +415,13 @@ function notificationStatus(): NotificationStatus {
   return faker.helpers.arrayElement(["unread", "read", "archived"]);
 }
 
-function notification(kind?: NotificationEventKind) {
+type Notification = {
+  id: string;
+  event: NotificationEvent;
+  status: NotificationStatus;
+};
+
+function notification(kind?: NotificationEventKind): Notification {
   return {
     event: notificationEvent(kind),
     id: faker.string.uuid(),
@@ -413,4 +445,5 @@ export {
   notificationEvent,
   notificationEventPayload,
   type ContributionDiffConfig,
+  type Notification,
 };

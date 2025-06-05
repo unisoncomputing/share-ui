@@ -238,6 +238,7 @@ type Msg
     | CloseModal
     | WhatsNewFetchFinished (HttpResult WhatsNew.LoadedWhatsNew)
     | WhatsNewMarkAllAsRead
+    | RefreshSessionFinished (HttpResult Session.Session)
       -- Sub msgs
     | CatalogPageMsg CatalogPage.Msg
     | ProfilePageMsg ProfilePage.Msg
@@ -260,6 +261,18 @@ update msg ({ appContext } as model) =
                     { appContext | now = DateTime.fromPosix t }
             in
             ( { model | appContext = appContext_ }, Cmd.none )
+
+        ( _, RefreshSessionFinished session ) ->
+            case session of
+                Ok session_ ->
+                    let
+                        appContext_ =
+                            { appContext | session = session_ }
+                    in
+                    ( { model | appContext = appContext_ }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
         ( _, LinkClicked urlRequest ) ->
             case urlRequest of
@@ -563,11 +576,19 @@ update msg ({ appContext } as model) =
             case appContext.session of
                 Session.SignedIn account ->
                     let
-                        ( notifications_, cmd ) =
+                        ( notifications_, cmd, out ) =
                             NotificationsPage.update appContext notificationsRoute account nMsg notifications
+
+                        sessionCmd =
+                            case out of
+                                NotificationsPage.NoOutMsg ->
+                                    Cmd.none
+
+                                NotificationsPage.UpdatedNotificationStatuses ->
+                                    refreshSession appContext
                     in
                     ( { model | page = Notifications notificationsRoute notifications_ }
-                    , Cmd.map NotificationsPageMsg cmd
+                    , Cmd.batch [ Cmd.map NotificationsPageMsg cmd, sessionCmd ]
                     )
 
                 _ ->
@@ -625,6 +646,13 @@ completeWelcomeTour appContext =
         |> HttpApi.perform appContext.api
 
 
+refreshSession : AppContext -> Cmd Msg
+refreshSession appContext =
+    ShareApi.session
+        |> HttpApi.toRequest Session.decode RefreshSessionFinished
+        |> HttpApi.perform appContext.api
+
+
 
 -- SUBSCRIPTIONS
 
@@ -640,7 +668,12 @@ subscriptions model =
                 _ ->
                     Sub.none
     in
-    Sub.batch [ sub, Time.every 1000 Tick ]
+    Sub.batch
+        [ sub
+
+        -- Keep track of the current time for things like "2 minutes ago"
+        , Time.every 1000 Tick
+        ]
 
 
 
