@@ -179,8 +179,8 @@ view toSyntaxConfig defDiff =
 
         Mismatched { oldDef, newDef } ->
             div [ class "diff-side-by-side" ]
-                [ pre [ class "monochrome" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" oldDef) ]
-                , pre [ class "monochrome" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" newDef) ]
+                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" oldDef) ]
+                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" newDef) ]
                 ]
 
 
