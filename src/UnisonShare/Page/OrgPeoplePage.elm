@@ -15,6 +15,7 @@ import UI.Icon as Icon
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle exposing (PageTitle)
+import UI.Placeholder as Placeholder
 import UI.ProfileSnippet as ProfileSnippet
 import UI.Tooltip as Tooltip
 import UnisonShare.AddOrgMemberModal as AddOrgMemberModal
@@ -271,7 +272,11 @@ viewContent model =
                     Card.card [ text (Util.httpErrorToString e) ]
 
                 _ ->
-                    Card.card [ text "TODO LOADING" ]
+                    Card.card
+                        [ div [ class "members_list" ]
+                            (List.map Placeholder.view Placeholder.texts5)
+                        ]
+                        |> Card.withClassName "members"
     in
     [ card
         |> Card.asContained
