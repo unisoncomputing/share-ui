@@ -177,8 +177,11 @@ view toSyntaxConfig defDiff =
         Diff _ diff ->
             div [] [ viewDiff toSyntaxConfig diff ]
 
-        Mismatched _ ->
-            div [] [ text "TODO" ]
+        Mismatched { oldDef, newDef } ->
+            div [ class "diff-side-by-side" ]
+                [ pre [ class "monochrome" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" oldDef) ]
+                , pre [ class "monochrome" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" newDef) ]
+                ]
 
 
 
@@ -284,7 +287,7 @@ decodeMismatched definitionType =
                 }
     in
     Decode.succeed mkMismatched
-        -- TODO: what about builtins?
+        -- TODO: what about builtins?defindi
         |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
         |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
 
