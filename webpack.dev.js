@@ -5,14 +5,12 @@ const webpack = require("webpack");
 const postcssPresetEnv = require("postcss-preset-env");
 const postcssGlobalData = require("@csstools/postcss-global-data");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
-const branchDiffJson = require("./api-stubs/branch-diff-lib-deps.json");
-const definitionDiffJson = require("./api-stubs/definition-diff.json");
-const definitionTypeDiffJson = require("./api-stubs/definition-type-diff.json");
-const definitionsByNameJson = require("./api-stubs/definitions-by-name.json");
+
+const kestrelReadme = require("./api-stubs/kestrel-readme.json");
+const instantDefinition = require("./api-stubs/instant-definition.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
-const WEBSITE_URL = process.env.WEBSITE_URL || "https://www.unison-lang.org";
 
 module.exports = {
   entry: "./src/unisonShare.js",
@@ -202,28 +200,14 @@ module.exports = {
         pathRewrite: { "^/api": "" },
         logLevel: "debug",
         bypass: (req, res, _proxyOptions) => {
-          if (req.url.endsWith("/diff")) {
-            res.send(branchDiffJson);
+          if (req.url.endsWith("/readme")) {
+            res.send(kestrelReadme);
           }
-
-          if (req.url.includes("/diff/types")) {
-            res.send(definitionTypeDiffJson);
-          }
-          /*
-          if (req.url.includes("/diff/terms")) {
-            res.send(definitionDiffJson);
-          }
-          if (req.url.includes("/definitions/by-name")) {
-            res.send(definitionsByNameJson);
-          }
-          */
         },
       },
       {
         context: ["/website"],
-        bypass: (req, res, _proxyOptions) => {
-          return [];
-        },
+        bypass: (_req, _res, _proxyOptions) => { return []; },
         pathRewrite: { "^/website": "" },
         logLevel: "debug",
       },

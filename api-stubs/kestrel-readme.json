@@ -1,0 +1,4593 @@
+{
+  "readMe": {
+    "contents": [
+      {
+        "contents": [
+          {
+            "contents": [
+              {
+                "contents": [
+                  {
+                    "contents": "🪶",
+                    "tag": "Word"
+                  }
+                ],
+                "tag": "Paragraph"
+              },
+              {
+                "contents": [
+                  {
+                    "contents": "The",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "library",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "is",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "named",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "after",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "the",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": {
+                      "contents": [
+                        {
+                          "contents": [
+                            {
+                              "contents": [
+                                {
+                                  "contents": "kestrel",
+                                  "tag": "Word"
+                                }
+                              ],
+                              "tag": "Paragraph"
+                            },
+                            {
+                              "contents": {
+                                "contents": "https://en.wikipedia.org/wiki/Kestrel",
+                                "tag": "Word"
+                              },
+                              "tag": "Group"
+                            }
+                          ],
+                          "tag": "NamedLink"
+                        },
+                        {
+                          "contents": ",",
+                          "tag": "Word"
+                        }
+                      ],
+                      "tag": "Join"
+                    },
+                    "tag": "Group"
+                  },
+                  {
+                    "contents": "a",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "bird",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "of",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "the",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "falcon",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "genus.",
+                    "tag": "Word"
+                  }
+                ],
+                "tag": "Paragraph"
+              }
+            ],
+            "tag": "Callout"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": "This",
+            "tag": "Word"
+          },
+          {
+            "contents": "library",
+            "tag": "Word"
+          },
+          {
+            "contents": "provides",
+            "tag": "Word"
+          },
+          {
+            "contents": "a",
+            "tag": "Word"
+          },
+          {
+            "contents": "typed",
+            "tag": "Word"
+          },
+          {
+            "contents": "SQL-like",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "annotation": {
+                    "contents": "#uebf0ccbn4om1ojkkntsc0uojsoje3ngd0mbpip4i8lmc8th9155o6htebotn2upeea4f9si51i6420bis0itl44060oev3ivr3c9c8",
+                    "tag": "TypeReference"
+                  },
+                  "segment": "Query"
+                }
+              ],
+              "tag": "Link"
+            },
+            "tag": "Special"
+          },
+          {
+            "contents": "language",
+            "tag": "Word"
+          },
+          {
+            "contents": "that",
+            "tag": "Word"
+          },
+          {
+            "contents": "can",
+            "tag": "Word"
+          },
+          {
+            "contents": "combine",
+            "tag": "Word"
+          },
+          {
+            "contents": "data",
+            "tag": "Word"
+          },
+          {
+            "contents": "from",
+            "tag": "Word"
+          },
+          {
+            "contents": "multiple",
+            "tag": "Word"
+          },
+          {
+            "contents": "sources",
+            "tag": "Word"
+          },
+          {
+            "contents": "(represented",
+            "tag": "Word"
+          },
+          {
+            "contents": "by",
+            "tag": "Word"
+          },
+          {
+            "contents": "the",
+            "tag": "Word"
+          },
+          {
+            "contents": "type",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "contents": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "#rss21jfln1a8jd7p70bh09g69dl5c9hdqmrm5ps2p7vv781rvg329qpf1qqm46hvhpqcm380sub3etegmitadvt1lq28sc95up3gpr0",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Index"
+                      }
+                    ],
+                    "tag": "Link"
+                  },
+                  "tag": "Special"
+                },
+                {
+                  "contents": ").",
+                  "tag": "Word"
+                }
+              ],
+              "tag": "Join"
+            },
+            "tag": "Group"
+          },
+          {
+            "contents": "Here's",
+            "tag": "Word"
+          },
+          {
+            "contents": "a",
+            "tag": "Word"
+          },
+          {
+            "contents": "simple",
+            "tag": "Word"
+          },
+          {
+            "contents": "example",
+            "tag": "Word"
+          },
+          {
+            "contents": "using",
+            "tag": "Word"
+          },
+          {
+            "contents": "in-memory",
+            "tag": "Word"
+          },
+          {
+            "contents": "data,",
+            "tag": "Word"
+          },
+          {
+            "contents": "but",
+            "tag": "Word"
+          },
+          {
+            "contents": "note",
+            "tag": "Word"
+          },
+          {
+            "contents": "that",
+            "tag": "Word"
+          },
+          {
+            "contents": "you",
+            "tag": "Word"
+          },
+          {
+            "contents": "can",
+            "tag": "Word"
+          },
+          {
+            "contents": "also",
+            "tag": "Word"
+          },
+          {
+            "contents": "pull",
+            "tag": "Word"
+          },
+          {
+            "contents": "from",
+            "tag": "Word"
+          },
+          {
+            "contents": "external",
+            "tag": "Word"
+          },
+          {
+            "contents": "services,",
+            "tag": "Word"
+          },
+          {
+            "contents": "files,",
+            "tag": "Word"
+          },
+          {
+            "contents": "database",
+            "tag": "Word"
+          },
+          {
+            "contents": "tables,",
+            "tag": "Word"
+          },
+          {
+            "contents": "and",
+            "tag": "Word"
+          },
+          {
+            "contents": "so",
+            "tag": "Word"
+          },
+          {
+            "contents": "on:",
+            "tag": "Word"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": {
+          "contents": [
+            [
+              {
+                "annotation": {
+                  "tag": "UseKeyword"
+                },
+                "segment": "use "
+              },
+              {
+                "annotation": {
+                  "tag": "UsePrefix"
+                },
+                "segment": "Index"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "UseSuffix"
+                },
+                "segment": "index"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": {
+                  "contents": "userIds",
+                  "tag": "HashQualifier"
+                },
+                "segment": "userIds"
+              },
+              {
+                "annotation": {
+                  "tag": "BindingEquals"
+                },
+                "segment": " ="
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "#t5chsu6qnlgorfull8fkqie2f8emigrn0hvph46cso27frep5uaklf6efqug1mvbuukvn224g7ljqn47b4mk11d057ffb3p202qldt0",
+                  "tag": "TermReference"
+                },
+                "segment": "index"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "["
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"alice\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "1"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"bob\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "2"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"carol\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "3"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"eve\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "5"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "]"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": {
+                  "contents": "favFruits",
+                  "tag": "HashQualifier"
+                },
+                "segment": "favFruits"
+              },
+              {
+                "annotation": {
+                  "tag": "BindingEquals"
+                },
+                "segment": " ="
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": null,
+                "segment": "  "
+              },
+              {
+                "annotation": {
+                  "contents": "#t5chsu6qnlgorfull8fkqie2f8emigrn0hvph46cso27frep5uaklf6efqug1mvbuukvn224g7ljqn47b4mk11d057ffb3p202qldt0",
+                  "tag": "TermReference"
+                },
+                "segment": "index"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "["
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "1"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍎\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "2"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍊\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "3"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍇\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "4"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍓\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "5"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍐\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "NumericLiteral"
+                },
+                "segment": "6"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🥝\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "]"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": {
+                  "contents": "#4i2uknk59rinu99b7dq97p8j3b0ttvlasq6rjhona69usp4e7prn741fl8v6ul73httln7oj8duci9pgo9mndott2vm7orgn5uqami8",
+                  "tag": "TermReference"
+                },
+                "segment": "Query.tryRun"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "ControlKeyword"
+                },
+                "segment": "do"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": null,
+                "segment": "  "
+              },
+              {
+                "annotation": {
+                  "contents": "user",
+                  "tag": "HashQualifier"
+                },
+                "segment": "user"
+              },
+              {
+                "annotation": {
+                  "tag": "BindingEquals"
+                },
+                "segment": " ="
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "#rd7kkbkmougtf8svjp8u6l75j3dshh0sn9th6phhueaqn840ddqnnc5hka1eotkqbke0l92eafqd17k0p58qen2huuogb0o4uc4hub8",
+                  "tag": "TermReference"
+                },
+                "segment": "Query.each"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "["
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"alice\""
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"bob\""
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"eve\""
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "]"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": null,
+                "segment": "  "
+              },
+              {
+                "annotation": {
+                  "contents": "userId",
+                  "tag": "HashQualifier"
+                },
+                "segment": "userId"
+              },
+              {
+                "annotation": {
+                  "tag": "BindingEquals"
+                },
+                "segment": " ="
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "#tcicmr4m44815dd9ki7objn62ddf13ir1voqekafecj3aje1g0hjmsaj6u0vpkvme1h4eq5pe0gotbg3vff3349p3q953hr3s979a00",
+                  "tag": "TermReference"
+                },
+                "segment": "select"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "Var"
+                },
+                "segment": "user"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "Var"
+                },
+                "segment": "userIds"
+              },
+              {
+                "annotation": null,
+                "segment": "\n"
+              },
+              {
+                "annotation": null,
+                "segment": "  "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "Var"
+                },
+                "segment": "user"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#tcicmr4m44815dd9ki7objn62ddf13ir1voqekafecj3aje1g0hjmsaj6u0vpkvme1h4eq5pe0gotbg3vff3349p3q953hr3s979a00",
+                  "tag": "TermReference"
+                },
+                "segment": "select"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "Var"
+                },
+                "segment": "userId"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "tag": "Var"
+                },
+                "segment": "favFruits"
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              }
+            ],
+            [
+              {
+                "annotation": {
+                  "contents": "#0o7mf021foma9acqdaibmlh1jidlijq08uf7f5se9tssttqs546pfunjpk6s31mqoq8s2o1natede8hkk6he45l95fibglidikt44v8#d0",
+                  "tag": "TermReference"
+                },
+                "segment": "Right"
+              },
+              {
+                "annotation": null,
+                "segment": " "
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "["
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"alice\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍎\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"bob\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍊\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": "("
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"eve\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ", "
+              },
+              {
+                "annotation": {
+                  "tag": "TextLiteral"
+                },
+                "segment": "\"🍐\""
+              },
+              {
+                "annotation": {
+                  "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                  "tag": "TypeReference"
+                },
+                "segment": ")"
+              },
+              {
+                "annotation": {
+                  "contents": "##Sequence",
+                  "tag": "TypeReference"
+                },
+                "segment": "]"
+              }
+            ]
+          ],
+          "tag": "Eval"
+        },
+        "tag": "Special"
+      },
+      {
+        "contents": [
+          {
+            "contents": "A",
+            "tag": "Word"
+          },
+          {
+            "contents": "goal",
+            "tag": "Word"
+          },
+          {
+            "contents": "of",
+            "tag": "Word"
+          },
+          {
+            "contents": "the",
+            "tag": "Word"
+          },
+          {
+            "contents": "library",
+            "tag": "Word"
+          },
+          {
+            "contents": "is",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "make",
+            "tag": "Word"
+          },
+          {
+            "contents": "it",
+            "tag": "Word"
+          },
+          {
+            "contents": "very",
+            "tag": "Word"
+          },
+          {
+            "contents": "easy",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "build",
+            "tag": "Word"
+          },
+          {
+            "contents": "\"glue\"",
+            "tag": "Word"
+          },
+          {
+            "contents": "services:",
+            "tag": "Word"
+          },
+          {
+            "contents": "by",
+            "tag": "Word"
+          },
+          {
+            "contents": "writing",
+            "tag": "Word"
+          },
+          {
+            "contents": "bindings",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "external",
+            "tag": "Word"
+          },
+          {
+            "contents": "data",
+            "tag": "Word"
+          },
+          {
+            "contents": "sources",
+            "tag": "Word"
+          },
+          {
+            "contents": "and",
+            "tag": "Word"
+          },
+          {
+            "contents": "services",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "contents": {
+                    "contents": [
+                      {
+                        "contents": "once",
+                        "tag": "Word"
+                      }
+                    ],
+                    "tag": "Paragraph"
+                  },
+                  "tag": "Bold"
+                },
+                {
+                  "contents": ",",
+                  "tag": "Word"
+                }
+              ],
+              "tag": "Join"
+            },
+            "tag": "Group"
+          },
+          {
+            "contents": "you",
+            "tag": "Word"
+          },
+          {
+            "contents": "obtain",
+            "tag": "Word"
+          },
+          {
+            "contents": "a",
+            "tag": "Word"
+          },
+          {
+            "contents": "nice",
+            "tag": "Word"
+          },
+          {
+            "contents": "typed",
+            "tag": "Word"
+          },
+          {
+            "contents": "and",
+            "tag": "Word"
+          },
+          {
+            "contents": "higher-order",
+            "tag": "Word"
+          },
+          {
+            "contents": "programming",
+            "tag": "Word"
+          },
+          {
+            "contents": "model",
+            "tag": "Word"
+          },
+          {
+            "contents": "for",
+            "tag": "Word"
+          },
+          {
+            "contents": "talking",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "any",
+            "tag": "Word"
+          },
+          {
+            "contents": "combination",
+            "tag": "Word"
+          },
+          {
+            "contents": "of",
+            "tag": "Word"
+          },
+          {
+            "contents": "them.",
+            "tag": "Word"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": "All",
+            "tag": "Word"
+          },
+          {
+            "contents": "encoding,",
+            "tag": "Word"
+          },
+          {
+            "contents": "decoding,",
+            "tag": "Word"
+          },
+          {
+            "contents": "and",
+            "tag": "Word"
+          },
+          {
+            "contents": "networking",
+            "tag": "Word"
+          },
+          {
+            "contents": "is",
+            "tag": "Word"
+          },
+          {
+            "contents": "out",
+            "tag": "Word"
+          },
+          {
+            "contents": "of",
+            "tag": "Word"
+          },
+          {
+            "contents": "the",
+            "tag": "Word"
+          },
+          {
+            "contents": "way,",
+            "tag": "Word"
+          },
+          {
+            "contents": "written",
+            "tag": "Word"
+          },
+          {
+            "contents": "once",
+            "tag": "Word"
+          },
+          {
+            "contents": "rather",
+            "tag": "Word"
+          },
+          {
+            "contents": "than",
+            "tag": "Word"
+          },
+          {
+            "contents": "littering",
+            "tag": "Word"
+          },
+          {
+            "contents": "every",
+            "tag": "Word"
+          },
+          {
+            "contents": "application",
+            "tag": "Word"
+          },
+          {
+            "contents": "that",
+            "tag": "Word"
+          },
+          {
+            "contents": "makes",
+            "tag": "Word"
+          },
+          {
+            "contents": "queries.",
+            "tag": "Word"
+          },
+          {
+            "contents": "The",
+            "tag": "Word"
+          },
+          {
+            "contents": "API",
+            "tag": "Word"
+          },
+          {
+            "contents": "also",
+            "tag": "Word"
+          },
+          {
+            "contents": "supports",
+            "tag": "Word"
+          },
+          {
+            "contents": "pipelined",
+            "tag": "Word"
+          },
+          {
+            "contents": "parallel",
+            "tag": "Word"
+          },
+          {
+            "contents": "execution",
+            "tag": "Word"
+          },
+          {
+            "contents": "of",
+            "tag": "Word"
+          },
+          {
+            "contents": "queries.",
+            "tag": "Word"
+          },
+          {
+            "contents": "See",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "contents": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "#q9c0p786hba7uheh1p6o7ugd3p0q5clk3h47h9jkc2rsr3gjapriopbbv2akbithjk02p79ofk5grieoh7j4avt34t3ej07mbkdnai8",
+                          "tag": "TermReference"
+                        },
+                        "segment": "parRun"
+                      }
+                    ],
+                    "tag": "Link"
+                  },
+                  "tag": "Special"
+                },
+                {
+                  "contents": ".",
+                  "tag": "Word"
+                }
+              ],
+              "tag": "Join"
+            },
+            "tag": "Group"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": "Here's",
+            "tag": "Word"
+          },
+          {
+            "contents": "another",
+            "tag": "Word"
+          },
+          {
+            "contents": "example,",
+            "tag": "Word"
+          },
+          {
+            "contents": "mixing",
+            "tag": "Word"
+          },
+          {
+            "contents": "an",
+            "tag": "Word"
+          },
+          {
+            "contents": "in-memory",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "annotation": {
+                    "contents": "#rss21jfln1a8jd7p70bh09g69dl5c9hdqmrm5ps2p7vv781rvg329qpf1qqm46hvhpqcm380sub3etegmitadvt1lq28sc95up3gpr0",
+                    "tag": "TypeReference"
+                  },
+                  "segment": "Index"
+                }
+              ],
+              "tag": "Link"
+            },
+            "tag": "Special"
+          },
+          {
+            "contents": "with",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "annotation": {
+                    "contents": "#s39hei7tgvnn70t7bts9hpve87eimsptppvkq8rthsqib9h6tu8kpvo3vfs1dp7bettu5gk32bqcerd4b8j5hr53fgg30colj95daio",
+                    "tag": "TermReference"
+                  },
+                  "segment": "weatherByLocation"
+                }
+              ],
+              "tag": "Link"
+            },
+            "tag": "Special"
+          },
+          {
+            "contents": "which",
+            "tag": "Word"
+          },
+          {
+            "contents": "calls",
+            "tag": "Word"
+          },
+          {
+            "contents": "out",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "the",
+            "tag": "Word"
+          },
+          {
+            "contents": [
+              {
+                "contents": [
+                  {
+                    "contents": "Open",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "Meteo",
+                    "tag": "Word"
+                  },
+                  {
+                    "contents": "API",
+                    "tag": "Word"
+                  }
+                ],
+                "tag": "Paragraph"
+              },
+              {
+                "contents": {
+                  "contents": "https://open-meteo.com/en/docs",
+                  "tag": "Word"
+                },
+                "tag": "Group"
+              }
+            ],
+            "tag": "NamedLink"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "obtain",
+            "tag": "Word"
+          },
+          {
+            "contents": "weather",
+            "tag": "Word"
+          },
+          {
+            "contents": "forecasts",
+            "tag": "Word"
+          },
+          {
+            "contents": "by",
+            "tag": "Word"
+          },
+          {
+            "contents": "location:",
+            "tag": "Word"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": {
+              "contents": [
+                [
+                  {
+                    "annotation": {
+                      "contents": "#s39hei7tgvnn70t7bts9hpve87eimsptppvkq8rthsqib9h6tu8kpvo3vfs1dp7bettu5gk32bqcerd4b8j5hr53fgg30colj95daio",
+                      "tag": "TermReference"
+                    },
+                    "segment": "weatherByLocation"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": {
+                      "tag": "TypeAscriptionColon"
+                    },
+                    "segment": ": "
+                  },
+                  {
+                    "annotation": {
+                      "contents": "#rss21jfln1a8jd7p70bh09g69dl5c9hdqmrm5ps2p7vv781rvg329qpf1qqm46hvhpqcm380sub3etegmitadvt1lq28sc95up3gpr0",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Index"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": {
+                      "contents": "#h5b7gcafno19l719u3nohgunmnalsni5h87tb7iakt50i8qf6usfnmvhdio609v1dgfao0ad65ia9jqcuokfdk2v6flioe2lv3n2aoo",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Remote"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": null,
+                    "segment": "("
+                  },
+                  {
+                    "annotation": {
+                      "contents": "##Float",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Float"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": ","
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": {
+                      "contents": "##Float",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Float"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": ")"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": null,
+                    "segment": "("
+                  },
+                  {
+                    "annotation": {
+                      "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "LocalDate"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": ","
+                  },
+                  {
+                    "annotation": null,
+                    "segment": " "
+                  },
+                  {
+                    "annotation": {
+                      "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Forecast"
+                  },
+                  {
+                    "annotation": null,
+                    "segment": ")"
+                  }
+                ]
+              ],
+              "tag": "Signature"
+            },
+            "tag": "Special"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": {
+              "contents": [
+                {
+                  "contents": [
+                    "#7gb1u9l65as0m3c98df3go2562qob8caot10l9g8h820vpm2pbrl6hco179uodp6opjs8c38ge05ptbknqpu88t5jn84bo0ektnc78g",
+                    {
+                      "contents": [
+                        [
+                          {
+                            "annotation": {
+                              "contents": "#7gb1u9l65as0m3c98df3go2562qob8caot10l9g8h820vpm2pbrl6hco179uodp6opjs8c38ge05ptbknqpu88t5jn84bo0ektnc78g",
+                              "tag": "TermReference"
+                            },
+                            "segment": "weatherForecast"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TypeAscriptionColon"
+                            },
+                            "segment": ": "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelayForceChar"
+                            },
+                            "segment": "'"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "AbilityBraces"
+                            },
+                            "segment": "{"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##IO",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "IO"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#4n0fgs00hpsj3paqnm9bfm4nbt9cbrin3hl88i992m9tjiq1ik7eq72asu4hcg885uti36tbnj5rudt56eahhnut1nobofg86pk1bng",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Exception"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "AbilityBraces"
+                            },
+                            "segment": "}"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelimiterChar"
+                            },
+                            "segment": "["
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Text",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Text"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "LocalDate"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Forecast"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelimiterChar"
+                            },
+                            "segment": "]"
+                          }
+                        ],
+                        [
+                          {
+                            "annotation": {
+                              "contents": "weatherForecast",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "weatherForecast"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TypeAscriptionColon"
+                            },
+                            "segment": " :"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelayForceChar"
+                            },
+                            "segment": "'"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "AbilityBraces"
+                            },
+                            "segment": "{"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##IO",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "IO"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#4n0fgs00hpsj3paqnm9bfm4nbt9cbrin3hl88i992m9tjiq1ik7eq72asu4hcg885uti36tbnj5rudt56eahhnut1nobofg86pk1bng",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Exception"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "AbilityBraces"
+                            },
+                            "segment": "}"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelimiterChar"
+                            },
+                            "segment": "["
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Text",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Text"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "LocalDate"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ","
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "Forecast"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "DelimiterChar"
+                            },
+                            "segment": "]"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "weatherForecast",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "weatherForecast"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "ControlKeyword"
+                            },
+                            "segment": "do"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#7balaganeli9gtksda6gm9qgqcplqtpll79v8ltnvfccbe31vrct8cil0gpmbg6qni3l7js29m5u9vkfed262e1uakqgq61detvhavg",
+                              "tag": "TermReference"
+                            },
+                            "segment": "runLocally"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "ControlKeyword"
+                            },
+                            "segment": "do"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "latLongs",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "latLongs"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#t5chsu6qnlgorfull8fkqie2f8emigrn0hvph46cso27frep5uaklf6efqug1mvbuukvn224g7ljqn47b4mk11d057ffb3p202qldt0",
+                              "tag": "TermReference"
+                            },
+                            "segment": "Index.index"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "[ "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"New Orleans\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "29.9509"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "-90.0769"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Paris\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "48.8566"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "2.3522"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"San Francisco\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "37.7749"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "-122.4194"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"London\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "51.5074"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "-0.1278"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Berlin\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "52.52"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "13.405"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Tokyo\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "35.6895"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "139.6917"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Sydney\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "-33.8688"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "NumericLiteral"
+                            },
+                            "segment": "151.2093"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "]"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#355kaidga9vf67ve906e3dvblor5sg6ao5c33phcujm7p4qgj5kkcjvqse1md6opumteem2r7d2fdn2pa0ujiotregc6ksccklgmpqg",
+                              "tag": "TermReference"
+                            },
+                            "segment": "Query.run"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "ControlKeyword"
+                            },
+                            "segment": "do"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "city",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "city"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#rd7kkbkmougtf8svjp8u6l75j3dshh0sn9th6phhueaqn840ddqnnc5hka1eotkqbke0l92eafqd17k0p58qen2huuogb0o4uc4hub8",
+                              "tag": "TermReference"
+                            },
+                            "segment": "Query.each"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "["
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"New Orleans\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Paris\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "TextLiteral"
+                            },
+                            "segment": "\"Tokyo\""
+                          },
+                          {
+                            "annotation": {
+                              "contents": "##Sequence",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "]"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "latLong",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "latLong"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#tcicmr4m44815dd9ki7objn62ddf13ir1voqekafecj3aje1g0hjmsaj6u0vpkvme1h4eq5pe0gotbg3vff3349p3q953hr3s979a00",
+                              "tag": "TermReference"
+                            },
+                            "segment": "select"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "Var"
+                            },
+                            "segment": "city"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "Var"
+                            },
+                            "segment": "latLongs"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "forecast",
+                              "tag": "HashQualifier"
+                            },
+                            "segment": "forecast"
+                          },
+                          {
+                            "annotation": {
+                              "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#tcicmr4m44815dd9ki7objn62ddf13ir1voqekafecj3aje1g0hjmsaj6u0vpkvme1h4eq5pe0gotbg3vff3349p3q953hr3s979a00",
+                              "tag": "TermReference"
+                            },
+                            "segment": "select"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "Var"
+                            },
+                            "segment": "latLong"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": " "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#s39hei7tgvnn70t7bts9hpve87eimsptppvkq8rthsqib9h6tu8kpvo3vfs1dp7bettu5gk32bqcerd4b8j5hr53fgg30colj95daio",
+                              "tag": "TermReference"
+                            },
+                            "segment": "weatherByLocation"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "\n"
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": null,
+                            "segment": "  "
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": "("
+                          },
+                          {
+                            "annotation": {
+                              "tag": "Var"
+                            },
+                            "segment": "city"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ", "
+                          },
+                          {
+                            "annotation": {
+                              "tag": "Var"
+                            },
+                            "segment": "forecast"
+                          },
+                          {
+                            "annotation": {
+                              "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                              "tag": "TypeReference"
+                            },
+                            "segment": ")"
+                          }
+                        ]
+                      ],
+                      "tag": "UserObject"
+                    }
+                  ],
+                  "tag": "Term"
+                }
+              ],
+              "tag": "Source"
+            },
+            "tag": "Special"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": [
+          {
+            "contents": "In",
+            "tag": "Word"
+          },
+          {
+            "contents": "UCM,",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": "run examples.weatherForecast",
+              "tag": "Word"
+            },
+            "tag": "Code"
+          },
+          {
+            "contents": "generates",
+            "tag": "Word"
+          },
+          {
+            "contents": "output",
+            "tag": "Word"
+          },
+          {
+            "contents": "like:",
+            "tag": "Word"
+          }
+        ],
+        "tag": "Paragraph"
+      },
+      {
+        "contents": {
+          "contents": [
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": "[ "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "( "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"New Orleans\""
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "4"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Overcast\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "73.9"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "89.6"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "( "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"New Orleans\""
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "5"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Overcast\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "72.8"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "91.7"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "( "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"New Orleans\""
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Light drizzle\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "73.9"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "96.5"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "( "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Paris\""
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "4"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Slight rain showers\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "56.8"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "67.9"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": null,
+              "segment": "  "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Paris\""
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "5"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Slight rain\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "56.6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "68.3"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Paris\""
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Slight rain\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "58.3"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "70.6"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Tokyo\""
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "5"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Slight rain\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "64.6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "80.7"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Tokyo\""
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Overcast\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "62.1"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "81.7"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Tokyo\""
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": "("
+            },
+            {
+              "annotation": {
+                "contents": "#7c3eck9l7iuo1aa2qi584ri9pm9d4hpebve259p2if9mhruh5hlrolr7471cp7ka6ju7lrb71c4kp66hc6d2gaoo16rfi8rubqmh6m8#d0",
+                "tag": "TermReference"
+              },
+              "segment": "LocalDate"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "+2025"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "6"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "7"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ", "
+            },
+            {
+              "annotation": {
+                "contents": "#nevd9k11cen5gdt7tutnvl8h949s9tc7cc5mat2v03saqlme9se8of5mhabj1riqo6ptsmjci1khiv8olhv6g1eeg1209tr5sonv390#d0",
+                "tag": "TermReference"
+              },
+              "segment": "Forecast"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "TextLiteral"
+              },
+              "segment": "\"Overcast\""
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "64.9"
+            },
+            {
+              "annotation": null,
+              "segment": " "
+            },
+            {
+              "annotation": {
+                "tag": "NumericLiteral"
+              },
+              "segment": "82.0"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": {
+                "contents": "#2lg4ah6ir6t129m33d7gssnigacral39qdamo20mn6r2vefliubpeqnjhejai9ekjckv0qnu9mlu3k9nbpfhl2schec4dohn7rjhjt8",
+                "tag": "TypeReference"
+              },
+              "segment": ")"
+            },
+            {
+              "annotation": null,
+              "segment": "\n"
+            },
+            {
+              "annotation": {
+                "contents": "##Sequence",
+                "tag": "TypeReference"
+              },
+              "segment": "]"
+            }
+          ],
+          "tag": "ExampleBlock"
+        },
+        "tag": "Special"
+      },
+      {
+        "contents": [
+          {
+            "contents": "See",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "annotation": {
+                    "contents": "#uebf0ccbn4om1ojkkntsc0uojsoje3ngd0mbpip4i8lmc8th9155o6htebotn2upeea4f9si51i6420bis0itl44060oev3ivr3c9c8",
+                    "tag": "TypeReference"
+                  },
+                  "segment": "Query"
+                }
+              ],
+              "tag": "Link"
+            },
+            "tag": "Special"
+          },
+          {
+            "contents": "for",
+            "tag": "Word"
+          },
+          {
+            "contents": "an",
+            "tag": "Word"
+          },
+          {
+            "contents": "overview",
+            "tag": "Word"
+          },
+          {
+            "contents": "of",
+            "tag": "Word"
+          },
+          {
+            "contents": "the",
+            "tag": "Word"
+          },
+          {
+            "contents": "API",
+            "tag": "Word"
+          },
+          {
+            "contents": "for",
+            "tag": "Word"
+          },
+          {
+            "contents": "building",
+            "tag": "Word"
+          },
+          {
+            "contents": "up",
+            "tag": "Word"
+          },
+          {
+            "contents": "queries,",
+            "tag": "Word"
+          },
+          {
+            "contents": "and",
+            "tag": "Word"
+          },
+          {
+            "contents": {
+              "contents": [
+                {
+                  "annotation": {
+                    "contents": "#rss21jfln1a8jd7p70bh09g69dl5c9hdqmrm5ps2p7vv781rvg329qpf1qqm46hvhpqcm380sub3etegmitadvt1lq28sc95up3gpr0",
+                    "tag": "TypeReference"
+                  },
+                  "segment": "Index"
+                }
+              ],
+              "tag": "Link"
+            },
+            "tag": "Special"
+          },
+          {
+            "contents": "for",
+            "tag": "Word"
+          },
+          {
+            "contents": "more",
+            "tag": "Word"
+          },
+          {
+            "contents": "on",
+            "tag": "Word"
+          },
+          {
+            "contents": "how",
+            "tag": "Word"
+          },
+          {
+            "contents": "to",
+            "tag": "Word"
+          },
+          {
+            "contents": "create",
+            "tag": "Word"
+          },
+          {
+            "contents": "your",
+            "tag": "Word"
+          },
+          {
+            "contents": "own",
+            "tag": "Word"
+          },
+          {
+            "contents": "data",
+            "tag": "Word"
+          },
+          {
+            "contents": "sources.",
+            "tag": "Word"
+          }
+        ],
+        "tag": "Paragraph"
+      }
+    ],
+    "tag": "UntitledSection"
+  }
+}
