@@ -34,11 +34,11 @@ import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Contribution.ContributionRef as ContributionRef
 import UnisonShare.ErrorCard as ErrorCard
 import UnisonShare.Link as Link
-import UnisonShare.Notification as Notification exposing (Notification)
+import UnisonShare.Notification as Notification exposing (Notification, NotificationStatus)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Paginated as Paginated exposing (PageCursor(..), PageCursorParam, Paginated(..))
 import UnisonShare.Project.ProjectRef as ProjectRef
-import UnisonShare.Route exposing (NotificationsRoute(..))
+import UnisonShare.Route as Route exposing (NotificationsRoute(..))
 
 
 
@@ -58,6 +58,7 @@ type NotificationSelection
 type alias SubPageState =
     { notifications : WebData PaginatedNotifications
     , selection : NotificationSelection
+    , updateSelection : WebData ()
     }
 
 
@@ -74,24 +75,25 @@ type alias Model =
 init : AppContext -> NotificationsRoute -> Account a -> ( Model, Cmd Msg )
 init appContext route account =
     let
-        subPageState =
+        subPageState_ =
             { notifications = Loading
             , selection = NoSelection
+            , updateSelection = NotAsked
             }
     in
     case route of
         NotificationsAll cursor ->
-            ( All subPageState
+            ( All subPageState_
             , fetchNotifications appContext account cursor
             )
 
         NotificationsUnread cursor ->
-            ( Unread subPageState
+            ( Unread subPageState_
             , fetchUnreadNotifications appContext account cursor
             )
 
         NotificationsArchive cursor ->
-            ( Archive subPageState
+            ( Archive subPageState_
             , fetchArchivedNotifications appContext account cursor
             )
 
@@ -104,18 +106,17 @@ type Msg
     = ToggleSelectAll
     | FetchAllNotificationsFinished (WebData PaginatedNotifications)
     | ToggleSelection Notification
-    | MarkSelectionAsUnread
-    | MarkNotificationsAsUnreadFinished (HttpResult ())
-    | MarkSelectionAsRead
-    | MarkNotificationsAsReadFinished (HttpResult ())
-    | ArchiveSelection
-    | MarkNotificationsAsArchivedFinished (HttpResult ())
-    | UnarchiveSelection
-    | MarkNotificationsAsUnarchivedFinished (HttpResult ())
+    | UpdateSelection NotificationStatus
+    | UpdateSelectionFinished NotificationStatus (HttpResult ())
 
 
-update : AppContext -> NotificationsRoute -> Account a -> Msg -> Model -> ( Model, Cmd Msg )
-update _ _ _ msg model =
+type OutMsg
+    = NoOutMsg
+    | UpdatedNotificationStatuses
+
+
+update : AppContext -> NotificationsRoute -> Account a -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
+update appContext _ account msg model =
     case msg of
         ToggleSelectAll ->
             let
@@ -131,7 +132,7 @@ update _ _ _ msg model =
                     in
                     { state | selection = selection }
             in
-            ( updateSubPageState selectAll_ model, Cmd.none )
+            ( updateSubPageState selectAll_ model, Cmd.none, NoOutMsg )
 
         ToggleSelection notification ->
             let
@@ -171,19 +172,94 @@ update _ _ _ msg model =
                             else
                                 { state | selection = SubsetSelected (Set.insert notification.id selections) }
             in
-            ( updateSubPageState toggleSelection model, Cmd.none )
+            ( updateSubPageState toggleSelection model, Cmd.none, NoOutMsg )
 
         FetchAllNotificationsFinished notifications ->
             let
                 updateNotifications _ =
                     { notifications = notifications
                     , selection = NoSelection
+                    , updateSelection = NotAsked
                     }
             in
-            ( updateSubPageState updateNotifications model, Cmd.none )
+            ( updateSubPageState updateNotifications model, Cmd.none, NoOutMsg )
 
-        _ ->
-            ( model, Cmd.none )
+        -- When marking is finished we should redirect to the current page without cursors and thus reload data
+        -- should also refresh the account endpoint to make update the little dot on the notifications icon
+        -- when its updating, the page should be blocked from interactivity.
+        -- MarkNotificationsAsUnreadFinished (HttpResult ())
+        UpdateSelection status ->
+            let
+                subPageState_ =
+                    subPageState model
+
+                ids =
+                    case ( subPageState_.notifications, subPageState_.selection ) of
+                        ( Success (Paginated { items }), AllNotifications ) ->
+                            List.map .id items
+
+                        ( Success (Paginated _), SubsetSelected ids_ ) ->
+                            Set.toList ids_
+
+                        _ ->
+                            []
+            in
+            if List.isEmpty ids then
+                ( model, Cmd.none, NoOutMsg )
+
+            else
+                let
+                    update_ subState =
+                        { subState | updateSelection = Loading }
+                in
+                ( updateSubPageState update_ model, updateNotificationStatuses appContext account ids status, NoOutMsg )
+
+        UpdateSelectionFinished _ result ->
+            case result of
+                Ok _ ->
+                    let
+                        update_ subState =
+                            { subState
+                                | notifications = Loading
+                                , updateSelection = Success ()
+                            }
+
+                        -- We refresh and reset any pagination
+                        refresh =
+                            case model of
+                                All _ ->
+                                    Route.NotificationsAll Paginated.NoPageCursor
+
+                                Unread _ ->
+                                    Route.NotificationsAll Paginated.NoPageCursor
+
+                                Archive _ ->
+                                    Route.NotificationsAll Paginated.NoPageCursor
+                    in
+                    ( updateSubPageState update_ model
+                    , Route.navigate appContext.navKey (Route.Notifications refresh)
+                    , UpdatedNotificationStatuses
+                    )
+
+                Err e ->
+                    let
+                        update_ subState =
+                            { subState | updateSelection = Failure e }
+                    in
+                    ( updateSubPageState update_ model, Cmd.none, NoOutMsg )
+
+
+subPageState : Model -> SubPageState
+subPageState model =
+    case model of
+        All s ->
+            s
+
+        Unread s ->
+            s
+
+        Archive s ->
+            s
 
 
 updateSubPageState : (SubPageState -> SubPageState) -> Model -> Model
@@ -237,49 +313,10 @@ fetchNotifications_ appContext account status paginationCursorParam =
         |> HttpApi.perform appContext.api
 
 
-markNotificationsAsRead : AppContext -> Account a -> List String -> Cmd Msg
-markNotificationsAsRead appContext account notificationIds =
-    updateNotificationStatuses
-        MarkNotificationsAsReadFinished
-        appContext
-        account
-        notificationIds
-        Notification.Read
-
-
-markNotificationsAsUnread : AppContext -> Account a -> List String -> Cmd Msg
-markNotificationsAsUnread appContext account notificationIds =
-    updateNotificationStatuses
-        MarkNotificationsAsUnreadFinished
-        appContext
-        account
-        notificationIds
-        Notification.Unread
-
-
-archiveNotifications : AppContext -> Account a -> List String -> Cmd Msg
-archiveNotifications appContext account notificationIds =
-    updateNotificationStatuses
-        MarkNotificationsAsArchivedFinished
-        appContext
-        account
-        notificationIds
-        Notification.Archived
-
-
-unarchiveNotifications : AppContext -> Account a -> List String -> Cmd Msg
-unarchiveNotifications appContext account notificationIds =
-    updateNotificationStatuses MarkNotificationsAsUnarchivedFinished
-        appContext
-        account
-        notificationIds
-        Notification.Unread
-
-
-updateNotificationStatuses : (HttpResult () -> Msg) -> AppContext -> Account a -> List String -> Notification.NotificationStatus -> Cmd Msg
-updateNotificationStatuses toMsg appContext account notificationIds status =
+updateNotificationStatuses : AppContext -> Account a -> List String -> Notification.NotificationStatus -> Cmd Msg
+updateNotificationStatuses appContext account notificationIds status =
     ShareApi.updateNotificationStatuses account notificationIds status
-        |> HttpApi.toRequestWithEmptyResponse toMsg
+        |> HttpApi.toRequestWithEmptyResponse (UpdateSelectionFinished status)
         |> HttpApi.perform appContext.api
 
 
@@ -473,7 +510,7 @@ viewSelectionControls selection controls =
                 _ ->
                     div [ class "notifications_selection-controls_controls" ]
                         (List.map
-                            (Button.small >> Button.emphasized >> Button.view)
+                            (Button.small >> Button.view)
                             controls
                         )
     in
@@ -542,9 +579,9 @@ view appContext model =
                 All state ->
                     ( TabList.tabList [] tabs.all [ tabs.unread, tabs.archive ]
                     , viewSelectionControls state.selection
-                        [ Button.button MarkSelectionAsUnread "Mark as unread"
-                        , Button.button MarkSelectionAsRead "Mark as read"
-                        , Button.button ArchiveSelection "Archive"
+                        [ Button.button (UpdateSelection Notification.Unread) "Mark as unread"
+                        , Button.button (UpdateSelection Notification.Read) "Mark as read"
+                        , Button.button (UpdateSelection Notification.Archived) "Archive"
                         ]
                     , view_ appContext model state.selection state.notifications
                     )
@@ -552,8 +589,8 @@ view appContext model =
                 Unread state ->
                     ( TabList.tabList [ tabs.all ] tabs.unread [ tabs.archive ]
                     , viewSelectionControls state.selection
-                        [ Button.button MarkSelectionAsRead "Mark as read"
-                        , Button.button ArchiveSelection "Archive"
+                        [ Button.button (UpdateSelection Notification.Read) "Mark as read"
+                        , Button.button (UpdateSelection Notification.Archived) "Archive"
                         ]
                     , view_ appContext model state.selection state.notifications
                     )
@@ -561,7 +598,7 @@ view appContext model =
                 Archive state ->
                     ( TabList.tabList [ tabs.all, tabs.unread ] tabs.archive []
                     , viewSelectionControls state.selection
-                        [ Button.button ArchiveSelection "Unarchive"
+                        [ Button.button (UpdateSelection Notification.Read) "Unarchive"
                         ]
                     , view_ appContext model state.selection state.notifications
                     )
