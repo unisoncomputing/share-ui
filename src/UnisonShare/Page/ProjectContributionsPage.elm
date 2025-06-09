@@ -35,6 +35,7 @@ import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
+import UnisonShare.Route exposing (ProjectContributionsRoute(..))
 import UnisonShare.Session as Session exposing (Session)
 
 
@@ -70,9 +71,20 @@ type alias Model =
     }
 
 
-init : AppContext -> ProjectRef -> ( Model, Cmd Msg )
-init appContext projectRef =
+init : AppContext -> ProjectRef -> ProjectContributionsRoute -> ( Model, Cmd Msg )
+init appContext projectRef subRoute =
     let
+        ( tab, statusToLoad ) =
+            case subRoute of
+                ProjectContributionsInReview ->
+                    ( InReview Loading, ContributionStatus.InReview )
+
+                ProjectContributionsMerged ->
+                    ( Merged Loading, ContributionStatus.Merged )
+
+                ProjectContributionsArchived ->
+                    ( Archived Loading, ContributionStatus.Archived )
+
         ( recentBranches, recentBranchesCmds ) =
             case appContext.session of
                 Session.SignedIn a ->
@@ -100,11 +112,11 @@ init appContext projectRef =
                     ( Nothing, [] )
     in
     ( { modal = NoModal
-      , tab = InReview Loading
+      , tab = tab
       , recentBranches = recentBranches
       }
     , Cmd.batch
-        (fetchProjectContributions appContext projectRef ContributionStatus.InReview :: recentBranchesCmds)
+        (fetchProjectContributions appContext projectRef statusToLoad :: recentBranchesCmds)
     )
 
 
@@ -119,11 +131,10 @@ type Msg
     | ShowSubmitContributionModal
     | ProjectContributionFormModalMsg ProjectContributionFormModal.Msg
     | CloseModal
-    | ChangeTab (Contributions -> Tab)
 
 
-update : AppContext -> ProjectRef -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext projectRef project msg model =
+update : AppContext -> ProjectRef -> ProjectContributionsRoute -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
+update appContext projectRef _ project msg model =
     case msg of
         FetchContributionsFinished status contributions ->
             let
@@ -208,23 +219,33 @@ update appContext projectRef project msg model =
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none )
 
-        ChangeTab t ->
-            let
-                tab =
-                    t Loading
 
-                cmd =
-                    case tab of
-                        InReview _ ->
-                            fetchProjectContributions appContext projectRef ContributionStatus.InReview
+updateSubPage : AppContext -> ProjectRef -> ProjectContributionsRoute -> Model -> ( Model, Cmd Msg )
+updateSubPage appContext projectRef subRoute model =
+    case subRoute of
+        ProjectContributionsInReview ->
+            case model.tab of
+                InReview _ ->
+                    ( model, Cmd.none )
 
-                        Merged _ ->
-                            fetchProjectContributions appContext projectRef ContributionStatus.Merged
+                _ ->
+                    ( { model | tab = InReview Loading }, fetchProjectContributions appContext projectRef ContributionStatus.InReview )
 
-                        Archived _ ->
-                            fetchProjectContributions appContext projectRef ContributionStatus.Archived
-            in
-            ( { model | tab = tab }, cmd )
+        ProjectContributionsMerged ->
+            case model.tab of
+                Merged _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    ( { model | tab = Merged Loading }, fetchProjectContributions appContext projectRef ContributionStatus.Merged )
+
+        ProjectContributionsArchived ->
+            case model.tab of
+                Archived _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    ( { model | tab = Archived Loading }, fetchProjectContributions appContext projectRef ContributionStatus.Archived )
 
 
 
@@ -299,8 +320,8 @@ viewPageTitle session project recentBranches =
                 ]
 
 
-viewLoadingPage : PageLayout msg
-viewLoadingPage =
+viewLoadingPage : Tab -> ProjectRef -> PageLayout Msg
+viewLoadingPage tab projectRef =
     let
         shape length =
             Placeholder.text
@@ -309,9 +330,13 @@ viewLoadingPage =
                 |> Placeholder.tiny
                 |> Placeholder.view
 
+        button =
+            Button.iconThenLabel ShowSubmitContributionModal Icon.merge "Submit contribution"
+
         content =
             PageContent.oneColumn
-                [ Card.card
+                [ tabList projectRef tab |> TabList.view
+                , Card.card
                     [ shape Placeholder.Large
                     , shape Placeholder.Small
                     , shape Placeholder.Medium
@@ -319,7 +344,20 @@ viewLoadingPage =
                     |> Card.asContained
                     |> Card.view
                 ]
-                |> PageContent.withPageTitle (PageTitle.title "Contributions")
+                |> PageContent.withPageTitle
+                    (PageTitle.title "Contributions"
+                        |> PageTitle.withRightSide
+                            [ div [ class "submit-contribution-disabled" ]
+                                [ Tooltip.text "Create a Contribution by pushing a feature branch to Share."
+                                    |> Tooltip.tooltip
+                                    |> Tooltip.view
+                                        (button
+                                            |> Button.disabled
+                                            |> Button.view
+                                        )
+                                ]
+                            ]
+                    )
     in
     PageLayout.centeredNarrowLayout content PageFooter.pageFooter
         |> PageLayout.withSubduedBackground
@@ -368,6 +406,31 @@ viewContributionRow appContext projectRef contribution =
         ]
 
 
+tabList : ProjectRef -> Tab -> TabList.TabList msg
+tabList projectRef tab =
+    case tab of
+        InReview _ ->
+            TabList.tabList []
+                (TabList.tab "In Review" (Link.projectContributions projectRef))
+                [ TabList.tab "Merged" (Link.projectContributionsMerged projectRef)
+                , TabList.tab "Archived" (Link.projectContributionsArchived projectRef)
+                ]
+
+        Merged _ ->
+            TabList.tabList
+                [ TabList.tab "In Review" (Link.projectContributions projectRef) ]
+                (TabList.tab "Merged" (Link.projectContributionsMerged projectRef))
+                [ TabList.tab "Archived" (Link.projectContributionsArchived projectRef) ]
+
+        Archived _ ->
+            TabList.tabList
+                [ TabList.tab "In Review" (Link.projectContributions projectRef)
+                , TabList.tab "Merged" (Link.projectContributionsMerged projectRef)
+                ]
+                (TabList.tab "Archived" (Link.projectContributionsArchived projectRef))
+                []
+
+
 viewPageContent : AppContext -> ProjectDetails -> Maybe RecentBranches -> Tab -> List ContributionSummary -> PageContent Msg
 viewPageContent appContext project recentBranches tab contributions =
     let
@@ -379,34 +442,16 @@ viewPageContent appContext project recentBranches tab contributions =
                 |> EmptyState.withContent [ h2 [] [ text text_ ] ]
                 |> EmptyStateCard.view
 
-        ( tabList, emptyState ) =
+        emptyState =
             case tab of
                 InReview _ ->
-                    ( TabList.tabList []
-                        (TabList.tab "In Review" (Click.onClick (ChangeTab InReview)))
-                        [ TabList.tab "Merged" (Click.onClick (ChangeTab Merged))
-                        , TabList.tab "Archived" (Click.onClick (ChangeTab Archived))
-                        ]
-                    , viewEmptyState Icon.conversation "There are currently no open contributions in review."
-                    )
+                    viewEmptyState Icon.conversation "There are currently no open contributions in review."
 
                 Merged _ ->
-                    ( TabList.tabList
-                        [ TabList.tab "In Review" (Click.onClick (ChangeTab InReview)) ]
-                        (TabList.tab "Merged" (Click.onClick (ChangeTab Merged)))
-                        [ TabList.tab "Archived" (Click.onClick (ChangeTab Archived)) ]
-                    , viewEmptyState Icon.merge "There are currently no merged contributions."
-                    )
+                    viewEmptyState Icon.merge "There are currently no merged contributions."
 
                 Archived _ ->
-                    ( TabList.tabList
-                        [ TabList.tab "In Review" (Click.onClick (ChangeTab InReview))
-                        , TabList.tab "Merged" (Click.onClick (ChangeTab Merged))
-                        ]
-                        (TabList.tab "Archived" (Click.onClick (ChangeTab Archived)))
-                        []
-                    , viewEmptyState Icon.archive "There are currently no archived contributions."
-                    )
+                    viewEmptyState Icon.archive "There are currently no archived contributions."
 
         divider =
             Divider.divider
@@ -428,7 +473,7 @@ viewPageContent appContext project recentBranches tab contributions =
                     |> Card.asContained
                     |> Card.view
     in
-    PageContent.oneColumn [ TabList.view tabList, card ]
+    PageContent.oneColumn [ tabList project.ref tab |> TabList.view, card ]
         |> PageContent.withPageTitle (viewPageTitle appContext.session project recentBranches)
 
 
@@ -448,10 +493,10 @@ view appContext project model =
     in
     case contributions of
         NotAsked ->
-            ( viewLoadingPage, Nothing )
+            ( viewLoadingPage model.tab project.ref, Nothing )
 
         Loading ->
-            ( viewLoadingPage, Nothing )
+            ( viewLoadingPage model.tab project.ref, Nothing )
 
         Success contribs ->
             let

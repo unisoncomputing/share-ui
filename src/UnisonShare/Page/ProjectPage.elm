@@ -132,12 +132,13 @@ init appContext projectRef route =
                     in
                     ( Contribution contribRef contribution_, Cmd.map ProjectContributionPageMsg contribCmd )
 
-                ProjectContributions ->
+                ProjectContributions subRoute ->
                     let
                         ( contributions_, contribsCmd ) =
                             ProjectContributionsPage.init
                                 appContext
                                 projectRef
+                                subRoute
                     in
                     ( Contributions contributions_, Cmd.map ProjectContributionsPageMsg contribsCmd )
 
@@ -522,10 +523,10 @@ update appContext projectRef route msg model =
 
         ( Contributions contribsPage, ProjectContributionsPageMsg contribsMsg ) ->
             case route of
-                Route.ProjectContributions ->
+                Route.ProjectContributions subRoute ->
                     let
                         ( contribsPage_, contribsPageCmd ) =
-                            ProjectContributionsPage.update appContext projectRef model.project contribsMsg contribsPage
+                            ProjectContributionsPage.update appContext projectRef subRoute model.project contribsMsg contribsPage
                     in
                     ( { model | subPage = Contributions contribsPage_ }
                     , Cmd.map ProjectContributionsPageMsg contribsPageCmd
@@ -725,17 +726,19 @@ updateSubPage appContext projectRef model route =
                 _ ->
                     newContribPage
 
-        ProjectContributions ->
+        ProjectContributions subRoute ->
             case model.subPage of
-                Contributions _ ->
-                    ( model, Cmd.none )
+                Contributions page ->
+                    let
+                        ( contribs_, contribsCmd ) =
+                            ProjectContributionsPage.updateSubPage appContext projectRef subRoute page
+                    in
+                    ( { model | subPage = Contributions contribs_ }, Cmd.map ProjectContributionsPageMsg contribsCmd )
 
                 _ ->
                     let
                         ( contribs_, contribsCmd ) =
-                            ProjectContributionsPage.init
-                                appContext
-                                projectRef
+                            ProjectContributionsPage.init appContext projectRef subRoute
                     in
                     ( { model | subPage = Contributions contribs_ }, Cmd.map ProjectContributionsPageMsg contribsCmd )
 
@@ -1234,7 +1237,10 @@ viewLoadingPage appContext subPage projectRef =
                 Contributions _ ->
                     ( PageLayout.map
                         ProjectContributionsPageMsg
-                        ProjectContributionsPage.viewLoadingPage
+                        (ProjectContributionsPage.viewLoadingPage
+                            (ProjectContributionsPage.InReview Loading)
+                            projectRef
+                        )
                     , "project-contributions-page"
                     )
 

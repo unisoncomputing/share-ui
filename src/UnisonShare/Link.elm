@@ -312,6 +312,16 @@ projectContributions projectRef_ =
     toClick (Route.projectContributions projectRef_)
 
 
+projectContributionsMerged : ProjectRef -> Click msg
+projectContributionsMerged projectRef_ =
+    toClick (Route.projectContributionsMerged projectRef_)
+
+
+projectContributionsArchived : ProjectRef -> Click msg
+projectContributionsArchived projectRef_ =
+    toClick (Route.projectContributionsArchived projectRef_)
+
+
 projectTicket : ProjectRef -> TicketRef -> Click msg
 projectTicket projectRef_ ticketRef =
     toClick (Route.projectTicket projectRef_ ticketRef)

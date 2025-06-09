@@ -3,6 +3,7 @@ module UnisonShare.Route exposing
     , NotificationsRoute(..)
     , OrgRoute(..)
     , ProjectContributionRoute(..)
+    , ProjectContributionsRoute(..)
     , ProjectRoute(..)
     , Route(..)
     , UserRoute(..)
@@ -30,6 +31,8 @@ module UnisonShare.Route exposing
     , projectContributionChange
     , projectContributionChanges
     , projectContributions
+    , projectContributionsArchived
+    , projectContributionsMerged
     , projectOverview
     , projectRelease
     , projectReleases
@@ -103,6 +106,12 @@ type ProjectContributionRoute
     | ProjectContributionChanges (Maybe ChangeLineId)
 
 
+type ProjectContributionsRoute
+    = ProjectContributionsInReview
+    | ProjectContributionsMerged
+    | ProjectContributionsArchived
+
+
 type ProjectRoute
     = ProjectOverview
     | ProjectBranches
@@ -112,7 +121,7 @@ type ProjectRoute
     | ProjectTicket TicketRef
     | ProjectTickets
     | ProjectContribution ContributionRef ProjectContributionRoute
-    | ProjectContributions
+    | ProjectContributions ProjectContributionsRoute
     | ProjectSettings
 
 
@@ -246,7 +255,17 @@ projectContributionChange projectRef_ contribRef changeLineId =
 
 projectContributions : ProjectRef -> Route
 projectContributions projectRef_ =
-    Project projectRef_ ProjectContributions
+    Project projectRef_ (ProjectContributions ProjectContributionsInReview)
+
+
+projectContributionsMerged : ProjectRef -> Route
+projectContributionsMerged projectRef_ =
+    Project projectRef_ (ProjectContributions ProjectContributionsMerged)
+
+
+projectContributionsArchived : ProjectRef -> Route
+projectContributionsArchived projectRef_ =
+    Project projectRef_ (ProjectContributions ProjectContributionsArchived)
 
 
 projectTicket : ProjectRef -> TicketRef -> Route
@@ -621,12 +640,12 @@ projectParser =
             in
             Project ps (ProjectContribution ref (ProjectContributionChanges Nothing))
 
-        projectContributions_ handle slug =
+        projectContributions_ subRoute handle slug =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps ProjectContributions
+            Project ps (ProjectContributions subRoute)
 
         projectTicket_ handle slug ref =
             let
@@ -652,7 +671,9 @@ projectParser =
         , b (succeed projectContributionChange_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. slash |= ChangeLineId.fromUrl |. end)
         , b (succeed projectContributionChanges_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. end)
         , b (succeed projectContribution_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. end)
-        , b (succeed projectContributions_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. end)
+        , b (succeed (projectContributions_ ProjectContributionsInReview) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. end)
+        , b (succeed (projectContributions_ ProjectContributionsMerged) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "merged" |. end)
+        , b (succeed (projectContributions_ ProjectContributionsArchived) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "archived" |. end)
         , b (succeed projectTicket_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. slash |= TicketRef.fromUrl |. end)
         , b (succeed projectTickets_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. end)
         , b (succeed projectSettings_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "settings" |. end)
@@ -818,8 +839,14 @@ toUrlPattern r =
         Project _ (ProjectContribution _ (ProjectContributionChanges (Just _))) ->
             ":handle/:project-slug/contributions/:contribution-ref/changes/:definition-name"
 
-        Project _ ProjectContributions ->
+        Project _ (ProjectContributions ProjectContributionsInReview) ->
             ":handle/:project-slug/contributions"
+
+        Project _ (ProjectContributions ProjectContributionsMerged) ->
+            ":handle/:project-slug/contributions/merged"
+
+        Project _ (ProjectContributions ProjectContributionsArchived) ->
+            ":handle/:project-slug/contributions/archived"
 
         Project _ (ProjectTicket _) ->
             ":handle/:project-slug/tickets/:ticket-ref"
@@ -1006,8 +1033,14 @@ toUrlString route =
                 Project projectRef_ (ProjectContribution r (ProjectContributionChanges (Just changeLineId))) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "changes", ChangeLineId.toString changeLineId ], [] )
 
-                Project projectRef_ ProjectContributions ->
+                Project projectRef_ (ProjectContributions ProjectContributionsInReview) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions" ], [] )
+
+                Project projectRef_ (ProjectContributions ProjectContributionsMerged) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", "merged" ], [] )
+
+                Project projectRef_ (ProjectContributions ProjectContributionsArchived) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", "archived" ], [] )
 
                 Project projectRef_ (ProjectTicket r) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets", TicketRef.toUrlString r ], [] )
