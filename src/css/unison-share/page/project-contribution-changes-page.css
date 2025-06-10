@@ -194,6 +194,7 @@
       & .diff-side {
         width: 50%;
         padding: 0.5rem 1rem;
+        overflow: auto;
       }
 
       & .diff-side:first-child {
