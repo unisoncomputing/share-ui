@@ -1,22 +1,12 @@
-.readme-card .definition-doc {
-  --c-width_doc_outer: 44.265rem;
-  --c-width_doc_inner-content: 44.265rem;
-}
-
-/* @todo: feels like this should be using 
- *   --readable-column-width: 43rem —  50rem is pretty wide */
-.page-content :not(.with-page-aside) .readme-card .definition-doc {
-  --c-width_doc_outer: 50rem;
-  --c-width_doc_inner-content: 50rem;
+.readme-card .readme {
+  container-name: doc-container;
+  container-type: inline-size;
+  width: 100%;
 }
 
 .readme-card .definition-doc aside {
   width: 14rem;
   right: -16rem;
-}
-
-.readme-card .definition-doc .doc-table {
-  max-width: var(--c-width_doc_outer);
 }
 
 @media only screen and (--u-viewport_max-xl) {
@@ -25,14 +15,5 @@
     right: auto;
     width: auto;
     margin: 1.5rem;
-  }
-}
-
-@media only screen and (--u-viewport_max-md) {
-  .readme-card .definition-doc,
-  .page-content :not(.with-page-aside) .readme-card .definition-doc {
-    --total-card-padding: calc(var(--c-card_padding) + var(--c-card_padding));
-    --c-width_doc_outer: calc(100% - var(--total-card-padding));
-    --c-width_doc_inner-content: calc(100% - var(--total-card-padding));
   }
 }

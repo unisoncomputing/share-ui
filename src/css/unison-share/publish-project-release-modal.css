@@ -121,6 +121,9 @@
   max-height: 19rem;
   gap: 1.5rem;
   overflow: hidden;
+  container-name: doc-container;
+  container-type: inline-size;
+  width: 100%;
 }
 
 #publish-project-release-modal .release-notes-preview:has(.definition-doc) {
@@ -194,8 +197,6 @@
   display: flex;
   flex-direction: column;
   font-size: var(--font-size-medium);
-  --c-width_doc_outer: 28rem;
-  --c-width_doc_inner-content: 28rem;
 }
 
 /* resizing the result indicator to better fit with the smaller preview padding */
@@ -256,28 +257,12 @@
   display: none;
 }
 
-/* @todo: feels like this should be using 
- *   --readable-column-width is 43rem. 50rem is pretty wide */
-#publish-project-release-modal
-  .publish-project-release_release-notes-preview-maximized
-  .release-notes-preview
-  .definition-doc {
-  --c-width_doc_outer: 50rem;
-  --c-width_doc_inner-content: 50rem;
-}
 
 #publish-project-release-modal .release-notes-preview .definition-doc aside {
   position: relative;
   right: auto;
   width: auto;
   margin: 1rem;
-}
-
-#publish-project-release-modal
-  .release-notes-preview
-  .definition-doc
-  .doc-table {
-  max-width: var(--c-width_doc_outer);
 }
 
 /* Loading State */

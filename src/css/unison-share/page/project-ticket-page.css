@@ -39,14 +39,9 @@
 
   & .ticket-description {
     z-index: 1;
-
-    & .definition-doc {
-      max-width: var(--readable-column-width-medium);
-      --c-width_doc_inner-content: calc(
-        var(--readable-column-width-medium) - 3rem
-      );
-      overflow-x: hidden;
-    }
+    container-name: doc-container;
+    container-type: inline-size;
+    width: 100%;
 
     & .actions {
       border-top: 1px solid var(--u-color_border_subdued);

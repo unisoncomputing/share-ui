@@ -97,18 +97,10 @@
   );
 }
 
-/* @todo: feels like this should be using 
- *   --readable-column-width: 43rem —  50rem is pretty wide */
-.project-releases-page .project-release-details_release-notes .definition-doc {
-  --c-width_doc_outer: 50rem;
-  --c-width_doc_inner-content: 50rem;
-}
-
-.project-releases-page
-  .project-release-details_release-notes
-  .definition-doc
-  .doc-table {
-  max-width: var(--c-width_doc_outer);
+.project-releases-page .project-release-details_release-notes {
+  container-name: doc-container;
+  container-type: inline-size;
+  width: 100%;
 }
 
 .project-releases-page .project-release-details footer {

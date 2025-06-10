@@ -9,18 +9,13 @@
 
   & .contribution-description {
     z-index: 1;
+    container-name: doc-container;
+    container-type: inline-size;
+    width: 100%;
 
     & .no-description {
       font-size: var(--font-size-medium);
       color: var(--u-color_text_subdued);
-    }
-
-    & .definition-doc {
-      max-width: var(--readable-column-width-medium);
-      --c-width_doc_inner-content: calc(
-        var(--readable-column-width-medium) - 3rem
-      );
-      overflow-x: hidden;
     }
 
     & .actions {

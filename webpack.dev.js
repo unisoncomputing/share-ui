@@ -6,8 +6,8 @@ const postcssPresetEnv = require("postcss-preset-env");
 const postcssGlobalData = require("@csstools/postcss-global-data");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 
-const kestrelReadme = require("./api-stubs/kestrel-readme.json");
-const instantDefinition = require("./api-stubs/instant-definition.json");
+const docExamplesReadme = require("./api-stubs/doc-examples-readme.json");
+const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -200,8 +200,12 @@ module.exports = {
         pathRewrite: { "^/api": "" },
         logLevel: "debug",
         bypass: (req, res, _proxyOptions) => {
+          if (req.url.endsWith("/by-name/README")) {
+            res.send(docExamplesReadmeDef);
+          }
+
           if (req.url.endsWith("/readme")) {
-            res.send(kestrelReadme);
+            res.send(docExamplesReadme);
           }
         },
       },
