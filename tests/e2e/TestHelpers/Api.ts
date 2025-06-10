@@ -70,6 +70,126 @@ async function getCatalog(page: Page) {
         },
       ],
     },
+    {
+      name: "Parsers & Text Manipulation",
+      projects: [
+        {
+          createdAt: "2023-05-25T01:39:01.955533Z",
+          isFaved: true,
+          numFavs: 4,
+          owner: {
+            handle: "@ceedubs",
+            name: "Cody",
+            type: "user"
+          },
+          slug: "Jargon",
+          summary: "Generate random JSON",
+          tags: [],
+          updatedAt: "2023-06-05T02:37:25.346367Z",
+          visibility: "public",
+        },
+        {
+          createdAt: "2023-04-03T17:05:08.873717Z",
+          isFaved: false,
+          numFavs: 5,
+          owner: {
+            handle: "@hojberg",
+            name: "Simon",
+            type: "user"
+          },
+          slug: "textExtra",
+          summary: "A series of Text helper functions to compliment the base library.",
+          tags: [],
+          updatedAt: "2023-04-05T02:38:23.774294Z",
+          visibility: "public",
+        },
+        {
+          createdAt: "2023-04-03T17:05:08.873717Z",
+          isFaved: false,
+          numFavs: 5,
+          owner: {
+            handle: "@mitchellwrosen",
+            name: "Mitchell",
+            type: "user"
+          },
+          slug: "csv-parser",
+          summary: "CSV parser, as specified by RFC 4180.",
+          tags: [],
+          updatedAt: "2023-04-05T02:38:23.774294Z",
+          visibility: "public",
+        },
+      ],
+    },
+    {
+      name: "Data Types",
+      projects: [
+        {
+          createdAt: "2023-05-25T01:39:01.955533Z",
+          isFaved: true,
+          numFavs: 4,
+          owner: {
+            handle: "@ceedubs",
+            name: "Cody",
+            type: "user"
+          },
+          slug: "exists",
+          summary: "Existential types.",
+          tags: [],
+          updatedAt: "2023-06-05T02:37:25.346367Z",
+          visibility: "public",
+        },
+        {
+          createdAt: "2023-04-03T17:05:08.873717Z",
+          isFaved: false,
+          numFavs: 5,
+          owner: {
+            handle: "@hojberg",
+            name: "Simon",
+            type: "user"
+          },
+          slug: "nanoid",
+          summary: "A Unison NanoId implementation, inspired by MichelBoucey/NanoID",
+          tags: [],
+          updatedAt: "2023-04-05T02:38:23.774294Z",
+          visibility: "public",
+        },
+      ],
+    },
+    {
+      name: "Concurrency",
+      projects: [
+        {
+          createdAt: "2023-05-25T01:39:01.955533Z",
+          isFaved: true,
+          numFavs: 4,
+          owner: {
+            handle: "@runarorama",
+            name: "Rúnar",
+            type: "user"
+          },
+          slug: "signals",
+          summary: "Safe and easy communication between threads.",
+          tags: [],
+          updatedAt: "2023-06-05T02:37:25.346367Z",
+          visibility: "public",
+        },
+        {
+          createdAt: "2023-04-03T17:05:08.873717Z",
+          isFaved: false,
+          numFavs: 5,
+          owner: {
+            handle: "@systemfw",
+            name: "Fabio",
+            type: "user"
+          },
+          slug: "concurrent",
+          summary: "A concurrency library, featuring a concurrent Map and a mutable variable with blocking.",
+          tags: [],
+          updatedAt: "2023-04-05T02:38:23.774294Z",
+          visibility: "public",
+        },
+      ],
+    },
   ];
 
   return get(page, { url: "catalog", status: 200, data });
