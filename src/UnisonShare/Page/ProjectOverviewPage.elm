@@ -360,7 +360,7 @@ keydown appContext model config keyboardEvent =
         noOp =
             ( model, Cmd.none, None )
     in
-    if Finder.isShowFinderKeyboardShortcut appContext.operatingSystem shortcut then
+    if Finder.isShowFinderKeyboardShortcut appContext.operatingSystem shortcut && model.modal == NoModal then
         let
             ( finder, cmd ) =
                 Finder.init config
