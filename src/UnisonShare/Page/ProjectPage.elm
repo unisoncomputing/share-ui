@@ -420,6 +420,13 @@ update appContext projectRef route msg model =
                                     in
                                     ( { model | modal = NoModal, project = Success project_ }, setProjectFav appContext project_ )
 
+                                ( Success project, ProjectOverviewPage.RequestToToggleProjectSubscription ) ->
+                                    let
+                                        project_ =
+                                            Project.toggleSubscription project
+                                    in
+                                    ( { model | modal = NoModal, project = Success project_ }, setProjectSubscription appContext project_ )
+
                                 ( Success project, ProjectOverviewPage.ProjectDescriptionUpdated description ) ->
                                     let
                                         updatedProject =
