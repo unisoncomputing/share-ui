@@ -73,7 +73,7 @@
             }
 
             & .notification-row_event-ref {
-              color: var(--u-color_text-subdued);
+              color: var(--u-color_text_subdued);
             }
 
             & .notification-row_event-ref:hover {

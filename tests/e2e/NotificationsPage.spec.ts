@@ -44,7 +44,13 @@ test.describe("when signed in", () => {
 
     await API.patchNotificationsHub(page, "@alice");
     await API.getNotificationsHub(page, "@alice", {
-      items: [notification(), notification(), notification(), notification(), notification(),],
+      items: [
+        notification(),
+        notification(),
+        notification(),
+        notification(),
+        notification(),
+      ],
     });
 
     await Page.button(page, "Mark as read").click();

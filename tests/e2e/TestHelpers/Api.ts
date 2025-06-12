@@ -458,10 +458,7 @@ async function getNotificationsHub(
   });
 }
 
-async function patchNotificationsHub(
-  page: Page,
-  handle: string,
-) {
+async function patchNotificationsHub(page: Page, handle: string) {
   return patch(page, {
     url: `/users/${handle.replace("@", "")}/notifications/hub`,
     status: 200,
