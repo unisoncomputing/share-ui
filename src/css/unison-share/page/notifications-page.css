@@ -73,7 +73,11 @@
             }
 
             & .notification-row_event-ref {
-              font-family: var(--font-monospace);
+              color: var(--u-color_text-subdued);
+            }
+
+            & .notification-row_event-ref:hover {
+              color: var(--u-color_text);
             }
           }
 

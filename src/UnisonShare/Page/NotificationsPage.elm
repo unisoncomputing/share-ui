@@ -2,7 +2,7 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
-import Html exposing (Html, div, footer, h1, h2, h4, span, strong, text)
+import Html exposing (Html, div, footer, h1, h2, h4, span, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode exposing (string)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -459,6 +459,9 @@ viewNotification appContext selection notification =
                         else
                             ProjectNameListing.verySubdued pl
                    )
+                |> ProjectNameListing.withClick
+                    Link.userProfile
+                    (\_ -> Link.projectOverview projectRef)
                 |> ProjectNameListing.small
                 |> ProjectNameListing.view
     in
