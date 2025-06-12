@@ -32,22 +32,28 @@ test.describe("when signed in", () => {
 
   test("can view notifications", async ({ page }) => {
     await Page.goto(page, "/notifications");
-    await expect(page.locator(".notification-row")).toHaveCount(3);
+    await expect(page.locator(".notification-row")).toHaveCount(6);
   });
 
-  test("can mark a notification as red", async ({ page }) => {
+  test("can mark a notification as read", async ({ page }) => {
     await Page.goto(page, "/notifications");
 
-    await expect(page.locator(".notification-row")).toHaveCount(3);
+    await expect(page.locator(".notification-row")).toHaveCount(6);
     await page.locator(".notification-row:first-child input").click();
     await expect(Page.button(page, "Mark as read")).toBeVisible();
 
     await API.getNotificationsHub(page, "@alice", {
-      items: [notification(), notification()],
+      items: [
+        notification(),
+        notification(),
+        notification(),
+        notification(),
+        notification(),
+      ],
     });
 
     await Page.button(page, "Mark as read").click();
 
-    await expect(page.locator(".notification-row")).toHaveCount(2);
+    await expect(page.locator(".notification-row")).toHaveCount(5);
   });
 });

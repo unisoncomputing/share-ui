@@ -134,6 +134,12 @@ function project(ref?: string) {
   };
 }
 
+type TicketStatus = "open" | "closed";
+
+function ticketStatus(): TicketStatus {
+  return faker.helpers.arrayElement(["open", "closed"]);
+}
+
 type ContributionStatus = "draft" | "in_review" | "merged" | "closed";
 
 function contributionStatus(): ContributionStatus {
@@ -292,57 +298,124 @@ function contributionDiff(projectRef: string, cfg: ContributionDiffConfig) {
 }
 
 type NotificationEventKind =
-  | "projectContributionCreated"
-  | "projectBranchUpdated";
+  | "project:contribution:created"
+  | "project:contribution:updated"
+  | "project:contribution:comment"
+  | "project:ticket:created"
+  | "project:ticket:updated"
+  | "project:ticket:comment"
+  | "project:branch:updated";
 
 function notificationEventKind(): NotificationEventKind {
   return faker.helpers.arrayElement([
-    "projectContributionCreated",
-    "projectBranchUpdated",
+    "project:contribution:created",
+    "project:contribution:updated",
+    "project:contribution:comment",
+    "project:ticket:created",
+    "project:ticket:updated",
+    "project:ticket:comment",
+    "project:branch:updated",
   ]);
+}
+
+function notificationEventContributionPayloadBase() {
+  const projectRef_ = projectRef();
+  const [projectHandle, projectSlug] = projectRef_.split("/");
+  const sourceBranchRef_ = branchRef();
+  const targetBranchRef_ = branchRef();
+
+  return {
+    contribution: {
+      author: user(),
+      contributionId: faker.string.uuid(),
+      description: faker.lorem.paragraphs(),
+      number: faker.number.int(100),
+      status: contributionStatus(),
+      title: faker.lorem.sentences(1),
+      mergeSourceBranch: {
+        branchContributorHandle: null,
+        branchContributorUserId: null,
+        branchId: faker.string.uuid(),
+        branchName: branchSlugOf(sourceBranchRef_),
+        branchShortHand: sourceBranchRef_,
+      },
+      mergeTargetBranch: {
+        branchContributorHandle: null,
+        branchContributorUserId: null,
+        branchId: faker.string.uuid(),
+        branchName: branchSlugOf(targetBranchRef_),
+        branchShortHand: targetBranchRef_,
+      },
+    },
+    project: {
+      projectId: faker.string.uuid(),
+      projectOwnerHandle: projectHandle,
+      projectOwnerUserId: faker.string.uuid(),
+      projectShortHand: projectRef_,
+      projectSlug: projectSlug,
+    },
+  };
+}
+
+function notificationEventTicketPayloadBase() {
+  const projectRef_ = projectRef();
+  const [projectHandle, projectSlug] = projectRef_.split("/");
+
+  return {
+    ticket: {
+      author: user(),
+      ticketId: `T-${faker.string.uuid()}`,
+      description: faker.lorem.paragraphs(),
+      number: faker.number.int(100),
+      status: ticketStatus(),
+      title: faker.lorem.sentences(1),
+      createdAt: faker.date.past(),
+    },
+    project: {
+      projectId: faker.string.uuid(),
+      projectOwnerHandle: projectHandle,
+      projectOwnerUserId: faker.string.uuid(),
+      projectShortHand: projectRef_,
+      projectSlug: projectSlug,
+    },
+  };
 }
 
 function notificationEventPayload(kind?: NotificationEventKind) {
   const kind_ = !!kind ? kind : notificationEventKind();
 
   switch (kind_) {
-    case "projectContributionCreated": {
-      const projectRef_ = projectRef();
-      const [projectHandle, projectSlug] = projectRef_.split("/");
-      const sourceBranchRef_ = branchRef();
-      const targetBranchRef_ = branchRef();
-
+    case "project:contribution:created": {
+      return notificationEventContributionPayloadBase();
+    }
+    case "project:contribution:updated": {
+      return notificationEventContributionPayloadBase();
+    }
+    case "project:contribution:comment": {
       return {
+        createdAt: faker.date.past(),
         author: user(),
-        contributionId: faker.string.uuid(),
-        description: faker.lorem.paragraphs(),
-        number: faker.number.int(100),
-        status: contributionStatus(),
-        title: faker.lorem.sentences(1),
-        mergeSourceBranch: {
-          branchContributorHandle: null,
-          branchContributorUserId: null,
-          branchId: faker.string.uuid(),
-          branchName: branchSlugOf(sourceBranchRef_),
-          branchShortHand: sourceBranchRef_,
-        },
-        mergeTargetBranch: {
-          branchContributorHandle: null,
-          branchContributorUserId: null,
-          branchId: faker.string.uuid(),
-          branchName: branchSlugOf(targetBranchRef_),
-          branchShortHand: targetBranchRef_,
-        },
-        project: {
-          projectId: faker.string.uuid(),
-          projectOwnerHandle: projectHandle,
-          projectOwnerUserId: faker.string.uuid(),
-          projectShortHand: projectRef_,
-          projectSlug: projectSlug,
-        },
+        commentId: `CMT-${faker.string.uuid()}`,
+        content: faker.lorem.paragraphs(),
+        ...notificationEventContributionPayloadBase(),
       };
     }
-    case "projectBranchUpdated": {
+    case "project:ticket:created": {
+      return notificationEventTicketPayloadBase();
+    }
+    case "project:ticket:updated": {
+      return notificationEventTicketPayloadBase();
+    }
+    case "project:ticket:comment": {
+      return {
+        createdAt: faker.date.past(),
+        author: user(),
+        commentId: `CMT-${faker.string.uuid()}`,
+        content: faker.lorem.paragraphs(),
+        ...notificationEventTicketPayloadBase(),
+      };
+    }
+    case "project:branch:updated": {
       const projectRef_ = projectRef();
       const [projectHandle, projectSlug] = projectRef_.split("/");
       const branchRef_ = branchRef();
@@ -376,6 +449,7 @@ type NotificationEvent = {
   };
   data: {
     kind: NotificationEventKind;
+    link: string;
     payload: object;
   };
   id: string;
@@ -398,6 +472,7 @@ function notificationEvent(kind?: NotificationEventKind): NotificationEvent {
     actor: actor,
     data: {
       kind: kind_,
+      link: faker.internet.url(),
       payload: notificationEventPayload(kind_),
     },
     id: faker.string.uuid(),

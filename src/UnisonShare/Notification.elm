@@ -10,6 +10,8 @@ import UI.DateTime as DateTime exposing (DateTime)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
+import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
+import UnisonShare.Ticket.TicketStatus as TicketStatus exposing (TicketStatus)
 import UnisonShare.User as User exposing (UserSummaryWithId)
 
 
@@ -22,11 +24,55 @@ type NotificationStatus
 type NotificationEventData
     = ProjectContributionCreated
         { projectRef : ProjectRef
-        , author : UserSummaryWithId
+        , contributionAuthor : UserSummaryWithId
         , contributionRef : ContributionRef
         , description : String
         , title : String
         , status : ContributionStatus
+        }
+    | ProjectContributionUpdated
+        { projectRef : ProjectRef
+        , contributionAuthor : UserSummaryWithId
+        , contributionRef : ContributionRef
+        , description : String
+        , title : String
+        , status : ContributionStatus
+        }
+    | ProjectContributionComment
+        { projectRef : ProjectRef
+        , contributionAuthor : UserSummaryWithId
+        , contributionRef : ContributionRef
+        , description : String
+        , title : String
+        , status : ContributionStatus
+        , comment : String
+        , commentAuthor : UserSummaryWithId
+        }
+    | ProjectTicketCreated
+        { projectRef : ProjectRef
+        , ticketAuthor : UserSummaryWithId
+        , ticketRef : TicketRef
+        , description : String
+        , title : String
+        , status : TicketStatus
+        }
+    | ProjectTicketUpdated
+        { projectRef : ProjectRef
+        , ticketAuthor : UserSummaryWithId
+        , ticketRef : TicketRef
+        , description : String
+        , title : String
+        , status : TicketStatus
+        }
+    | ProjectTicketComment
+        { projectRef : ProjectRef
+        , ticketAuthor : UserSummaryWithId
+        , ticketRef : TicketRef
+        , description : String
+        , title : String
+        , status : TicketStatus
+        , comment : String
+        , commentAuthor : UserSummaryWithId
         }
     | ProjectBranchUpdated
         { projectRef : ProjectRef
@@ -98,24 +144,103 @@ decodeStatus =
 decodeEventData : Decode.Decoder NotificationEventData
 decodeEventData =
     let
-        mkProjectContributionCreated projectRef author contribRef description title status =
-            ProjectContributionCreated
+        mkProjectContributionEvent ctor projectRef author contribRef description title status =
+            ctor
                 { projectRef = projectRef
-                , author = author
+                , contributionAuthor = author
                 , contributionRef = contribRef
                 , description = description
                 , title = title
                 , status = status
                 }
 
-        decodeContributionCreated =
-            Decode.succeed mkProjectContributionCreated
+        decodeContributionEvent ctor =
+            Decode.succeed ctor
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
+                |> requiredAt [ "contribution", "author" ] User.decodeSummaryWithId
+                |> requiredAt [ "contribution", "number" ] ContributionRef.decode
+                |> requiredAt [ "contribution", "description" ] string
+                |> requiredAt [ "contribution", "title" ] string
+                |> requiredAt [ "contribution", "status" ] ContributionStatus.decode
+
+        decodeContributionCreated =
+            decodeContributionEvent (mkProjectContributionEvent ProjectContributionCreated)
+
+        decodeContributionUpdated =
+            decodeContributionEvent (mkProjectContributionEvent ProjectContributionUpdated)
+
+        decodeContributionComment =
+            let
+                mkContributionComment projectRef author contribRef description title status comment commentAuthor =
+                    ProjectContributionComment
+                        { projectRef = projectRef
+                        , contributionAuthor = author
+                        , contributionRef = contribRef
+                        , description = description
+                        , title = title
+                        , status = status
+                        , comment = comment
+                        , commentAuthor = commentAuthor
+                        }
+            in
+            Decode.succeed mkContributionComment
+                |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
+                |> requiredAt [ "contribution", "author" ] User.decodeSummaryWithId
+                |> requiredAt [ "contribution", "number" ] ContributionRef.decode
+                |> requiredAt [ "contribution", "description" ] string
+                |> requiredAt [ "contribution", "title" ] string
+                |> requiredAt [ "contribution", "status" ] ContributionStatus.decode
+                |> required "content" string
                 |> required "author" User.decodeSummaryWithId
-                |> required "number" ContributionRef.decode
-                |> required "description" string
-                |> required "title" string
-                |> required "status" ContributionStatus.decode
+
+        mkProjectTicketEvent ctor projectRef author contribRef description title status =
+            ctor
+                { projectRef = projectRef
+                , ticketAuthor = author
+                , ticketRef = contribRef
+                , description = description
+                , title = title
+                , status = status
+                }
+
+        decodeTicketEvent ctor =
+            Decode.succeed ctor
+                |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
+                |> requiredAt [ "ticket", "author" ] User.decodeSummaryWithId
+                |> requiredAt [ "ticket", "number" ] TicketRef.decode
+                |> requiredAt [ "ticket", "description" ] string
+                |> requiredAt [ "ticket", "title" ] string
+                |> requiredAt [ "ticket", "status" ] TicketStatus.decode
+
+        decodeTicketCreated =
+            decodeTicketEvent (mkProjectTicketEvent ProjectTicketCreated)
+
+        decodeTicketUpdated =
+            decodeTicketEvent (mkProjectTicketEvent ProjectTicketUpdated)
+
+        decodeTicketComment =
+            let
+                mkTicketComment projectRef author contribRef description title status comment commentAuthor =
+                    ProjectTicketComment
+                        { projectRef = projectRef
+                        , ticketAuthor = author
+                        , ticketRef = contribRef
+                        , description = description
+                        , title = title
+                        , status = status
+                        , comment = comment
+                        , commentAuthor = commentAuthor
+                        }
+            in
+            Decode.succeed mkTicketComment
+                |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
+                |> requiredAt [ "ticket", "author" ] User.decodeSummaryWithId
+                |> requiredAt [ "ticket", "number" ] TicketRef.decode
+                |> requiredAt [ "ticket", "description" ] string
+                |> requiredAt [ "ticket", "title" ] string
+                |> requiredAt [ "ticket", "status" ] TicketStatus.decode
+                |> required "content" string
+                |> required "author" User.decodeSummaryWithId
 
         decodeBranchUpdated =
             Decode.succeed (\projectRef branchRef -> ProjectBranchUpdated { projectRef = projectRef, branchRef = branchRef })
@@ -123,8 +248,13 @@ decodeEventData =
                 |> requiredAt [ "branch", "branchShortHand" ] BranchRef.decode
     in
     Decode.oneOf
-        [ whenFieldIs "kind" "projectContributionCreated" (field "payload" decodeContributionCreated)
-        , whenFieldIs "kind" "projectBranchUpdated" (field "payload" decodeBranchUpdated)
+        [ whenFieldIs "kind" "project:contribution:created" (field "payload" decodeContributionCreated)
+        , whenFieldIs "kind" "project:contribution:updated" (field "payload" decodeContributionUpdated)
+        , whenFieldIs "kind" "project:contribution:comment" (field "payload" decodeContributionComment)
+        , whenFieldIs "kind" "project:ticket:created" (field "payload" decodeTicketCreated)
+        , whenFieldIs "kind" "project:ticket:updated" (field "payload" decodeTicketUpdated)
+        , whenFieldIs "kind" "project:ticket:comment" (field "payload" decodeTicketComment)
+        , whenFieldIs "kind" "project:branch:updated" (field "payload" decodeBranchUpdated)
         ]
 
 
@@ -143,3 +273,17 @@ decode =
         |> required "id" string
         |> required "status" decodeStatus
         |> required "event" decodeEvent
+
+
+decodeMaybe : Decode.Decoder (Maybe Notification)
+decodeMaybe =
+    Decode.oneOf
+        [ Decode.map Just decode
+        , Decode.succeed Nothing
+        ]
+
+
+decodeList : Decode.Decoder (List Notification)
+decodeList =
+    Decode.list decodeMaybe
+        |> Decode.map (List.filterMap identity)
