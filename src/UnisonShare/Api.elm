@@ -1168,6 +1168,23 @@ updateProjectFav projectRef isFaved =
         }
 
 
+updateProjectSubscription : ProjectRef -> Bool -> Endpoint
+updateProjectSubscription projectRef isSubscribed =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+
+        body =
+            Encode.object [ ( "isSubscribed", Encode.bool isSubscribed ) ]
+                |> Http.jsonBody
+    in
+    PUT
+        { path = [ "users", handle, "projects", slug, "subscription" ]
+        , queryParams = []
+        , body = body
+        }
+
+
 type ProjectUpdate
     = ProjectDescriptionUpdate { summary : Maybe String, tags : Set String }
     | ProjectSettingsUpdate { visibility : ProjectVisibility }

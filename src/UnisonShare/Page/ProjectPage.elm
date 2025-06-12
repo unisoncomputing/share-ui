@@ -205,6 +205,8 @@ type Msg
     | FetchProjectFinished (WebData ProjectDetails)
     | ToggleProjectFav
     | SetProjectFavFinished Bool (HttpResult ())
+    | ToggleProjectSubscription
+    | SetProjectSubscriptionFinished Bool (HttpResult ())
     | ShowUseProjectModal
     | ShowDeleteProjectModal
     | YesDeleteProject
@@ -321,6 +323,28 @@ update appContext projectRef route msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        ( _, ToggleProjectSubscription ) ->
+            case model.project of
+                Success project ->
+                    let
+                        project_ =
+                            Project.toggleSubscription project
+                    in
+                    ( { model | project = Success project_ }, setProjectSubscription appContext project_ )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( _, SetProjectSubscriptionFinished _ isSubscribedResult ) ->
+            case ( model.project, isSubscribedResult ) of
+                -- We have a project, but the API request to subscribing failed
+                ( Success project, Err _ ) ->
+                    -- Reverting the subscription change by re-toggling Project.isSubscribed.
+                    ( { model | modal = NoModal, project = Success (Project.toggleSubscription project) }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
         ( _, ToggleMobileNav ) ->
             ( { model | mobileNavIsOpen = not model.mobileNavIsOpen }, Cmd.none )
 
@@ -395,6 +419,13 @@ update appContext projectRef route msg model =
                                             Project.toggleFav project
                                     in
                                     ( { model | modal = NoModal, project = Success project_ }, setProjectFav appContext project_ )
+
+                                ( Success project, ProjectOverviewPage.RequestToToggleProjectSubscription ) ->
+                                    let
+                                        project_ =
+                                            Project.toggleSubscription project
+                                    in
+                                    ( { model | modal = NoModal, project = Success project_ }, setProjectSubscription appContext project_ )
 
                                 ( Success project, ProjectOverviewPage.ProjectDescriptionUpdated description ) ->
                                     let
@@ -825,6 +856,17 @@ setProjectFav appContext project =
     in
     ShareApi.updateProjectFav project.ref isFaved
         |> HttpApi.toRequestWithEmptyResponse (SetProjectFavFinished isFaved)
+        |> HttpApi.perform appContext.api
+
+
+setProjectSubscription : AppContext -> ProjectDetails -> Cmd Msg
+setProjectSubscription appContext project =
+    let
+        isSubscribed =
+            Project.isSubscribedToBool project.isSubscribed
+    in
+    ShareApi.updateProjectSubscription project.ref isSubscribed
+        |> HttpApi.toRequestWithEmptyResponse (SetProjectSubscriptionFinished isSubscribed)
         |> HttpApi.perform appContext.api
 
 
@@ -1341,6 +1383,7 @@ view appContext projectRef model =
             ProjectPageHeader.projectPageHeader
                 appContext.session
                 { toggleFavMsg = ToggleProjectFav
+                , toggleSubscriptionMsg = ToggleProjectSubscription
                 , useProjectButtonClickMsg = ShowUseProjectModal
                 , mobileNavToggleMsg = ToggleMobileNav
                 , mobileNavIsOpen = model.mobileNavIsOpen
