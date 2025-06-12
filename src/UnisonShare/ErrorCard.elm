@@ -18,6 +18,8 @@ card session error entityName className =
 
             else
                 UI.nothing
+
+        -- details [] [ summary [] [ text "Error Details" ], div [] [ text (Util.httpErrorToString error) ] ]
     in
     Card.card
         [ StatusBanner.bad ("Something broke on our end and we couldn't show the " ++ entityName ++ ". Please try again.")

@@ -40,6 +40,7 @@
         display: flex;
         flex-direction: row;
         gap: 1.5rem;
+        width: 100%;
 
         & .notification-row_selection {
           display: flex;
@@ -82,6 +83,18 @@
             font-weight: bold;
           }
         }
+      }
+
+      & .notification-row_kind {
+        width: 12rem;
+        text-align: right;
+        font-size: var(--font-size-small);
+        color: var(--u-color_text_subdued);
+      }
+
+      & .notification-row_participants {
+        width: 4rem;
+        text-align: right;
       }
 
       & .notification-row_date {

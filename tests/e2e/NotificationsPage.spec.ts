@@ -42,14 +42,9 @@ test.describe("when signed in", () => {
     await page.locator(".notification-row:first-child input").click();
     await expect(Page.button(page, "Mark as read")).toBeVisible();
 
+    await API.patchNotificationsHub(page, "@alice");
     await API.getNotificationsHub(page, "@alice", {
-      items: [
-        notification(),
-        notification(),
-        notification(),
-        notification(),
-        notification(),
-      ],
+      items: [notification(), notification(), notification(), notification(), notification(),],
     });
 
     await Page.button(page, "Mark as read").click();

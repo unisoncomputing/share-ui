@@ -452,9 +452,19 @@ async function getNotificationsHub(
   };
 
   return get(page, {
-    url: `/users/${handle.replace("@", "")}/notifications/hub`,
+    url: `/users/${handle.replace("@", "")}/notifications/hub?status=read%2Cunread`,
     status: 200,
     data: data,
+  });
+}
+
+async function patchNotificationsHub(
+  page: Page,
+  handle: string,
+) {
+  return patch(page, {
+    url: `/users/${handle.replace("@", "")}/notifications/hub`,
+    status: 200,
   });
 }
 
@@ -466,6 +476,18 @@ type Response = {
   status: number;
 };
 async function get(page: Page, response: Response) {
+  const url = response.url.startsWith("/") ? response.url : `/${response.url}`;
+
+  return page.route(`*/**/api${url}`, async (request) => {
+    if ("status" in response) {
+      await request.fulfill({ status: response.status, json: response.data });
+    } else {
+      await request.fulfill({ json: response });
+    }
+  });
+}
+
+async function patch(page: Page, response: Response) {
   const url = response.url.startsWith("/") ? response.url : `/${response.url}`;
 
   return page.route(`*/**/api${url}`, async (request) => {
@@ -498,5 +520,6 @@ export {
   getProjectContributionMergeCheck_,
   getProjectContributionDiff,
   getNotificationsHub,
+  patchNotificationsHub,
   get,
 };
