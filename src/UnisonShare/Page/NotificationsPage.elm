@@ -459,7 +459,7 @@ viewNotification appContext selection notification =
             , div [ class "notification-row_details" ]
                 [ div [ class "notification-row_details_context-and-event" ]
                     [ projectListing
-                    , Icon.largeDot
+                    , Icon.boldDot
                         |> Icon.withClass "notification-row_details_sep"
                         |> Icon.view
                     , span [ class "notification-row_details_event" ]
