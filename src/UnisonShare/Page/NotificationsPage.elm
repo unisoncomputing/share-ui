@@ -341,70 +341,84 @@ isSelected selection notification =
 viewNotification : AppContext -> NotificationSelection -> Notification -> Html Msg
 viewNotification appContext selection notification =
     let
-        ( title, event, projectRef ) =
+        { kind, title, event, projectRef } =
             case notification.event.data of
                 Notification.ProjectBranchUpdated eventData ->
-                    ( "Branch update"
-                    , span []
-                        [ text "Branch: "
-                        , strong [ class "notification-row_event-ref" ] [ text (BranchRef.toString eventData.branchRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "Branch update"
+                    , title = BranchRef.toString eventData.branchRef
+                    , event =
+                        span []
+                            [ text "Branch: "
+                            , strong [ class "notification-row_event-ref" ] [ text (BranchRef.toString eventData.branchRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectContributionCreated eventData ->
-                    ( "New contribution"
-                    , span []
-                        [ text "Contribution: "
-                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "New contribution"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Contribution: "
+                            , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectContributionUpdated eventData ->
-                    ( "Updated contribution"
-                    , span []
-                        [ text "Contribution: "
-                        , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "Updated contribution"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Contribution: "
+                            , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectContributionComment eventData ->
-                    ( "New contribution comment"
-                    , span []
-                        [ text "Contribution: "
-                        , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "New contribution comment"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Contribution: "
+                            , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectTicketCreated eventData ->
-                    ( "New ticket"
-                    , span []
-                        [ text "Ticket: "
-                        , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "New ticket"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Ticket: "
+                            , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectTicketUpdated eventData ->
-                    ( "Updated ticket"
-                    , span []
-                        [ text "Ticket: "
-                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "Updated ticket"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Ticket: "
+                            , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
                 Notification.ProjectTicketComment eventData ->
-                    ( "New ticket comment"
-                    , span []
-                        [ text "Ticket: "
-                        , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                        ]
-                    , eventData.projectRef
-                    )
+                    { kind = "New ticket comment"
+                    , title = eventData.title
+                    , event =
+                        span []
+                            [ text "Ticket: "
+                            , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                            ]
+                    , projectRef = eventData.projectRef
+                    }
 
         isUnread =
             Notification.isUnread notification
@@ -470,6 +484,7 @@ viewNotification appContext selection notification =
                     ]
                 ]
             ]
+        , div [ class "notification-row_kind" ] [ text kind ]
         , div [ class "notification-row_participants" ] [ actor ]
         , div [ class "notification-row_date" ]
             [ DateTime.view

@@ -64,7 +64,7 @@
             color: var(--u-color_text_subdued);
 
             & .notification-row_details_sep {
-              font-size: var(--font-size-large);
+              font-size: var(--font-size-medium);
               color: var(--u-color_text_very-subdued);
             }
 
@@ -85,9 +85,9 @@
       }
 
       & .notification-row_date {
-        width: 8.5rem;
+        width: 8rem;
         text-align: right;
-        font-size: var(--font-size-medium);
+        font-size: var(--font-size-small);
         color: var(--u-color_text_subdued);
       }
     }
