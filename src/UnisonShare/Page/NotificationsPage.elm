@@ -341,82 +341,89 @@ isSelected selection notification =
 viewNotification : AppContext -> NotificationSelection -> Notification -> Html Msg
 viewNotification appContext selection notification =
     let
-        { kind, title, event, projectRef } =
+        { kind, title, link, event, projectRef } =
             case notification.event.data of
                 Notification.ProjectBranchUpdated eventData ->
                     { kind = "Branch update"
                     , title = BranchRef.toString eventData.branchRef
+                    , link = Link.projectBranchRoot eventData.projectRef eventData.branchRef
                     , event =
-                        span []
-                            [ text "Branch: "
-                            , strong [ class "notification-row_event-ref" ] [ text (BranchRef.toString eventData.branchRef) ]
-                            ]
+                        Link.projectBranchRoot eventData.projectRef eventData.branchRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Branch: " ++ BranchRef.toString eventData.branchRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectContributionCreated eventData ->
                     { kind = "New contribution"
                     , title = eventData.title
+                    , link = Link.projectContribution eventData.projectRef eventData.contributionRef
                     , event =
-                        span []
-                            [ text "Contribution: "
-                            , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                            ]
+                        Link.projectContribution eventData.projectRef eventData.contributionRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectContributionUpdated eventData ->
                     { kind = "Updated contribution"
                     , title = eventData.title
+                    , link = Link.projectContribution eventData.projectRef eventData.contributionRef
                     , event =
-                        span []
-                            [ text "Contribution: "
-                            , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                            ]
+                        Link.projectContribution eventData.projectRef eventData.contributionRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectContributionComment eventData ->
                     { kind = "New contribution comment"
                     , title = eventData.title
+                    , link = Link.projectContribution eventData.projectRef eventData.contributionRef
                     , event =
-                        span []
-                            [ text "Contribution: "
-                            , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
-                            ]
+                        Link.projectContribution eventData.projectRef eventData.contributionRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectTicketCreated eventData ->
                     { kind = "New ticket"
                     , title = eventData.title
+                    , link = Link.projectTicket eventData.projectRef eventData.ticketRef
                     , event =
-                        span []
-                            [ text "Ticket: "
-                            , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                            ]
+                        Link.projectTicket eventData.projectRef eventData.ticketRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Ticket: " ++ TicketRef.toString eventData.ticketRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectTicketUpdated eventData ->
                     { kind = "Updated ticket"
                     , title = eventData.title
+                    , link = Link.projectTicket eventData.projectRef eventData.ticketRef
                     , event =
-                        span []
-                            [ text "Ticket: "
-                            , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                            ]
+                        Link.projectTicket eventData.projectRef eventData.ticketRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Ticket: " ++ TicketRef.toString eventData.ticketRef) ]
                     , projectRef = eventData.projectRef
                     }
 
                 Notification.ProjectTicketComment eventData ->
                     { kind = "New ticket comment"
                     , title = eventData.title
+                    , link = Link.projectTicket eventData.projectRef eventData.ticketRef
                     , event =
-                        span []
-                            [ text "Ticket: "
-                            , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
-                            ]
+                        Link.projectTicket eventData.projectRef eventData.ticketRef
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Ticket: " ++ TicketRef.toString eventData.ticketRef) ]
                     , projectRef = eventData.projectRef
                     }
 
@@ -479,9 +486,7 @@ viewNotification appContext selection notification =
                     , span [ class "notification-row_details_event" ]
                         [ event ]
                     ]
-                , h4 [ class "notification-row_details_title" ]
-                    [ text title
-                    ]
+                , h4 [ class "notification-row_details_title" ] [ Link.view title link ]
                 ]
             ]
         , div [ class "notification-row_kind" ] [ text kind ]
