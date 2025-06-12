@@ -232,10 +232,10 @@ update appContext _ account msg model =
                                     Route.NotificationsAll Paginated.NoPageCursor
 
                                 Unread _ ->
-                                    Route.NotificationsAll Paginated.NoPageCursor
+                                    Route.NotificationsUnread Paginated.NoPageCursor
 
                                 Archive _ ->
-                                    Route.NotificationsAll Paginated.NoPageCursor
+                                    Route.NotificationsArchive Paginated.NoPageCursor
                     in
                     ( updateSubPageState update_ model
                     , Route.navigate appContext.navKey (Route.Notifications refresh)
