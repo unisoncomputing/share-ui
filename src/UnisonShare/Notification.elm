@@ -135,8 +135,8 @@ encodeStatus status =
 decodeStatus : Decode.Decoder NotificationStatus
 decodeStatus =
     Decode.oneOf
-        [ when string ((==) "unread") (Decode.succeed Read)
-        , when string ((==) "read") (Decode.succeed Unread)
+        [ when string ((==) "unread") (Decode.succeed Unread)
+        , when string ((==) "read") (Decode.succeed Read)
         , when string ((==) "archived") (Decode.succeed Archived)
         ]
 
