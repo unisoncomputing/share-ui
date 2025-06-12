@@ -196,7 +196,7 @@ notifications account status paginationCursor =
                     [ string "status" (Notification.statusToString s) ]
 
                 Nothing ->
-                    []
+                    [ string "status" "read,unread" ]
 
         paginationQueryParams =
             Paginated.toQueryParams paginationCursor
