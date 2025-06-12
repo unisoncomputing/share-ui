@@ -440,7 +440,14 @@ async function getNotificationsHub(
   const data = {
     prevCursor: null,
     nextCursor: faker.lorem.slug(1),
-    items: [notification(), notification(), notification()],
+    items: [
+      notification("project:contribution:created"),
+      notification("project:contribution:updated"),
+      notification("project:contribution:comment"),
+      notification("project:ticket:created"),
+      notification("project:ticket:updated"),
+      notification("project:ticket:comment"),
+    ],
     ...(data_ ? data_ : {}),
   };
 

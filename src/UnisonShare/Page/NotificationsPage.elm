@@ -39,6 +39,7 @@ import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Paginated as Paginated exposing (PageCursor(..), PageCursorParam, Paginated(..))
 import UnisonShare.Project.ProjectRef as ProjectRef
 import UnisonShare.Route as Route exposing (NotificationsRoute(..))
+import UnisonShare.Ticket.TicketRef as TicketRef
 
 
 
@@ -304,7 +305,7 @@ fetchNotifications_ appContext account status paginationCursorParam =
             Decode.succeed mkPaginated
                 |> optional "prevCursor" (Decode.map (PageCursor >> Just) string) Nothing
                 |> optional "nextCursor" (Decode.map (PageCursor >> Just) string) Nothing
-                |> required "items" (Decode.list Notification.decode)
+                |> required "items" Notification.decodeList
     in
     ShareApi.notifications account status paginationCursorParam
         |> HttpApi.toRequest
@@ -356,6 +357,51 @@ viewNotification appContext selection notification =
                     , span []
                         [ text "Contribution: "
                         , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                        ]
+                    , eventData.projectRef
+                    )
+
+                Notification.ProjectContributionUpdated eventData ->
+                    ( "Updated contribution"
+                    , span []
+                        [ text "Contribution: "
+                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                        ]
+                    , eventData.projectRef
+                    )
+
+                Notification.ProjectContributionComment eventData ->
+                    ( "New contribution comment"
+                    , span []
+                        [ text "Contribution: "
+                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                        ]
+                    , eventData.projectRef
+                    )
+
+                Notification.ProjectTicketCreated eventData ->
+                    ( "New ticket"
+                    , span []
+                        [ text "Ticket: "
+                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                        ]
+                    , eventData.projectRef
+                    )
+
+                Notification.ProjectTicketUpdated eventData ->
+                    ( "Updated ticket"
+                    , span []
+                        [ text "Ticket: "
+                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                        ]
+                    , eventData.projectRef
+                    )
+
+                Notification.ProjectTicketComment eventData ->
+                    ( "New ticket comment"
+                    , span []
+                        [ text "Ticket: "
+                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
                         ]
                     , eventData.projectRef
                     )
