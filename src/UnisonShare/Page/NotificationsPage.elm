@@ -438,6 +438,7 @@ viewNotification appContext selection notification =
                         else
                             ProjectNameListing.verySubdued pl
                    )
+                |> ProjectNameListing.small
                 |> ProjectNameListing.view
     in
     div

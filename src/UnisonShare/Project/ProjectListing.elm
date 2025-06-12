@@ -43,6 +43,16 @@ verySubdued pl =
     { pl | listing = ProjectNameListing.verySubdued pl.listing }
 
 
+small : ProjectListing p msg -> ProjectListing p msg
+small pl =
+    { pl | listing = ProjectNameListing.small pl.listing }
+
+
+medium : ProjectListing p msg -> ProjectListing p msg
+medium pl =
+    { pl | listing = ProjectNameListing.medium pl.listing }
+
+
 large : ProjectListing p msg -> ProjectListing p msg
 large pl =
     { pl | listing = ProjectNameListing.large pl.listing }
