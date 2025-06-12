@@ -69,7 +69,7 @@
             }
 
             & .notification-row_details_event {
-              font-size: var(--font-size-medium);
+              font-size: var(--font-size-small);
             }
 
             & .notification-row_event-ref {
@@ -85,6 +85,8 @@
       }
 
       & .notification-row_date {
+        width: 8.5rem;
+        text-align: right;
         font-size: var(--font-size-medium);
         color: var(--u-color_text_subdued);
       }

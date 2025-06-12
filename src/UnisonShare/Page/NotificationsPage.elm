@@ -365,7 +365,7 @@ viewNotification appContext selection notification =
                     ( "Updated contribution"
                     , span []
                         [ text "Contribution: "
-                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                        , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
                         ]
                     , eventData.projectRef
                     )
@@ -374,7 +374,7 @@ viewNotification appContext selection notification =
                     ( "New contribution comment"
                     , span []
                         [ text "Contribution: "
-                        , strong [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
+                        , span [ class "notification-row_event-ref" ] [ text (ContributionRef.toString eventData.contributionRef) ]
                         ]
                     , eventData.projectRef
                     )
@@ -383,7 +383,7 @@ viewNotification appContext selection notification =
                     ( "New ticket"
                     , span []
                         [ text "Ticket: "
-                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                        , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
                         ]
                     , eventData.projectRef
                     )
@@ -401,7 +401,7 @@ viewNotification appContext selection notification =
                     ( "New ticket comment"
                     , span []
                         [ text "Ticket: "
-                        , strong [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
+                        , span [ class "notification-row_event-ref" ] [ text (TicketRef.toString eventData.ticketRef) ]
                         ]
                     , eventData.projectRef
                     )
@@ -459,7 +459,7 @@ viewNotification appContext selection notification =
             , div [ class "notification-row_details" ]
                 [ div [ class "notification-row_details_context-and-event" ]
                     [ projectListing
-                    , Icon.dot
+                    , Icon.largeDot
                         |> Icon.withClass "notification-row_details_sep"
                         |> Icon.view
                     , span [ class "notification-row_details_event" ]
