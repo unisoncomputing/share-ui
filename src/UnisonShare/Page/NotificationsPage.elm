@@ -380,7 +380,7 @@ viewNotification appContext selection notification =
                     }
 
                 Notification.ProjectContributionComment eventData ->
-                    { kind = "New contribution comment"
+                    { kind = "New comment"
                     , title = eventData.title
                     , link = Link.projectContribution eventData.projectRef eventData.contributionRef
                     , event =
@@ -416,7 +416,7 @@ viewNotification appContext selection notification =
                     }
 
                 Notification.ProjectTicketComment eventData ->
-                    { kind = "New ticket comment"
+                    { kind = "New comment"
                     , title = eventData.title
                     , link = Link.projectTicket eventData.projectRef eventData.ticketRef
                     , event =
@@ -492,13 +492,15 @@ viewNotification appContext selection notification =
                 , h4 [ class "notification-row_details_title" ] [ Link.view title link ]
                 ]
             ]
-        , div [ class "notification-row_kind" ] [ text kind ]
-        , div [ class "notification-row_participants" ] [ actor ]
-        , div [ class "notification-row_date" ]
-            [ DateTime.view
-                (DateTime.DistanceFrom appContext.now)
-                appContext.timeZone
-                notification.event.occurredAt
+        , div [ class "notification-row_right" ]
+            [ div [ class "notification-row_kind" ] [ text kind ]
+            , div [ class "notification-row_participants" ] [ actor ]
+            , div [ class "notification-row_date" ]
+                [ DateTime.view
+                    (DateTime.DistanceFrom appContext.now)
+                    appContext.timeZone
+                    notification.event.occurredAt
+                ]
             ]
         ]
 
