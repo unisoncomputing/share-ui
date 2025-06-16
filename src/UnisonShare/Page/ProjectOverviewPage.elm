@@ -705,26 +705,14 @@ view_ session project model =
 
         subscription =
             case ( session, project.isSubscribed ) of
-                ( Session.SignedIn account, Project.NotSubscribed ) ->
-                    if account.isSuperAdmin then
-                        subButton Icon.bellSlash "Subscribe"
+                ( Session.SignedIn _, Project.NotSubscribed ) ->
+                    subButton Icon.bellSlash "Subscribe"
 
-                    else
-                        UI.nothing
+                ( Session.SignedIn _, Project.Subscribed ) ->
+                    subButton Icon.bell "Subscribed"
 
-                ( Session.SignedIn account, Project.Subscribed ) ->
-                    if account.isSuperAdmin then
-                        subButton Icon.bell "Subscribed"
-
-                    else
-                        UI.nothing
-
-                ( Session.SignedIn account, Project.JustSubscribed ) ->
-                    if account.isSuperAdmin then
-                        subButton Icon.bell "Subscribed"
-
-                    else
-                        UI.nothing
+                ( Session.SignedIn _, Project.JustSubscribed ) ->
+                    subButton Icon.bell "Subscribed"
 
                 _ ->
                     UI.nothing

@@ -19,7 +19,6 @@ import UI.Sizing as Sizing
 import UnisonShare.Account as Account
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
-import UnisonShare.Util as Util
 import Url exposing (Url)
 import WhatsNew exposing (WhatsNew)
 
@@ -318,13 +317,13 @@ view ctx appHeader_ =
                             in
                             [ div [ class "signed-in-nav signed-in-nav_desktop" ]
                                 [ newOrgButton
-                                , Util.privateBeta account notifications
+                                , notifications
                                 , helpAndResources False
                                 , accountMenu
                                 ]
                             , div [ class "signed-in-nav signed-in-nav_mobile" ]
                                 [ newOrgButton
-                                , Util.privateBeta account notifications
+                                , notifications
                                 , helpAndResources True
                                 , accountMenu
                                 ]
