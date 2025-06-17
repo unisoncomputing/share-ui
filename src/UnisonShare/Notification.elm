@@ -1,6 +1,7 @@
 module UnisonShare.Notification exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
+import Code.Version as Version exposing (Version)
 import Json.Decode as Decode exposing (field, string)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
@@ -77,6 +78,10 @@ type NotificationEventData
     | ProjectBranchUpdated
         { projectRef : ProjectRef
         , branchRef : BranchRef
+        }
+    | ProjectReleaseCreated
+        { projectRef : ProjectRef
+        , version : Version
         }
 
 
@@ -246,6 +251,11 @@ decodeEventData =
             Decode.succeed (\projectRef branchRef -> ProjectBranchUpdated { projectRef = projectRef, branchRef = branchRef })
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
                 |> requiredAt [ "branch", "branchShortHand" ] BranchRef.decode
+
+        decodeReleaseCreated =
+            Decode.succeed (\projectRef version -> ProjectReleaseCreated { projectRef = projectRef, version = version })
+                |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
+                |> requiredAt [ "release", "version" ] Version.decode
     in
     Decode.oneOf
         [ whenFieldIs "kind" "project:contribution:created" (field "payload" decodeContributionCreated)
@@ -255,6 +265,7 @@ decodeEventData =
         , whenFieldIs "kind" "project:ticket:updated" (field "payload" decodeTicketUpdated)
         , whenFieldIs "kind" "project:ticket:comment" (field "payload" decodeTicketComment)
         , whenFieldIs "kind" "project:branch:updated" (field "payload" decodeBranchUpdated)
+        , whenFieldIs "kind" "project:release:created" (field "payload" decodeReleaseCreated)
         ]
 
 

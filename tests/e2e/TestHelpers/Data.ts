@@ -17,6 +17,10 @@ function userHandle() {
   return faker.lorem.slug(1);
 }
 
+function version() {
+  return faker.system.semver();
+}
+
 type User = {
   avatarUrl: string;
   handle: string;
@@ -304,7 +308,8 @@ type NotificationEventKind =
   | "project:ticket:created"
   | "project:ticket:updated"
   | "project:ticket:comment"
-  | "project:branch:updated";
+  | "project:branch:updated"
+  | "project:release:created";
 
 function notificationEventKind(): NotificationEventKind {
   return faker.helpers.arrayElement([
@@ -315,6 +320,7 @@ function notificationEventKind(): NotificationEventKind {
     "project:ticket:updated",
     "project:ticket:comment",
     "project:branch:updated",
+    "project:release:created",
   ]);
 }
 
@@ -428,6 +434,23 @@ function notificationEventPayload(kind?: NotificationEventKind) {
           branchId: faker.string.uuid(),
           branchName: branchSlugOf(branchRef_),
           branchShortHand: branchRef_,
+        },
+        project: {
+          projectId: faker.string.uuid(),
+          projectOwnerHandle: projectHandle,
+          projectOwnerUserId: faker.string.uuid(),
+          projectShortHand: projectRef_,
+          projectSlug: projectSlug,
+        },
+      };
+    }
+    case "project:release:created": {
+      const projectRef_ = projectRef();
+      const [projectHandle, projectSlug] = projectRef_.split("/");
+
+      return {
+        release: {
+          version: version(),
         },
         project: {
           projectId: faker.string.uuid(),
