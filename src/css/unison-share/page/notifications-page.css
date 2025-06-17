@@ -108,7 +108,7 @@
         }
 
         & .notification-row_date {
-          width: 6rem;
+          width: 7rem;
           text-align: right;
           font-size: var(--font-size-small);
           color: var(--u-color_text_subdued);
