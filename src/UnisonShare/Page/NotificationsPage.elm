@@ -2,6 +2,7 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
+import Code.Version as Version
 import Html exposing (Html, div, footer, h1, h2, h4, span, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode exposing (string)
@@ -424,6 +425,18 @@ viewNotification appContext selection notification =
                             |> Click.view
                                 [ class "notification-row_event-ref" ]
                                 [ text ("Ticket: " ++ TicketRef.toString eventData.ticketRef) ]
+                    , projectRef = eventData.projectRef
+                    }
+
+                Notification.ProjectReleaseCreated eventData ->
+                    { kind = "New release"
+                    , title = Version.toString eventData.version
+                    , link = Link.projectRelease eventData.projectRef eventData.version
+                    , event =
+                        Link.projectRelease eventData.projectRef eventData.version
+                            |> Click.view
+                                [ class "notification-row_event-ref" ]
+                                [ text ("Release: " ++ Version.toString eventData.version) ]
                     , projectRef = eventData.projectRef
                     }
 
