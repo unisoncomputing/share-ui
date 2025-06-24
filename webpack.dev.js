@@ -8,6 +8,7 @@ const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 
 const docExamplesReadme = require("./api-stubs/doc-examples-readme.json");
 const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition.json");
+const blogEngineLib = require("./api-stubs/blog-engine-lib.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -207,13 +208,15 @@ module.exports = {
           if (req.url.endsWith("/readme")) {
             res.send(docExamplesReadme);
           }
+
+          if (req.url.endsWith("/browse?namespace=lib")) {
+            res.send(blogEngineLib);
+          }
         },
       },
       {
         context: ["/website"],
-        bypass: (_req, _res, _proxyOptions) => {
-          return [];
-        },
+        bypass: (_req, _res, _proxyOptions) => [],
         pathRewrite: { "^/website": "" },
         logLevel: "debug",
       },

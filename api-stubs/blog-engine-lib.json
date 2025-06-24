@@ -1,0 +1,102 @@
+{
+  "namespaceListingChildren": [
+    {
+      "contents": {
+        "namespaceHash": "#v4t40pl2unusqh1bplvn1vnkskgcn18tgojconfsulbuqb335ul2f5il14rdqq5r7hmh5d7ebmqqfcs1nnnfqv1fubh6nfshtg39be8",
+        "namespaceName": "base_2_14_0",
+        "namespaceSize": 6895
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#gd8ra934i9hg745i4g8neohr2jhe67krbp3t8j46btpfk5ogdhncfq6k622vlm8sdfh82psq9thrck8frg4clma92u39d73pcu8m3c0",
+        "namespaceName": "css_1_0_0",
+        "namespaceSize": 7055
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#lvs8tnlpm53lb89jdtelmnl6a14j52khimf2a197ar2efm65c0kop1l9tmj3b8uhjoijioplalq67n07rnj92t75vktnfharc1cee58",
+        "namespaceName": "hojberg_html_2_6_0",
+        "namespaceSize": 7412
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#4eeqin8gt7mfia27t7qhlsros6h0081tanua94bpkuofpug9lnr8n18ts4kedt4ein0p4k6rr5lakbuqk7ah6qsg1u7pum9a74n5nvg",
+        "namespaceName": "orderator_0_7_1",
+        "namespaceSize": 7136
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#coqj7g5isnkhmj8v4kvn692bj3u1vnc0sig6lafhfm5jk4229a9d7qitc5lf7qaa3qbdp9ocv60sce9nrs1g8m22nvgibt2u5t1d96o",
+        "namespaceName": "sendgrid_1_0_1",
+        "namespaceSize": 62620
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#ccsv5o8v51rpm2f3fpak1shcuselqoo5qml4i94866nji695gb8tu333h1o0p36m7ujm17mj0bh5hhe1vvmc26bn2he3gor2p52q2l0",
+        "namespaceName": "shareSdk_2_7_0",
+        "namespaceSize": 78530
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#f14eevm3jaqfhnuj57he0ks5lo8qt4v8dm72qdoc6tbi2o4v4kj33ag52jal69qm1uj2bq7qapc7irq44j2igcnedbd06nhvsja7l3o",
+        "namespaceName": "slug_3_0_0",
+        "namespaceSize": 6642
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#bf5lu4tne8m1eqr567q9927k2uuove8dtl2f1c1agakt6on6srfut2cs7onacivksm4b51kuaqmp7ih0qm5k39e0bkpgq1rtbsatph8",
+        "namespaceName": "unison_base_3_21_0",
+        "namespaceSize": 7477
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#9i5ihkoddq7mnkr2upe0ifd7f98oc583odms6i2jh9e6leodf5lm0hjchaj6daak1pnslvf2e2josht8kvvpbch3qg95dh58vi69kko",
+        "namespaceName": "unison_cloud_20_14_0",
+        "namespaceSize": 73354
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#dpbgcnrfscg7635m30noa7m1efk1077t5vi32imsqpv68gaifnoeioo8o8hbujib9dv4l7ui1scf1nr3fpauhemq6erra42cjsiteco",
+        "namespaceName": "unison_routes_6_3_0",
+        "namespaceSize": 125713
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#i053f1k24vm29rsgdvqhfrisb0ci9710t7m706qbugdqufpp1muiben0gt7u8dbdfr74bdp8gr8g7uchjmmgd1h6o5662pbotgdls0o",
+        "namespaceName": "unison_xml_2_1_1",
+        "namespaceSize": 7735
+      },
+      "tag": "Subnamespace"
+    },
+    {
+      "contents": {
+        "namespaceHash": "#lvf3oc11q1bfdpcbg07f3prh0fe9l3bscpde62uj39arlu911et5hqla7emf8rm57e0vdrhupbitofmavhqjqittpqnjn58jkf03nqo",
+        "namespaceName": "uuid_1_0_3",
+        "namespaceSize": 6636
+      },
+      "tag": "Subnamespace"
+    }
+  ],
+  "namespaceListingFQN": "lib",
+  "namespaceListingHash": "#vajsckhfv9q31spteh6v2esk0b03sit0f82qgtqr4nhd052rjdrl7bvjgujce96hhmd98841k3fblhug0b10198qta3pd4ia26tuaho"
+}

@@ -149,7 +149,17 @@
 
 /* @todo @color-todo */
 .project-overview-page .project-dependencies .tag {
+  background: var(--c-color_tag_bg);
+  border: 1px solid var(--u-color_border_subdued);
+}
+
+.project-overview-page .project-dependencies a.tag {
   background: var(--u-color_element);
+  border: 1px solid var(--u-color_border);
+}
+
+.project-overview-page .project-dependencies a.tag:hover {
+  background: var(--c-color_tag_bg_hovered);
   border: 1px solid var(--u-color_border);
 }
 
