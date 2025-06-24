@@ -1,4 +1,8 @@
 .project-tickets-page {
+  & .page-title .submit-ticket-disabled .tooltip {
+    margin-top: 1rem;
+  }
+
   & .tickets-empty-state_icon {
     height: 4rem;
     width: 4rem;
