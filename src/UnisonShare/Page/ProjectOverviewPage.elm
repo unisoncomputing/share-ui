@@ -680,7 +680,28 @@ viewReadmeCard project readme =
 
 viewDependencies : List ProjectDependency -> Html msg
 viewDependencies deps =
-    div [ class "project-dependencies" ] [ strong [] [ text "Dependencies" ], deps |> List.map ProjectDependency.toTag |> Tag.viewTags ]
+    let
+        viewDepTag dep =
+            case ( dep.name, dep.version ) of
+                ( ProjectDependency.UserProject u p, Just v ) ->
+                    dep
+                        |> ProjectDependency.toTag
+                        |> Tag.withClick (Link.projectRelease (ProjectRef.fromParts u p) v)
+
+                ( ProjectDependency.UserProject u p, Nothing ) ->
+                    dep
+                        |> ProjectDependency.toTag
+                        |> Tag.withClick (Link.projectOverview (ProjectRef.fromParts u p))
+
+                _ ->
+                    ProjectDependency.toTag dep
+    in
+    div [ class "project-dependencies" ]
+        [ strong [] [ text "Dependencies" ]
+        , deps
+            |> List.map viewDepTag
+            |> Tag.viewTags
+        ]
 
 
 view_ : Session -> ProjectDetails -> Model -> ( Maybe (List (Html Msg)), PageContent Msg )

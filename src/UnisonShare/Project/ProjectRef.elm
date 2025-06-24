@@ -2,6 +2,7 @@ module UnisonShare.Project.ProjectRef exposing
     ( ProjectRef
     , decode
     , equals
+    , fromParts
     , fromString
     , handle
     , projectRef
@@ -40,6 +41,11 @@ fromString rawHandle rawSlug =
     Maybe.map2 projectRef
         (UserHandle.fromString rawHandle)
         (ProjectSlug.fromString rawSlug)
+
+
+fromParts : UserHandle -> ProjectSlug -> ProjectRef
+fromParts handle_ slug_ =
+    ProjectRef { handle = handle_, slug = slug_ }
 
 
 {-| Don't use! It's meant for tests
