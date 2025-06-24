@@ -996,6 +996,7 @@ viewDeleteProjectModal projectRef { confirmText, deleting } =
                 ]
     in
     Modal.modal "delete-project-modal" CloseModal (Modal.Content content)
+        |> Modal.withAccept YesDeleteProject
         |> Modal.withHeader "Permanently Delete Project?"
         |> Modal.view
 
