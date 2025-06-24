@@ -102,6 +102,32 @@ init appContext projectRef =
     )
 
 
+initWithProject : AppContext -> ProjectDetails -> ( Model, Cmd Msg )
+initWithProject appContext project =
+    let
+        branchRef =
+            case ( project.latestVersion, project.defaultBranch ) of
+                ( Just v, _ ) ->
+                    BranchRef.ReleaseBranchRef v
+
+                ( Nothing, Just br ) ->
+                    br
+
+                _ ->
+                    BranchRef.main_
+    in
+    ( { readme = Loading
+      , modal = NoModal
+      , keyboardShortcut = KeyboardShortcut.init appContext.operatingSystem
+      , dependencies = NotAsked
+      }
+    , Cmd.batch
+        [ fetchReadme appContext project.ref
+        , fetchDependencies appContext project.ref branchRef
+        ]
+    )
+
+
 
 -- UPDATE
 

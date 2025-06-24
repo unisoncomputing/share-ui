@@ -719,7 +719,12 @@ updateSubPage appContext projectRef model route =
                 _ ->
                     let
                         ( overviewPage, overviewCmd ) =
-                            ProjectOverviewPage.init appContext projectRef
+                            case model.project of
+                                Success project ->
+                                    ProjectOverviewPage.initWithProject appContext project
+
+                                _ ->
+                                    ProjectOverviewPage.init appContext projectRef
                     in
                     ( { model | subPage = Overview overviewPage }, Cmd.map ProjectOverviewPageMsg overviewCmd )
 
