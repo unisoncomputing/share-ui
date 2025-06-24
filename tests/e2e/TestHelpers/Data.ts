@@ -400,9 +400,11 @@ function notificationEventPayload(kind?: NotificationEventKind) {
     case "project:contribution:comment": {
       return {
         createdAt: faker.date.past(),
-        author: user(),
-        commentId: `CMT-${faker.string.uuid()}`,
-        content: faker.lorem.paragraphs(),
+        comment: {
+          author: user(),
+          commentId: `CMT-${faker.string.uuid()}`,
+          content: faker.lorem.paragraphs(),
+        },
         ...notificationEventContributionPayloadBase(),
       };
     }
@@ -415,9 +417,11 @@ function notificationEventPayload(kind?: NotificationEventKind) {
     case "project:ticket:comment": {
       return {
         createdAt: faker.date.past(),
-        author: user(),
-        commentId: `CMT-${faker.string.uuid()}`,
-        content: faker.lorem.paragraphs(),
+        comment: {
+          author: user(),
+          commentId: `CMT-${faker.string.uuid()}`,
+          content: faker.lorem.paragraphs(),
+        },
         ...notificationEventTicketPayloadBase(),
       };
     }

@@ -195,8 +195,8 @@ decodeEventData =
                 |> requiredAt [ "contribution", "description" ] string
                 |> requiredAt [ "contribution", "title" ] string
                 |> requiredAt [ "contribution", "status" ] ContributionStatus.decode
-                |> required "content" string
-                |> required "author" User.decodeSummaryWithId
+                |> requiredAt [ "comment", "content" ] string
+                |> requiredAt [ "comment", "author" ] User.decodeSummaryWithId
 
         mkProjectTicketEvent ctor projectRef author contribRef description title status =
             ctor
@@ -244,8 +244,8 @@ decodeEventData =
                 |> requiredAt [ "ticket", "description" ] string
                 |> requiredAt [ "ticket", "title" ] string
                 |> requiredAt [ "ticket", "status" ] TicketStatus.decode
-                |> required "content" string
-                |> required "author" User.decodeSummaryWithId
+                |> requiredAt [ "comment", "content" ] string
+                |> requiredAt [ "comment", "author" ] User.decodeSummaryWithId
 
         decodeBranchUpdated =
             Decode.succeed (\projectRef branchRef -> ProjectBranchUpdated { projectRef = projectRef, branchRef = branchRef })
