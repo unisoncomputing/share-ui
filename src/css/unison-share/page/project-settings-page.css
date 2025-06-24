@@ -81,20 +81,19 @@
   gap: 0.5rem;
 }
 
-.project-settings-page .actions {
-  margin-top: 1.5rem;
+.project-settings-page .page-content .actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   position: relative;
 }
 
-.project-settings-page .actions .status-banner {
+.project-settings-page .page-content .actions .status-banner {
   position: absolute;
   left: 0;
 }
 
-.project-settings-page .actions .buttons {
+.project-settings-page .page-content .actions .buttons {
   display: flex;
   flex-direction: row;
   gap: 0.75rem;
