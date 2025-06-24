@@ -306,17 +306,13 @@ viewPageTitle session project recentBranches =
 
         button =
             Button.iconThenLabel ShowSubmitContributionModal Icon.merge "Submit contribution"
+                |> Button.emphasized
 
         canContribute =
             Session.isSignedIn session && (Project.canContribute project || hasRecentContributorBranches)
     in
     if canContribute then
-        pt
-            |> PageTitle.withRightSide
-                [ button
-                    |> Button.emphasized
-                    |> Button.view
-                ]
+        PageTitle.withRightSide [ Button.view button ] pt
 
     else
         pt

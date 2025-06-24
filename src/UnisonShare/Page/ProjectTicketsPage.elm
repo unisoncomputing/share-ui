@@ -19,6 +19,7 @@ import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle
 import UI.Placeholder as Placeholder
 import UI.TabList as TabList
+import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
@@ -161,17 +162,27 @@ viewPageTitle session project =
 
         canSubmit =
             Session.isSignedIn session && (Project.canView project || Project.isPublic project)
+
+        button =
+            Button.iconThenLabel ShowSubmitTicketModal Icon.bug "New ticket"
+                |> Button.emphasized
     in
     if canSubmit then
-        pt
-            |> PageTitle.withRightSide
-                [ Button.iconThenLabel ShowSubmitTicketModal Icon.bug "New ticket"
-                    |> Button.emphasized
-                    |> Button.view
-                ]
+        PageTitle.withRightSide [ Button.view button ] pt
 
     else
         pt
+            |> PageTitle.withRightSide
+                [ div [ class "submit-ticket-disabled" ]
+                    [ Tooltip.text "Sign in to submit a ticket"
+                        |> Tooltip.tooltip
+                        |> Tooltip.view
+                            (button
+                                |> Button.disabled
+                                |> Button.view
+                            )
+                    ]
+                ]
 
 
 viewLoadingPage : PageLayout msg
