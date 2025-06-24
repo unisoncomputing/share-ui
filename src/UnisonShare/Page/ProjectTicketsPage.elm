@@ -76,11 +76,16 @@ type Msg
     | ChangeTab Tab
 
 
-update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg )
+type OutMsg
+    = NoOut
+    | AddedTicket
+
+
+update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef msg model =
     case msg of
         FetchTicketsFinished tickets ->
-            ( { model | tickets = tickets }, Cmd.none )
+            ( { model | tickets = tickets }, Cmd.none, NoOut )
 
         ShowSubmitTicketModal ->
             case appContext.session of
@@ -92,10 +97,11 @@ update appContext projectRef msg model =
                     in
                     ( { model | modal = SubmitTicketModal projectTicketFormModal }
                     , Cmd.none
+                    , NoOut
                     )
 
                 Session.Anonymous ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ProjectTicketFormModalMsg formMsg ->
             case ( appContext.session, model.modal ) of
@@ -104,29 +110,30 @@ update appContext projectRef msg model =
                         ( projectTicketFormModal, cmd, out ) =
                             ProjectTicketFormModal.update appContext projectRef formMsg formModel
 
-                        ( modal, tickets ) =
+                        ( modal, tickets, out_ ) =
                             case out of
                                 ProjectTicketFormModal.None ->
-                                    ( SubmitTicketModal projectTicketFormModal, model.tickets )
+                                    ( SubmitTicketModal projectTicketFormModal, model.tickets, NoOut )
 
                                 ProjectTicketFormModal.RequestToCloseModal ->
-                                    ( NoModal, model.tickets )
+                                    ( NoModal, model.tickets, NoOut )
 
                                 ProjectTicketFormModal.Saved c ->
-                                    ( NoModal, RemoteData.map (\cs -> c :: cs) model.tickets )
+                                    ( NoModal, RemoteData.map (\cs -> c :: cs) model.tickets, AddedTicket )
                     in
                     ( { model | modal = modal, tickets = tickets }
                     , Cmd.map ProjectTicketFormModalMsg cmd
+                    , out_
                     )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         CloseModal ->
-            ( { model | modal = NoModal }, Cmd.none )
+            ( { model | modal = NoModal }, Cmd.none, NoOut )
 
         ChangeTab t ->
-            ( { model | tab = t }, Cmd.none )
+            ( { model | tab = t }, Cmd.none, NoOut )
 
 
 
