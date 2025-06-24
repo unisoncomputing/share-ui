@@ -133,7 +133,12 @@ type Msg
     | CloseModal
 
 
-update : AppContext -> ProjectRef -> ProjectContributionsRoute -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg )
+type OutMsg
+    = NoOut
+    | AddedContribution
+
+
+update : AppContext -> ProjectRef -> ProjectContributionsRoute -> WebData ProjectDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef _ project msg model =
     case msg of
         FetchContributionsFinished status contributions ->
@@ -152,7 +157,7 @@ update appContext projectRef _ project msg model =
                         _ ->
                             model.tab
             in
-            ( { model | tab = tab }, Cmd.none )
+            ( { model | tab = tab }, Cmd.none, NoOut )
 
         FetchOwnContributorBranchesFinished contribBranches ->
             let
@@ -160,7 +165,7 @@ update appContext projectRef _ project msg model =
                     model.recentBranches
                         |> Maybe.map (\rb -> { rb | ownContributorBranches = contribBranches })
             in
-            ( { model | recentBranches = recentBranches }, Cmd.none )
+            ( { model | recentBranches = recentBranches }, Cmd.none, NoOut )
 
         FetchProjectBranchesFinished projectBranches ->
             let
@@ -168,7 +173,7 @@ update appContext projectRef _ project msg model =
                     model.recentBranches
                         |> Maybe.map (\rb -> { rb | projectBranches = projectBranches })
             in
-            ( { model | recentBranches = recentBranches }, Cmd.none )
+            ( { model | recentBranches = recentBranches }, Cmd.none, NoOut )
 
         ShowSubmitContributionModal ->
             case appContext.session of
@@ -183,10 +188,11 @@ update appContext projectRef _ project msg model =
                     in
                     ( { model | modal = SubmitContributionModal projectContributionFormModal }
                     , Cmd.map ProjectContributionFormModalMsg cmd
+                    , NoOut
                     )
 
                 Session.Anonymous ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ProjectContributionFormModalMsg formMsg ->
             case ( appContext.session, model.modal, project ) of
@@ -195,29 +201,36 @@ update appContext projectRef _ project msg model =
                         ( projectContributionFormModal, cmd, out ) =
                             ProjectContributionFormModal.update appContext p account formMsg formModel
 
-                        ( modal, tab ) =
+                        ( modal, tab, out_ ) =
                             case ( out, model.tab ) of
                                 ( ProjectContributionFormModal.None, _ ) ->
-                                    ( SubmitContributionModal projectContributionFormModal, model.tab )
+                                    ( SubmitContributionModal projectContributionFormModal, model.tab, NoOut )
 
                                 ( ProjectContributionFormModal.RequestToCloseModal, _ ) ->
-                                    ( NoModal, model.tab )
+                                    ( NoModal, model.tab, NoOut )
 
                                 ( ProjectContributionFormModal.Saved c, InReview contributions ) ->
-                                    ( NoModal, InReview (RemoteData.map (\cs -> c :: cs) contributions) )
+                                    ( NoModal
+                                    , InReview (RemoteData.map (\cs -> c :: cs) contributions)
+                                    , AddedContribution
+                                    )
 
                                 ( ProjectContributionFormModal.Saved _, _ ) ->
-                                    ( NoModal, model.tab )
+                                    ( NoModal
+                                    , model.tab
+                                    , AddedContribution
+                                    )
                     in
                     ( { model | modal = modal, tab = tab }
                     , Cmd.map ProjectContributionFormModalMsg cmd
+                    , out_
                     )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         CloseModal ->
-            ( { model | modal = NoModal }, Cmd.none )
+            ( { model | modal = NoModal }, Cmd.none, NoOut )
 
 
 updateSubPage : AppContext -> ProjectRef -> ProjectContributionsRoute -> Model -> ( Model, Cmd Msg )

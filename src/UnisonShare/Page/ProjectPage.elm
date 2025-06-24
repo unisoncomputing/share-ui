@@ -556,10 +556,20 @@ update appContext projectRef route msg model =
             case route of
                 Route.ProjectContributions subRoute ->
                     let
-                        ( contribsPage_, contribsPageCmd ) =
+                        ( contribsPage_, contribsPageCmd, out ) =
                             ProjectContributionsPage.update appContext projectRef subRoute model.project contribsMsg contribsPage
+
+                        project =
+                            case out of
+                                ProjectContributionsPage.NoOut ->
+                                    model.project
+
+                                ProjectContributionsPage.AddedContribution ->
+                                    model.project
+                                        |> RemoteData.map
+                                            (\p -> { p | numActiveContributions = p.numActiveContributions + 1 })
                     in
-                    ( { model | subPage = Contributions contribsPage_ }
+                    ( { model | project = project, subPage = Contributions contribsPage_ }
                     , Cmd.map ProjectContributionsPageMsg contribsPageCmd
                     )
 
@@ -598,10 +608,20 @@ update appContext projectRef route msg model =
             case route of
                 Route.ProjectTickets ->
                     let
-                        ( ticketsPage_, ticketsPageCmd ) =
+                        ( ticketsPage_, ticketsPageCmd, out ) =
                             ProjectTicketsPage.update appContext projectRef ticketsMsg ticketsPage
+
+                        project =
+                            case out of
+                                ProjectTicketsPage.NoOut ->
+                                    model.project
+
+                                ProjectTicketsPage.AddedTicket ->
+                                    model.project
+                                        |> RemoteData.map
+                                            (\p -> { p | numOpenTickets = p.numOpenTickets + 1 })
                     in
-                    ( { model | subPage = Tickets ticketsPage_ }
+                    ( { model | project = project, subPage = Tickets ticketsPage_ }
                     , Cmd.map ProjectTicketsPageMsg ticketsPageCmd
                     )
 
