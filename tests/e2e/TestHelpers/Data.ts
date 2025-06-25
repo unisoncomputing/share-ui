@@ -91,7 +91,7 @@ function project(ref?: string) {
       faker.number.int(100),
     ],
     slug: slug,
-    summary: faker.lorem.text(),
+    summary: faker.lorem.sentence(),
     tags: [],
     updatedAt: faker.date.past(),
     visibility: "public",
@@ -201,7 +201,7 @@ function definitionSearchMatch() {
 function projectSearchMatch() {
   return {
     projectRef: projectRef(),
-    summary: faker.lorem.text(),
+    summary: faker.lorem.sentence(),
     tag: "Project",
     visibility: "public",
   };

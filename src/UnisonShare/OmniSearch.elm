@@ -103,18 +103,26 @@ type alias DefinitionSearchMatch =
     }
 
 
-type MainSearch
-    = NoSearch
-      -- Each kind of search has a secondary to help the user if they, say,
-      -- meant to search for the projects instead of definitions. The UI allows
-      -- them to quickly flip over the other result set.
-    | EntitySearch (Search EntityMatch) (Search DefinitionSearchMatch)
-    | DefinitionSearch (Search DefinitionSearchMatch) (Search EntityMatch)
+
+{-
+   type MainSearch
+       = NoSearch
+         -- Each kind of search has a secondary to help the user if they, say,
+         -- meant to search for the projects instead of definitions. The UI allows
+         -- them to quickly flip over the other result set.
+       | EntitySearch (Search EntityMatch) (Search DefinitionSearchMatch)
+       | DefinitionSearch (Search DefinitionSearchMatch) (Search EntityMatch)
+-}
 
 
 type BlendedMatch
     = BlendedEntityMatch EntityMatch
     | BlendedDefinitionMatch DefinitionSearchMatch
+
+
+type MainSearch
+    = NoSearch
+    | BlendedSearch (Search BlendedMatch)
 
 
 type Filter
@@ -255,26 +263,14 @@ update appContext msg model =
             -- Are we still searching for the same thing?
             if res.query == addAtPrefix model.fieldValue then
                 case ( model.search, res.results ) of
-                    ( EntitySearch (Searching q _) defSearch, Ok matches ) ->
-                        ( { model | search = EntitySearch (Success q (toSearchResults matches)) defSearch }
+                    ( BlendedSearch (Searching q _), Ok matches ) ->
+                        ( { model | search = BlendedSearch (Success q (toSearchResults matches)) }
                         , Cmd.none
                         , NoOut
                         )
 
-                    ( EntitySearch (Searching q _) defSearch, Err e ) ->
-                        ( { model | search = EntitySearch (Failure q e) defSearch }
-                        , Cmd.none
-                        , NoOut
-                        )
-
-                    ( DefinitionSearch defSearch (Searching q _), Ok matches ) ->
-                        ( { model | search = DefinitionSearch defSearch (Success q (toSearchResults matches)) }
-                        , Cmd.none
-                        , NoOut
-                        )
-
-                    ( DefinitionSearch defSearch (Searching q _), Err e ) ->
-                        ( { model | search = DefinitionSearch defSearch (Failure q e) }
+                    ( BlendedSearch (Searching q _), Err e ) ->
+                        ( { model | search = BlendedSearch (Failure q e) }
                         , Cmd.none
                         , NoOut
                         )
@@ -306,23 +302,14 @@ update appContext msg model =
             -- Are we still searching for the same thing?
             if res.query == val || res.query == removeAtPrefix model.fieldValue then
                 case ( model.search, res.results ) of
-                    ( DefinitionSearch (Searching q _) entitySearch, Ok matches ) ->
-                        ( { model | search = DefinitionSearch (Success q (toSearchResults matches)) entitySearch }
+                    ( BlendedSearch (Searching q _), Ok matches ) ->
+                        ( { model | search = BlendedSearch (Success q (toSearchResults matches)) }
                         , Cmd.none
                         , NoOut
                         )
 
-                    ( DefinitionSearch (Searching q _) entitySearch, Err e ) ->
-                        ( { model | search = DefinitionSearch (Failure q e) entitySearch }, Cmd.none, NoOut )
-
-                    ( EntitySearch entitySearch (Searching q _), Ok matches ) ->
-                        ( { model | search = EntitySearch entitySearch (Success q (toSearchResults matches)) }
-                        , Cmd.none
-                        , NoOut
-                        )
-
-                    ( EntitySearch entitySearch (Searching q _), Err e ) ->
-                        ( { model | search = EntitySearch entitySearch (Failure q e) }, Cmd.none, NoOut )
+                    ( BlendedSearch (Searching q _), Err e ) ->
+                        ( { model | search = BlendedSearch (Failure q e) }, Cmd.none, NoOut )
 
                     _ ->
                         ( model, Cmd.none, NoOut )
@@ -395,22 +382,16 @@ update appContext msg model =
 
                 Sequence _ ArrowUp ->
                     case model.search of
-                        EntitySearch s d ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsPrev s) d }, cmd, NoOut )
-
-                        DefinitionSearch s e ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsPrev s) e }, cmd, NoOut )
+                        BlendedSearch s ->
+                            ( { newModel | search = BlendedSearch (Search.searchResultsPrev s) }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
 
                 Sequence _ ArrowDown ->
                     case model.search of
-                        EntitySearch s d ->
-                            ( { newModel | search = EntitySearch (Search.searchResultsNext s) d }, cmd, NoOut )
-
-                        DefinitionSearch s e ->
-                            ( { newModel | search = DefinitionSearch (Search.searchResultsNext s) e }, cmd, NoOut )
+                        BlendedSearch s ->
+                            ( { newModel | search = BlendedSearch (Search.searchResultsNext s) }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
@@ -419,20 +400,15 @@ update appContext msg model =
                     let
                         navCmd =
                             case model.search of
-                                EntitySearch s _ ->
+                                BlendedSearch s ->
                                     case Maybe.andThen SearchResults.focus (Search.searchResults s) of
-                                        Just (UserMatch u) ->
+                                        Just (BlendedEntityMatch (UserMatch u)) ->
                                             Route.navigate appContext.navKey (Route.userProfile u.handle)
 
-                                        Just (ProjectMatch p) ->
+                                        Just (BlendedEntityMatch (ProjectMatch p)) ->
                                             Route.navigate appContext.navKey (Route.projectOverview p.ref)
 
-                                        _ ->
-                                            Cmd.none
-
-                                DefinitionSearch s _ ->
-                                    case Maybe.andThen SearchResults.focus (Search.searchResults s) of
-                                        Just d ->
+                                        Just (BlendedDefinitionMatch d) ->
                                             let
                                                 perspective =
                                                     Perspective.relativeRootPerspective
@@ -490,9 +466,9 @@ update appContext msg model =
 
                         _ ->
                             case model.search of
-                                EntitySearch s _ ->
+                                BlendedSearch s ->
                                     case Search.searchResultsFocus s of
-                                        Just (UserMatch u) ->
+                                        Just (BlendedEntityMatch (UserMatch u)) ->
                                             let
                                                 model_ =
                                                     { model
@@ -507,7 +483,7 @@ update appContext msg model =
                                             , NoOut
                                             )
 
-                                        Just (ProjectMatch p) ->
+                                        Just (BlendedEntityMatch (ProjectMatch p)) ->
                                             let
                                                 model_ =
                                                     { model
@@ -598,12 +574,12 @@ updateForValue appContext model value =
         let
             ( filter, val, search_ ) =
                 case model.search of
-                    EntitySearch s _ ->
+                    BlendedSearch s ->
                         case Search.searchResultsFocus s of
-                            Just (UserMatch u) ->
+                            Just (BlendedEntityMatch (UserMatch u)) ->
                                 ( UserFilter u.handle, "", NoSearch )
 
-                            Just (ProjectMatch p) ->
+                            Just (BlendedEntityMatch (ProjectMatch p)) ->
                                 ( ProjectFilter p.ref, "", NoSearch )
 
                             _ ->
@@ -837,10 +813,7 @@ searchNames appContext filter query =
 isMainSearchSearching : MainSearch -> Bool
 isMainSearchSearching search =
     case search of
-        EntitySearch s _ ->
-            Search.isSearching s
-
-        DefinitionSearch s _ ->
+        BlendedSearch s ->
             Search.isSearching s
 
         _ ->
@@ -848,33 +821,27 @@ isMainSearchSearching search =
 
 
 
-{- TODO, search the secondary -}
+{- TODO, DO WE NEED BOTH? -}
 
 
 toEntitySearchSearchingWithQuery : MainSearch -> String -> MainSearch
 toEntitySearchSearchingWithQuery search query =
     case search of
-        EntitySearch e d ->
-            EntitySearch (e |> Search.toSearching |> Search.withQuery query) d
-
-        DefinitionSearch d _ ->
-            EntitySearch (Searching query Nothing) d
+        BlendedSearch s ->
+            BlendedSearch (s |> Search.toSearching |> Search.withQuery query)
 
         NoSearch ->
-            EntitySearch (Searching query Nothing) (Searching query Nothing)
+            BlendedSearch (Searching query Nothing)
 
 
 toDefinitionSearchSearchingWithQuery : MainSearch -> String -> MainSearch
 toDefinitionSearchSearchingWithQuery search query =
     case search of
-        DefinitionSearch d e ->
-            DefinitionSearch (d |> Search.toSearching |> Search.withQuery query) e
-
-        EntitySearch e _ ->
-            DefinitionSearch (Searching query Nothing) e
+        BlendedSearch s ->
+            BlendedSearch (s |> Search.toSearching |> Search.withQuery query)
 
         NoSearch ->
-            DefinitionSearch (Searching query Nothing) (Searching query Nothing)
+            BlendedSearch (Searching query Nothing)
 
 
 valueWithFocusedName : String -> SearchResults.SearchResults String -> String
@@ -1033,7 +1000,6 @@ viewEntityMatch keyboardShortcut match isFocused =
                 [ div [ class "info-and-summary" ]
                     [ div [ class "project-info" ]
                         [ ProjectListing.projectListing p
-                            |> ProjectListing.large
                             |> ProjectListing.view
                         ]
                     , summary
@@ -1281,16 +1247,16 @@ viewMainSearch keyboardShortcut mainSearch =
         NoSearch ->
             UI.nothing
 
-        EntitySearch entitySearch defSearch ->
+        BlendedSearch search ->
             viewSearchSheet
                 { viewMatch = viewEntityMatch keyboardShortcut
-                , search = entitySearch
+                , search = search
                 , viewSecondaryMatch = viewDefinitionMatch keyboardShortcut
                 , secondarySearch = defSearch
                 , mainEmptyWithSecondaryMessage = \n -> "No users or projects matched the query, but " ++ String.fromInt n ++ " definitions did:"
                 }
 
-        DefinitionSearch defSearch entitySearch ->
+        DefinitionSearch defSearch ->
             viewSearchSheet
                 { viewMatch = viewDefinitionMatch keyboardShortcut
                 , search = defSearch
