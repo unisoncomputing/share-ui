@@ -286,9 +286,8 @@ update appContext msg model =
                                     prevMatches
 
                                 else
-                                    prevMatches
-                                        |> SearchResults.filterMatches isEntityMatch
-                                        |> (\prevMatches_ -> SearchResults.prepend prevMatches_ blendedMatches)
+                                    SearchResults.prepend prevMatches blendedMatches
+                                        |> SearchResults.uniqueMatchesBy uniqueMatchReference
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
@@ -356,9 +355,8 @@ update appContext msg model =
                                     |> List.map BlendedDefinitionMatch
 
                             matches_ =
-                                prevMatches
-                                    |> SearchResults.filterMatches (isEntityMatch >> not)
-                                    |> (\prevMatches_ -> SearchResults.append prevMatches_ blendedMatches)
+                                SearchResults.prepend prevMatches blendedMatches
+                                    |> SearchResults.uniqueMatchesBy uniqueMatchReference
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
@@ -609,6 +607,22 @@ update appContext msg model =
 
 
 -- UPDATE HELPERS
+
+
+uniqueMatchReference : BlendedSearchMatch -> String
+uniqueMatchReference match =
+    case match of
+        BlendedEntityMatch (ProjectMatch { ref }) ->
+            ProjectRef.toString ref
+
+        BlendedEntityMatch (UserMatch { handle }) ->
+            UserHandle.toString handle
+
+        BlendedEntityMatch (OrgMatch { handle }) ->
+            UserHandle.toString handle
+
+        BlendedDefinitionMatch { fqn, projectRef, branchRef } ->
+            FQN.toString fqn ++ "_" ++ ProjectRef.toString projectRef ++ "_" ++ BranchRef.toString branchRef
 
 
 isEntityMatch : BlendedSearchMatch -> Bool
