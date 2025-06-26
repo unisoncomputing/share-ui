@@ -282,7 +282,7 @@ update appContext msg model =
                                     SearchResults.prepend prevMatches blendedMatches
 
                                 else
-                                    SearchResults.append prevMatches blendedMatches
+                                    SearchResults.append prevMatches (List.take 3 blendedMatches)
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
@@ -349,7 +349,7 @@ update appContext msg model =
                                         SearchResults.prepend prevMatches blendedMatches
 
                                     else
-                                        SearchResults.append prevMatches blendedMatches
+                                        SearchResults.append prevMatches (List.take 3 blendedMatches)
 
                                 else
                                     SearchResults.prepend prevMatches blendedMatches
