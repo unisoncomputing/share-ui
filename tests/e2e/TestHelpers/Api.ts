@@ -8,6 +8,9 @@ import {
   contributionTimeline,
   contributionDiff,
   userDetails,
+  definitionSearchMatch,
+  userSearchMatch,
+  projectSearchMatch,
   org,
   contribution,
   user,
@@ -465,6 +468,42 @@ async function patchNotificationsHub(page: Page, handle: string) {
   });
 }
 
+// -- SEARCH
+
+async function getNameSearch(page: Page, query = "map", results = null) {
+  return get(page, {
+    url: `/search-names?query=${query}`,
+    status: 200,
+    data: results || [{ tag: "plain", token: query.split(" ")[0] }],
+  });
+}
+
+async function getDefinitionSearch(page: Page, query = "map", results = null) {
+  return get(page, {
+    url: `/search-definitions?query=${query}`,
+    status: 200,
+    data: {
+      results: results || [
+        definitionSearchMatch(),
+        definitionSearchMatch(),
+        definitionSearchMatch(),
+      ],
+    },
+  });
+}
+
+async function getEntitySearch(page: Page, query = "@base", results = null) {
+  return get(page, {
+    url: `/search?query=%40${query.replace("@", "")}`,
+    status: 200,
+    data: results || [
+      projectSearchMatch(),
+      userSearchMatch(),
+      projectSearchMatch(),
+    ],
+  });
+}
+
 // -- UTIL
 
 type Response = {
@@ -516,6 +555,9 @@ export {
   getProjectContributionMergeCheck,
   getProjectContributionMergeCheck_,
   getProjectContributionDiff,
+  getDefinitionSearch,
+  getEntitySearch,
+  getNameSearch,
   getNotificationsHub,
   patchNotificationsHub,
   get,
