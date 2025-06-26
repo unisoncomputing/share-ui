@@ -355,7 +355,7 @@ update appContext msg model =
                                     |> List.map BlendedDefinitionMatch
 
                             matches_ =
-                                SearchResults.prepend prevMatches blendedMatches
+                                SearchResults.append prevMatches blendedMatches
                                     |> SearchResults.uniqueMatchesBy uniqueMatchReference
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
