@@ -504,10 +504,73 @@ function notification(kind?: NotificationEventKind): Notification {
   };
 }
 
+function definitionSearchMatch() {
+  return {
+    branchRef: "releases/3.35.0",
+    definition: {
+      displayName: "List.map",
+      hash: "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g",
+      summary: {
+        contents: [
+          { annotation: null, segment: "(" },
+          { annotation: { tag: "Var" }, segment: "a" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "TypeOperator" }, segment: "->" },
+          { annotation: { tag: "AbilityBraces" }, segment: "{" },
+          { annotation: { tag: "Var" }, segment: "𝕖" },
+          { annotation: { tag: "AbilityBraces" }, segment: "}" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "Var" }, segment: "b" },
+          { annotation: null, segment: ")" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "TypeOperator" }, segment: "->" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "DelimiterChar" }, segment: "[" },
+          { annotation: { tag: "Var" }, segment: "a" },
+          { annotation: { tag: "DelimiterChar" }, segment: "]" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "TypeOperator" }, segment: "->" },
+          { annotation: { tag: "AbilityBraces" }, segment: "{" },
+          { annotation: { tag: "Var" }, segment: "𝕖" },
+          { annotation: { tag: "AbilityBraces" }, segment: "}" },
+          { annotation: null, segment: " " },
+          { annotation: { tag: "DelimiterChar" }, segment: "[" },
+          { annotation: { tag: "Var" }, segment: "b" },
+          { annotation: { tag: "DelimiterChar" }, segment: "]" },
+        ],
+        tag: "UserObject",
+      },
+      tag: "Plain",
+    },
+    fqn: "data.List.map",
+    kind: "term",
+    projectRef: "@unison/base",
+  };
+}
+
+function projectSearchMatch() {
+  return {
+    projectRef: projectRef(),
+    summary: faker.lorem.sentence(),
+    tag: "project",
+    visibility: "public",
+  };
+}
+
+function userSearchMatch() {
+  return {
+    ...user(),
+    tag: "user",
+  };
+}
+
 export {
   projectRef,
   project,
   account,
+  definitionSearchMatch,
+  projectSearchMatch,
+  userSearchMatch,
   user,
   userDetails,
   userHandle,
