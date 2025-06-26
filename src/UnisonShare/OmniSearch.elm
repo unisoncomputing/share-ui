@@ -385,7 +385,8 @@ update appContext msg model =
                                         (\q_ ->
                                             ( toSearchSearchingWithQuery model.search q_
                                             , Cmd.batch
-                                                [ searchEntities appContext model.filter (ensureAtPrefix q_)
+                                                -- We don't want to search entities by the autocompleted name, instead we search on the actual value
+                                                [ searchEntities appContext model.filter (ensureAtPrefix model.fieldValue)
                                                 , searchDefinitions appContext model.filter q_
                                                 ]
                                             )
@@ -626,11 +627,11 @@ isDefinitionMatch match =
             False
 
 
-isOnlyEntityMatches : SearchResults.SearchResults BlendedSearchMatch -> Bool
-isOnlyEntityMatches results =
+hasAnyEntityMatches : SearchResults.SearchResults BlendedSearchMatch -> Bool
+hasAnyEntityMatches results =
     results
         |> SearchResults.toList
-        |> List.all isEntityMatch
+        |> List.any isEntityMatch
 
 
 isOnlyDefinitionMatches : SearchResults.SearchResults BlendedSearchMatch -> Bool
@@ -638,6 +639,20 @@ isOnlyDefinitionMatches results =
     results
         |> SearchResults.toList
         |> List.all isEntityMatch
+
+
+isOnlyEntityMatches : SearchResults.SearchResults BlendedSearchMatch -> Bool
+isOnlyEntityMatches results =
+    results
+        |> SearchResults.toList
+        |> List.all isEntityMatch
+
+
+hasAnyDefinitionMatches : SearchResults.SearchResults BlendedSearchMatch -> Bool
+hasAnyDefinitionMatches results =
+    results
+        |> SearchResults.toList
+        |> List.any isEntityMatch
 
 
 isEntityQuery : String -> Bool
