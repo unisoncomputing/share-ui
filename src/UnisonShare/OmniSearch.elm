@@ -282,15 +282,11 @@ update appContext msg model =
                                     |> List.map BlendedEntityMatch
 
                             matches_ =
-                                if isEntityQuery model.fieldValue then
-                                    SearchResults.prepend prevMatches blendedMatches
-
-                                else if List.length blendedMatches == 1 then
-                                    -- If there's just 1 result, put it at the top regardless
-                                    SearchResults.prepend prevMatches blendedMatches
+                                if List.length (String.split " " model.fieldValue) > 1 then
+                                    prevMatches
 
                                 else
-                                    SearchResults.append prevMatches blendedMatches
+                                    SearchResults.prepend prevMatches blendedMatches
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
@@ -358,16 +354,7 @@ update appContext msg model =
                                     |> List.map BlendedDefinitionMatch
 
                             matches_ =
-                                if isEntityQuery model.fieldValue then
-                                    if List.length blendedMatches == 1 then
-                                        -- If there's just 1 result, put it at the top regardless
-                                        SearchResults.prepend prevMatches blendedMatches
-
-                                    else
-                                        SearchResults.append prevMatches blendedMatches
-
-                                else
-                                    SearchResults.prepend prevMatches blendedMatches
+                                SearchResults.append prevMatches blendedMatches
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
