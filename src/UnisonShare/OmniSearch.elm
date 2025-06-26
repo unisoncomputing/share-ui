@@ -252,12 +252,20 @@ update appContext msg model =
         EntitySearchFinished res ->
             -- Are we still searching for the same thing?
             if res.query == ensureAtPrefix model.fieldValue then
+                let
+                    toTake =
+                        if isEntityQuery model.fieldValue then
+                            8
+
+                        else
+                            3
+                in
                 case ( model.search, res.results ) of
                     ( BlendedSearch (Searching q _), Ok matches ) ->
                         let
                             matches_ =
                                 matches
-                                    |> List.take 8
+                                    |> List.take toTake
                                     |> List.map BlendedEntityMatch
                                     |> SearchResults.fromList
                         in
@@ -270,7 +278,7 @@ update appContext msg model =
                         let
                             blendedMatches =
                                 matches
-                                    |> List.take 8
+                                    |> List.take toTake
                                     |> List.map BlendedEntityMatch
 
                             matches_ =
@@ -282,7 +290,7 @@ update appContext msg model =
                                     SearchResults.prepend prevMatches blendedMatches
 
                                 else
-                                    SearchResults.append prevMatches (List.take 3 blendedMatches)
+                                    SearchResults.append prevMatches blendedMatches
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
@@ -318,6 +326,13 @@ update appContext msg model =
 
                         _ ->
                             model.fieldValue
+
+                toTake =
+                    if not (isEntityQuery model.fieldValue) then
+                        8
+
+                    else
+                        3
             in
             -- Are we still searching for the same thing?
             if res.query == val || res.query == withoutAtPrefix model.fieldValue then
@@ -326,7 +341,7 @@ update appContext msg model =
                         let
                             matches_ =
                                 matches
-                                    |> List.take 8
+                                    |> List.take toTake
                                     |> List.map BlendedDefinitionMatch
                                     |> SearchResults.fromList
                         in
@@ -339,7 +354,7 @@ update appContext msg model =
                         let
                             blendedMatches =
                                 matches
-                                    |> List.take 8
+                                    |> List.take toTake
                                     |> List.map BlendedDefinitionMatch
 
                             matches_ =
@@ -349,7 +364,7 @@ update appContext msg model =
                                         SearchResults.prepend prevMatches blendedMatches
 
                                     else
-                                        SearchResults.append prevMatches (List.take 3 blendedMatches)
+                                        SearchResults.append prevMatches blendedMatches
 
                                 else
                                     SearchResults.prepend prevMatches blendedMatches
