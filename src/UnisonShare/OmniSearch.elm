@@ -286,7 +286,9 @@ update appContext msg model =
                                     prevMatches
 
                                 else
-                                    SearchResults.prepend prevMatches blendedMatches
+                                    prevMatches
+                                        |> SearchResults.filterMatches isEntityMatch
+                                        |> (\prevMatches_ -> SearchResults.prepend prevMatches_ blendedMatches)
                         in
                         ( { model | search = BlendedSearch (Success q matches_) }
                         , Cmd.none
