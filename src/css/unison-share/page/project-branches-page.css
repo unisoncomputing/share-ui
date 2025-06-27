@@ -7,6 +7,7 @@
 }
 
 .project-branches-page .project-branches_branch-row {
+  position: relative;
   height: 1.5rem;
   font-size: var(--font-size-medium);
   display: flex;
