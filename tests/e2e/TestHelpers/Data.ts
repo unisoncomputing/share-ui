@@ -97,7 +97,7 @@ function hash() {
 }
 
 function fqn() {
-  return faker.lorem.words({ min: 1, max: 3 }).replaceAll(" ", ".")
+  return faker.lorem.words({ min: 1, max: 3 }).replaceAll(" ", ".");
 }
 
 function project(ref?: string) {
@@ -229,28 +229,28 @@ type DiffErrorCulprit = "new" | "old";
 type DiffErrorDetails =
   | { tag: "impossibleError" }
   | {
-    tag: "constructorAlias";
-    oldOrNewBranch: DiffErrorCulprit;
-    typeName: string;
-    constructorName1: string;
-    constructorName2: string;
-  }
+      tag: "constructorAlias";
+      oldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+      constructorName1: string;
+      constructorName2: string;
+    }
   | {
-    tag: "missingConstructorName";
-    oldOrNewBranch: DiffErrorCulprit;
-    typeName: string;
-  }
+      tag: "missingConstructorName";
+      oldOrNewBranch: DiffErrorCulprit;
+      typeName: string;
+    }
   | {
-    tag: "nestedDeclAlias";
-    oldOrNewBranch: DiffErrorCulprit;
-    constructorName1: string;
-    constructorName2: string;
-  }
+      tag: "nestedDeclAlias";
+      oldOrNewBranch: DiffErrorCulprit;
+      constructorName1: string;
+      constructorName2: string;
+    }
   | {
-    tag: "strayConstructor";
-    oldOrNewBranch: DiffErrorCulprit;
-    constructorName: string;
-  };
+      tag: "strayConstructor";
+      oldOrNewBranch: DiffErrorCulprit;
+      constructorName: string;
+    };
 
 type ContributionDiffConfig =
   | { tag: "ok" }
