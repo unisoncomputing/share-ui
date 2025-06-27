@@ -326,7 +326,17 @@ update appContext msg model =
 
                 toTake =
                     if not (isEntityQuery model.fieldValue) then
-                        8
+                        case model.search of
+                            BlendedSearch s ->
+                                case Search.length s of
+                                    Just n ->
+                                        8 - n
+
+                                    Nothing ->
+                                        8
+
+                            _ ->
+                                8
 
                     else
                         3
