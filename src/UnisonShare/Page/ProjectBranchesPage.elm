@@ -246,13 +246,21 @@ viewAt : AppContext -> BranchSummary -> Html msg
 viewAt appContext branch =
     let
         at_ location =
+            let
+                d =
+                    if location == "tooltip" then
+                        DateTime.FullDateTime
+
+                    else
+                        DateTime.DistanceFrom appContext.now
+            in
             Keyed.node "div"
                 []
                 [ ( DateTime.toISO8601 branch.updatedAt ++ location
                   , span []
                         [ text
                             (DateTime.toString
-                                (DateTime.DistanceFrom appContext.now)
+                                d
                                 appContext.timeZone
                                 branch.updatedAt
                             )
