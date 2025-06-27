@@ -96,6 +96,10 @@ function hash() {
   return `#${faker.string.alphanumeric(256)}`;
 }
 
+function fqn() {
+  return faker.lorem.words({ min: 1, max: 3 }).replaceAll(" ", ".")
+}
+
 function project(ref?: string) {
   const ref_ = ref ? ref : projectRef();
   const [handle, slug] = ref_.split("/");
@@ -225,28 +229,28 @@ type DiffErrorCulprit = "new" | "old";
 type DiffErrorDetails =
   | { tag: "impossibleError" }
   | {
-      tag: "constructorAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "constructorAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "missingConstructorName";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-    }
+    tag: "missingConstructorName";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+  }
   | {
-      tag: "nestedDeclAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "nestedDeclAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "strayConstructor";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName: string;
-    };
+    tag: "strayConstructor";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName: string;
+  };
 
 type ContributionDiffConfig =
   | { tag: "ok" }
@@ -508,8 +512,8 @@ function definitionSearchMatch() {
   return {
     branchRef: "releases/3.35.0",
     definition: {
-      displayName: "List.map",
-      hash: "#ko93h54ensirkthhekqb7898lk1j1klhv5mplfpcui1bh03dcrg9i2tp3ibfk3r1qp36uhie79el2fbc15rpm6bkgl7l1tfahst2m6g",
+      displayName: fqn(),
+      hash: hash(),
       summary: {
         contents: [
           { annotation: null, segment: "(" },
