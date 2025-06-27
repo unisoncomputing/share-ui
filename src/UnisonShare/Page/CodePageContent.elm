@@ -10,6 +10,7 @@ import Code.Config exposing (Config)
 import Code.Definition.Readme exposing (Readme)
 import Code.EmptyState as EmptyState
 import Code.FullyQualifiedName as FQN exposing (FQN)
+import Code.FullyQualifiedNameSet exposing (FQNSet)
 import Code.Namespace as Namespace exposing (NamespaceDetails)
 import Code.Perspective as Perspective exposing (Perspective)
 import Code.ReadmeCard as ReadmeCard
@@ -187,9 +188,10 @@ viewSidebar :
         , showFinderModalMsg : msg
         , changePerspectiveToNamespaceMsg : FQN -> msg
         }
+    -> FQNSet
     -> Maybe { codebaseTree : CodebaseTree.Model, codebaseTreeMsg : CodebaseTree.Msg -> msg }
     -> Sidebar msg
-viewSidebar perspective cfg codebaseTree =
+viewSidebar perspective cfg openDefinitions codebaseTree =
     let
         perspectiveHeader =
             viewPerspectiveHeader
@@ -202,7 +204,9 @@ viewSidebar perspective cfg codebaseTree =
                 (\c ->
                     Sidebar.section "Code"
                         [ Html.map c.codebaseTreeMsg
-                            (CodebaseTree.view { withPerspective = True }
+                            (CodebaseTree.view
+                                { withPerspective = True }
+                                openDefinitions
                                 c.codebaseTree
                             )
                         ]

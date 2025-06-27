@@ -6,6 +6,7 @@ import Code.Definition.Reference exposing (Reference)
 import Code.Finder as Finder
 import Code.Finder.SearchOptions as SearchOptions
 import Code.FullyQualifiedName as FQN exposing (FQN)
+import Code.FullyQualifiedNameSet as FQNSet
 import Code.Namespace exposing (NamespaceDetails)
 import Code.Perspective as Perspective exposing (Perspective)
 import Code.ReadmeCard as ReadmeCard
@@ -524,6 +525,16 @@ viewSidebar model =
     let
         codebaseTree =
             Just { codebaseTree = model.codebaseTree, codebaseTreeMsg = CodebaseTreeMsg }
+
+        openDefinitions =
+            case model.content of
+                WorkspacePage workspace ->
+                    workspace
+                        |> Workspace.currentlyOpenReferences
+                        |> FQNSet.fromReferenceList
+
+                _ ->
+                    FQNSet.empty
     in
     CodePageContent.viewSidebar
         model.config.perspective
@@ -531,6 +542,7 @@ viewSidebar model =
         , showFinderModalMsg = ShowFinderModal
         , changePerspectiveToNamespaceMsg = ChangePerspectiveToNamespace
         }
+        openDefinitions
         codebaseTree
         |> Sidebar.withToggle
             { isToggled = model.sidebarToggled, toggleMsg = ToggleSidebar }
