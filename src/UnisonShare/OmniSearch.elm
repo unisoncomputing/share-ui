@@ -1235,7 +1235,7 @@ viewSearchSheet appContext viewMatch search =
 
             else
                 div [ class "main-result-sheet" ]
-                    (matches |> SearchResults.take 8 |> SearchResults.mapToList viewMatch)
+                    (matches |> SearchResults.mapToList viewMatch)
     in
     case search of
         NotAsked _ ->
