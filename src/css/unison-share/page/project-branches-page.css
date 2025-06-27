@@ -29,6 +29,7 @@
 }
 
 .project-branches-page .project-branches_branch-info .branch-updated-at {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
