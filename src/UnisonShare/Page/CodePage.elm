@@ -530,8 +530,8 @@ viewSidebar model =
             case model.content of
                 WorkspacePage workspace ->
                     workspace
-                        |> Workspace.currentlyOpenReferences
-                        |> FQNSet.fromReferenceList
+                        |> Workspace.currentlyOpenFqns
+                        |> FQNSet.fromList
 
                 _ ->
                     FQNSet.empty
