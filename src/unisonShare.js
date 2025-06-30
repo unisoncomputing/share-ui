@@ -13,6 +13,7 @@ import "ui-core/Lib/OnClickOutside";
 import "ui-core/Lib/EmbedKatex";
 import "ui-core/Lib/MermaidDiagram";
 import "ui-core/Lib/EmbedSvg";
+import "ui-core/Lib/ProdDebug";
 import detectOs from "ui-core/Lib/detectOs";
 import preventDefaultGlobalKeyboardEvents from "ui-core/Lib/preventDefaultGlobalKeyboardEvents";
 import * as Sentry from "@sentry/browser";
