@@ -13,7 +13,6 @@ import Code.ReadmeCard as ReadmeCard
 import Code.Workspace as Workspace
 import Html exposing (Html)
 import Lib.HttpApi as HttpApi
-import ProdDebug
 import RemoteData exposing (WebData)
 import UI.KeyboardShortcut as KeyboardShortcut
 import UI.KeyboardShortcut.Key exposing (Key(..))
@@ -348,7 +347,6 @@ update appContext context codeRoute msg model_ =
                 [ cmd
                 , outCmd
                 , Cmd.map WorkspaceMsg workspaceCmd
-                , ProdDebug.debugLog (Workspace.currentlyOpenFqns workspace_ |> List.map FQN.toString |> String.join " | ")
                 ]
             )
 
