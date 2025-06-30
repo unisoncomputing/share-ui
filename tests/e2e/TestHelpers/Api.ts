@@ -450,6 +450,7 @@ async function getNotificationsHub(
       notification("project:ticket:created"),
       notification("project:ticket:updated"),
       notification("project:ticket:comment"),
+      notification("project:release:created"),
     ],
     ...(data_ ? data_ : {}),
   };

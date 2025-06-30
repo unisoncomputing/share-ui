@@ -32,13 +32,13 @@ test.describe("when signed in", () => {
 
   test("can view notifications", async ({ page }) => {
     await Page.goto(page, "/notifications");
-    await expect(page.locator(".notification-row")).toHaveCount(6);
+    await expect(page.locator(".notification-row")).toHaveCount(7);
   });
 
   test("can mark a notification as read", async ({ page }) => {
     await Page.goto(page, "/notifications");
 
-    await expect(page.locator(".notification-row")).toHaveCount(6);
+    await expect(page.locator(".notification-row")).toHaveCount(7);
     await page.locator(".notification-row:first-child input").click();
     await expect(Page.button(page, "Mark as read")).toBeVisible();
 
@@ -50,11 +50,12 @@ test.describe("when signed in", () => {
         notification(),
         notification(),
         notification(),
+        notification(),
       ],
     });
 
     await Page.button(page, "Mark as read").click();
 
-    await expect(page.locator(".notification-row")).toHaveCount(5);
+    await expect(page.locator(".notification-row")).toHaveCount(6);
   });
 });
