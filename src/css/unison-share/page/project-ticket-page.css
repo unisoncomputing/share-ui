@@ -3,8 +3,21 @@
     overflow: auto;
   }
 
+  & .page-content .page-title .page-title_default-title h1 {
+    display: block;
+    & .left-title-text {
+      margin-right: 0.5rem;
+    }
+  }
+
+  & .page-content .page-title .page-title_right-side {
+    margin-top: 0.25rem;
+    align-self: flex-start;
+  }
+
   & .page-title .description {
     margin: 0;
+    margin-top: 0.25rem;
   }
 
   & .page-title_description {
