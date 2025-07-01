@@ -229,28 +229,28 @@ type DiffErrorCulprit = "new" | "old";
 type DiffErrorDetails =
   | { tag: "impossibleError" }
   | {
-      tag: "constructorAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "constructorAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "missingConstructorName";
-      oldOrNewBranch: DiffErrorCulprit;
-      typeName: string;
-    }
+    tag: "missingConstructorName";
+    oldOrNewBranch: DiffErrorCulprit;
+    typeName: string;
+  }
   | {
-      tag: "nestedDeclAlias";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName1: string;
-      constructorName2: string;
-    }
+    tag: "nestedDeclAlias";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName1: string;
+    constructorName2: string;
+  }
   | {
-      tag: "strayConstructor";
-      oldOrNewBranch: DiffErrorCulprit;
-      constructorName: string;
-    };
+    tag: "strayConstructor";
+    oldOrNewBranch: DiffErrorCulprit;
+    constructorName: string;
+  };
 
 type ContributionDiffConfig =
   | { tag: "ok" }
@@ -509,10 +509,11 @@ function notification(kind?: NotificationEventKind): Notification {
 }
 
 function definitionSearchMatch() {
+  const fqn_ = fqn();
   return {
     branchRef: "releases/3.35.0",
     definition: {
-      displayName: fqn(),
+      displayName: fqn_,
       hash: hash(),
       summary: {
         contents: [
@@ -546,7 +547,7 @@ function definitionSearchMatch() {
       },
       tag: "Plain",
     },
-    fqn: "data.List.map",
+    fqn: fqn_,
     kind: "term",
     projectRef: "@unison/base",
   };
