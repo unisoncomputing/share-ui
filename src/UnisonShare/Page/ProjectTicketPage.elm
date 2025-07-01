@@ -1,6 +1,6 @@
 module UnisonShare.Page.ProjectTicketPage exposing (..)
 
-import Html exposing (Html, div, header)
+import Html exposing (Html, div, h1, header, span, text)
 import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
@@ -355,7 +355,7 @@ timeAgo dateTimeContext t =
 detailedPageTitle : AppContext -> Ticket -> PageTitle Msg
 detailedPageTitle appContext ticket =
     let
-        isContributor =
+        isTicketAuthor =
             ticket.author
                 |> Maybe.map .handle
                 |> Maybe.map (\h -> Session.isHandle h appContext.session)
@@ -369,25 +369,28 @@ detailedPageTitle appContext ticket =
                 Nothing ->
                     ByAt.byUnknown ticket.createdAt
 
-        rightSide =
-            if isContributor then
-                [ Button.iconThenLabel ShowEditModal Icon.writingPad "Edit"
+        editButton =
+            if isTicketAuthor then
+                Button.iconThenLabel ShowEditModal Icon.writingPad "Edit"
                     |> Button.small
                     |> Button.outlined
                     |> Button.view
-                ]
 
             else
-                []
+                UI.nothing
     in
-    PageTitle.title ticket.title
-        |> PageTitle.withLeftTitleText (TicketRef.toString ticket.ref)
-        |> PageTitle.withDescription_
-            (byAt
-                |> ByAt.withToClick Link.userProfile
-                |> ByAt.view appContext.timeZone appContext.now
-            )
-        |> PageTitle.withRightSide rightSide
+    PageTitle.custom
+        [ div [ class "ticket-page-title" ]
+            [ div [ class "page-title_pre-title" ]
+                [ span [ class "ticket-ref_by-at" ]
+                    [ span [ class "ticket-ref" ] [ text (TicketRef.toString ticket.ref) ]
+                    , ByAt.view appContext.timeZone appContext.now byAt
+                    ]
+                , editButton
+                ]
+            , h1 [] [ text ticket.title ]
+            ]
+        ]
 
 
 viewLoadingPage : PageLayout Msg
