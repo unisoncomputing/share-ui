@@ -212,6 +212,7 @@ viewSidebar perspective cfg openDefinitions codebaseTree =
                         ]
                         |> Sidebar.sectionWithTitleButton (Button.iconThenLabel cfg.showFinderModalMsg Icon.browse "Search" |> Button.small)
                         |> Sidebar.sectionWithScrollable
+                        |> Sidebar.sectionWithStickyHeader
                 )
                 codebaseTree
 
@@ -239,7 +240,8 @@ viewSidebar perspective cfg openDefinitions codebaseTree =
     in
     sidebar
         |> withCollapsedContext
-        |> Sidebar.withCollapsedActions [ Button.icon cfg.showFinderModalMsg Icon.browse |> Button.small ]
+        |> Sidebar.withCollapsedActions
+            [ Button.icon cfg.showFinderModalMsg Icon.browse |> Button.small ]
 
 
 viewPerspectiveLandingPage :
