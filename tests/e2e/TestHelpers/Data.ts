@@ -536,10 +536,11 @@ function notification(kind?: NotificationEventKind): Notification {
 }
 
 function definitionSearchMatch() {
+  const fqn_ = fqn();
   return {
     branchRef: "releases/3.35.0",
     definition: {
-      displayName: fqn(),
+      displayName: fqn_,
       hash: hash(),
       summary: {
         contents: [
@@ -573,7 +574,7 @@ function definitionSearchMatch() {
       },
       tag: "Plain",
     },
-    fqn: "data.List.map",
+    fqn: fqn_,
     kind: "term",
     projectRef: "@unison/base",
   };

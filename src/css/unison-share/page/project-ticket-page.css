@@ -3,39 +3,46 @@
     overflow: auto;
   }
 
-  & .page-title .description {
-    margin: 0;
+  & .page-content .page-title .page-title_custom-title {
+    display: flex;
+    width: 100%;
+    flex: 1;
   }
 
-  & .page-title_description {
+  & .ticket-page-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  & .page-title_pre-title {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.75ch;
-    line-height: 1;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: var(--u-color_text_subdued);
+    font-size: var(--font-size-medium);
+    width: 100%;
 
-    & .time-ago {
-      text-transform: capitalize;
-    }
-
-    & .branches {
+    & .ticket-ref_by-at {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 0.75ch;
-      line-height: 1;
+      gap: 0.5rem;
+    }
 
-      & .tag {
-        /* @todo @color-todo */
-        background: var(--u-color_container);
-        border: 1px solid var(--u-color_border);
-      }
-      & .tag:hover {
-        border-color: var(--u-color_border_hovered);
-        background: var(--u-color_container_hovered);
-      }
+    & .ticket-ref {
+      font-size: 0.875rem;
+      font-weight: bold;
+      background: var(--u-color_element);
+      padding: 0.125rem 0.5rem;
+      border: 1px solid var(--u-color_border_subdued);
+      border-radius: 1.5rem;
     }
   }
+
 
   & .ticket-description {
     z-index: 1;
