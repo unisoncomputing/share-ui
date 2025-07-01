@@ -6,6 +6,7 @@
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/Browser.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Code/DefinitionDetailTooltip.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Lib/Paginated.elm" },
+    { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Lib/ProdDebug.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/Lib/ScrollEvent.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/AppDocument.elm" },
     { "count": 1, "filePath": "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/UI/AvatarStack.elm" },
