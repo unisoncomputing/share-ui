@@ -138,7 +138,7 @@ fetchBranches appContext projectRef cursor =
         params =
             { kind = ShareApi.AllBranches Nothing
             , searchQuery = Nothing
-            , limit = 24
+            , limit = 100
             , cursor = cursor
             }
 
@@ -352,7 +352,7 @@ viewBranchRow appContext project branch =
 {-| TODO: add an empty state
 -}
 viewPageContent : AppContext -> ProjectDetails -> PaginatedBranches -> PageContent Msg
-viewPageContent appContext project (Paginated.Paginated { prev, next, items }) =
+viewPageContent appContext project (Paginated.Paginated { items }) =
     let
         card =
             items
@@ -361,18 +361,8 @@ viewPageContent appContext project (Paginated.Paginated { prev, next, items }) =
                 |> List.singleton
                 |> Card.card
                 |> Card.asContained
-
-        paginationControls =
-            if List.isEmpty items then
-                UI.nothing
-
-            else
-                viewPaginationControls project.ref { prev = prev, next = next }
     in
-    PageContent.oneColumn
-        [ Card.view card
-        , paginationControls
-        ]
+    PageContent.oneColumn [ Card.view card ]
         |> PageContent.withPageTitle (pageTitle project.ref)
 
 
