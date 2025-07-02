@@ -6,6 +6,7 @@ import Html exposing (Html, br, div, footer, p, span, strong, text)
 import Html.Attributes exposing (class)
 import Html.Keyed as Keyed
 import Json.Decode as Decode
+import Json.Decode.Pipeline exposing (optional, required)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
@@ -48,15 +49,21 @@ type Modal
     | DeleteBranchModal BranchRef DeleteBranch
 
 
+type alias PaginatedBranches =
+    Paginated.Paginated BranchSummary
+
+
 type alias Model =
-    { branches : WebData (List BranchSummary)
+    { branches : WebData PaginatedBranches
     , modal : Modal
     }
 
 
-init : AppContext -> ProjectRef -> ( Model, Cmd Msg )
-init appContext projectRef =
-    ( { branches = Loading, modal = NoModal }, fetchBranches appContext projectRef )
+init : AppContext -> ProjectRef -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
+init appContext projectRef cursor =
+    ( { branches = Loading, modal = NoModal }
+    , fetchBranches appContext projectRef cursor
+    )
 
 
 
@@ -64,7 +71,7 @@ init appContext projectRef =
 
 
 type Msg
-    = FetchBranchesFinished (WebData (List BranchSummary))
+    = FetchBranchesFinished (WebData PaginatedBranches)
     | ShowDeleteBranchModal BranchRef
     | CloseModal
     | YesDeleteBranch
@@ -100,7 +107,15 @@ update appContext projectRef msg model =
                         branches =
                             model.branches
                                 |> RemoteData.map
-                                    (List.filter (.ref >> BranchRef.equals branchRef >> not))
+                                    (\(Paginated.Paginated branches_) ->
+                                        Paginated.Paginated
+                                            { branches_
+                                                | items =
+                                                    List.filter
+                                                        (.ref >> BranchRef.equals branchRef >> not)
+                                                        branches_.items
+                                            }
+                                    )
                     in
                     ( { model
                         | branches = branches
@@ -117,20 +132,27 @@ update appContext projectRef msg model =
 -- EFFECTS
 
 
-fetchBranches : AppContext -> ProjectRef -> Cmd Msg
-fetchBranches appContext projectRef =
+fetchBranches : AppContext -> ProjectRef -> Paginated.PageCursorParam -> Cmd Msg
+fetchBranches appContext projectRef cursor =
     let
         params =
             { kind = ShareApi.AllBranches Nothing
             , searchQuery = Nothing
-            , limit = 100
-            , cursor = Paginated.NoPageCursor
+            , limit = 12
+            , cursor = cursor
             }
+
+        mkPaginated prev next items =
+            Paginated.Paginated { prev = prev, next = next, items = items }
+
+        decode =
+            Decode.succeed mkPaginated
+                |> optional "prevCursor" (Decode.map (Paginated.PageCursor >> Just) Decode.string) Nothing
+                |> optional "nextCursor" (Decode.map (Paginated.PageCursor >> Just) Decode.string) Nothing
+                |> required "items" (Decode.list (Branch.decodeSummary Project.decode))
     in
     ShareApi.projectBranches projectRef params
-        |> HttpApi.toRequest
-            (Decode.field "items" (Decode.list (Branch.decodeSummary Project.decode)))
-            (RemoteData.fromResult >> FetchBranchesFinished)
+        |> HttpApi.toRequest decode (RemoteData.fromResult >> FetchBranchesFinished)
         |> HttpApi.perform appContext.api
 
 
@@ -177,8 +199,6 @@ viewLoadingPage projectRef =
         |> PageLayout.withSubduedBackground
 
 
-{-| TODO: wording here should talk about it only deleting it on Share
--}
 viewDeleteBranchModal : ProjectRef -> BranchRef -> DeleteBranch -> Html Msg
 viewDeleteBranchModal projectRef branchRef deleting =
     let
@@ -222,6 +242,7 @@ viewDeleteBranchModal projectRef branchRef deleting =
                     , strong [] [ text projectRef_ ]
                     , text ", is that ok?"
                     ]
+                , StatusBanner.info "Note that this will only delete the branch on Unison Share"
                 , footer
                     [ class "delete-branch-modal_actions" ]
                     [ statusBanner
@@ -287,6 +308,40 @@ viewAt appContext branch =
         tooltip
 
 
+viewPaginationControls : ProjectRef -> { prev : Maybe Paginated.PageCursor, next : Maybe Paginated.PageCursor } -> Html msg
+viewPaginationControls projectRef cursors =
+    let
+        link cursor =
+            Link.projectBranches projectRef cursor
+
+        paginationButton icon click =
+            Button.icon_ click icon
+
+        buttons =
+            case ( cursors.prev, cursors.next ) of
+                ( Just prev, Just next ) ->
+                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
+                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
+                    ]
+
+                ( Just prev, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+
+                ( Nothing, Just next ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
+                    ]
+
+                ( Nothing, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+    in
+    footer [ class "pagination-controls" ] (List.map (Button.small >> Button.view) buttons)
+
+
 canDelete : Session -> ProjectDetails -> BranchRef -> Bool
 canDelete session project branchRef =
     case branchRef of
@@ -319,19 +374,30 @@ viewBranchRow appContext project branch =
         ]
 
 
-viewPageContent : AppContext -> ProjectDetails -> List BranchSummary -> PageContent Msg
-viewPageContent appContext project branches =
+{-| TODO: add an empty state
+-}
+viewPageContent : AppContext -> ProjectDetails -> PaginatedBranches -> PageContent Msg
+viewPageContent appContext project (Paginated.Paginated { prev, next, items }) =
     let
         card =
-            branches
+            items
                 |> List.map (viewBranchRow appContext project)
                 |> div [ class "project-branches_list" ]
                 |> List.singleton
                 |> Card.card
                 |> Card.asContained
+
+        paginationControls =
+            if List.isEmpty items then
+                UI.nothing
+
+            else
+                viewPaginationControls project.ref { prev = prev, next = next }
     in
     PageContent.oneColumn
-        [ Card.view card ]
+        [ Card.view card
+        , paginationControls
+        ]
         |> PageContent.withPageTitle (pageTitle project.ref)
 
 
