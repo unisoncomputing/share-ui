@@ -138,7 +138,7 @@ fetchBranches appContext projectRef cursor =
         params =
             { kind = ShareApi.AllBranches Nothing
             , searchQuery = Nothing
-            , limit = 12
+            , limit = 24
             , cursor = cursor
             }
 

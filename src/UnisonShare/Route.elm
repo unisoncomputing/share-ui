@@ -364,7 +364,7 @@ toRoute queryString =
         , b profileParser
         , b userParser
         , b orgParser
-        , b projectParser -- Specifically comes _after_ userParser because project slugs share the url space with user pages
+        , b (projectParser queryString) -- Specifically comes _after_ userParser because project slugs share the url space with user pages
         , b termsOfServiceParser
         , b (acceptTermsParser queryString)
         , b privacyPolicyParser
@@ -567,9 +567,26 @@ orgParser =
         ]
 
 
-projectParser : Parser Route
-projectParser =
+projectParser : Maybe String -> Parser Route
+projectParser queryString =
     let
+        cursorParser =
+            Parser.chompUntilEndOr "&"
+                |> Parser.getChompedString
+                |> Parser.map Paginated.PageCursor
+
+        paginationCursorParser =
+            oneOf
+                [ b (succeed PrevPage |. s "prev" |. symbol "=" |= cursorParser |. end)
+                , b (succeed NextPage |. s "next" |. symbol "=" |= cursorParser |. end)
+                ]
+
+        paginationCursor =
+            queryString
+                |> Maybe.withDefault ""
+                |> Parser.run paginationCursorParser
+                |> Result.withDefault NoPageCursor
+
         projectOverview_ handle slug =
             let
                 ps =
@@ -577,12 +594,12 @@ projectParser =
             in
             Project ps ProjectOverview
 
-        projectBranches_ handle slug =
+        projectBranches_ cursor handle slug =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectBranches NoPageCursor)
+            Project ps (ProjectBranches cursor)
 
         projectBranch_ handle slug branchRef c =
             let
@@ -663,7 +680,7 @@ projectParser =
     in
     oneOf
         [ b (succeed projectOverview_ |. slash |= userHandle |. slash |= projectSlug |. end)
-        , b (succeed projectBranches_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. end)
+        , b (succeed (projectBranches_ paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. end)
         , b (succeed projectBranch_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "code" |. slash |= branchRef |. slash |= codeParser)
         , b (succeed projectBranchRoot_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "code" |. slash |= branchRef |. end)
         , b (succeed projectRelease_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "releases" |. slash |= version |. end)
