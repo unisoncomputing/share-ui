@@ -244,9 +244,9 @@ projectOverview projectRef_ =
     toClick (Route.projectOverview projectRef_)
 
 
-projectBranches : ProjectRef -> Click msg
-projectBranches projectRef_ =
-    toClick (Route.projectBranches projectRef_)
+projectBranches : ProjectRef -> PageCursorParam -> Click msg
+projectBranches projectRef_ cursor =
+    toClick (Route.projectBranches projectRef_ cursor)
 
 
 projectBranchDefinition_ : ProjectRef -> BranchRef -> Perspective -> Reference -> Click msg

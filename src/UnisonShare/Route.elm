@@ -114,7 +114,7 @@ type ProjectContributionsRoute
 
 type ProjectRoute
     = ProjectOverview
-    | ProjectBranches
+    | ProjectBranches PageCursorParam
     | ProjectBranch BranchRef CodeRoute
     | ProjectRelease Version
     | ProjectReleases
@@ -223,9 +223,9 @@ projectBranch projectRef_ branchRef_ codeRoute =
     Project projectRef_ (ProjectBranch branchRef_ codeRoute)
 
 
-projectBranches : ProjectRef -> Route
-projectBranches projectRef_ =
-    Project projectRef_ ProjectBranches
+projectBranches : ProjectRef -> PageCursorParam -> Route
+projectBranches projectRef_ cursor =
+    Project projectRef_ (ProjectBranches cursor)
 
 
 projectRelease : ProjectRef -> Version -> Route
@@ -582,7 +582,7 @@ projectParser =
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps ProjectBranches
+            Project ps (ProjectBranches NoPageCursor)
 
         projectBranch_ handle slug branchRef c =
             let
@@ -818,7 +818,7 @@ toUrlPattern r =
         Project _ ProjectOverview ->
             ":handle/:project-slug"
 
-        Project _ ProjectBranches ->
+        Project _ (ProjectBranches _) ->
             ":handle/:project-slug/branches"
 
         Project _ (ProjectBranch _ codeRoute) ->
@@ -1005,8 +1005,8 @@ toUrlString route =
                 Project projectRef_ ProjectOverview ->
                     ( ProjectRef.toUrlPath projectRef_, [] )
 
-                Project projectRef_ ProjectBranches ->
-                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], [] )
+                Project projectRef_ (ProjectBranches cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], Paginated.toQueryParams cursor )
 
                 Project projectRef_ (ProjectBranch branchRef codeRoute) ->
                     let

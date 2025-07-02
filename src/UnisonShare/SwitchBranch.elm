@@ -227,7 +227,7 @@ viewSheet projectRef sheet =
         (SearchBranchSheet.view
             "Switch Branch"
             suggestions
-            (Just (Link.view "View all branches" (Link.projectBranches projectRef)))
+            (Just (Link.view "View all branches" (Link.projectBranches projectRef Paginated.NoPageCursor)))
             sheet.sheet
         )
 

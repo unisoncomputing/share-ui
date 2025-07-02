@@ -104,10 +104,10 @@ init appContext projectRef route =
                     in
                     ( Overview overviewPage, Cmd.map ProjectOverviewPageMsg overviewCmd )
 
-                ProjectBranches ->
+                ProjectBranches cursor ->
                     let
                         ( branchesPage, branchesCmd ) =
-                            ProjectBranchesPage.init appContext projectRef
+                            ProjectBranchesPage.init appContext projectRef cursor
                     in
                     ( Branches branchesPage, Cmd.map ProjectBranchesPageMsg branchesCmd )
 
@@ -449,7 +449,7 @@ update appContext projectRef route msg model =
 
         ( Branches branchesPage, ProjectBranchesPageMsg branchesMsg ) ->
             case route of
-                Route.ProjectBranches ->
+                Route.ProjectBranches _ ->
                     let
                         ( branchesPage_, branchesCmd ) =
                             ProjectBranchesPage.update appContext projectRef branchesMsg branchesPage
@@ -728,7 +728,7 @@ updateSubPage appContext projectRef model route =
                     in
                     ( { model | subPage = Overview overviewPage }, Cmd.map ProjectOverviewPageMsg overviewCmd )
 
-        ProjectBranches ->
+        ProjectBranches cursor ->
             case model.subPage of
                 Branches _ ->
                     ( model, Cmd.none )
@@ -736,7 +736,7 @@ updateSubPage appContext projectRef model route =
                 _ ->
                     let
                         ( branchesPage, branchesCmd ) =
-                            ProjectBranchesPage.init appContext projectRef
+                            ProjectBranchesPage.init appContext projectRef cursor
                     in
                     ( { model | subPage = Branches branchesPage }, Cmd.map ProjectBranchesPageMsg branchesCmd )
 

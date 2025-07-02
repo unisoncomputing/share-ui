@@ -9,6 +9,7 @@ import Expect
 import Lib.UserHandle as UserHandle
 import Test exposing (..)
 import UnisonShare.AppError as AppError
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project.ProjectRef as ProjectRef
 import UnisonShare.Route as Route exposing (CodeRoute(..), ProjectRoute(..), Route(..), UserRoute(..))
 import Url exposing (Url)
@@ -191,7 +192,7 @@ projectBranchesRoute =
                 in
                 Expect.equal
                     (Project (ProjectRef.unsafeFromString "unison" "base")
-                        ProjectBranches
+                        (ProjectBranches Paginated.NoPageCursor)
                     )
                     (Route.fromUrl "" url)
         ]
