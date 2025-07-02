@@ -3,7 +3,7 @@ module UnisonShare.Page.NotificationsPage exposing (..)
 import Code.BranchRef as BranchRef
 import Code.ProjectNameListing as ProjectNameListing
 import Code.Version as Version
-import Html exposing (Html, div, footer, h1, h2, h4, span, text)
+import Html exposing (Html, div, h1, h2, h4, span, text)
 import Html.Attributes exposing (class, classList)
 import Json.Decode as Decode exposing (string)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -617,7 +617,7 @@ tabs =
 viewPaginationControls : Model -> { prev : Maybe PageCursor, next : Maybe PageCursor } -> Html Msg
 viewPaginationControls model cursors =
     let
-        link =
+        toLink =
             case model of
                 All _ ->
                     Link.notificationsAll
@@ -627,33 +627,8 @@ viewPaginationControls model cursors =
 
                 Archive _ ->
                     Link.notificationsArchive
-
-        paginationButton icon click =
-            Button.icon_ click icon
-
-        buttons =
-            case ( cursors.prev, cursors.next ) of
-                ( Just prev, Just next ) ->
-                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
-                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
-                    ]
-
-                ( Just prev, Nothing ) ->
-                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
-                    , paginationButton Icon.arrowRight Click.disabled
-                    ]
-
-                ( Nothing, Just next ) ->
-                    [ paginationButton Icon.arrowLeft Click.disabled
-                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
-                    ]
-
-                ( Nothing, Nothing ) ->
-                    [ paginationButton Icon.arrowLeft Click.disabled
-                    , paginationButton Icon.arrowRight Click.disabled
-                    ]
     in
-    footer [ class "pagination-controls" ] (List.map (Button.small >> Button.view) buttons)
+    Paginated.view toLink cursors
 
 
 view : AppContext -> Model -> AppDocument Msg

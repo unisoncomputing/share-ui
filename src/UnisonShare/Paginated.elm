@@ -1,5 +1,10 @@
 module UnisonShare.Paginated exposing (..)
 
+import Html exposing (Html, footer)
+import Html.Attributes exposing (class)
+import UI.Button as Button
+import UI.Click as Click exposing (Click)
+import UI.Icon as Icon
 import Url.Builder exposing (QueryParameter, string)
 
 
@@ -45,3 +50,34 @@ toQueryParams param =
         |> toQueryParam
         |> Maybe.map List.singleton
         |> Maybe.withDefault []
+
+
+view : (PageCursorParam -> Click msg) -> { prev : Maybe PageCursor, next : Maybe PageCursor } -> Html msg
+view toClick cursors =
+    let
+        paginationButton icon click =
+            Button.icon_ click icon
+
+        buttons =
+            case ( cursors.prev, cursors.next ) of
+                ( Just prev, Just next ) ->
+                    [ paginationButton Icon.arrowLeft (toClick (PrevPage prev))
+                    , paginationButton Icon.arrowRight (toClick (NextPage next))
+                    ]
+
+                ( Just prev, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft (toClick (PrevPage prev))
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+
+                ( Nothing, Just next ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight (toClick (NextPage next))
+                    ]
+
+                ( Nothing, Nothing ) ->
+                    [ paginationButton Icon.arrowLeft Click.disabled
+                    , paginationButton Icon.arrowRight Click.disabled
+                    ]
+    in
+    footer [ class "paginated" ] (List.map (Button.small >> Button.view) buttons)

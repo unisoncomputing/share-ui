@@ -37,7 +37,7 @@ import UnisonShare.Session as Session exposing (Session)
 
 
 -- MODEL
-{- TODO: Pagination, group (contributor and maintainer), search, and empty state (however you got to that) -}
+{- TODO: group (contributor and maintainer), search, and empty state (however you got to that) -}
 
 
 type alias DeleteBranch =
@@ -311,35 +311,10 @@ viewAt appContext branch =
 viewPaginationControls : ProjectRef -> { prev : Maybe Paginated.PageCursor, next : Maybe Paginated.PageCursor } -> Html msg
 viewPaginationControls projectRef cursors =
     let
-        link cursor =
+        toLink cursor =
             Link.projectBranches projectRef cursor
-
-        paginationButton icon click =
-            Button.icon_ click icon
-
-        buttons =
-            case ( cursors.prev, cursors.next ) of
-                ( Just prev, Just next ) ->
-                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
-                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
-                    ]
-
-                ( Just prev, Nothing ) ->
-                    [ paginationButton Icon.arrowLeft (link (Paginated.PrevPage prev))
-                    , paginationButton Icon.arrowRight Click.disabled
-                    ]
-
-                ( Nothing, Just next ) ->
-                    [ paginationButton Icon.arrowLeft Click.disabled
-                    , paginationButton Icon.arrowRight (link (Paginated.NextPage next))
-                    ]
-
-                ( Nothing, Nothing ) ->
-                    [ paginationButton Icon.arrowLeft Click.disabled
-                    , paginationButton Icon.arrowRight Click.disabled
-                    ]
     in
-    footer [ class "pagination-controls" ] (List.map (Button.small >> Button.view) buttons)
+    Paginated.view toLink cursors
 
 
 canDelete : Session -> ProjectDetails -> BranchRef -> Bool
