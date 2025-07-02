@@ -977,15 +977,12 @@ toUrlString route =
                     perspectiveParamsToPath params True ++ refPath ref
 
         paginationCursorToQueryParams cursor =
-            case cursor of
-                NoPageCursor ->
+            case Paginated.toQueryParam cursor of
+                Nothing ->
                     []
 
-                PrevPage (Paginated.PageCursor cursor_) ->
-                    [ string "prev" cursor_ ]
-
-                NextPage (Paginated.PageCursor cursor_) ->
-                    [ string "next" cursor_ ]
+                Just qp ->
+                    [ qp ]
 
         ( path, queryParams ) =
             case route of
@@ -1023,7 +1020,7 @@ toUrlString route =
                     ( ProjectRef.toUrlPath projectRef_, [] )
 
                 Project projectRef_ (ProjectBranches cursor) ->
-                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], Paginated.toQueryParams cursor )
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], paginationCursorToQueryParams cursor )
 
                 Project projectRef_ (ProjectBranch branchRef codeRoute) ->
                     let

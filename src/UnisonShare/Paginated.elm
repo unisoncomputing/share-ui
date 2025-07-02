@@ -33,10 +33,10 @@ toQueryParam param =
             Nothing
 
         PrevPage c ->
-            Just (string "cursor" (cursorToString c))
+            Just (string "prev" (cursorToString c))
 
         NextPage c ->
-            Just (string "cursor" (cursorToString c))
+            Just (string "next" (cursorToString c))
 
 
 toQueryParams : PageCursorParam -> List QueryParameter
