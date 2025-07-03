@@ -68,7 +68,7 @@ view status =
                 Archived ->
                     ( "closed", Icon.archive )
     in
-    div [ class ("contribition-status " ++ className) ]
+    div [ class ("contribution-status " ++ className) ]
         [ Icon.view icon, text (toString status) ]
 
 
