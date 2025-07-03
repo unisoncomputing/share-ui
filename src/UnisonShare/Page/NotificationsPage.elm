@@ -33,6 +33,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Contribution.ContributionRef as ContributionRef
+import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.ErrorCard as ErrorCard
 import UnisonShare.Link as Link
 import UnisonShare.Notification as Notification exposing (Notification, NotificationStatus)
@@ -364,7 +365,9 @@ viewNotification appContext selection notification =
                         Link.projectContribution eventData.projectRef eventData.contributionRef
                             |> Click.view
                                 [ class "notification-row_event-ref" ]
-                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef)
+                                , ContributionStatus.view eventData.status
+                                ]
                     , projectRef = eventData.projectRef
                     }
 
@@ -376,7 +379,9 @@ viewNotification appContext selection notification =
                         Link.projectContribution eventData.projectRef eventData.contributionRef
                             |> Click.view
                                 [ class "notification-row_event-ref" ]
-                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef)
+                                , ContributionStatus.view eventData.status
+                                ]
                     , projectRef = eventData.projectRef
                     }
 
@@ -388,7 +393,9 @@ viewNotification appContext selection notification =
                         Link.projectContribution eventData.projectRef eventData.contributionRef
                             |> Click.view
                                 [ class "notification-row_event-ref" ]
-                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef) ]
+                                [ text ("Contribution: " ++ ContributionRef.toString eventData.contributionRef)
+                                , ContributionStatus.view eventData.status
+                                ]
                     , projectRef = eventData.projectRef
                     }
 

@@ -334,22 +334,24 @@ function notificationEventContributionPayloadBase() {
   const sourceBranchRef_ = branchRef();
   const targetBranchRef_ = branchRef();
 
+  const status = contributionStatus();
+
   return {
     contribution: {
       author: user(),
       contributionId: faker.string.uuid(),
       description: faker.lorem.paragraphs(),
       number: faker.number.int(100),
-      status: contributionStatus(),
+      status: status,
       title: faker.lorem.sentences(1),
-      mergeSourceBranch: {
+      sourceBranch: {
         branchContributorHandle: null,
         branchContributorUserId: null,
         branchId: faker.string.uuid(),
         branchName: branchSlugOf(sourceBranchRef_),
         branchShortHand: sourceBranchRef_,
       },
-      mergeTargetBranch: {
+      targetBranch: {
         branchContributorHandle: null,
         branchContributorUserId: null,
         branchId: faker.string.uuid(),
@@ -363,6 +365,10 @@ function notificationEventContributionPayloadBase() {
       projectOwnerUserId: faker.string.uuid(),
       projectShortHand: projectRef_,
       projectSlug: projectSlug,
+    },
+    status_update: {
+      oldStatus: "closed",
+      newStatus: status,
     },
   };
 }

@@ -27,7 +27,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , contributionAuthor : UserSummaryWithId
         , contributionRef : ContributionRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : ContributionStatus
         }
@@ -35,7 +35,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , contributionAuthor : UserSummaryWithId
         , contributionRef : ContributionRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : ContributionStatus
         }
@@ -43,7 +43,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , contributionAuthor : UserSummaryWithId
         , contributionRef : ContributionRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : ContributionStatus
         , comment : String
@@ -53,7 +53,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , ticketAuthor : UserSummaryWithId
         , ticketRef : TicketRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : TicketStatus
         }
@@ -61,7 +61,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , ticketAuthor : UserSummaryWithId
         , ticketRef : TicketRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : TicketStatus
         }
@@ -69,7 +69,7 @@ type NotificationEventData
         { projectRef : ProjectRef
         , ticketAuthor : UserSummaryWithId
         , ticketRef : TicketRef
-        , description : String
+        , description : Maybe String
         , title : String
         , status : TicketStatus
         , comment : String
@@ -164,7 +164,7 @@ decodeEventData =
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
                 |> requiredAt [ "contribution", "author" ] User.decodeSummaryWithId
                 |> requiredAt [ "contribution", "number" ] ContributionRef.decode
-                |> requiredAt [ "contribution", "description" ] string
+                |> maybeAt [ "contribution", "description" ] string
                 |> requiredAt [ "contribution", "title" ] string
                 |> requiredAt [ "contribution", "status" ] ContributionStatus.decode
 
@@ -192,7 +192,7 @@ decodeEventData =
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
                 |> requiredAt [ "contribution", "author" ] User.decodeSummaryWithId
                 |> requiredAt [ "contribution", "number" ] ContributionRef.decode
-                |> requiredAt [ "contribution", "description" ] string
+                |> maybeAt [ "contribution", "description" ] string
                 |> requiredAt [ "contribution", "title" ] string
                 |> requiredAt [ "contribution", "status" ] ContributionStatus.decode
                 |> requiredAt [ "comment", "content" ] string
@@ -213,7 +213,7 @@ decodeEventData =
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
                 |> requiredAt [ "ticket", "author" ] User.decodeSummaryWithId
                 |> requiredAt [ "ticket", "number" ] TicketRef.decode
-                |> requiredAt [ "ticket", "description" ] string
+                |> maybeAt [ "ticket", "description" ] string
                 |> requiredAt [ "ticket", "title" ] string
                 |> requiredAt [ "ticket", "status" ] TicketStatus.decode
 
@@ -241,7 +241,7 @@ decodeEventData =
                 |> requiredAt [ "project", "projectShortHand" ] ProjectRef.decode
                 |> requiredAt [ "ticket", "author" ] User.decodeSummaryWithId
                 |> requiredAt [ "ticket", "number" ] TicketRef.decode
-                |> requiredAt [ "ticket", "description" ] string
+                |> maybeAt [ "ticket", "description" ] string
                 |> requiredAt [ "ticket", "title" ] string
                 |> requiredAt [ "ticket", "status" ] TicketStatus.decode
                 |> requiredAt [ "comment", "content" ] string
