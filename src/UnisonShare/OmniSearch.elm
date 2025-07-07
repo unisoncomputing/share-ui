@@ -796,7 +796,10 @@ updateForValue appContext model value =
                     Nothing ->
                         ( toSearchSearchingWithQuery model.search value
                         , model.nameSearch
-                        , searchDefinitions appContext model.filter value
+                        , Cmd.batch
+                            [ searchEntities appContext model.filter (ensureAtPrefix value)
+                            , searchDefinitions appContext model.filter value
+                            ]
                         )
 
                     Just searchNamesCmd_ ->
