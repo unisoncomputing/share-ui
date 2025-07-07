@@ -29,7 +29,7 @@ import UI.Placeholder as Placeholder
 import UI.TabList as TabList
 import UnisonShare.Account exposing (Account)
 import UnisonShare.Api as ShareApi
-import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.Contribution.ContributionRef as ContributionRef
@@ -105,8 +105,15 @@ init appContext route account =
 -- UPDATE
 
 
+type NotificationsTab
+    = AllTab
+    | UnreadTab
+    | ArchiveTab
+
+
 type Msg
-    = ToggleSelectAll
+    = ChangeTab NotificationsTab
+    | ToggleSelectAll
     | FetchAllNotificationsFinished (WebData PaginatedNotifications)
     | ToggleSelection Notification
     | UpdateSelection NotificationStatus
@@ -116,11 +123,33 @@ type Msg
 type OutMsg
     = NoOutMsg
     | UpdatedNotificationStatuses
+    | UpdateLastActiveNotificationsTab AppContext.LastActiveNotificationsTab
 
 
 update : AppContext -> NotificationsRoute -> Account a -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext _ account msg model =
     case msg of
+        ChangeTab tab ->
+            let
+                ( newRoute, out ) =
+                    case tab of
+                        AllTab ->
+                            ( Route.notificationsAll Paginated.NoPageCursor
+                            , UpdateLastActiveNotificationsTab AppContext.AllNotifications
+                            )
+
+                        UnreadTab ->
+                            ( Route.notificationsUnread Paginated.NoPageCursor
+                            , UpdateLastActiveNotificationsTab AppContext.UnreadNotifications
+                            )
+
+                        _ ->
+                            ( Route.notificationsArchive Paginated.NoPageCursor
+                            , NoOutMsg
+                            )
+            in
+            ( model, Route.navigate appContext.navKey newRoute, out )
+
         ToggleSelectAll ->
             let
                 selectAll_ state =
@@ -615,9 +644,9 @@ viewSelectionControls selection controls =
 
 tabs : { all : TabList.Tab Msg, unread : TabList.Tab Msg, archive : TabList.Tab Msg }
 tabs =
-    { all = TabList.tab "All" (Link.notificationsAll Paginated.NoPageCursor)
-    , unread = TabList.tab "Unread" (Link.notificationsUnread Paginated.NoPageCursor)
-    , archive = TabList.tab "Archive" (Link.notificationsArchive Paginated.NoPageCursor)
+    { all = TabList.tab "All" (Click.onClick (ChangeTab AllTab))
+    , unread = TabList.tab "Unread" (Click.onClick (ChangeTab UnreadTab))
+    , archive = TabList.tab "Archive" (Click.onClick (ChangeTab ArchiveTab))
     }
 
 

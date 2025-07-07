@@ -17,6 +17,7 @@ import UI.Navigation as Navigation exposing (NavItem)
 import UI.Nudge as Nudge
 import UI.Sizing as Sizing
 import UnisonShare.Account as Account
+import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
 import Url exposing (Url)
@@ -75,10 +76,7 @@ type OpenedAppHeaderMenu
 
 
 type alias AppHeaderContext msg =
-    { session : Session
-    , timeZone : Time.Zone
-    , currentUrl : Url
-    , api : HttpApi
+    { appContext : AppContext
     , openedAppHeaderMenu : OpenedAppHeaderMenu
     , whatsNew : WhatsNew
     , toggleHelpAndResourcesMenuMsg : msg
@@ -138,7 +136,10 @@ view ctx appHeader_ =
                                     ActionMenu.optionItem_
                                         Nothing
                                         p.title
-                                        (ActionMenu.DateTimeSubtext DateTime.ShortDate ctx.timeZone p.publishedAt)
+                                        (ActionMenu.DateTimeSubtext DateTime.ShortDate
+                                            ctx.appContext.timeZone
+                                            p.publishedAt
+                                        )
                                         postNudge
                                         (Link.link p.url)
                             in
@@ -190,21 +191,21 @@ view ctx appHeader_ =
                         |> (\hr -> div [ class "help-and-resources" ] [ hr ])
 
                 loginLink =
-                    Link.login ctx.api
+                    Link.login ctx.appContext.api
 
                 rightSide =
-                    case ctx.session of
+                    case ctx.appContext.session of
                         Anonymous ->
                             let
                                 signIn =
-                                    Button.button_ (loginLink ctx.currentUrl) "Sign In"
+                                    Button.button_ (loginLink ctx.appContext.currentUrl) "Sign In"
                                         |> Button.small
                                         |> Button.view
 
                                 createAccountSheet =
                                     AnchoredOverlay.sheet
                                         (div [ class "create-account-menu" ]
-                                            [ Button.iconThenLabel_ (loginLink ctx.currentUrl) Icon.github "Connect with GitHub"
+                                            [ Button.iconThenLabel_ (loginLink ctx.appContext.currentUrl) Icon.github "Connect with GitHub"
                                                 |> Button.medium
                                                 |> Button.emphasized
                                                 |> Button.view
@@ -278,7 +279,7 @@ view ctx appHeader_ =
                                 notifications =
                                     if account.hasUnreadNotifications then
                                         div [ class "notifications" ]
-                                            [ Button.icon_ Link.notifications Icon.bellRing
+                                            [ Button.icon_ (Link.notifications ctx.appContext) Icon.bellRing
                                                 |> Button.small
                                                 |> Button.view
                                             , Nudge.nudge
@@ -286,7 +287,7 @@ view ctx appHeader_ =
                                             ]
 
                                     else
-                                        Button.icon_ Link.notifications Icon.bell
+                                        Button.icon_ (Link.notifications ctx.appContext) Icon.bell
                                             |> Button.small
                                             |> Button.view
 
@@ -307,7 +308,7 @@ view ctx appHeader_ =
                                         (ActionMenu.optionItem Icon.user (UserHandle.toString account.handle) (Link.userProfile account.handle))
                                         (orgs
                                             ++ [ ActionMenu.optionItem Icon.cog "Account Settings" Link.account
-                                               , ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.api ctx.currentUrl)
+                                               , ActionMenu.optionItem Icon.exitDoor "Sign Out" (Link.logout ctx.appContext.api ctx.appContext.currentUrl)
                                                ]
                                         )
                                         |> ActionMenu.fromCustom ctx.toggleAccountMenuMsg viewAccountMenuTrigger

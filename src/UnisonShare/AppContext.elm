@@ -13,6 +13,11 @@ import UnisonShare.Session exposing (Session)
 import Url exposing (Url)
 
 
+type LastActiveNotificationsTab
+    = AllNotifications
+    | UnreadNotifications
+
+
 type alias AppContext =
     { operatingSystem : OperatingSystem
     , basePath : String
@@ -24,6 +29,7 @@ type alias AppContext =
     , whatsNewReadPostIds : List String
     , now : DateTime
     , timeZone : Time.Zone
+    , lastActiveNotificationsTab : LastActiveNotificationsTab
     }
 
 
@@ -35,6 +41,7 @@ type alias Flags =
     , xsrfToken : Maybe String
     , appEnv : String
     , whatsNewReadPostIds : List String
+    , lastActiveNotificationsTab : Maybe String
     }
 
 
@@ -54,7 +61,28 @@ init flags navKey currentUrl now timeZone session =
     , whatsNewReadPostIds = flags.whatsNewReadPostIds
     , now = now
     , timeZone = timeZone
+    , lastActiveNotificationsTab = lastActiveNotificationsTabFromString flags.lastActiveNotificationsTab
     }
+
+
+lastActiveNotificationsTabFromString : Maybe String -> LastActiveNotificationsTab
+lastActiveNotificationsTabFromString raw =
+    case raw of
+        Just "UnreadNotifications" ->
+            UnreadNotifications
+
+        _ ->
+            AllNotifications
+
+
+lastActiveNotificationsTabToString : LastActiveNotificationsTab -> String
+lastActiveNotificationsTabToString tab =
+    case tab of
+        UnreadNotifications ->
+            "UnreadNotifications"
+
+        _ ->
+            "AllNotifications"
 
 
 toCodeConfig : AppContext -> CodeBrowsingContext -> Perspective -> Code.Config.Config

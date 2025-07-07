@@ -9,6 +9,7 @@ import Html exposing (Html, text)
 import Lib.HttpApi as HttpApi exposing (HttpApi)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
+import UnisonShare.AppContext exposing (AppContext, LastActiveNotificationsTab(..))
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.Paginated as Paginated exposing (PageCursorParam)
@@ -189,9 +190,14 @@ account =
     toClick Route.account
 
 
-notifications : Click msg
-notifications =
-    toClick (Route.notificationsAll Paginated.NoPageCursor)
+notifications : AppContext -> Click msg
+notifications appContext =
+    case appContext.lastActiveNotificationsTab of
+        AllNotifications ->
+            notificationsAll Paginated.NoPageCursor
+
+        UnreadNotifications ->
+            notificationsUnread Paginated.NoPageCursor
 
 
 notificationsAll : PageCursorParam -> Click msg

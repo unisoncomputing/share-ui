@@ -1,4 +1,4 @@
-module UnisonShare.App exposing (..)
+port module UnisonShare.App exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
@@ -35,7 +35,7 @@ import UI.KeyboardShortcut.Key as Key exposing (Key(..))
 import UI.Modal as Modal
 import UnisonShare.Account as Account exposing (Account)
 import UnisonShare.Api as ShareApi
-import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.AppDocument as AppDocument
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.AppHeader as AppHeader
@@ -579,16 +579,21 @@ update msg ({ appContext } as model) =
                         ( notifications_, cmd, out ) =
                             NotificationsPage.update appContext notificationsRoute account nMsg notifications
 
-                        sessionCmd =
+                        ( cmd_, appContext_ ) =
                             case out of
                                 NotificationsPage.NoOutMsg ->
-                                    Cmd.none
+                                    ( Cmd.none, appContext )
 
                                 NotificationsPage.UpdatedNotificationStatuses ->
-                                    refreshSession appContext
+                                    ( refreshSession appContext, appContext )
+
+                                NotificationsPage.UpdateLastActiveNotificationsTab tab ->
+                                    ( updateLastActiveNotificationsTab (AppContext.lastActiveNotificationsTabToString tab)
+                                    , { appContext | lastActiveNotificationsTab = tab }
+                                    )
                     in
-                    ( { model | page = Notifications notificationsRoute notifications_ }
-                    , Cmd.batch [ Cmd.map NotificationsPageMsg cmd, sessionCmd ]
+                    ( { model | appContext = appContext_, page = Notifications notificationsRoute notifications_ }
+                    , Cmd.batch [ Cmd.map NotificationsPageMsg cmd, cmd_ ]
                     )
 
                 _ ->
@@ -651,6 +656,9 @@ refreshSession appContext =
     ShareApi.session
         |> HttpApi.toRequest Session.decode RefreshSessionFinished
         |> HttpApi.perform appContext.api
+
+
+port updateLastActiveNotificationsTab : String -> Cmd msg
 
 
 
@@ -827,11 +835,8 @@ view model =
             appContext.session
 
         appHeaderContext =
-            { session = session
-            , timeZone = appContext.timeZone
-            , currentUrl = appContext.currentUrl
-            , whatsNew = model.whatsNew
-            , api = appContext.api
+            { whatsNew = model.whatsNew
+            , appContext = appContext
             , openedAppHeaderMenu = model.openedAppHeaderMenu
             , toggleHelpAndResourcesMenuMsg = ToggleHelpAndResourcesMenu
             , toggleAccountMenuMsg = ToggleAccountMenu

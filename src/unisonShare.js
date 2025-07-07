@@ -92,6 +92,9 @@ const Storage = {
 const whatsNewReadPostIds =
   JSON.parse(Storage.get("whatsNewReadPostIds")) || [];
 
+const lastActiveNotificationsTab =
+  Storage.get("lastActiveNotificationsTab") || "AllNotifications";
+
 const flags = {
   operatingSystem: detectOs(window.navigator),
   basePath,
@@ -100,6 +103,7 @@ const flags = {
   xsrfToken: getCookie("XSRF-TOKEN"),
   appEnv: APP_ENV,
   whatsNewReadPostIds,
+  lastActiveNotificationsTab,
 };
 
 // The main entry point for the `UnisonShare` target of the Codebase UI.
@@ -109,6 +113,10 @@ const app = Elm.UnisonShare.init({ flags });
 if (app.ports) {
   app.ports.updateWhatsNewReadPostIds?.subscribe((postIds) => {
     Storage.set("whatsNewReadPostIds", JSON.stringify(postIds));
+  });
+
+  app.ports.updateLastActiveNotificationsTab?.subscribe((tab) => {
+    Storage.set("lastActiveNotificationsTab", tab);
   });
 
   app.ports.copyToClipboard?.subscribe((text) => {
