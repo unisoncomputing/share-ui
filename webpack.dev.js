@@ -9,6 +9,7 @@ const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const docExamplesReadme = require("./api-stubs/doc-examples-readme.json");
 const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition.json");
 const blogEngineLib = require("./api-stubs/blog-engine-lib.json");
+const browseBlog = require("./api-stubs/browse-blog.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -211,6 +212,10 @@ module.exports = {
 
           if (req.url.endsWith("/browse?namespace=lib")) {
             res.send(blogEngineLib);
+          }
+
+          if (req.url.endsWith("/browse")) {
+            res.send(browseBlog);
           }
         },
       },
