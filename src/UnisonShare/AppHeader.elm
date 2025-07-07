@@ -2,9 +2,7 @@ module UnisonShare.AppHeader exposing (..)
 
 import Html exposing (Html, div, h1, span, text)
 import Html.Attributes exposing (class, classList)
-import Lib.HttpApi exposing (HttpApi)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
-import Time
 import UI.ActionMenu as ActionMenu
 import UI.AnchoredOverlay as AnchoredOverlay
 import UI.AppHeader exposing (AppHeader, AppTitle(..))
@@ -20,7 +18,6 @@ import UnisonShare.Account as Account
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
 import UnisonShare.Session exposing (Session(..))
-import Url exposing (Url)
 import WhatsNew exposing (WhatsNew)
 
 
