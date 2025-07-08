@@ -244,9 +244,12 @@ update appContext _ account msg model =
                     update_ subState =
                         { subState | updateSelection = Loading }
                 in
-                ( updateSubPageState update_ model, updateNotificationStatuses appContext account ids status, NoOutMsg )
+                ( updateSubPageState update_ model
+                , updateNotificationStatuses appContext account ids status
+                , NoOutMsg
+                )
 
-        UpdateSelectionFinished _ result ->
+        UpdateSelectionFinished status result ->
             case result of
                 Ok _ ->
                     let
@@ -256,20 +259,32 @@ update appContext _ account msg model =
                                 , updateSelection = Success ()
                             }
 
-                        -- We refresh and reset any pagination
+                        -- We refresh and reset any pagination Except for when
+                        -- we are on the "all" page and are just marking
+                        -- read/unread (since this wont effect the number of
+                        -- notifications show)
                         refresh =
-                            case model of
-                                All _ ->
-                                    Route.NotificationsAll Paginated.NoPageCursor
+                            case ( model, status ) of
+                                ( All _, Notification.Read ) ->
+                                    Nothing
 
-                                Unread _ ->
-                                    Route.NotificationsUnread Paginated.NoPageCursor
+                                ( All _, Notification.Unread ) ->
+                                    Nothing
 
-                                Archive _ ->
-                                    Route.NotificationsArchive Paginated.NoPageCursor
+                                ( All _, _ ) ->
+                                    Just (Route.NotificationsAll Paginated.NoPageCursor)
+
+                                ( Unread _, _ ) ->
+                                    Just (Route.NotificationsUnread Paginated.NoPageCursor)
+
+                                ( Archive _, _ ) ->
+                                    Just (Route.NotificationsArchive Paginated.NoPageCursor)
                     in
                     ( updateSubPageState update_ model
-                    , Route.navigate appContext.navKey (Route.Notifications refresh)
+                    , refresh
+                        |> Maybe.map Route.Notifications
+                        |> Maybe.map (Route.navigate appContext.navKey)
+                        |> Maybe.withDefault Cmd.none
                     , UpdatedNotificationStatuses
                     )
 
