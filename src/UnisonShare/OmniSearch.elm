@@ -38,6 +38,7 @@ import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Code.Version as Version
+import Dict
 import Html exposing (Html, code, div, h2, input, span, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (autocomplete, autofocus, class, classList, name, placeholder, spellcheck, tabindex, type_, value)
 import Html.Events exposing (onInput)
@@ -46,13 +47,15 @@ import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.Search as Search exposing (Search(..))
+import Lib.MultiSearch as MultiSearch exposing (MultiSearch)
+import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
 import Lib.Util as Util
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
 import Regex
+import RemoteData
 import String.Extra as StringE
 import UI
 import UI.Button as Button
@@ -115,7 +118,7 @@ type BlendedSearchMatch
 
 type MainSearch
     = NoSearch
-    | BlendedSearch (Search BlendedSearchMatch)
+    | BlendedSearch (MultiSearch BlendedSearchMatch)
 
 
 type Filter
@@ -180,6 +183,11 @@ init appContext query filter =
             }
     in
     ( model, cmd )
+
+
+searchKeys : { entity : String, definition : String }
+searchKeys =
+    { entity = "entity", definition = "definition" }
 
 
 filterFromString : String -> Maybe Filter
@@ -260,45 +268,26 @@ update appContext msg model =
                         else
                             3
                 in
-                case ( model.search, res.results ) of
-                    ( BlendedSearch (Searching q _), Ok matches ) ->
-                        let
-                            matches_ =
-                                matches
-                                    |> List.take toTake
-                                    |> List.map BlendedEntityMatch
-                                    |> SearchResults.fromList
-                        in
-                        ( { model | search = BlendedSearch (Success q matches_) }
-                        , Cmd.none
-                        , NoOut
-                        )
+                if List.length (String.split " " model.fieldValue) > 1 then
+                    ( model, Cmd.none, NoOut )
 
-                    ( BlendedSearch (Success q prevMatches), Ok matches ) ->
-                        let
-                            blendedMatches =
-                                matches
-                                    |> List.take toTake
-                                    |> List.map BlendedEntityMatch
+                else
+                    case model.search of
+                        BlendedSearch s ->
+                            ( { model
+                                | search =
+                                    BlendedSearch
+                                        (updateSearchWithResult searchKeys.entity
+                                            (Result.map (List.take toTake >> List.map BlendedEntityMatch) res.results)
+                                            s
+                                        )
+                              }
+                            , Cmd.none
+                            , NoOut
+                            )
 
-                            matches_ =
-                                if List.length (String.split " " model.fieldValue) > 1 then
-                                    prevMatches
-
-                                else
-                                    SearchResults.prepend prevMatches blendedMatches
-                                        |> SearchResults.uniqueMatchesBy uniqueMatchReference
-                        in
-                        ( { model | search = BlendedSearch (Success q matches_) }
-                        , Cmd.none
-                        , NoOut
-                        )
-
-                    ( BlendedSearch (Searching q _), Err e ) ->
-                        ( { model | search = BlendedSearch (Failure q e) }, Cmd.none, NoOut )
-
-                    _ ->
-                        ( model, Cmd.none, NoOut )
+                        _ ->
+                            ( model, Cmd.none, NoOut )
 
             else
                 ( model, Cmd.none, NoOut )
@@ -318,7 +307,7 @@ update appContext msg model =
             let
                 val =
                     case model.nameSearch of
-                        Success _ results ->
+                        Search.Success _ results ->
                             valueWithFocusedName model.fieldValue results
 
                         _ ->
@@ -328,7 +317,7 @@ update appContext msg model =
                     if not (isEntityQuery model.fieldValue) then
                         case model.search of
                             BlendedSearch s ->
-                                case Search.length s of
+                                case MultiSearch.length s of
                                     Just n ->
                                         8 - n
 
@@ -343,38 +332,20 @@ update appContext msg model =
             in
             -- Are we still searching for the same thing?
             if res.query == val || res.query == withoutAtPrefix model.fieldValue then
-                case ( model.search, res.results ) of
-                    ( BlendedSearch (Searching q _), Ok matches ) ->
+                case model.search of
+                    BlendedSearch s ->
                         let
-                            matches_ =
-                                matches
-                                    |> List.take toTake
-                                    |> List.map BlendedDefinitionMatch
-                                    |> SearchResults.fromList
+                            search_ =
+                                BlendedSearch
+                                    (updateSearchWithResult searchKeys.definition
+                                        (Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results)
+                                        s
+                                    )
                         in
-                        ( { model | search = BlendedSearch (Success q matches_) }
+                        ( { model | search = search_ }
                         , Cmd.none
                         , NoOut
                         )
-
-                    ( BlendedSearch (Success q prevMatches), Ok matches ) ->
-                        let
-                            blendedMatches =
-                                matches
-                                    |> List.take toTake
-                                    |> List.map BlendedDefinitionMatch
-
-                            matches_ =
-                                SearchResults.append prevMatches blendedMatches
-                                    |> SearchResults.uniqueMatchesBy uniqueMatchReference
-                        in
-                        ( { model | search = BlendedSearch (Success q matches_) }
-                        , Cmd.none
-                        , NoOut
-                        )
-
-                    ( BlendedSearch (Searching q _), Err e ) ->
-                        ( { model | search = BlendedSearch (Failure q e) }, Cmd.none, NoOut )
 
                     _ ->
                         ( model, Cmd.none, NoOut )
@@ -385,7 +356,7 @@ update appContext msg model =
         NameSearchFinished res ->
             if String.endsWith res.query model.fieldValue then
                 case ( model.nameSearch, res.results ) of
-                    ( Searching q _, Ok matches ) ->
+                    ( Search.Searching q _, Ok matches ) ->
                         let
                             results =
                                 SearchResults.fromList matches
@@ -411,10 +382,10 @@ update appContext msg model =
                                             ]
                                         )
                         in
-                        ( { model | nameSearch = Success q results, search = search }, cmd, NoOut )
+                        ( { model | nameSearch = Search.Success q results, search = search }, cmd, NoOut )
 
-                    ( Searching q _, Err e ) ->
-                        ( { model | nameSearch = Failure q e }, Cmd.none, NoOut )
+                    ( Search.Searching q _, Err e ) ->
+                        ( { model | nameSearch = Search.Failure q e }, Cmd.none, NoOut )
 
                     _ ->
                         ( model, Cmd.none, NoOut )
@@ -455,7 +426,7 @@ update appContext msg model =
                 Sequence _ ArrowUp ->
                     case model.search of
                         BlendedSearch s ->
-                            ( { newModel | search = BlendedSearch (Search.searchResultsPrev s) }, cmd, NoOut )
+                            ( { newModel | search = BlendedSearch (MultiSearch.searchResultsPrev s) }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
@@ -463,7 +434,7 @@ update appContext msg model =
                 Sequence _ ArrowDown ->
                     case model.search of
                         BlendedSearch s ->
-                            ( { newModel | search = BlendedSearch (Search.searchResultsNext s) }, cmd, NoOut )
+                            ( { newModel | search = BlendedSearch (MultiSearch.searchResultsNext s) }, cmd, NoOut )
 
                         _ ->
                             ( newModel, cmd, NoOut )
@@ -473,7 +444,7 @@ update appContext msg model =
                         navCmd =
                             case model.search of
                                 BlendedSearch s ->
-                                    case Maybe.andThen SearchResults.focus (Search.searchResults s) of
+                                    case Maybe.andThen SearchResults.focus (MultiSearch.searchResults s) of
                                         Just (BlendedEntityMatch (UserMatch u)) ->
                                             Route.navigate appContext.navKey (Route.userProfile u.handle)
 
@@ -506,7 +477,7 @@ update appContext msg model =
 
                 Sequence _ Tab ->
                     case model.nameSearch of
-                        Success q results ->
+                        Search.Success q results ->
                             let
                                 val =
                                     valueWithFocusedName model.fieldValue results
@@ -517,7 +488,7 @@ update appContext msg model =
                                             ( Search.empty, Cmd.none )
 
                                         Just searchNamesCmd_ ->
-                                            ( Searching q Nothing, searchNamesCmd_ )
+                                            ( Search.Searching q Nothing, searchNamesCmd_ )
 
                                 model_ =
                                     { model
@@ -540,7 +511,7 @@ update appContext msg model =
                         _ ->
                             case model.search of
                                 BlendedSearch s ->
-                                    case Search.searchResultsFocus s of
+                                    case MultiSearch.searchResultsFocus s of
                                         Just (BlendedEntityMatch (UserMatch u)) ->
                                             let
                                                 model_ =
@@ -617,6 +588,21 @@ update appContext msg model =
 
 
 -- UPDATE HELPERS
+
+
+updateSearchWithResult : String -> HttpResult (List BlendedSearchMatch) -> MultiSearch BlendedSearchMatch -> MultiSearch BlendedSearchMatch
+updateSearchWithResult key res s =
+    let
+        resultOrder a _ =
+            if a == searchKeys.entity then
+                LT
+
+            else
+                GT
+    in
+    s
+        |> MultiSearch.fromResult_ resultOrder key res
+        |> MultiSearch.mapSearchResults (SearchResults.uniqueMatchesBy uniqueMatchReference)
 
 
 uniqueMatchReference : BlendedSearchMatch -> String
@@ -730,7 +716,7 @@ updateForValue appContext model value =
             ( filter, val, search_ ) =
                 case model.search of
                     BlendedSearch s ->
-                        case Search.searchResultsFocus s of
+                        case MultiSearch.searchResultsFocus s of
                             Just (BlendedEntityMatch (UserMatch u)) ->
                                 ( UserFilter u.handle, "", NoSearch )
 
@@ -803,7 +789,7 @@ updateForValue appContext model value =
                         )
 
                     Just searchNamesCmd_ ->
-                        ( model.search, Searching value Nothing, searchNamesCmd_ )
+                        ( model.search, Search.Searching value Nothing, searchNamesCmd_ )
         in
         ( { model | fieldValue = value, search = mainSearch, nameSearch = nameSearch }, cmd )
 
@@ -952,7 +938,7 @@ isMainSearchSearching : MainSearch -> Bool
 isMainSearchSearching search =
     case search of
         BlendedSearch s ->
-            Search.isSearching s
+            MultiSearch.isSearching s
 
         _ ->
             False
@@ -962,10 +948,20 @@ toSearchSearchingWithQuery : MainSearch -> String -> MainSearch
 toSearchSearchingWithQuery search query =
     case search of
         BlendedSearch s ->
-            BlendedSearch (s |> Search.toSearching |> Search.withQuery query)
+            BlendedSearch
+                (s
+                    |> MultiSearch.toSearching searchKeys.entity
+                    |> MultiSearch.toSearching searchKeys.definition
+                    |> MultiSearch.withQuery query
+                )
 
         _ ->
-            BlendedSearch (Searching query Nothing)
+            BlendedSearch
+                (MultiSearch.empty
+                    |> MultiSearch.toSearching searchKeys.entity
+                    |> MultiSearch.toSearching searchKeys.definition
+                    |> MultiSearch.withQuery query
+                )
 
 
 valueWithFocusedName : String -> SearchResults.SearchResults String -> String
@@ -1237,7 +1233,7 @@ viewDefinitionMatch keyboardShortcut def isFocused =
         )
 
 
-viewSearchSheet : AppContext -> (a -> Bool -> Html Msg) -> Search a -> Html Msg
+viewSearchSheet : AppContext -> (a -> Bool -> Html Msg) -> MultiSearch a -> Html Msg
 viewSearchSheet appContext viewMatch search =
     let
         viewSheet matches =
@@ -1251,20 +1247,33 @@ viewSearchSheet appContext viewMatch search =
                     (matches |> SearchResults.mapToList viewMatch)
     in
     case search of
-        NotAsked _ ->
+        MultiSearch.NotAsked _ ->
             UI.nothing
 
-        Searching _ matches ->
-            matches
+        MultiSearch.Searching { previous } ->
+            previous
                 |> Maybe.map viewSheet
                 |> Maybe.withDefault UI.nothing
 
-        Success _ matches ->
+        MultiSearch.Success _ matches ->
             viewSheet matches
 
-        Failure _ err ->
+        MultiSearch.Failure { requests } ->
+            let
+                -- TODO: This could probably be a helper in Lib.MultiSearch
+                f r acc =
+                    case r of
+                        RemoteData.Failure e ->
+                            Util.httpErrorToString e
+
+                        _ ->
+                            acc
+
+                err =
+                    List.foldr f "Unknown error" (Dict.values requests)
+            in
             if Session.isSuperAdmin appContext.session then
-                div [ class "main-result-sheet" ] [ text (Util.httpErrorToString err) ]
+                div [ class "main-result-sheet" ] [ text err ]
 
             else
                 -- TODO: Improve the quality of this error messaging
