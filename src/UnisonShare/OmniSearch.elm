@@ -475,6 +475,46 @@ update appContext msg model =
                     in
                     ( newModel, Cmd.batch [ cmd, navCmd ], NoOut )
 
+                Sequence _ ArrowRight ->
+                    case model.search of
+                        BlendedSearch s ->
+                            case MultiSearch.searchResultsFocus s of
+                                Just (BlendedEntityMatch (UserMatch u)) ->
+                                    let
+                                        model_ =
+                                            { model
+                                                | nameSearch = Search.empty
+                                                , filter = UserFilter u.handle
+                                                , fieldValue = ""
+                                                , search = NoSearch
+                                            }
+                                    in
+                                    ( model_
+                                    , updateQuery model_.fieldValue model_.filter
+                                    , NoOut
+                                    )
+
+                                Just (BlendedEntityMatch (ProjectMatch p)) ->
+                                    let
+                                        model_ =
+                                            { model
+                                                | nameSearch = Search.empty
+                                                , filter = ProjectFilter p.ref
+                                                , fieldValue = ""
+                                                , search = NoSearch
+                                            }
+                                    in
+                                    ( model_
+                                    , updateQuery model_.fieldValue model_.filter
+                                    , NoOut
+                                    )
+
+                                _ ->
+                                    ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
+
+                        _ ->
+                            ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
+
                 Sequence _ Tab ->
                     case model.nameSearch of
                         Search.Success q results ->
@@ -509,44 +549,7 @@ update appContext msg model =
                             )
 
                         _ ->
-                            case model.search of
-                                BlendedSearch s ->
-                                    case MultiSearch.searchResultsFocus s of
-                                        Just (BlendedEntityMatch (UserMatch u)) ->
-                                            let
-                                                model_ =
-                                                    { model
-                                                        | nameSearch = Search.empty
-                                                        , filter = UserFilter u.handle
-                                                        , fieldValue = ""
-                                                        , search = NoSearch
-                                                    }
-                                            in
-                                            ( model_
-                                            , updateQuery model_.fieldValue model_.filter
-                                            , NoOut
-                                            )
-
-                                        Just (BlendedEntityMatch (ProjectMatch p)) ->
-                                            let
-                                                model_ =
-                                                    { model
-                                                        | nameSearch = Search.empty
-                                                        , filter = ProjectFilter p.ref
-                                                        , fieldValue = ""
-                                                        , search = NoSearch
-                                                    }
-                                            in
-                                            ( model_
-                                            , updateQuery model_.fieldValue model_.filter
-                                            , NoOut
-                                            )
-
-                                        _ ->
-                                            ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
-
-                                _ ->
-                                    ( { model | nameSearch = Search.empty, search = NoSearch }, Cmd.none, NoOut )
+                            ( model, Cmd.none, NoOut )
 
                 Sequence _ Backspace ->
                     if String.isEmpty newModel.fieldValue then
@@ -1067,7 +1070,7 @@ viewMatchKeyboardShortcuts keyboardShortcut includeFilter =
                     [ text "Filter by "
                     , KeyboardShortcut.view
                         keyboardShortcut
-                        (KeyboardShortcut.single Key.Tab)
+                        (KeyboardShortcut.single Key.ArrowRight)
                     ]
 
             else
@@ -1298,11 +1301,6 @@ viewSearchHelpModal appContext =
         inlineCode t =
             UI.inlineCode [] (text t)
 
-        tabKey =
-            KeyboardShortcut.viewBase
-                [ KeyboardShortcut.viewKey appContext.operatingSystem Key.Tab False
-                ]
-
         enterKey =
             KeyboardShortcut.viewBase
                 [ KeyboardShortcut.viewKey appContext.operatingSystem
@@ -1321,6 +1319,13 @@ viewSearchHelpModal appContext =
             KeyboardShortcut.viewBase
                 [ KeyboardShortcut.viewKey appContext.operatingSystem
                     Key.ArrowDown
+                    False
+                ]
+
+        rightKey =
+            KeyboardShortcut.viewBase
+                [ KeyboardShortcut.viewKey appContext.operatingSystem
+                    Key.ArrowRight
                     False
                 ]
 
@@ -1390,18 +1395,18 @@ viewSearchHelpModal appContext =
                             ]
                         ]
                     , div []
-                        [ h2 [] [ text "Filtering by user or project with the ", tabKey, text " key" ]
+                        [ h2 [] [ text "Filtering by user or project with the ", rightKey, text " key" ]
                         , table []
                             [ tbody []
                                 [ tr []
-                                    [ td [] [ inlineCode "@unison", text " + ", tabKey ]
+                                    [ td [] [ inlineCode "@unison", text " + ", rightKey ]
                                     , td []
                                         [ text "Filter subsequent searches by the Unison user."
                                         ]
                                     ]
                                 , tr
                                     []
-                                    [ td [] [ inlineCode "@unison/base", text " + ", tabKey ]
+                                    [ td [] [ inlineCode "@unison/base", text " + ", rightKey ]
                                     , td [] [ text "Filter subsequent searches by the Unison base project." ]
                                     ]
                                 ]
