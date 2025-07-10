@@ -10,6 +10,7 @@ const docExamplesReadme = require("./api-stubs/doc-examples-readme.json");
 const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition.json");
 const blogEngineLib = require("./api-stubs/blog-engine-lib.json");
 const browseBlog = require("./api-stubs/browse-blog.json");
+const notifications = require("./api-stubs/notifications.json");
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
 const UI_CORE_SRC = "elm-stuff/gitdeps/github.com/unisonweb/ui-core/src";
@@ -216,6 +217,12 @@ module.exports = {
 
           if (req.url.endsWith("/browse")) {
             res.send(browseBlog);
+          }
+
+          if (
+            req.url.endsWith("/notifications/hub?status=read%2Cunread&limit=12")
+          ) {
+            res.send(notifications);
           }
         },
       },

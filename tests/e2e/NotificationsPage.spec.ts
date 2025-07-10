@@ -36,26 +36,30 @@ test.describe("when signed in", () => {
   });
 
   test("can mark a notification as read", async ({ page }) => {
+    await API.getNotificationsHub(page, "@alice", {
+      items: [
+        notification({ status: "unread" }),
+        notification({ status: "unread" }),
+        notification({ status: "unread" }),
+        notification({ status: "unread" }),
+      ],
+    });
+
     await Page.goto(page, "/notifications");
 
-    await expect(page.locator(".notification-row")).toHaveCount(7);
+    await expect(page.locator(".notification-row")).toHaveCount(4);
     await page.locator(".notification-row:first-child input").click();
     await expect(Page.button(page, "Mark as read")).toBeVisible();
 
     await API.patchNotificationsHub(page, "@alice");
-    await API.getNotificationsHub(page, "@alice", {
-      items: [
-        notification(),
-        notification(),
-        notification(),
-        notification(),
-        notification(),
-        notification(),
-      ],
-    });
 
     await Page.button(page, "Mark as read").click();
 
-    await expect(page.locator(".notification-row")).toHaveCount(6);
+    await expect(
+      page.locator(".notification-row:not(.notification-row_unread)"),
+    ).toHaveCount(1);
+    await expect(
+      page.locator(".notification-row.notification-row_unread"),
+    ).toHaveCount(3);
   });
 });

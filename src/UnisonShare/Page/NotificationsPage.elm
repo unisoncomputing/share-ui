@@ -235,6 +235,24 @@ update appContext _ account msg model =
 
                         _ ->
                             []
+
+                updateNotificationStatus notification =
+                    if List.member notification.id ids then
+                        { notification | status = status }
+
+                    else
+                        notification
+
+                notifications =
+                    case subPageState_.notifications of
+                        Success (Paginated paginated) ->
+                            paginated.items
+                                |> List.map updateNotificationStatus
+                                |> (\items -> Paginated { paginated | items = items })
+                                |> Success
+
+                        _ ->
+                            subPageState_.notifications
             in
             if List.isEmpty ids then
                 ( model, Cmd.none, NoOutMsg )
@@ -242,7 +260,7 @@ update appContext _ account msg model =
             else
                 let
                     update_ subState =
-                        { subState | updateSelection = Loading }
+                        { subState | notifications = notifications, updateSelection = Loading }
                 in
                 ( updateSubPageState update_ model
                 , updateNotificationStatuses appContext account ids status
@@ -253,9 +271,9 @@ update appContext _ account msg model =
             case result of
                 Ok _ ->
                     let
-                        update_ subState =
+                        update_ notifications_ subState =
                             { subState
-                                | notifications = Loading
+                                | notifications = Maybe.withDefault subState.notifications notifications_
                                 , updateSelection = Success ()
                             }
 
@@ -263,24 +281,24 @@ update appContext _ account msg model =
                         -- we are on the "all" page and are just marking
                         -- read/unread (since this wont effect the number of
                         -- notifications show)
-                        refresh =
+                        ( refresh, notifications ) =
                             case ( model, status ) of
                                 ( All _, Notification.Read ) ->
-                                    Nothing
+                                    ( Nothing, Nothing )
 
                                 ( All _, Notification.Unread ) ->
-                                    Nothing
+                                    ( Nothing, Nothing )
 
                                 ( All _, _ ) ->
-                                    Just (Route.NotificationsAll Paginated.NoPageCursor)
+                                    ( Just (Route.NotificationsAll Paginated.NoPageCursor), Just Loading )
 
                                 ( Unread _, _ ) ->
-                                    Just (Route.NotificationsUnread Paginated.NoPageCursor)
+                                    ( Just (Route.NotificationsUnread Paginated.NoPageCursor), Just Loading )
 
                                 ( Archive _, _ ) ->
-                                    Just (Route.NotificationsArchive Paginated.NoPageCursor)
+                                    ( Just (Route.NotificationsArchive Paginated.NoPageCursor), Just Loading )
                     in
-                    ( updateSubPageState update_ model
+                    ( updateSubPageState (update_ notifications) model
                     , refresh
                         |> Maybe.map Route.Notifications
                         |> Maybe.map (Route.navigate appContext.navKey)

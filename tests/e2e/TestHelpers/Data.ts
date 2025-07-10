@@ -533,11 +533,14 @@ type Notification = {
   status: NotificationStatus;
 };
 
-function notification(kind?: NotificationEventKind): Notification {
+function notification(notif?: {
+  kind?: NotificationEventKind;
+  status?: NotificationStatus;
+}): Notification {
   return {
-    event: notificationEvent(kind),
+    event: notificationEvent(notif?.kind),
     id: faker.string.uuid(),
-    status: notificationStatus(),
+    status: notif?.status || notificationStatus(),
   };
 }
 
