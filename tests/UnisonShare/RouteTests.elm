@@ -192,7 +192,7 @@ projectBranchesRoute =
                 in
                 Expect.equal
                     (Project (ProjectRef.unsafeFromString "unison" "base")
-                        (ProjectBranches Paginated.NoPageCursor)
+                        (ProjectBranches Route.ProjectBranchesAll Paginated.NoPageCursor)
                     )
                     (Route.fromUrl "" url)
         ]

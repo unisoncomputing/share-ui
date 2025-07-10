@@ -255,6 +255,21 @@ projectBranches projectRef_ cursor =
     toClick (Route.projectBranches projectRef_ cursor)
 
 
+projectBranchesYours : ProjectRef -> PageCursorParam -> Click msg
+projectBranchesYours projectRef_ cursor =
+    toClick (Route.projectBranchesYours projectRef_ cursor)
+
+
+projectBranchesMaintainer : ProjectRef -> PageCursorParam -> Click msg
+projectBranchesMaintainer projectRef_ cursor =
+    toClick (Route.projectBranchesMaintainer projectRef_ cursor)
+
+
+projectBranchesContributor : ProjectRef -> PageCursorParam -> Click msg
+projectBranchesContributor projectRef_ cursor =
+    toClick (Route.projectBranchesContributor projectRef_ cursor)
+
+
 projectBranchDefinition_ : ProjectRef -> BranchRef -> Perspective -> Reference -> Click msg
 projectBranchDefinition_ projectRef_ branchRef pers ref =
     toClick (Route.projectBranchDefinition projectRef_ branchRef pers ref)

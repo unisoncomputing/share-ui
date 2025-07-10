@@ -2,6 +2,7 @@ module UnisonShare.Route exposing
     ( CodeRoute(..)
     , NotificationsRoute(..)
     , OrgRoute(..)
+    , ProjectBranchesRoute(..)
     , ProjectContributionRoute(..)
     , ProjectContributionsRoute(..)
     , ProjectRoute(..)
@@ -27,6 +28,9 @@ module UnisonShare.Route exposing
     , projectBranchDefinition
     , projectBranchRoot
     , projectBranches
+    , projectBranchesContributor
+    , projectBranchesMaintainer
+    , projectBranchesYours
     , projectContribution
     , projectContributionChange
     , projectContributionChanges
@@ -112,9 +116,16 @@ type ProjectContributionsRoute
     | ProjectContributionsArchived
 
 
+type ProjectBranchesRoute
+    = ProjectBranchesAll
+    | ProjectBranchesYours
+    | ProjectBranchesMaintainer
+    | ProjectBranchesContributor
+
+
 type ProjectRoute
     = ProjectOverview
-    | ProjectBranches PageCursorParam
+    | ProjectBranches ProjectBranchesRoute PageCursorParam
     | ProjectBranch BranchRef CodeRoute
     | ProjectRelease Version
     | ProjectReleases
@@ -225,7 +236,22 @@ projectBranch projectRef_ branchRef_ codeRoute =
 
 projectBranches : ProjectRef -> PageCursorParam -> Route
 projectBranches projectRef_ cursor =
-    Project projectRef_ (ProjectBranches cursor)
+    Project projectRef_ (ProjectBranches ProjectBranchesAll cursor)
+
+
+projectBranchesYours : ProjectRef -> PageCursorParam -> Route
+projectBranchesYours projectRef_ cursor =
+    Project projectRef_ (ProjectBranches ProjectBranchesYours cursor)
+
+
+projectBranchesMaintainer : ProjectRef -> PageCursorParam -> Route
+projectBranchesMaintainer projectRef_ cursor =
+    Project projectRef_ (ProjectBranches ProjectBranchesMaintainer cursor)
+
+
+projectBranchesContributor : ProjectRef -> PageCursorParam -> Route
+projectBranchesContributor projectRef_ cursor =
+    Project projectRef_ (ProjectBranches ProjectBranchesContributor cursor)
 
 
 projectRelease : ProjectRef -> Version -> Route
@@ -594,12 +620,12 @@ projectParser queryString =
             in
             Project ps ProjectOverview
 
-        projectBranches_ cursor handle slug =
+        projectBranches_ subRoute cursor handle slug =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectBranches cursor)
+            Project ps (ProjectBranches subRoute cursor)
 
         projectBranch_ handle slug branchRef c =
             let
@@ -680,7 +706,10 @@ projectParser queryString =
     in
     oneOf
         [ b (succeed projectOverview_ |. slash |= userHandle |. slash |= projectSlug |. end)
-        , b (succeed (projectBranches_ paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. end)
+        , b (succeed (projectBranches_ ProjectBranchesAll paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. end)
+        , b (succeed (projectBranches_ ProjectBranchesYours paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. slash |. s "yours" |. end)
+        , b (succeed (projectBranches_ ProjectBranchesMaintainer paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. slash |. s "maintainer" |. end)
+        , b (succeed (projectBranches_ ProjectBranchesContributor paginationCursor) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "branches" |. slash |. s "contributor" |. end)
         , b (succeed projectBranch_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "code" |. slash |= branchRef |. slash |= codeParser)
         , b (succeed projectBranchRoot_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "code" |. slash |= branchRef |. end)
         , b (succeed projectRelease_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "releases" |. slash |= version |. end)
@@ -835,8 +864,17 @@ toUrlPattern r =
         Project _ ProjectOverview ->
             ":handle/:project-slug"
 
-        Project _ (ProjectBranches _) ->
+        Project _ (ProjectBranches ProjectBranchesAll _) ->
             ":handle/:project-slug/branches"
+
+        Project _ (ProjectBranches ProjectBranchesYours _) ->
+            ":handle/:project-slug/branches/yours"
+
+        Project _ (ProjectBranches ProjectBranchesMaintainer _) ->
+            ":handle/:project-slug/branches/maintainer"
+
+        Project _ (ProjectBranches ProjectBranchesContributor _) ->
+            ":handle/:project-slug/branches/contributor"
 
         Project _ (ProjectBranch _ codeRoute) ->
             ":handle/:project-slug/code/:branch-ref/" ++ codePattern codeRoute
@@ -1019,8 +1057,17 @@ toUrlString route =
                 Project projectRef_ ProjectOverview ->
                     ( ProjectRef.toUrlPath projectRef_, [] )
 
-                Project projectRef_ (ProjectBranches cursor) ->
+                Project projectRef_ (ProjectBranches ProjectBranchesAll cursor) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "branches" ], paginationCursorToQueryParams cursor )
+
+                Project projectRef_ (ProjectBranches ProjectBranchesYours cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches", "yours" ], paginationCursorToQueryParams cursor )
+
+                Project projectRef_ (ProjectBranches ProjectBranchesMaintainer cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches", "maintainer" ], paginationCursorToQueryParams cursor )
+
+                Project projectRef_ (ProjectBranches ProjectBranchesContributor cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "branches", "contributor" ], paginationCursorToQueryParams cursor )
 
                 Project projectRef_ (ProjectBranch branchRef codeRoute) ->
                     let

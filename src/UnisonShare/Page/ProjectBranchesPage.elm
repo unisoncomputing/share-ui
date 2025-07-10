@@ -1,8 +1,10 @@
 module UnisonShare.Page.ProjectBranchesPage exposing (..)
 
+-- import UI.Form.TextField as TextField
+
 import Code.Branch as Branch
 import Code.BranchRef as BranchRef exposing (BranchRef)
-import Html exposing (Html, br, div, footer, p, span, strong, text)
+import Html exposing (Html, br, div, footer, h2, p, span, strong, text)
 import Html.Attributes exposing (class)
 import Html.Keyed as Keyed
 import Json.Decode as Decode
@@ -15,29 +17,44 @@ import UI.Button as Button
 import UI.Card as Card
 import UI.Click as Click
 import UI.DateTime as DateTime
+import UI.EmptyState as EmptyState
+import UI.EmptyStateCard as EmptyStateCard
 import UI.Icon as Icon
 import UI.Modal as Modal
-import UI.PageContent as PageContent exposing (PageContent)
+import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle
 import UI.Placeholder as Placeholder
 import UI.StatusBanner as StatusBanner
 import UI.StatusIndicator as StatusIndicator
+import UI.TabList as TabList
 import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchSummary exposing (BranchSummary)
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
-import UnisonShare.Paginated as Paginated
+import UnisonShare.Paginated as Paginated exposing (Paginated(..))
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
+import UnisonShare.Route exposing (ProjectBranchesRoute(..))
 import UnisonShare.Session as Session exposing (Session)
 
 
 
 -- MODEL
 {- TODO: group (contributor and maintainer), search, and empty state (however you got to that) -}
+
+
+type alias Branches =
+    WebData PaginatedBranches
+
+
+type BranchesTab
+    = AllBranches Branches
+    | YourBranches Branches
+    | MaintainerBranches Branches
+    | ContributorBranches Branches
 
 
 type alias DeleteBranch =
@@ -54,15 +71,38 @@ type alias PaginatedBranches =
 
 
 type alias Model =
-    { branches : WebData PaginatedBranches
+    { tab : BranchesTab
     , modal : Modal
     }
 
 
-init : AppContext -> ProjectRef -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
-init appContext projectRef cursor =
-    ( { branches = Loading, modal = NoModal }
-    , fetchBranches appContext projectRef cursor
+init : AppContext -> ProjectRef -> ProjectBranchesRoute -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
+init appContext projectRef branchesRoute cursor =
+    let
+        ( tab, kindFilter ) =
+            case branchesRoute of
+                ProjectBranchesAll ->
+                    ( AllBranches Loading
+                    , ShareApi.AllBranches Nothing
+                    )
+
+                ProjectBranchesYours ->
+                    ( YourBranches Loading
+                    , ShareApi.ContributorBranches (Session.handle appContext.session)
+                    )
+
+                ProjectBranchesMaintainer ->
+                    ( MaintainerBranches Loading
+                    , ShareApi.ProjectBranches
+                    )
+
+                ProjectBranchesContributor ->
+                    ( ContributorBranches Loading
+                    , ShareApi.ContributorBranches Nothing
+                    )
+    in
+    ( { tab = tab, modal = NoModal }
+    , fetchBranches appContext projectRef kindFilter cursor
     )
 
 
@@ -72,17 +112,19 @@ init appContext projectRef cursor =
 
 type Msg
     = FetchBranchesFinished (WebData PaginatedBranches)
+    | UpdateSearchQuery String
+    | ClearSearch
     | ShowDeleteBranchModal BranchRef
     | CloseModal
     | YesDeleteBranch
     | DeleteBranchFinished (HttpResult ())
 
 
-update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext projectRef msg model =
+update : AppContext -> ProjectRef -> ProjectBranchesRoute -> Msg -> Model -> ( Model, Cmd Msg )
+update appContext projectRef _ msg model =
     case msg of
         FetchBranchesFinished branches ->
-            ( { model | branches = branches }, Cmd.none )
+            ( { model | tab = mapTab (always branches) model.tab }, Cmd.none )
 
         ShowDeleteBranchModal branchRef ->
             ( { model | modal = DeleteBranchModal branchRef NotAsked }, Cmd.none )
@@ -104,21 +146,21 @@ update appContext projectRef msg model =
             case model.modal of
                 DeleteBranchModal branchRef _ ->
                     let
-                        branches =
-                            model.branches
+                        remove branches_ =
+                            branches_
                                 |> RemoteData.map
-                                    (\(Paginated.Paginated branches_) ->
+                                    (\(Paginated.Paginated paginated) ->
                                         Paginated.Paginated
-                                            { branches_
+                                            { paginated
                                                 | items =
                                                     List.filter
                                                         (.ref >> BranchRef.equals branchRef >> not)
-                                                        branches_.items
+                                                        paginated.items
                                             }
                                     )
                     in
                     ( { model
-                        | branches = branches
+                        | tab = mapTab remove model.tab
                         , modal = DeleteBranchModal branchRef (RemoteData.fromResult r)
                       }
                     , Util.delayMsg 1500 CloseModal
@@ -127,16 +169,75 @@ update appContext projectRef msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        _ ->
+            ( model, Cmd.none )
+
+
+
+-- UPDATE HELPERS
+
+
+mapTab : (Branches -> Branches) -> BranchesTab -> BranchesTab
+mapTab f tab =
+    case tab of
+        AllBranches branches ->
+            AllBranches (f branches)
+
+        YourBranches branches ->
+            YourBranches (f branches)
+
+        MaintainerBranches branches ->
+            MaintainerBranches (f branches)
+
+        ContributorBranches branches ->
+            ContributorBranches (f branches)
+
+
+updateSubPage : AppContext -> ProjectRef -> ProjectBranchesRoute -> Model -> ( Model, Cmd Msg )
+updateSubPage appContext projectRef subRoute model =
+    case subRoute of
+        ProjectBranchesAll ->
+            case model.tab of
+                AllBranches _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    init appContext projectRef subRoute Paginated.NoPageCursor
+
+        ProjectBranchesYours ->
+            case model.tab of
+                YourBranches _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    init appContext projectRef subRoute Paginated.NoPageCursor
+
+        ProjectBranchesMaintainer ->
+            case model.tab of
+                MaintainerBranches _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    init appContext projectRef subRoute Paginated.NoPageCursor
+
+        ProjectBranchesContributor ->
+            case model.tab of
+                ContributorBranches _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    init appContext projectRef subRoute Paginated.NoPageCursor
+
 
 
 -- EFFECTS
 
 
-fetchBranches : AppContext -> ProjectRef -> Paginated.PageCursorParam -> Cmd Msg
-fetchBranches appContext projectRef cursor =
+fetchBranches : AppContext -> ProjectRef -> ShareApi.ProjectBranchesKindFilter -> Paginated.PageCursorParam -> Cmd Msg
+fetchBranches appContext projectRef kind cursor =
     let
         params =
-            { kind = ShareApi.AllBranches Nothing
+            { kind = kind
             , searchQuery = Nothing
             , limit = 100
             , cursor = cursor
@@ -173,8 +274,8 @@ pageTitle projectRef =
         |> PageTitle.withDescription ("All branches for " ++ ProjectRef.toString projectRef)
 
 
-viewLoadingPage : ProjectRef -> PageLayout msg
-viewLoadingPage projectRef =
+viewLoading : Html msg
+viewLoading =
     let
         shape length =
             Placeholder.text
@@ -182,20 +283,23 @@ viewLoadingPage projectRef =
                 |> Placeholder.subdued
                 |> Placeholder.tiny
                 |> Placeholder.view
-
-        content =
-            PageContent.oneColumn
-                [ Card.card
-                    [ shape Placeholder.Large
-                    , shape Placeholder.Small
-                    , shape Placeholder.Medium
-                    ]
-                    |> Card.asContained
-                    |> Card.view
-                ]
-                |> PageContent.withPageTitle (pageTitle projectRef)
     in
-    PageLayout.centeredNarrowLayout content PageFooter.pageFooter
+    Card.card
+        [ shape Placeholder.Large
+        , shape Placeholder.Small
+        , shape Placeholder.Medium
+        ]
+        |> Card.asContained
+        |> Card.view
+
+
+viewLoadingPage : ProjectRef -> PageLayout msg
+viewLoadingPage projectRef =
+    PageLayout.centeredNarrowLayout
+        (PageContent.oneColumn [ viewLoading ]
+            |> PageContent.withPageTitle (pageTitle projectRef)
+        )
+        PageFooter.pageFooter
         |> PageLayout.withSubduedBackground
 
 
@@ -349,58 +453,127 @@ viewBranchRow appContext project branch =
         ]
 
 
+tabList : AppContext -> ProjectRef -> BranchesTab -> TabList.TabList msg
+tabList appContext projectRef tab =
+    let
+        tabs =
+            { all = TabList.tab "All" (Link.projectBranches projectRef Paginated.NoPageCursor)
+            , yours = TabList.tab "Your branches" (Link.projectBranchesYours projectRef Paginated.NoPageCursor)
+            , maintainer = TabList.tab "Maintainer branches" (Link.projectBranchesMaintainer projectRef Paginated.NoPageCursor)
+            , contributor = TabList.tab "Contributor branches" (Link.projectBranchesContributor projectRef Paginated.NoPageCursor)
+            }
+    in
+    case ( tab, appContext.session ) of
+        ( AllBranches _, Session.SignedIn _ ) ->
+            TabList.tabList [] tabs.all [ tabs.yours, tabs.maintainer, tabs.contributor ]
+
+        ( AllBranches _, Session.Anonymous ) ->
+            TabList.tabList [] tabs.all [ tabs.maintainer, tabs.contributor ]
+
+        ( YourBranches _, _ ) ->
+            TabList.tabList [ tabs.all ] tabs.yours [ tabs.maintainer, tabs.contributor ]
+
+        ( MaintainerBranches _, Session.SignedIn _ ) ->
+            TabList.tabList [ tabs.all, tabs.yours ] tabs.maintainer [ tabs.contributor ]
+
+        ( MaintainerBranches _, Session.Anonymous ) ->
+            TabList.tabList [ tabs.all ] tabs.maintainer [ tabs.contributor ]
+
+        ( ContributorBranches _, Session.SignedIn _ ) ->
+            TabList.tabList [ tabs.all, tabs.yours, tabs.maintainer ] tabs.contributor []
+
+        ( ContributorBranches _, Session.Anonymous ) ->
+            TabList.tabList [ tabs.all, tabs.maintainer ] tabs.contributor []
+
+
 {-| TODO: add an empty state
 -}
-viewPageContent : AppContext -> ProjectDetails -> PaginatedBranches -> PageContent Msg
-viewPageContent appContext project (Paginated.Paginated { items }) =
+viewBranches : AppContext -> ProjectDetails -> Branches -> String -> Html Msg
+viewBranches appContext project branches emptyStateMessage =
     let
-        card =
+        viewCard (Paginated { items }) =
             items
                 |> List.map (viewBranchRow appContext project)
                 |> div [ class "project-branches_list" ]
                 |> List.singleton
                 |> Card.card
                 |> Card.asContained
+                |> Card.view
     in
-    PageContent.oneColumn [ Card.view card ]
-        |> PageContent.withPageTitle (pageTitle project.ref)
+    case branches of
+        NotAsked ->
+            viewLoading
+
+        Loading ->
+            viewLoading
+
+        Success ((Paginated { items }) as paginated) ->
+            if List.isEmpty items then
+                EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.branch)
+                    |> EmptyState.withContent [ h2 [] [ text emptyStateMessage ] ]
+                    |> EmptyStateCard.view
+
+            else
+                viewCard paginated
+
+        Failure _ ->
+            text "Couldn't load branches..."
 
 
 view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project model =
-    case model.branches of
-        NotAsked ->
-            ( viewLoadingPage project.ref, Nothing )
+    let
+        {-
+           isSearching =
+               False
+              searchField =
+                  TextField.fieldWithoutLabel UpdateSearchQuery "Search Branches" ""
+                      |> TextField.withHelpText "Find a contributor branch by prefixing their handle, ex: \"@unison\"."
+                      |> TextField.withIconOrWorking Icon.search isSearching
+                      |> TextField.withClear ClearSearch
+                      |> TextField.view
+        -}
+        modal =
+            case model.modal of
+                NoModal ->
+                    Nothing
 
-        Loading ->
-            ( viewLoadingPage project.ref, Nothing )
+                DeleteBranchModal branchRef del ->
+                    if canDelete appContext.session project branchRef then
+                        Just (viewDeleteBranchModal project.ref branchRef del)
 
-        Success branches ->
-            let
-                modal =
-                    case model.modal of
-                        NoModal ->
-                            Nothing
+                    else
+                        Nothing
 
-                        DeleteBranchModal branchRef del ->
-                            if canDelete appContext.session project branchRef then
-                                Just (viewDeleteBranchModal project.ref branchRef del)
+        tabContent =
+            case model.tab of
+                AllBranches branches ->
+                    viewBranches appContext project branches "There are no branches for this project"
 
-                            else
-                                Nothing
-            in
-            ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext project branches)
-                PageFooter.pageFooter
-                |> PageLayout.withSubduedBackground
-            , modal
-            )
+                YourBranches branches ->
+                    case appContext.session of
+                        Session.SignedIn _ ->
+                            viewBranches appContext project branches "Your have no branches for this project"
 
-        Failure _ ->
-            -- TODO
-            ( PageLayout.centeredNarrowLayout
-                (PageContent.oneColumn [ text "Couldn't load branches..." ])
-                PageFooter.pageFooter
-                |> PageLayout.withSubduedBackground
-            , Nothing
-            )
+                        _ ->
+                            StatusBanner.info "Please sign in to view your branches."
+
+                MaintainerBranches branches ->
+                    viewBranches appContext project branches "There are no Maintainer branches for this project"
+
+                ContributorBranches branches ->
+                    viewBranches appContext project branches "There are no Contributor branches for this project"
+    in
+    ( PageLayout.centeredNarrowLayout
+        (PageContent.oneColumn
+            [ tabList appContext project.ref model.tab |> TabList.view
+
+            -- , searchField
+            , tabContent
+            ]
+            |> PageContent.withPageTitle (pageTitle project.ref)
+        )
+        PageFooter.pageFooter
+        |> PageLayout.withSubduedBackground
+    , modal
+    )
