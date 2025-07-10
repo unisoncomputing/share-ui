@@ -260,7 +260,11 @@ update appContext _ account msg model =
             else
                 let
                     update_ subState =
-                        { subState | notifications = notifications, updateSelection = Loading }
+                        { subState
+                            | notifications = notifications
+                            , updateSelection = Loading
+                            , selection = NoSelection
+                        }
                 in
                 ( updateSubPageState update_ model
                 , updateNotificationStatuses appContext account ids status
