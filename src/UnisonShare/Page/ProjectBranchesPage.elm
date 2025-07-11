@@ -1,7 +1,5 @@
 module UnisonShare.Page.ProjectBranchesPage exposing (..)
 
--- import UI.Form.TextField as TextField
-
 import Code.Branch as Branch
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Html exposing (Html, br, div, footer, h2, p, span, strong, text)
@@ -12,6 +10,7 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
+import String.Extra as StringE
 import UI
 import UI.Button as Button
 import UI.Card as Card
@@ -19,6 +18,7 @@ import UI.Click as Click
 import UI.DateTime as DateTime
 import UI.EmptyState as EmptyState
 import UI.EmptyStateCard as EmptyStateCard
+import UI.Form.TextField as TextField
 import UI.Icon as Icon
 import UI.Modal as Modal
 import UI.PageContent as PageContent
@@ -72,6 +72,7 @@ type alias PaginatedBranches =
 
 type alias Model =
     { tab : BranchesTab
+    , query : String
     , modal : Modal
     }
 
@@ -79,7 +80,7 @@ type alias Model =
 init : AppContext -> ProjectRef -> ProjectBranchesRoute -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
 init appContext projectRef branchesRoute cursor =
     let
-        ( tab, kindFilter ) =
+        ( tab, kindFilter_ ) =
             case branchesRoute of
                 ProjectBranchesAll ->
                     ( AllBranches Loading
@@ -101,8 +102,8 @@ init appContext projectRef branchesRoute cursor =
                     , ShareApi.ContributorBranches Nothing
                     )
     in
-    ( { tab = tab, modal = NoModal }
-    , fetchBranches appContext projectRef kindFilter cursor
+    ( { tab = tab, query = "", modal = NoModal }
+    , fetchBranches appContext projectRef kindFilter_ Nothing cursor
     )
 
 
@@ -111,8 +112,9 @@ init appContext projectRef branchesRoute cursor =
 
 
 type Msg
-    = FetchBranchesFinished (WebData PaginatedBranches)
+    = FetchBranchesFinished (Maybe String) (WebData PaginatedBranches)
     | UpdateSearchQuery String
+    | PerformSearch String
     | ClearSearch
     | ShowDeleteBranchModal BranchRef
     | CloseModal
@@ -123,8 +125,12 @@ type Msg
 update : AppContext -> ProjectRef -> ProjectBranchesRoute -> Msg -> Model -> ( Model, Cmd Msg )
 update appContext projectRef _ msg model =
     case msg of
-        FetchBranchesFinished branches ->
-            ( { model | tab = mapTab (always branches) model.tab }, Cmd.none )
+        FetchBranchesFinished q branches ->
+            if q == StringE.nonEmpty model.query then
+                ( { model | tab = mapTab (always branches) model.tab }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
 
         ShowDeleteBranchModal branchRef ->
             ( { model | modal = DeleteBranchModal branchRef NotAsked }, Cmd.none )
@@ -169,12 +175,67 @@ update appContext projectRef _ msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        _ ->
-            ( model, Cmd.none )
+        UpdateSearchQuery q ->
+            let
+                cmd =
+                    if String.length q > 2 then
+                        Util.delayMsg 300 (PerformSearch q)
+
+                    else if String.isEmpty q then
+                        fetchBranches
+                            appContext
+                            projectRef
+                            (kindFilter appContext model.tab)
+                            Nothing
+                            Paginated.NoPageCursor
+
+                    else
+                        Cmd.none
+            in
+            ( { model | query = q }, cmd )
+
+        PerformSearch q ->
+            if model.query == q then
+                ( { model | tab = mapTab (always Loading) model.tab }
+                , fetchBranches appContext
+                    projectRef
+                    (kindFilter appContext model.tab)
+                    (Just q)
+                    Paginated.NoPageCursor
+                )
+
+            else
+                ( model, Cmd.none )
+
+        ClearSearch ->
+            ( { model | query = "" }
+            , fetchBranches
+                appContext
+                projectRef
+                (kindFilter appContext model.tab)
+                Nothing
+                Paginated.NoPageCursor
+            )
 
 
 
 -- UPDATE HELPERS
+
+
+kindFilter : AppContext -> BranchesTab -> ShareApi.ProjectBranchesKindFilter
+kindFilter appContext tab =
+    case tab of
+        AllBranches _ ->
+            ShareApi.AllBranches Nothing
+
+        YourBranches _ ->
+            ShareApi.ContributorBranches (Session.handle appContext.session)
+
+        MaintainerBranches _ ->
+            ShareApi.ProjectBranches
+
+        ContributorBranches _ ->
+            ShareApi.ContributorBranches Nothing
 
 
 mapTab : (Branches -> Branches) -> BranchesTab -> BranchesTab
@@ -233,12 +294,12 @@ updateSubPage appContext projectRef subRoute model =
 -- EFFECTS
 
 
-fetchBranches : AppContext -> ProjectRef -> ShareApi.ProjectBranchesKindFilter -> Paginated.PageCursorParam -> Cmd Msg
-fetchBranches appContext projectRef kind cursor =
+fetchBranches : AppContext -> ProjectRef -> ShareApi.ProjectBranchesKindFilter -> Maybe String -> Paginated.PageCursorParam -> Cmd Msg
+fetchBranches appContext projectRef kind query cursor =
     let
         params =
             { kind = kind
-            , searchQuery = Nothing
+            , searchQuery = query
             , limit = 100
             , cursor = cursor
             }
@@ -253,7 +314,7 @@ fetchBranches appContext projectRef kind cursor =
                 |> required "items" (Decode.list (Branch.decodeSummary Project.decode))
     in
     ShareApi.projectBranches projectRef params
-        |> HttpApi.toRequest decode (RemoteData.fromResult >> FetchBranchesFinished)
+        |> HttpApi.toRequest decode (RemoteData.fromResult >> FetchBranchesFinished query)
         |> HttpApi.perform appContext.api
 
 
@@ -523,16 +584,11 @@ viewBranches appContext project branches emptyStateMessage =
 view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project model =
     let
-        {-
-           isSearching =
-               False
-              searchField =
-                  TextField.fieldWithoutLabel UpdateSearchQuery "Search Branches" ""
-                      |> TextField.withHelpText "Find a contributor branch by prefixing their handle, ex: \"@unison\"."
-                      |> TextField.withIconOrWorking Icon.search isSearching
-                      |> TextField.withClear ClearSearch
-                      |> TextField.view
-        -}
+        searchField =
+            TextField.fieldWithoutLabel UpdateSearchQuery "Search Branches" model.query
+                |> TextField.withClear ClearSearch
+                |> TextField.view
+
         modal =
             case model.modal of
                 NoModal ->
@@ -567,8 +623,7 @@ view appContext project model =
     ( PageLayout.centeredNarrowLayout
         (PageContent.oneColumn
             [ tabList appContext project.ref model.tab |> TabList.view
-
-            -- , searchField
+            , searchField
             , tabContent
             ]
             |> PageContent.withPageTitle (pageTitle project.ref)
