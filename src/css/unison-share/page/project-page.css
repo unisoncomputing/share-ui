@@ -1,13 +1,13 @@
 .project-page .page-header .button {
-  --u-color_text-on-action-outlined: var(--color-gray-lighten-50);
-  --u-color_icon-on-action-outlined: var(--color-gray-lighten-20);
-  --u-color_border-on-action-outlined: var(--color-gray-base);
-  --u-color_action_outlined: var(--color-gray-darken-20);
-  --u-color_text-on-action-outlined_hovered: var(--color-gray-lighten-100);
-  --u-color_icon-on-action-outlined_hovered: var(--color-gray-lighten-30);
-  --u-color_text-on-action-outlined_hovered: var(--color-gray-lighten-100);
-  --u-color_action_outlined_hovered: var(--color-gray-darken-10);
-  --u-color_border-on-action-outlined_hovered: var(--color-gray-lighten-20);
+  --u-color_text-on-action-outlined: var(--color-gray-8);
+  --u-color_icon-on-action-outlined: var(--color-gray-4);
+  --u-color_border-on-action-outlined: var(--color-gray-3);
+  --u-color_action_outlined: var(--color-gray-1);
+  --u-color_text-on-action-outlined_hovered: var(--color-gray-11);
+  --u-color_icon-on-action-outlined_hovered: var(--color-gray-5);
+  --u-color_text-on-action-outlined_hovered: var(--color-gray-11);
+  --u-color_action_outlined_hovered: var(--color-gray-2);
+  --u-color_border-on-action-outlined_hovered: var(--color-gray-4);
 }
 
 .project-page .page-header .actions {
@@ -46,7 +46,7 @@
 
 .project-page .page-header .page-header_right-side .kpi:hover .kpi-content {
   /* @color-todo */
-  background: var(--color-gray-darken-30);
+  background: var(--color-gray-0);
   border-radius: var(--border-radius-base);
 }
 
@@ -98,7 +98,7 @@
 }
 
 .project-page .empty-state-content code {
-  background: var(--color-gray-lighten-55);
+  background: var(--color-gray-9);
   border-radius: var(--border-radius-base);
   padding: 0 0.25rem;
   text-align: left;

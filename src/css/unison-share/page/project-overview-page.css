@@ -196,7 +196,7 @@
 }
 
 #project-readme-instructions-modal .pull-hint .inline-code {
-  background: var(--color-gray-lighten-60);
+  background: var(--color-gray-10);
   border-radius: var(--border-radius-base);
   padding: 0 0.3rem;
 }
