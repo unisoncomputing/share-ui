@@ -10,7 +10,7 @@
     left: 0;
     right: 0;
     bottom: 0rem;
-    background: var(--color-gray-lighten-100);
+    background: var(--color-gray-11);
     border-top: 1px solid var(--u-color_border);
   }
 }

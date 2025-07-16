@@ -13,7 +13,7 @@
 
 /* @color-todo @inverse */
 .search-branch-sheet .tag {
-  --c-color_tag_bg_hovered: var(--color-gray-darken-10);
+  --c-color_tag_bg_hovered: var(--color-gray-2);
 }
 
 .search-branch-sheet .search-branch-sheet_branches {

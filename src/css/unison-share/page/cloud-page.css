@@ -5,14 +5,14 @@
 .cloud-page .card {
   background: var(--color-blue-2);
   align-self: center;
-  color: var(--color-gray-lighten-100);
+  color: var(--color-gray-11);
   align-items: center;
   width: 32rem;
   margin-bottom: 2rem;
 }
 
 .cloud-page h1 {
-  color: var(--color-gray-lighten-100);
+  color: var(--color-gray-11);
   font-size: 2rem;
 }
 

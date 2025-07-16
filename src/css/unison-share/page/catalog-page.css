@@ -1,7 +1,7 @@
 .catalog-hero {
   /* @color-todo @decorative */
-  --color-catalog-hero-bg: var(--color-gray-darken-10);
-  --color-catalog-hero-bg-transparent: var(--color-gray-darken-10-transparent);
+  --color-catalog-hero-bg: var(--color-gray-2);
+  --color-catalog-hero-bg-transparent: var(--color-gray-2-transparent);
   --color-catalog-hero-explore: var(--color-green-4);
   --color-catalog-hero-discover: var(--color-blue-4);
   --color-catalog-hero-share: var(--color-purple-4);

@@ -90,12 +90,12 @@ body:has(#modal-overlay) {
 
 #app-header .create-account-menu .button {
   width: 100%;
-  --color-button-emphasized-text: var(--color-gray-darken-30);
-  --color-button-emphasized-icon: var(--color-gray-lighten-20);
-  --color-button-emphasized-bg: var(--color-gray-lighten-60);
-  --color-button-emphasized-hover-text: var(--color-gray-darken-30);
-  --color-button-emphasized-hover-icon: var(--color-gray-lighten-20);
-  --color-button-emphasized-hover-bg: var(--color-gray-lighten-30);
+  --color-button-emphasized-text: var(--color-gray-0);
+  --color-button-emphasized-icon: var(--color-gray-4);
+  --color-button-emphasized-bg: var(--color-gray-10);
+  --color-button-emphasized-hover-text: var(--color-gray-0);
+  --color-button-emphasized-hover-icon: var(--color-gray-4);
+  --color-button-emphasized-hover-bg: var(--color-gray-5);
 }
 
 #app-header .create-account-menu .terms-of-service {

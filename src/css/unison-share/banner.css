@@ -31,9 +31,9 @@
 
 .banner.article {
   --banner-fg: var(--color-green-4);
-  --banner-bg: var(--color-gray-base);
+  --banner-bg: var(--color-gray-3);
   --banner-fg-em: var(--color-green-3);
-  --banner-border: var(--color-gray-lighten-20);
+  --banner-border: var(--color-gray-4);
   text-shadow: 0 1px rgba(0, 0, 0, 0.25);
 
   color: var(--banner-fg);
