@@ -349,7 +349,7 @@ update appContext msg model =
                             res_ =
                                 case res.results of
                                     Ok r ->
-                                        "Ok" ++ String.fromInt (List.length r)
+                                        "Ok " ++ String.fromInt (List.length r)
 
                                     Err e ->
                                         "Err"
@@ -623,7 +623,10 @@ updateSearchWithResult key res s =
     in
     s
         |> MultiSearch.fromResult_ resultOrder key res
-        |> MultiSearch.mapSearchResults (SearchResults.uniqueMatchesBy uniqueMatchReference)
+
+
+
+-- |> MultiSearch.mapSearchResults (SearchResults.uniqueMatchesBy uniqueMatchReference)
 
 
 uniqueMatchReference : BlendedSearchMatch -> String
