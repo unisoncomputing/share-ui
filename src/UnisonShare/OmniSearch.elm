@@ -48,6 +48,7 @@ import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.MultiSearch as MultiSearch exposing (MultiSearch)
+import Lib.ProdDebug as ProdDebug
 import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
@@ -267,8 +268,11 @@ update appContext msg model =
 
                         else
                             3
+
+                    moreThan1Word =
+                        List.length (String.split " " model.fieldValue) > 1
                 in
-                if List.length (String.split " " model.fieldValue) > 1 then
+                if moreThan1Word then
                     ( model, Cmd.none, NoOut )
 
                 else
@@ -1292,7 +1296,11 @@ viewMainSearch appContext keyboardShortcut mainSearch =
             UI.nothing
 
         BlendedSearch s ->
-            viewSearchSheet appContext (viewBlendedMatch keyboardShortcut) s
+            let
+                msg =
+                    Debug.toString s
+            in
+            ProdDebug.view msg [ viewSearchSheet appContext (viewBlendedMatch keyboardShortcut) s ]
 
 
 viewSearchHelpModal : AppContext -> Html Msg
