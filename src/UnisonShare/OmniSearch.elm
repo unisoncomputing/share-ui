@@ -1298,7 +1298,39 @@ viewMainSearch appContext keyboardShortcut mainSearch =
         BlendedSearch s ->
             let
                 msg =
-                    Debug.toString s
+                    case s of
+                        MultiSearch.NotAsked q ->
+                            "[NotAsked]\n\tQuery: " ++ q
+
+                        MultiSearch.Searching { query, requests } ->
+                            let
+                                reqToStr r =
+                                    case r of
+                                        RemoteData.NotAsked ->
+                                            "[NotAsked]"
+
+                                        RemoteData.Loading ->
+                                            "[Loading]"
+
+                                        RemoteData.Success _ ->
+                                            "[Success]"
+
+                                        RemoteData.Failure _ ->
+                                            "[Failure]"
+
+                                requests_ =
+                                    requests
+                                        |> Dict.toList
+                                        |> List.map (\( k, r ) -> "(" ++ k ++ ", " ++ reqToStr r ++ ")")
+                                        |> String.join "\n\t\t"
+                            in
+                            "[Searching]\n\tQuery: " ++ query ++ "\n\tRequests: \n\t\t" ++ requests_
+
+                        MultiSearch.Success q res ->
+                            "[Success]\n\tQuery: " ++ q ++ "\n\tNum matches: " ++ String.fromInt (SearchResults.length res)
+
+                        MultiSearch.Failure _ ->
+                            "[Failure]"
             in
             ProdDebug.view msg [ viewSearchSheet appContext (viewBlendedMatch keyboardShortcut) s ]
 
