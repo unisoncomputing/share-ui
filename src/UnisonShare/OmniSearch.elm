@@ -385,7 +385,18 @@ update appContext msg model =
                                         "Err"
                         in
                         ( { model | search = search_ }
-                        , debugLog ("UPDATE | [DefinitionSearchFinished]\n\tResult: " ++ res_ ++ "\n\tResult Taken: " ++ resTaken_ ++ "\n\nSearch before: " ++ searchToString s ++ "\n\nSearch after: " ++ searchToString search__)
+                        , debugLog
+                            ("UPDATE | [DefinitionSearchFinished]\n\tResult: "
+                                ++ res_
+                                ++ "\n\tTo take: "
+                                ++ String.fromInt toTake
+                                ++ "\n\tResult taken: "
+                                ++ resTaken_
+                                ++ "\n\nSearch before: "
+                                ++ searchToString s
+                                ++ "\n\nSearch after: "
+                                ++ searchToString search__
+                            )
                         , NoOut
                         )
 
