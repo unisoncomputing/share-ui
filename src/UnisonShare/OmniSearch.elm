@@ -339,7 +339,7 @@ update appContext msg model =
                     if not (isEntityQuery model.fieldValue) then
                         case model.search of
                             BlendedSearch s ->
-                                case Debug.log "MultiSearch.length" (MultiSearch.length s) of
+                                case MultiSearch.length s of
                                     Just n ->
                                         8 - n
 
