@@ -27,7 +27,7 @@
 -}
 
 
-module UnisonShare.OmniSearch exposing (..)
+port module UnisonShare.OmniSearch exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.Definition.Reference as Reference
@@ -345,17 +345,31 @@ update appContext msg model =
                                         (Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results)
                                         s
                                     )
+
+                            res_ =
+                                case res.results of
+                                    Ok r ->
+                                        "Ok" ++ String.fromInt (List.length r)
+
+                                    Err e ->
+                                        "Err"
                         in
                         ( { model | search = search_ }
-                        , Cmd.none
+                        , debugLog ("[DefinitionSearchFinished]\n\tResult: " ++ res_)
                         , NoOut
                         )
 
                     _ ->
-                        ( model, Cmd.none, NoOut )
+                        ( model
+                        , debugLog "[DefinitionSearchFinished]\n\tNo active search.."
+                        , NoOut
+                        )
 
             else
-                ( model, Cmd.none, NoOut )
+                ( model
+                , debugLog "[DefinitionSearchFinished]\n\tQuery mismatch.."
+                , NoOut
+                )
 
         NameSearchFinished res ->
             if String.endsWith res.query model.fieldValue then
@@ -815,6 +829,9 @@ isCapitalized s =
 
 
 -- EFFECTS
+
+
+port debugLog : String -> Cmd msg
 
 
 searchEntities : AppContext -> Filter -> String -> Cmd Msg
@@ -1312,8 +1329,8 @@ viewMainSearch appContext keyboardShortcut mainSearch =
                                         RemoteData.Loading ->
                                             "[Loading]"
 
-                                        RemoteData.Success _ ->
-                                            "[Success]"
+                                        RemoteData.Success items ->
+                                            "[Success] " ++ String.fromInt (List.length items)
 
                                         RemoteData.Failure _ ->
                                             "[Failure]"
