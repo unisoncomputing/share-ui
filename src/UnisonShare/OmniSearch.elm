@@ -48,7 +48,6 @@ import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.MultiSearch as MultiSearch exposing (MultiSearch)
-import Lib.ProdDebug as ProdDebug
 import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
@@ -273,23 +272,11 @@ update appContext msg model =
                         List.length (String.split " " model.fieldValue) > 1
                 in
                 if moreThan1Word then
-                    ( model
-                    , debugLog "UPDATE | [EntitySearchFinished]\n\tQuery is more than 1 word.."
-                    , NoOut
-                    )
+                    ( model, Cmd.none, NoOut )
 
                 else
                     case model.search of
                         BlendedSearch s ->
-                            let
-                                res_ =
-                                    case res.results of
-                                        Ok r ->
-                                            "Ok " ++ String.fromInt (List.length r)
-
-                                        Err _ ->
-                                            "Err"
-                            in
                             ( { model
                                 | search =
                                     BlendedSearch
@@ -298,21 +285,15 @@ update appContext msg model =
                                             s
                                         )
                               }
-                            , debugLog ("UPDATE | [EntitySearchFinished]\n\tResult: " ++ res_)
+                            , Cmd.none
                             , NoOut
                             )
 
                         _ ->
-                            ( model
-                            , debugLog "UPDATE | [EntitySearchFinished]\n\tNo active search.."
-                            , NoOut
-                            )
+                            ( model, Cmd.none, NoOut )
 
             else
-                ( model
-                , debugLog "UPDATE | [EntitySearchFinished]\n\tQuery mismatch.."
-                , NoOut
-                )
+                ( model, Cmd.none, NoOut )
 
         SearchDefinitions filter query ->
             ( { model
@@ -357,60 +338,21 @@ update appContext msg model =
                 case model.search of
                     BlendedSearch s ->
                         let
-                            resultTaken =
-                                Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results
-
-                            resTaken_ =
-                                case resultTaken of
-                                    Ok r ->
-                                        "Ok " ++ String.fromInt (List.length r)
-
-                                    Err _ ->
-                                        "Err"
-
                             search__ =
                                 updateSearchWithResult searchKeys.definition
-                                    resultTaken
+                                    (Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results)
                                     s
 
                             search_ =
                                 BlendedSearch search__
-
-                            res_ =
-                                case res.results of
-                                    Ok r ->
-                                        "Ok " ++ String.fromInt (List.length r)
-
-                                    Err _ ->
-                                        "Err"
                         in
-                        ( { model | search = search_ }
-                        , debugLog
-                            ("UPDATE | [DefinitionSearchFinished]\n\tResult: "
-                                ++ res_
-                                ++ "\n\tTo take: "
-                                ++ String.fromInt toTake
-                                ++ "\n\tResult taken: "
-                                ++ resTaken_
-                                ++ "\n\nSearch before: "
-                                ++ searchToString s
-                                ++ "\n\nSearch after: "
-                                ++ searchToString search__
-                            )
-                        , NoOut
-                        )
+                        ( { model | search = search_ }, Cmd.none, NoOut )
 
                     _ ->
-                        ( model
-                        , debugLog "UPDATE | [DefinitionSearchFinished]\n\tNo active search.."
-                        , NoOut
-                        )
+                        ( model, Cmd.none, NoOut )
 
             else
-                ( model
-                , debugLog "UPDATE | [DefinitionSearchFinished]\n\tQuery mismatch.."
-                , NoOut
-                )
+                ( model, Cmd.none, NoOut )
 
         NameSearchFinished res ->
             if String.endsWith res.query model.fieldValue then
@@ -1354,47 +1296,7 @@ viewMainSearch appContext keyboardShortcut mainSearch =
             UI.nothing
 
         BlendedSearch s ->
-            let
-                msg =
-                    searchToString s
-            in
-            ProdDebug.view ("VIEW | " ++ msg) [ viewSearchSheet appContext (viewBlendedMatch keyboardShortcut) s ]
-
-
-searchToString s =
-    case s of
-        MultiSearch.NotAsked q ->
-            "[NotAsked]\n\tQuery: " ++ q
-
-        MultiSearch.Searching { query, requests } ->
-            let
-                reqToStr r =
-                    case r of
-                        RemoteData.NotAsked ->
-                            "[NotAsked]"
-
-                        RemoteData.Loading ->
-                            "[Loading]"
-
-                        RemoteData.Success items ->
-                            "[Success] " ++ String.fromInt (List.length items)
-
-                        RemoteData.Failure _ ->
-                            "[Failure]"
-
-                requests_ =
-                    requests
-                        |> Dict.toList
-                        |> List.map (\( k, r ) -> "(" ++ k ++ ", " ++ reqToStr r ++ ")")
-                        |> String.join "\n\t\t"
-            in
-            "[Searching]\n\tQuery: " ++ query ++ "\n\tRequests: \n\t\t" ++ requests_
-
-        MultiSearch.Success q res ->
-            "[Success]\n\tQuery: " ++ q ++ "\n\tNum matches: " ++ String.fromInt (SearchResults.length res)
-
-        MultiSearch.Failure _ ->
-            "[Failure]"
+            viewSearchSheet appContext (viewBlendedMatch keyboardShortcut) s
 
 
 viewSearchHelpModal : AppContext -> Html Msg
