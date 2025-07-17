@@ -357,9 +357,20 @@ update appContext msg model =
                 case model.search of
                     BlendedSearch s ->
                         let
+                            resultTaken =
+                                Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results
+
+                            resTaken_ =
+                                case resultTaken of
+                                    Ok r ->
+                                        "Ok " ++ String.fromInt (List.length r)
+
+                                    Err _ ->
+                                        "Err"
+
                             search__ =
                                 updateSearchWithResult searchKeys.definition
-                                    (Result.map (List.take toTake >> List.map BlendedDefinitionMatch) res.results)
+                                    resultTaken
                                     s
 
                             search_ =
@@ -374,7 +385,7 @@ update appContext msg model =
                                         "Err"
                         in
                         ( { model | search = search_ }
-                        , debugLog ("UPDATE | [DefinitionSearchFinished]\n\tResult: " ++ res_ ++ "\n\nSearch before: " ++ searchToString s ++ "\n\nSearch after: " ++ searchToString search__)
+                        , debugLog ("UPDATE | [DefinitionSearchFinished]\n\tResult: " ++ res_ ++ "\n\tResult Taken: " ++ resTaken_ ++ "\n\nSearch before: " ++ searchToString s ++ "\n\nSearch after: " ++ searchToString search__)
                         , NoOut
                         )
 
