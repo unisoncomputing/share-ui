@@ -65,7 +65,7 @@ const unisonShareCfg = {
             loader: "elm-webpack-loader",
             options: {
               debug: false,
-              optimize: true,
+              optimize: false,
               cwd: __dirname,
             },
           },
