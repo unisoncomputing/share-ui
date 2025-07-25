@@ -69,7 +69,7 @@ update appContext projectRef msg model =
                     { model | search = Search.withQuery q model.search }
 
                 ( sheet, cmd ) =
-                    if Search.hasSubstantialQuery model.search then
+                    if Search.queryGreaterThan 1 model.search then
                         ( newModel, Search.debounce (PerformSearch q) )
 
                     else
