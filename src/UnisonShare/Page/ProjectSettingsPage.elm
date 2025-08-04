@@ -328,6 +328,7 @@ viewCollaborators model =
                     let
                         addButton =
                             Button.iconThenLabel ShowAddCollaboratorModal Icon.plus "Add a collaborator"
+                                |> Button.small
 
                         viewCollaborator collab =
                             div [ class "collaborator" ]
@@ -352,7 +353,7 @@ viewCollaborators model =
 
                             else
                                 div [ class "collaborators" ]
-                                    [ addButton |> Button.small |> Button.view
+                                    [ addButton |> Button.view
                                     , Divider.divider
                                         |> Divider.withoutMargin
                                         |> Divider.small
@@ -379,6 +380,26 @@ viewCollaborators model =
     Card.card
         [ h2 [] [ text "Project Collaborators" ]
         , collabs
+        ]
+        |> Card.asContained
+        |> Card.view
+
+
+viewWebhooks : Model -> Html Msg
+viewWebhooks model =
+    let
+        webhooks =
+            [ div [ class "webhook" ]
+                [ div [] [ text "When" ]
+                , div [ class "event-name" ] [ text "Branch is created" ]
+                , div [] [ text "Call" ]
+                , div [ class "url" ] [ text "https://example.com" ]
+                ]
+            ]
+    in
+    Card.card
+        [ h2 [] [ text "Webhooks" ]
+        , div [ class "webhooks" ] webhooks
         ]
         |> Card.asContained
         |> Card.view
@@ -533,10 +554,13 @@ viewPageContent project model =
 
             else
                 UI.nothing
+
+        webhooks =
+            viewWebhooks model
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
-            (collaborators :: formAndActions)
+            (collaborators :: webhooks :: formAndActions)
         ]
         |> pageTitle_
 
