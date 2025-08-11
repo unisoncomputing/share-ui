@@ -700,7 +700,7 @@ updateForValue : AppContext -> Model -> String -> ( Model, Cmd Msg )
 updateForValue appContext model value =
     let
         hasEnoughChars =
-            String.length value > 2
+            String.length value > 1
     in
     if String.endsWith "  " value then
         -- Ignore 2 spaces after each other
