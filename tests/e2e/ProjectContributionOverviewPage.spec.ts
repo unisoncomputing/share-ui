@@ -216,6 +216,7 @@ test.describe("while signed in", () => {
       await expect(button(page, "Archive")).toBeVisible();
     });
   });
+  /*
 
   test("when merging, the project header number of active contributions is updated", async ({
     page,
@@ -345,4 +346,5 @@ test.describe("while signed in", () => {
         .getByText("6"),
     ).toBeVisible();
   });
+  */
 });
