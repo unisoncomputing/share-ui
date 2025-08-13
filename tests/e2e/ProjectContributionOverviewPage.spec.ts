@@ -216,4 +216,135 @@ test.describe("while signed in", () => {
       await expect(button(page, "Archive")).toBeVisible();
     });
   });
+  /*
+
+  test("when merging, the project header number of active contributions is updated", async ({
+    page,
+  }) => {
+    const projectRef = "@bob/private-project";
+    const contrib = { ...contribution(projectRef), status: "in_review" };
+    await API.getProject(page, projectRef, {
+      visibility: "private",
+      permissions: ["project:maintain"],
+      numActiveContributions: 5,
+    });
+    await API.getProjectContribution(page, projectRef, contrib.number, contrib);
+    await API.getProjectContributionTimeline(page, projectRef, contrib.number);
+    await API.getProjectContributionMergeCheck(
+      page,
+      projectRef,
+      contrib.number,
+    );
+
+    const response = await page.goto(
+      `http://localhost:1234/${projectRef}/contributions/${contrib.number}`,
+    );
+    expect(response?.status()).toBeLessThan(400);
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("5"),
+    ).toBeVisible();
+
+    await API.postProjectContributionMerge(page, projectRef, contrib.number, {
+      status: 200,
+      data: { ...contrib, status: "merged" },
+    });
+
+    await button(page, "Merge Contribution").click();
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("4"),
+    ).toBeVisible();
+  });
+
+  test("when archiving, the project header number of active contributions is updated", async ({
+    page,
+  }) => {
+    const projectRef = "@bob/private-project";
+    const contrib = { ...contribution(projectRef), status: "in_review" };
+    await API.getProject(page, projectRef, {
+      visibility: "private",
+      permissions: ["project:maintain"],
+      numActiveContributions: 5,
+    });
+    await API.getProjectContribution(page, projectRef, contrib.number, contrib);
+    await API.getProjectContributionTimeline(page, projectRef, contrib.number);
+    await API.getProjectContributionMergeCheck(
+      page,
+      projectRef,
+      contrib.number,
+    );
+
+    const response = await page.goto(
+      `http://localhost:1234/${projectRef}/contributions/${contrib.number}`,
+    );
+    expect(response?.status()).toBeLessThan(400);
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("5"),
+    ).toBeVisible();
+
+    await API.patchProjectContribution(page, projectRef, contrib.number, {
+      status: 200,
+      data: { ...contrib, status: "closed" },
+    });
+
+    await button(page, "Archive").click();
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("4"),
+    ).toBeVisible();
+  });
+
+  test("when re-opening, the project header number of active contributions is updated", async ({
+    page,
+  }) => {
+    const projectRef = "@bob/private-project";
+    const contrib = { ...contribution(projectRef), status: "closed" };
+    await API.getProject(page, projectRef, {
+      visibility: "private",
+      permissions: ["project:maintain"],
+      numActiveContributions: 5,
+    });
+    await API.getProjectContribution(page, projectRef, contrib.number, contrib);
+    await API.getProjectContributionTimeline(page, projectRef, contrib.number);
+    await API.getProjectContributionMergeCheck(
+      page,
+      projectRef,
+      contrib.number,
+    );
+
+    const response = await page.goto(
+      `http://localhost:1234/${projectRef}/contributions/${contrib.number}`,
+    );
+    expect(response?.status()).toBeLessThan(400);
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("5"),
+    ).toBeVisible();
+
+    await API.patchProjectContribution(page, projectRef, contrib.number, {
+      status: 200,
+      data: { ...contrib, status: "in_review" },
+    });
+
+    await button(page, "Re-open").click();
+
+    expect(
+      page
+        .locator(".page-header .min-md .tag.num-active-contributions")
+        .getByText("6"),
+    ).toBeVisible();
+  });
+  */
 });

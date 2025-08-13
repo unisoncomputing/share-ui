@@ -35,6 +35,7 @@ import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
+import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.Page.CodePage as CodePage
 import UnisonShare.Page.ProjectBranchesPage as ProjectBranchesPage
 import UnisonShare.Page.ProjectContributionPage as ProjectContributionPage
@@ -53,6 +54,7 @@ import UnisonShare.Route as Route exposing (CodeRoute, ProjectRoute(..))
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.SwitchBranch as SwitchBranch
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
+import UnisonShare.Ticket.TicketStatus as TicketStatus
 import UnisonShare.UcmCommand as UcmCommand
 
 
@@ -527,7 +529,7 @@ update appContext projectRef route msg model =
                 Route.ProjectContribution contribRef contribRoute ->
                     if ContributionRef.equals currentContribRef contribRef then
                         let
-                            ( contribPage_, contribPageCmd ) =
+                            ( contribPage_, contribPageCmd, contribOut ) =
                                 ProjectContributionPage.update appContext
                                     projectRef
                                     contribRef
@@ -535,8 +537,30 @@ update appContext projectRef route msg model =
                                     model.project
                                     contribMsg
                                     contribPage
+
+                            updateNumActiveContributions project =
+                                case contribOut of
+                                    ProjectContributionPage.ContributionStatusUpdated change ->
+                                        case ( change.old, change.new ) of
+                                            ( ContributionStatus.InReview, ContributionStatus.Merged ) ->
+                                                { project | numActiveContributions = project.numActiveContributions - 1 }
+
+                                            ( ContributionStatus.InReview, ContributionStatus.Archived ) ->
+                                                { project | numActiveContributions = project.numActiveContributions - 1 }
+
+                                            ( _, ContributionStatus.InReview ) ->
+                                                { project | numActiveContributions = project.numActiveContributions + 1 }
+
+                                            _ ->
+                                                project
+
+                                    _ ->
+                                        project
+
+                            proj =
+                                RemoteData.map updateNumActiveContributions model.project
                         in
-                        ( { model | subPage = Contribution contribRef contribPage_ }
+                        ( { model | subPage = Contribution contribRef contribPage_, project = proj }
                         , Cmd.map ProjectContributionPageMsg contribPageCmd
                         )
 
@@ -581,14 +605,33 @@ update appContext projectRef route msg model =
                 Route.ProjectTicket ticketRef ->
                     if TicketRef.equals currentTicketRef ticketRef then
                         let
-                            ( ticketPage_, ticketPageCmd ) =
+                            ( ticketPage_, ticketPageCmd, ticketOut ) =
                                 ProjectTicketPage.update appContext
                                     projectRef
                                     ticketRef
                                     ticketMsg
                                     ticketPage
+
+                            updateNumOpenTickets project =
+                                case ticketOut of
+                                    ProjectTicketPage.TicketStatusUpdated change ->
+                                        case ( change.old, change.new ) of
+                                            ( TicketStatus.Open, TicketStatus.Closed ) ->
+                                                { project | numOpenTickets = project.numOpenTickets - 1 }
+
+                                            ( TicketStatus.Closed, TicketStatus.Open ) ->
+                                                { project | numOpenTickets = project.numOpenTickets + 1 }
+
+                                            _ ->
+                                                project
+
+                                    _ ->
+                                        project
+
+                            proj =
+                                RemoteData.map updateNumOpenTickets model.project
                         in
-                        ( { model | subPage = Ticket ticketRef ticketPage_ }
+                        ( { model | subPage = Ticket ticketRef ticketPage_, project = proj }
                         , Cmd.map ProjectTicketPageMsg ticketPageCmd
                         )
 

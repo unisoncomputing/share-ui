@@ -80,14 +80,22 @@ allNavItems project switchBranch =
 
         withContributionsCount navItem =
             if project.numActiveContributions > 0 then
-                Nav.navItemWithTag (Tag.tag (String.fromInt project.numActiveContributions)) navItem
+                Nav.navItemWithTag
+                    (Tag.tag (String.fromInt project.numActiveContributions)
+                        |> Tag.withClassName "num-active-contributions"
+                    )
+                    navItem
 
             else
                 navItem
 
         withTicketsCount navItem =
             if project.numOpenTickets > 0 then
-                Nav.navItemWithTag (Tag.tag (String.fromInt project.numOpenTickets)) navItem
+                Nav.navItemWithTag
+                    (Tag.tag (String.fromInt project.numOpenTickets)
+                        |> Tag.withClassName "num-open-tickets"
+                    )
+                    navItem
 
             else
                 navItem
