@@ -92,24 +92,30 @@ type Msg
     | TicketTimelineMsg TicketTimeline.Msg
 
 
-update : AppContext -> ProjectRef -> TicketRef -> Msg -> Model -> ( Model, Cmd Msg )
+type OutMsg
+    = NoOut
+    | TicketStatusUpdated { old : TicketStatus, new : TicketStatus }
+
+
+update : AppContext -> ProjectRef -> TicketRef -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef ticketRef msg model =
     case msg of
         NoOp ->
-            ( model, Cmd.none )
+            ( model, Cmd.none, NoOut )
 
         FetchTicketFinished ticket ->
-            ( { model | ticket = ticket }, Cmd.none )
+            ( { model | ticket = ticket }, Cmd.none, NoOut )
 
         UpdateStatus newStatus ->
             case model.ticket of
                 Success ticket ->
                     ( { model | updateStatus = UpdatingStatus }
                     , updateTicketStatus appContext projectRef ticket.ref newStatus
+                    , NoOut
                     )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         UpdateStatusFinished newStatus res ->
             case appContext.session of
@@ -134,16 +140,17 @@ update appContext projectRef ticketRef msg model =
                                 , updateStatus = Idle
                               }
                             , Cmd.none
+                            , TicketStatusUpdated { old = ticket.status, new = newStatus }
                             )
 
                         ( Err e, Success _ ) ->
-                            ( { model | updateStatus = UpdateStatusFailed e }, Cmd.none )
+                            ( { model | updateStatus = UpdateStatusFailed e }, Cmd.none, NoOut )
 
                         _ ->
-                            ( model, Cmd.none )
+                            ( model, Cmd.none, NoOut )
 
                 Session.Anonymous ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ShowEditModal ->
             case ( appContext.session, model.ticket ) of
@@ -152,10 +159,10 @@ update appContext projectRef ticketRef msg model =
                         formModel =
                             ProjectTicketFormModal.init (ProjectTicketFormModal.Edit ticket)
                     in
-                    ( { model | modal = EditModal formModel }, Cmd.none )
+                    ( { model | modal = EditModal formModel }, Cmd.none, NoOut )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ProjectTicketFormModalMsg formMsg ->
             case ( appContext.session, model.modal ) of
@@ -181,20 +188,21 @@ update appContext projectRef ticketRef msg model =
                     in
                     ( { model | modal = modal, ticket = ticket }
                     , Cmd.map ProjectTicketFormModalMsg cmd
+                    , NoOut
                     )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         CloseModal ->
-            ( { model | modal = NoModal }, Cmd.none )
+            ( { model | modal = NoModal }, Cmd.none, NoOut )
 
         TicketTimelineMsg timelineMsg ->
             let
                 ( timeline, timelineCmd ) =
                     TicketTimeline.update appContext projectRef ticketRef timelineMsg model.timeline
             in
-            ( { model | timeline = timeline }, Cmd.map TicketTimelineMsg timelineCmd )
+            ( { model | timeline = timeline }, Cmd.map TicketTimelineMsg timelineCmd, NoOut )
 
 
 

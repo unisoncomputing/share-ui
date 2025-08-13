@@ -148,6 +148,30 @@ function ticketStatus(): TicketStatus {
   return faker.helpers.arrayElement(["open", "closed"]);
 }
 
+function ticket(projectRef: string, ticketRef?: number) {
+  const author = user();
+  return {
+    author: author,
+    createdAt: faker.date.past(),
+    description: faker.lorem.paragraphs(),
+    id: faker.string.uuid(),
+    numComments: faker.number.int(),
+    number: ticketRef || faker.number.int(100),
+    projectRef: projectRef,
+    status: ticketStatus(),
+    title: faker.lorem.sentences(1),
+    updatedAt: faker.date.past(),
+  };
+}
+
+function ticketTimeline(events?: unknown[]) {
+  return {
+    prevCursor: faker.string.uuid(),
+    nextCursor: faker.string.uuid(),
+    items: events || [timelineCommentEvent(), timelineCommentEvent()],
+  };
+}
+
 type ContributionStatus = "draft" | "in_review" | "merged" | "closed";
 
 function contributionStatus(): ContributionStatus {
@@ -623,6 +647,9 @@ export {
   notification,
   notificationEvent,
   notificationEventPayload,
+  ticket,
+  ticketStatus,
+  ticketTimeline,
   type ContributionDiffConfig,
   type Notification,
 };

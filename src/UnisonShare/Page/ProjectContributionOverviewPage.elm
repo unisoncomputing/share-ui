@@ -107,7 +107,7 @@ type Msg
 
 type OutMsg
     = NoOut
-    | ContributionStatusUpdated ContributionStatus
+    | ContributionStatusUpdated { old : ContributionStatus, new : ContributionStatus }
 
 
 update : AppContext -> ProjectRef -> ContributionRef -> WebData ContributionDetails -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
@@ -155,7 +155,7 @@ update appContext projectRef contributionRef contribution msg model =
                         , mergeStatus = Merged
                       }
                     , Cmd.none
-                    , ContributionStatusUpdated ContributionStatus.Merged
+                    , ContributionStatusUpdated { old = contrib.status, new = ContributionStatus.Merged }
                     )
 
                 ( _, _, Err e ) ->
@@ -189,7 +189,7 @@ update appContext projectRef contributionRef contribution msg model =
                                 , updateStatus = Idle
                               }
                             , Cmd.none
-                            , ContributionStatusUpdated newStatus
+                            , ContributionStatusUpdated { old = contrib.status, new = newStatus }
                             )
 
                         ( Err e, _ ) ->

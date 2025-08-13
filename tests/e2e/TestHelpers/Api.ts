@@ -7,6 +7,8 @@ import {
   type Notification,
   contributionTimeline,
   contributionDiff,
+  ticket,
+  ticketTimeline,
   userDetails,
   definitionSearchMatch,
   userSearchMatch,
@@ -411,6 +413,42 @@ async function getProjectContributionMergeCheck_(
   });
 }
 
+async function postProjectContributionMerge(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  resp?: { status: number; data: object },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return post(page, {
+    ...{
+      url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}/merge`,
+      status: 200,
+      data: contribution(projectRef, contribRef),
+    },
+    ...(resp || {}),
+  });
+}
+
+async function patchProjectContribution(
+  page: Page,
+  projectRef: string,
+  contribRef: number,
+  resp?: { status: number; data: object },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return patch(page, {
+    ...{
+      url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}`,
+      status: 200,
+      data: contribution(projectRef, contribRef),
+    },
+    ...(resp || {}),
+  });
+}
+
 async function getProjectContributionDiff(
   page: Page,
   projectRef: string,
@@ -424,6 +462,78 @@ async function getProjectContributionDiff(
     url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/contributions/${contribRef}/diff`,
     status: 200,
     data: data,
+  });
+}
+
+// -- /users/:handle/project/tickets/:ticket-ref
+//
+async function getProjectTicket(
+  page: Page,
+  projectRef: string,
+  ticketRef: number,
+  ticketData = {},
+) {
+  return getProjectTicket_(page, projectRef, ticketRef, {
+    status: 200,
+    data: ticketData,
+  });
+}
+
+async function getProjectTicket_(
+  page: Page,
+  projectRef: string,
+  ticketRef: number,
+  resp: { status: number; data?: {} },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/tickets/${ticketRef}`,
+    status: resp.status,
+    data: { ...ticket(projectRef, ticketRef), ...resp.data },
+  });
+}
+
+async function getProjectTicketTimeline(
+  page: Page,
+  projectRef: string,
+  ticketRef: number,
+) {
+  return getProjectTicketTimeline_(page, projectRef, ticketRef, {
+    status: 200,
+  });
+}
+
+async function getProjectTicketTimeline_(
+  page: Page,
+  projectRef: string,
+  ticketRef: number,
+  resp: { status: number },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/tickets/${ticketRef}/timeline`,
+    status: resp.status,
+    data: ticketTimeline(),
+  });
+}
+
+async function patchProjectTicket(
+  page: Page,
+  projectRef: string,
+  ticketRef: number,
+  resp?: { status: number; data: object },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return patch(page, {
+    ...{
+      url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/tickets/${ticketRef}`,
+      status: 200,
+      data: ticket(projectRef, ticketRef),
+    },
+    ...(resp || {}),
   });
 }
 
@@ -444,13 +554,13 @@ async function getNotificationsHub(
     prevCursor: null,
     nextCursor: faker.lorem.slug(1),
     items: [
-      notification("project:contribution:created"),
-      notification("project:contribution:updated"),
-      notification("project:contribution:comment"),
-      notification("project:ticket:created"),
-      notification("project:ticket:updated"),
-      notification("project:ticket:comment"),
-      notification("project:release:created"),
+      notification({ kind: "project:contribution:created" }),
+      notification({ kind: "project:contribution:updated" }),
+      notification({ kind: "project:contribution:comment" }),
+      notification({ kind: "project:ticket:created" }),
+      notification({ kind: "project:ticket:updated" }),
+      notification({ kind: "project:ticket:comment" }),
+      notification({ kind: "project:release:created" }),
     ],
     ...(data_ ? data_ : {}),
   };
@@ -512,14 +622,17 @@ type Response = {
   data?: object;
   status: number;
 };
+
 async function get(page: Page, response: Response) {
   const url = response.url.startsWith("/") ? response.url : `/${response.url}`;
 
-  return page.route(`*/**/api${url}`, async (request) => {
-    if ("status" in response) {
-      await request.fulfill({ status: response.status, json: response.data });
-    } else {
-      await request.fulfill({ json: response });
+  return page.route(`*/**/api${url}`, async (route, request) => {
+    if (request.method() === "GET") {
+      if ("status" in response) {
+        await route.fulfill({ status: response.status, json: response.data });
+      } else {
+        await route.fulfill({ json: response });
+      }
     }
   });
 }
@@ -527,11 +640,27 @@ async function get(page: Page, response: Response) {
 async function patch(page: Page, response: Response) {
   const url = response.url.startsWith("/") ? response.url : `/${response.url}`;
 
-  return page.route(`*/**/api${url}`, async (request) => {
-    if ("status" in response) {
-      await request.fulfill({ status: response.status, json: response.data });
-    } else {
-      await request.fulfill({ json: response });
+  return page.route(`*/**/api${url}`, async (route, request) => {
+    if (request.method() === "PATCH") {
+      if ("status" in response) {
+        await route.fulfill({ status: response.status, json: response.data });
+      } else {
+        await route.fulfill({ json: response });
+      }
+    }
+  });
+}
+
+async function post(page: Page, response: Response) {
+  const url = response.url.startsWith("/") ? response.url : `/${response.url}`;
+
+  return page.route(`*/**/api${url}`, async (route, request) => {
+    if (request.method() === "POST") {
+      if ("status" in response) {
+        await route.fulfill({ status: response.status, json: response.data });
+      } else {
+        await route.fulfill({ json: response });
+      }
     }
   });
 }
@@ -555,7 +684,14 @@ export {
   getProjectContributionTimeline_,
   getProjectContributionMergeCheck,
   getProjectContributionMergeCheck_,
+  postProjectContributionMerge,
+  patchProjectContribution,
   getProjectContributionDiff,
+  getProjectTicket,
+  getProjectTicket_,
+  getProjectTicketTimeline,
+  getProjectTicketTimeline_,
+  patchProjectTicket,
   getDefinitionSearch,
   getEntitySearch,
   getNameSearch,

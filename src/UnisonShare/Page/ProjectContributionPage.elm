@@ -23,6 +23,7 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Contribution as Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
+import UnisonShare.Contribution.ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
 import UnisonShare.Page.ProjectContributionChangesPage as ProjectContributionChangesPage
@@ -101,6 +102,11 @@ type Msg
     | ProjectContributionChangesPageMsg ProjectContributionChangesPage.Msg
 
 
+type OutMsg
+    = NoOut
+    | ContributionStatusUpdated { old : ContributionStatus, new : ContributionStatus }
+
+
 update :
     AppContext
     -> ProjectRef
@@ -109,14 +115,14 @@ update :
     -> WebData ProjectDetails
     -> Msg
     -> Model
-    -> ( Model, Cmd Msg )
+    -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef contribRef _ project msg model =
     case ( model.subPage, msg ) of
         ( _, NoOp ) ->
-            ( model, Cmd.none )
+            ( model, Cmd.none, NoOut )
 
         ( _, FetchContributionFinished contrib ) ->
-            ( { model | contribution = contrib }, Cmd.none )
+            ( { model | contribution = contrib }, Cmd.none, NoOut )
 
         ( _, ShowEditModal ) ->
             case ( appContext.session, model.contribution ) of
@@ -128,10 +134,10 @@ update appContext projectRef contribRef _ project msg model =
                                 projectRef
                                 (ProjectContributionFormModal.Edit (Contribution.toSummary contrib))
                     in
-                    ( { model | modal = EditModal formModel }, Cmd.map ProjectContributionFormModalMsg formCmd )
+                    ( { model | modal = EditModal formModel }, Cmd.map ProjectContributionFormModalMsg formCmd, NoOut )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ( _, ProjectContributionFormModalMsg formMsg ) ->
             case ( appContext.session, model.contribution ) of
@@ -160,16 +166,17 @@ update appContext projectRef contribRef _ project msg model =
                             in
                             ( { model | modal = modal, contribution = contribution }
                             , Cmd.map ProjectContributionFormModalMsg cmd
+                            , NoOut
                             )
 
                         _ ->
-                            ( model, Cmd.none )
+                            ( model, Cmd.none, NoOut )
 
                 _ ->
-                    ( model, Cmd.none )
+                    ( model, Cmd.none, NoOut )
 
         ( _, CloseModal ) ->
-            ( { model | modal = NoModal }, Cmd.none )
+            ( { model | modal = NoModal }, Cmd.none, NoOut )
 
         ( Overview overviewPage, ProjectContributionOverviewPageMsg overviewPageMsg ) ->
             let
@@ -181,19 +188,20 @@ update appContext projectRef contribRef _ project msg model =
                         overviewPageMsg
                         overviewPage
 
-                contrib =
+                ( contrib, out ) =
                     case outMsg of
                         ProjectContributionOverviewPage.NoOut ->
-                            model.contribution
+                            ( model.contribution, NoOut )
 
                         ProjectContributionOverviewPage.ContributionStatusUpdated status ->
-                            RemoteData.map (\c -> { c | status = status }) model.contribution
+                            ( RemoteData.map (\c -> { c | status = status.new }) model.contribution, ContributionStatusUpdated status )
             in
             ( { model
                 | contribution = contrib
                 , subPage = Overview overviewPage_
               }
             , Cmd.map ProjectContributionOverviewPageMsg overviewPageCmd
+            , out
             )
 
         ( Changes changesPage, ProjectContributionChangesPageMsg changesPageMsg ) ->
@@ -207,10 +215,11 @@ update appContext projectRef contribRef _ project msg model =
             in
             ( { model | subPage = Changes changesPage_ }
             , Cmd.map ProjectContributionChangesPageMsg changesPageCmd
+            , NoOut
             )
 
         _ ->
-            ( model, Cmd.none )
+            ( model, Cmd.none, NoOut )
 
 
 updateSubPage : AppContext -> ProjectRef -> ContributionRef -> ProjectContributionRoute -> Model -> ( Model, Cmd Msg )
