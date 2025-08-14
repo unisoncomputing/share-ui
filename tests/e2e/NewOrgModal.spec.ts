@@ -11,13 +11,22 @@ test.describe("without being signed in", () => {
     await API.getAccount(page, "NOT_SIGNED_IN");
   });
 
-  test("can *NOT* see the 'New Org' button", async ({ page }) => {
+  test("can *NOT* see the 'New Org' button", async ({ page, isMobile }) => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
+    await expect(page).toHaveScreenshot("no-new-org-button.png", {
+      maxDiffPixels: 100,
+    });
 
-    await expect(
-      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
-    ).not.toBeVisible();
+    if (isMobile) {
+      await expect(
+        page.locator(".signed-in-nav_mobile .button").getByText("New Org"),
+      ).not.toBeVisible();
+    } else {
+      await expect(
+        page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+      ).not.toBeVisible();
+    }
   });
 });
 
@@ -26,12 +35,21 @@ test.describe("while being signed in", () => {
     await API.getAccount(page, "@alice", { isSuperadmin: true });
   });
 
-  test("can see the 'New Org' button", async ({ page }) => {
+  test("can see the 'New Org' button", async ({ page, isMobile }) => {
     const response = await page.goto("http://localhost:1234");
     expect(response?.status()).toBeLessThan(400);
+    await expect(page).toHaveScreenshot("new-org-button.png", {
+      maxDiffPixels: 100,
+    });
 
-    await expect(
-      page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
-    ).toBeVisible();
+    if (isMobile) {
+      await expect(
+        page.locator(".signed-in-nav_mobile .button").getByText("New Org"),
+      ).toBeVisible();
+    } else {
+      await expect(
+        page.locator(".signed-in-nav_desktop .button").getByText("New Org"),
+      ).toBeVisible();
+    }
   });
 });
