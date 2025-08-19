@@ -1,0 +1,115 @@
+.workspace-card {
+  --c-workspace-card_border: var(--u-color_border_subdued);
+  --c-workspace-card_background: var(--u-color_container_faded);
+  --c-workspace-card_width: calc(var(--readable-column-width-medium) + 2rem);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  width: var(--c-workspace-card_width);
+
+  & .workspace-card_titlebar {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    height: 2.5rem;
+    border-bottom: 1px solid var(--c-workspace-card_border);
+    font-size: var(--font-size-medium);
+    color: var(--u-color_text_subdued);
+    position: relative;
+
+    & .workspace-card_titlebar_left {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    & .workspace-card_titlebar_right {
+      position: absolute;
+      right: 0.325rem;
+    }
+
+    & .workspace-card_title {
+      font-weight: bold;
+    }
+  }
+
+  & .tab-list {
+    --c-color_tabs_text: var(--u-color_text_very-subdued);
+    --c-color_tabs_border: var(--color-card-border);
+    --c-color_tabs_text_selected: var(--u-color_text_subdued);
+    --c-color_tabs_border_selected: var(--u-color_border_emphasized);
+    --c-color_tabs_text_hovered: var(--u-color_text);
+    --c-color_tabs_border_hovered: var(--color-card-border);
+
+    & .tab {
+      font-weight: 600;
+      font-size: var(--font-size-small);
+    }
+  }
+
+  & .workspace-card_main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.75rem;
+    width: 100%;
+
+    container-name: doc-container;
+    container-type: inline-size;
+  }
+
+  & .workspace-card_error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  & .workspace-card_loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.workspace-card.card {
+  --color-card-bg: var(--c-workspace-card_background);
+  --color-card-border: var(--c-workspace-card_border);
+}
+
+.workspace-card.focused {
+  --c-workspace-card_border: var(--u-color_border);
+  --c-workspace-card_background: var(--u-color_container_selected);
+
+  & .workspace-card_titlebar {
+    color: var(--u-color_text);
+    background: var(--u-color_container);
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+  }
+
+  & .tab-list {
+    --c-color_tabs_border: var(--color-card-border);
+    background: var(--u-color_container);
+  }
+}
+
+.workspace-card .definition-doc aside {
+  right: -16.5rem;
+}
+
+@container workspace-pane (max-width: 968px) {
+  /* TODO: these are the styles from ui-core. This container query probably
+   * belongs there showhow */
+  .workspace-card .definition-doc aside {
+    position: relative;
+    right: auto;
+    width: auto;
+    margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+  }
+}

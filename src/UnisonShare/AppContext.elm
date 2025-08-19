@@ -86,9 +86,9 @@ lastActiveNotificationsTabToString tab =
 
 
 toCodeConfig : AppContext -> CodeBrowsingContext -> Perspective -> Code.Config.Config
-toCodeConfig appContex codeBrowsingContext perspective =
+toCodeConfig appContex context perspective =
     { operatingSystem = appContex.operatingSystem
     , perspective = perspective
-    , toApiEndpoint = Api.codebaseApiEndpointToEndpoint codeBrowsingContext
+    , toApiEndpoint = Api.codebaseApiEndpointToEndpoint context
     , api = appContex.api
     }

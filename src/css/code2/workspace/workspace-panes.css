@@ -1,0 +1,48 @@
+.workspace-panes,
+.workspace-panes_single-pane {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.workspace-panes_resize-handle {
+  width: 1.5rem;
+  z-index: 1;
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+  height: 100%;
+  cursor: col-resize;
+  position: relative;
+}
+
+.workspace-panes_resize-handle::before {
+  position: absolute;
+  top: 0;
+  left: 0.75rem;
+  bottom: 0;
+  background: var(--u-color_chrome_border);
+  width: 1px;
+  content: "";
+}
+
+.workspace-panes_resize-handle:hover::before {
+  background: var(--u-color_focus-border);
+}
+
+.workspace-panes .workspace-card {
+  --c-workspace-card_width: 100%;
+}
+
+/* TODO: these are the styles from ui-core. Would be better if it were more
+ * dynamic somehow */
+.workspace-panes .workspace-card aside {
+  position: relative;
+  right: auto;
+  width: auto;
+  margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+}
+
+.workspace-panes .workspace-card_main-content:has(> .rich) {
+  overflow-x: auto;
+}
