@@ -48,6 +48,7 @@ import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (tag)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.MultiSearch as MultiSearch exposing (MultiSearch)
+import Lib.ProdDebug as ProdDebug
 import Lib.Search as Search exposing (Search)
 import Lib.SearchResults as SearchResults
 import Lib.UserHandle as UserHandle exposing (UserHandle)
@@ -272,7 +273,19 @@ update appContext msg model =
                         List.length (String.split " " model.fieldValue) > 1
                 in
                 if moreThan1Word then
-                    ( model, Cmd.none, NoOut )
+                    case model.search of
+                        BlendedSearch s ->
+                            ( { model
+                                | search =
+                                    BlendedSearch
+                                        (updateSearchWithResult searchKeys.entity (Ok []) s)
+                              }
+                            , Cmd.none
+                            , NoOut
+                            )
+
+                        _ ->
+                            ( model, Cmd.none, NoOut )
 
                 else
                     case model.search of
