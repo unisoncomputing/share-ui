@@ -10,7 +10,8 @@ import Code.FullyQualifiedNameSet as FQNSet
 import Code.Namespace exposing (NamespaceDetails)
 import Code.Perspective as Perspective exposing (Perspective)
 import Code.ReadmeCard as ReadmeCard
-import Code.Workspace as Workspace
+import Code2.Workspace.WorkspaceItemRef as WorkspaceItemRef
+import Code2.Workspace.WorkspacePanes as WorkspacePanes
 import Html exposing (Html)
 import Lib.HttpApi as HttpApi
 import RemoteData exposing (WebData)
@@ -38,7 +39,7 @@ type PageModal
 
 type CodeContent
     = PerspectivePage ReadmeCard.Model
-    | WorkspacePage Workspace.Model
+    | WorkspacePage WorkspacePanes.Model
 
 
 type alias Model =
@@ -65,6 +66,9 @@ init appContext context codeRoute =
                 Definition p _ ->
                     Perspective.fromParams p
 
+                DependentsOf p _ ->
+                    Perspective.fromParams p
+
         ( codebaseTree, codebaseTreeCmd ) =
             CodebaseTree.init config
 
@@ -77,11 +81,34 @@ init appContext context codeRoute =
 
                 Definition _ ref ->
                     let
+                        ( workspaceInit, workspaceCmdInit ) =
+                            WorkspacePanes.init
+                                appContext.operatingSystem
+
                         ( workspace, workspaceCmd ) =
-                            Workspace.init config (Just ref)
+                            WorkspacePanes.openDefinition config workspaceInit ref
                     in
                     ( WorkspacePage workspace
-                    , Cmd.map WorkspaceMsg workspaceCmd
+                    , Cmd.batch
+                        [ Cmd.map WorkspacePanesMsg workspaceCmdInit
+                        , Cmd.map WorkspacePanesMsg workspaceCmd
+                        ]
+                    )
+
+                DependentsOf _ ref ->
+                    let
+                        ( workspaceInit, workspaceCmdInit ) =
+                            WorkspacePanes.init
+                                appContext.operatingSystem
+
+                        ( workspace, workspaceCmd ) =
+                            WorkspacePanes.openDependentsOf config workspaceInit ref
+                    in
+                    ( WorkspacePage workspace
+                    , Cmd.batch
+                        [ Cmd.map WorkspacePanesMsg workspaceCmdInit
+                        , Cmd.map WorkspacePanesMsg workspaceCmd
+                        ]
                     )
 
         fetchNamespaceDetailsCmd =
@@ -123,7 +150,7 @@ type Msg
     | FinderMsg Finder.Msg
     | KeyboardShortcutMsg KeyboardShortcut.Msg
     | CodebaseTreeMsg CodebaseTree.Msg
-    | WorkspaceMsg Workspace.Msg
+    | WorkspacePanesMsg WorkspacePanes.Msg
 
 
 update : AppContext -> CodeBrowsingContext -> CodeRoute -> Msg -> Model -> ( Model, Cmd Msg )
@@ -303,20 +330,28 @@ update appContext context codeRoute msg model_ =
             , Cmd.batch [ cmd, navCmd, Cmd.map ReadmeCardMsg rmCmd ]
             )
 
-        ( WorkspacePage workspace, WorkspaceMsg workspaceMsg ) ->
+        ( WorkspacePage workspace, WorkspacePanesMsg workspaceMsg ) ->
             let
                 ( workspace_, workspaceCmd, outMsg ) =
-                    Workspace.update model.config workspaceMsg workspace
+                    WorkspacePanes.update model.config workspaceMsg workspace
 
                 ( m, outCmd ) =
                     case outMsg of
-                        Workspace.Focused ref ->
-                            ( model, navigateToCode appContext context (Route.definition model.config.perspective ref) )
+                        WorkspacePanes.Focused ref ->
+                            case ref of
+                                WorkspaceItemRef.DefinitionItemRef dRef ->
+                                    ( model, navigateToCode appContext context (Route.definition model.config.perspective dRef) )
 
-                        Workspace.Emptied ->
+                                WorkspaceItemRef.DependentsItemRef dRef ->
+                                    ( model, navigateToCode appContext context (Route.dependentsOf model.config.perspective dRef) )
+
+                                _ ->
+                                    ( model, Cmd.none )
+
+                        WorkspacePanes.Emptied ->
                             ( model, navigateToCode appContext context (Route.codeRoot model.config.perspective) )
 
-                        Workspace.ChangePerspectiveToSubNamespace ref subFqn ->
+                        WorkspacePanes.ChangePerspectiveToSubNamespace ref subFqn ->
                             let
                                 perspective =
                                     let
@@ -330,9 +365,9 @@ update appContext context codeRoute msg model_ =
                                     in
                                     Perspective.toNamespacePerspective model.config.perspective fullFqn
                             in
-                            ( model, navigateToCode appContext context (Route.replacePerspective ref perspective) )
+                            ( model, navigateToCode appContext context (Route.replacePerspective (Just ref) perspective) )
 
-                        Workspace.ShowFinderRequest adhocFqn ->
+                        WorkspacePanes.ShowFinderRequest adhocFqn ->
                             let
                                 ( fm, fCmd ) =
                                     Finder.init model.config (SearchOptions.init model.config.perspective (Just adhocFqn))
@@ -346,7 +381,7 @@ update appContext context codeRoute msg model_ =
             , Cmd.batch
                 [ cmd
                 , outCmd
-                , Cmd.map WorkspaceMsg workspaceCmd
+                , Cmd.map WorkspacePanesMsg workspaceCmd
                 ]
             )
 
@@ -411,10 +446,17 @@ updateSubPage appContext codeBrowsingContext codeRoute model =
                 ( workspace, workspaceCmd ) =
                     case model.content of
                         WorkspacePage ws ->
-                            Workspace.open config_ ws ref
+                            WorkspacePanes.openDefinition config_ ws ref
 
                         _ ->
-                            Workspace.init config_ (Just ref)
+                            let
+                                ( initWs, initCmd ) =
+                                    WorkspacePanes.init appContext.operatingSystem
+
+                                ( openDef, openDefCmd ) =
+                                    WorkspacePanes.openDefinition config_ initWs ref
+                            in
+                            ( openDef, Cmd.batch [ initCmd, openDefCmd ] )
 
                 model2 =
                     { model | config = config_, content = WorkspacePage workspace }
@@ -423,7 +465,40 @@ updateSubPage appContext codeBrowsingContext codeRoute model =
                     refreshSidebar config_ model2
             in
             ( model3
-            , Cmd.batch [ Cmd.map WorkspaceMsg workspaceCmd, cmd ]
+            , Cmd.batch [ Cmd.map WorkspacePanesMsg workspaceCmd, cmd ]
+            )
+
+        DependentsOf p ref ->
+            let
+                persp =
+                    p |> Perspective.fromParams
+
+                config_ =
+                    config persp
+
+                ( workspace, workspaceCmd ) =
+                    case model.content of
+                        WorkspacePage ws ->
+                            WorkspacePanes.openDependentsOf config_ ws ref
+
+                        _ ->
+                            let
+                                ( initWs, initCmd ) =
+                                    WorkspacePanes.init appContext.operatingSystem
+
+                                ( openDef, openDefCmd ) =
+                                    WorkspacePanes.openDefinition config_ initWs ref
+                            in
+                            ( openDef, Cmd.batch [ initCmd, openDefCmd ] )
+
+                model2 =
+                    { model | config = config_, content = WorkspacePage workspace }
+
+                ( model3, cmd ) =
+                    refreshSidebar config_ model2
+            in
+            ( model3
+            , Cmd.batch [ Cmd.map WorkspacePanesMsg workspaceCmd, cmd ]
             )
 
 
@@ -500,7 +575,7 @@ subscriptions model =
         WorkspacePage ws ->
             Sub.batch
                 [ KeyboardEvent.subscribe KeyboardEvent.Keydown Keydown
-                , Sub.map WorkspaceMsg (Workspace.subscriptions ws)
+                , Sub.map WorkspacePanesMsg (WorkspacePanes.subscriptions ws)
                 ]
 
 
@@ -508,8 +583,8 @@ subscriptions model =
 -- VIEW
 
 
-viewContent : Perspective -> CodeContent -> PageContent Msg
-viewContent perspective content =
+viewContent : AppContext -> Perspective -> CodeContent -> PageContent Msg
+viewContent appContext perspective content =
     case content of
         PerspectivePage readmeCard ->
             PageContent.oneColumn
@@ -521,7 +596,16 @@ viewContent perspective content =
                 )
 
         WorkspacePage workspace ->
-            PageContent.oneColumn [ Html.map WorkspaceMsg (Workspace.view workspace) ]
+            let
+                cfg =
+                    { operatingSystem = appContext.operatingSystem
+                    , withDependents = True
+                    , withDependencies = False
+                    , withNamespaceDropdown = True
+                    , withFocusedPaneIndicator = False
+                    }
+            in
+            PageContent.oneColumn [ Html.map WorkspacePanesMsg (WorkspacePanes.view cfg workspace) ]
 
 
 viewSidebar : Model -> Sidebar Msg
@@ -534,7 +618,7 @@ viewSidebar model =
             case model.content of
                 WorkspacePage workspace ->
                     workspace
-                        |> Workspace.currentlyOpenFqns
+                        |> WorkspacePanes.currentlyOpenFqns
                         |> FQNSet.fromList
 
                 _ ->
@@ -556,7 +640,12 @@ view : AppContext -> (Msg -> msg) -> Model -> ( PageLayout msg, Maybe (Html msg)
 view appContext toMsg model =
     let
         content =
-            PageContent.map toMsg (viewContent model.config.perspective model.content)
+            PageContent.map toMsg
+                (viewContent
+                    appContext
+                    model.config.perspective
+                    model.content
+                )
 
         modal =
             case model.modal of
@@ -578,7 +667,7 @@ view appContext toMsg model =
             )
 
         WorkspacePage _ ->
-            ( PageLayout.sidebarLeftContentLayout
+            ( PageLayout.sidebarEdgeToEdgeLayout
                 appContext.operatingSystem
                 (Sidebar.map toMsg (viewSidebar model))
                 content
