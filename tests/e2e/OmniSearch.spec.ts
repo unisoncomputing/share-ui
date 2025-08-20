@@ -127,6 +127,32 @@ test.describe("definition search", () => {
       await expect(page.getByText("No matches found")).toBeVisible();
     });
   });
+
+  test.describe("with more than 1 word", () => {
+    const query = "[a] -> [a]";
+
+    test.beforeEach(async ({ page }) => {
+      await page.goto("http://localhost:1234/");
+      await API.getDefinitionSearch(page, query);
+      await API.getEntitySearch(page, `@${query}`);
+      await API.getNameSearch(page, query);
+
+      const field = searchField(page);
+      await field.focus();
+      await field.fill(query);
+    });
+
+    test("shows definitions matches", async ({ page }) => {
+      await expect(searchResults(page)).toBeVisible();
+      await expect(definitionMatches(page)).toHaveCount(3);
+    });
+
+    test("doesn't show any entity matches", async ({ page }) => {
+      await expect(searchResults(page)).toBeVisible();
+      await expect(projectMatches(page)).toHaveCount(0);
+      await expect(userMatches(page)).toHaveCount(0);
+    });
+  });
 });
 
 test.describe("entity search", () => {

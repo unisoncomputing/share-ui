@@ -591,7 +591,7 @@ async function getNameSearch(page: Page, query = "map", results = null) {
 
 async function getDefinitionSearch(page: Page, query = "map", results = null) {
   return get(page, {
-    url: `/search-definitions?query=${query}`,
+    url: `/search-definitions?query=${encodeURI(query)}`,
     status: 200,
     data: {
       results: results || [
