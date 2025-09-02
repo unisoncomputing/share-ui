@@ -9,7 +9,14 @@ import { truncate } from "../common/utils.ts";
 async function userSocialImage(handle: string): Promise<React.Element> {
   console.log("[UserSocialImage]", "Fetching user", handle);
 
-  const user = await ShareAPI.getUser(handle);
+  const resp = await ShareAPI.getProfile(handle);
+
+  let user;
+  if (resp.kind === "org") {
+    user = resp.user;
+  } else {
+    user = resp;
+  }
 
   if (!user) {
     console.log("[UserSocialImage]", "User not found", handle);
@@ -80,8 +87,9 @@ const STYLES = {
     borderRadius: Sizing.toPx(8),
     boxShadow: `inset 0 0 0 ${Sizing.toPx(
       0.25,
-    )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${Colors.gray.darken30
-      }`,
+    )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
+      Colors.gray.darken30
+    }`,
   },
   text: {
     display: "flex",

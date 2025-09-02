@@ -17,7 +17,15 @@ type APIUser = {
   name?: string;
   avatarUrl?: string;
   bio?: string;
+  kind: "user";
 };
+
+type APIOrg = {
+  user: APIUser;
+  kind: "org";
+};
+
+type APIProfile = APIUser | APIOrg;
 
 type Author = {
   handle: string;
@@ -74,7 +82,7 @@ const ShareAPI = {
     )}/projects/${projectSlug}${path || ""}`;
   },
 
-  getUser: async (handle: string): Promise<APIUser> => {
+  getProfile: async (handle: string): Promise<APIProfile> => {
     const url = `${ShareAPI.baseURL}/users/${apiHandle(handle)}`;
 
     return fetch(url).then(async (resp) => {
@@ -82,7 +90,7 @@ const ShareAPI = {
         throw await error(url, resp);
       }
 
-      return resp.json() as Promise<APIUser>;
+      return resp.json() as Promise<APIProfile>;
     });
   },
 

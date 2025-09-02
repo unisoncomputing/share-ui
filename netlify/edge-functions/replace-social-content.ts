@@ -33,9 +33,17 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
 
   return route.caseOf({
     async UserOverview(handle) {
-      const user = await ShareAPI.getUser(handle);
+      const profile = await ShareAPI.getProfile(handle);
 
-      if (!user) return DefaultSocialContent;
+      if (!profile) return DefaultSocialContent;
+
+      let user;
+
+      if (profile.kind === "org") {
+        user = profile.user;
+      } else {
+        user = profile;
+      }
 
       const nameAndHandle = user.name
         ? `${user.name} @${user.handle}`
