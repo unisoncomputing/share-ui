@@ -16,7 +16,8 @@ async function userSocialImage(handle: string): Promise<React.Element> {
     return await defaultSocialImage();
   }
 
-  let title = user.name || user.handle;
+  // TODO: Improve to better handle orgs
+  let title = user.name || user.handle || handle;
   let titleFontSize = Sizing.toPx(4);
 
   if (title.length > MaxLength.at3) {
@@ -79,9 +80,8 @@ const STYLES = {
     borderRadius: Sizing.toPx(8),
     boxShadow: `inset 0 0 0 ${Sizing.toPx(
       0.25,
-    )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${
-      Colors.gray.darken30
-    }`,
+    )}px rgba(255, 255, 255, 0.25), 0 0 0 ${Sizing.toPx(0.25)}px ${Colors.gray.darken30
+      }`,
   },
   text: {
     display: "flex",
