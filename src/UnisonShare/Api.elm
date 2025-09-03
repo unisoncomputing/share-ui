@@ -1338,8 +1338,50 @@ codebaseApiEndpointToEndpoint context cbEndpoint =
     let
         base =
             baseCodePathFromContext context
+
+        -- TODO: Temporarily disable constructor suffixes in hashes
+        -- July 16 2024. SH: I wish the above comment said why it was disabled...
+        -- September 3 2025. SH: I still have no idea...
+        constructorSuffixRegex =
+            Maybe.withDefault Regex.never (Regex.fromString "@[ad]\\d$")
+
+        withoutConstructorSuffix h =
+            h
+                |> Hash.toApiUrlString
+                |> Regex.replace constructorSuffixRegex (always "")
+
+        prefixedRefPath prefix ref =
+            case Reference.hashQualified ref of
+                HQ.NameOnly fqn ->
+                    prefix ++ [ "by-name", FQN.toApiUrlString fqn ]
+
+                HQ.HashOnly h ->
+                    prefix ++ [ "by-hash", withoutConstructorSuffix h ]
+
+                HQ.HashQualified _ h ->
+                    prefix ++ [ "by-hash", withoutConstructorSuffix h ]
     in
     case cbEndpoint of
+        CodebaseApi.Dependencies { ref } ->
+            let
+                path =
+                    prefixedRefPath [ "definitions", "dependencies" ] ref
+            in
+            GET
+                { path = base ++ path
+                , queryParams = []
+                }
+
+        CodebaseApi.Dependents { ref } ->
+            let
+                path =
+                    prefixedRefPath [ "definitions", "dependents" ] ref
+            in
+            GET
+                { path = base ++ path
+                , queryParams = []
+                }
+
         CodebaseApi.Find { perspective, withinFqn, limit, sourceWidth, query } ->
             let
                 params =
@@ -1373,26 +1415,8 @@ codebaseApiEndpointToEndpoint context cbEndpoint =
 
         CodebaseApi.Definition { perspective, ref } ->
             let
-                -- TODO: Temporarily disable constructor suffixes in hashes
-                -- July 16 2024. SH: I wish the above comment said why it was disabled...
-                constructorSuffixRegex =
-                    Maybe.withDefault Regex.never (Regex.fromString "@[ad]\\d$")
-
-                withoutConstructorSuffix h =
-                    h
-                        |> Hash.toApiUrlString
-                        |> Regex.replace constructorSuffixRegex (always "")
-
                 path =
-                    case Reference.hashQualified ref of
-                        HQ.NameOnly fqn ->
-                            [ "definitions", "by-name", FQN.toApiUrlString fqn ]
-
-                        HQ.HashOnly h ->
-                            [ "definitions", "by-hash", withoutConstructorSuffix h ]
-
-                        HQ.HashQualified _ h ->
-                            [ "definitions", "by-hash", withoutConstructorSuffix h ]
+                    prefixedRefPath [ "definitions" ] ref
             in
             GET
                 { path = base ++ path
