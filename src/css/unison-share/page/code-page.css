@@ -92,3 +92,13 @@
   display: flex;
   flex-grow: 1;
 }
+
+.code-page .sidebar-toggled .columns {
+  padding-top: 2.25rem;
+}
+
+@media only screen and (--u-viewport_max-lg) {
+  .code-page .columns {
+    padding-top: 1.25rem;
+  }
+}

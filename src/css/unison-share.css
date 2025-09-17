@@ -20,3 +20,18 @@
 @import "./unison-share/timeline.css";
 @import "./unison-share/omni-search.css";
 @import "./unison-share/paginated.css";
+@import "./code2.css";
+
+/* TODO: put back into ui-core */
+:root {
+  --u-color_icon_very-subdued: var(--color-gray-6);
+  --u-color_chrome: var(--color-gray-9);
+  --u-color_chrome_subdued: var(--color-gray-10);
+  --u-color_chrome_emphasized: var(--color-gray-11);
+  --u-color_chrome_selected: var(--color-gray-10);
+  --u-color_chrome_border: var(--u-color_border);
+}
+
+.workspace-pane_focused .workspace-card.focused {
+  --c-workspace-card_background: var(--color-gray-11);
+}

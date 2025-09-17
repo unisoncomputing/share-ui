@@ -1,0 +1,153 @@
+.workspace-card.workspace-definition-item-card {
+  & .workspace-definition-item-card_other-names {
+    & .workspace-definition-item-card_other-names_button {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: var(--border-radius-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        & .icon {
+          color: var(--u-color_icon-on-action_hovered);
+        }
+      }
+    }
+
+    & .tooltip {
+      & .tooltip-bubble {
+        height: auto;
+      }
+    }
+  }
+
+  & .workspace-definition-item-card_other-names_list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    & .aka {
+      color: var(--u-color_text_subdued);
+    }
+
+    & .aka,
+    & .other-name {
+      display: flex;
+      line-height: 1;
+      padding: 0.25rem 0;
+    }
+
+    & .other-name {
+      flex-direction: row;
+      gap: 0.25rem;
+      align-items: center;
+
+      & .icon {
+        color: var(--u-color_icon_subdued);
+      }
+
+      & .fully-qualified-name {
+        height: auto;
+        padding: 0;
+      }
+    }
+  }
+
+  & .definition-hash {
+    margin-right: 0.75rem;
+    padding: 0 0.5rem;
+    border-radius: var(--border-radius-base);
+    height: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 0.2s;
+
+    & .tooltip {
+      margin-top: calc(0.25rem - 1px);
+      margin-left: 5.5rem;
+
+      & .tooltip-bubble {
+        height: 2.25rem;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    & .hash {
+      font-size: var(--font-size-extra-small);
+    }
+
+    & .icon {
+      font-size: var(--font-size-extra-small);
+      transition: none;
+    }
+
+    & .copy-on-click {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.25rem;
+
+      & .copy-on-click_success {
+        position: absolute;
+        margin-top: 3px;
+        margin-left: -1.5rem;
+
+        & .icon {
+          color: var(--u-color_positive_icon-on-element_subdued);
+          font-size: var(--font-size-small);
+        }
+      }
+    }
+
+    &:hover {
+      background: var(--u-color_action_hovered);
+
+      & .hash {
+        color: var(--u-color_text);
+      }
+
+      & .icon {
+        color: var(--u-color_icon);
+      }
+    }
+  }
+
+  & .mixed-docs-and-code {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  & .foldable-source {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+}
+
+@container workspace-pane (max-width: 968px) {
+  .workspace-card.workspace-definition-item-card {
+    & .definition-doc aside {
+      position: relative;
+      right: auto;
+      width: auto;
+      margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+    }
+
+    & .definition-source {
+      overflow: auto;
+      overflow-x: auto;
+    }
+
+    & .namespace-dropdown,
+    & .category-icon,
+    & .workspace-definition-item-card_other-names_list,
+    & .definition-hash {
+      display: none;
+    }
+  }
+}

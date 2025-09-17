@@ -1,0 +1,245 @@
+.workspace-card {
+  --c-workspace-card_border: var(--u-color_border_subdued);
+  --c-workspace-card_background: var(--u-color_container_faded);
+  --c-workspace-card_width: min(
+    calc(var(--readable-column-width-medium) + 2rem),
+    100%
+  );
+
+  .definition-doc {
+    --color-doc-source-bg: var(--u-color_container_subdued);
+  }
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  width: var(--c-workspace-card_width);
+  position: relative;
+  z-index: var(--layer-base);
+  transition: all 0.2s;
+
+  & .tooltip-with-shortcut {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  & .workspace-card_foldable-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    transition: height 0.2s ease-in-out;
+    width: 100%;
+    height: auto;
+    height: calc-size(auto, size);
+  }
+
+  & .workspace-card_titlebar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    height: 2.5rem;
+    font-size: var(--font-size-medium);
+    color: var(--u-color_text_subdued);
+    position: relative;
+    transition: none;
+    border-bottom: 1px solid var(--c-workspace-card_border);
+
+    & a:has(.fully-qualified-name):hover .fully-qualified-name_segment {
+      color: var(--u-color_interactive);
+    }
+
+    & .subdued {
+      color: var(--u-color_text_subdued);
+    }
+
+    & .workspace-card_titlebar_left {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+
+      & .copy-on-click {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.25rem;
+
+        & .copy-on-click_success {
+          position: absolute;
+          background: var(--u-color_positive_element_subdued);
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: 4px;
+          display: flex;
+          line-height: 1;
+          align-items: center;
+          justify-content: center;
+
+          & .icon {
+            color: var(--u-color_positive_icon-on-element_subdued);
+            font-size: var(--font-size-base);
+          }
+        }
+      }
+
+      & .tooltip {
+        margin-top: 0.5rem;
+        margin-left: -0.5rem;
+
+        & .tooltip-bubble {
+          height: 2.25rem;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+
+    & .workspace-card_titlebar_right {
+      position: absolute;
+      right: 0.325rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.125rem;
+
+      & .tooltip {
+        margin-top: 0.5rem;
+        margin-left: 2rem;
+
+        & .tooltip-bubble {
+          height: 2.25rem;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+
+    & .workspace-card_title {
+      font-weight: bold;
+    }
+  }
+
+  & .workspace-card_titlebar:has(+ .workspace-card_subtitlebar) {
+    border-bottom: 0;
+  }
+
+  & .workspace-card_subtitlebar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    padding-top: 0;
+    font-size: var(--font-size-medium);
+    color: var(--u-color_text_subdued);
+    position: relative;
+    transition: none;
+    border-bottom: 1px solid var(--c-workspace-card_border);
+  }
+
+  & .tab-list {
+    --c-color_tabs_text: var(--u-color_text_subdued);
+    --c-color_tabs_border: var(--color-card-border);
+    --c-color_tabs_text_selected: var(--u-color_text);
+    --c-color_tabs_border_selected: var(--u-color_border_emphasized);
+    --c-color_tabs_text_hovered: var(--u-color_text);
+    --c-color_tabs_border_hovered: var(--color-card-border);
+
+    & .tab {
+      font-weight: 600;
+      font-size: var(--font-size-small);
+    }
+  }
+
+  & .workspace-card_main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.75rem;
+    width: 100%;
+    font-size: var(--font-size-medium);
+
+    container-name: doc-container;
+    container-type: inline-size;
+  }
+
+  & .workspace-card_error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    & .error {
+      font-family: var(--font-monospace);
+    }
+  }
+
+  & .workspace-card_loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.workspace-card.card {
+  --color-card-bg: var(--c-workspace-card_background);
+  --color-card-border: var(--c-workspace-card_border);
+}
+
+.workspace-pane_focused .workspace-card.focused {
+  --c-workspace-card_border: var(--u-color_border);
+  --c-workspace-card_background: var(--u-color_container_selected);
+  border-color: var(--u-color_focus-border);
+  box-shadow: 0 0 0 2px var(--u-color_focus-outline);
+
+  & .workspace-card_titlebar {
+    color: var(--u-color_text);
+    background: var(--u-color_container);
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+  }
+
+  & .tab-list {
+    --c-color_tabs_border: var(--color-card-border);
+    background: var(--u-color_container);
+  }
+}
+
+.workspace-card:hover {
+  z-index: var(--layer-floating-controls);
+}
+
+.workspace-card:not(.focused):hover {
+  --c-workspace-card_border: var(--u-color_border);
+  --c-workspace-card_background: var(--u-color_container_selected);
+}
+
+.workspace-pane_focused .workspace-card.focused .definition-doc {
+  --color-doc-bg: var(--c-workspace-card_background);
+}
+
+.workspace-card .definition-doc aside {
+  right: -16.5rem;
+}
+
+.workspace-card.folded {
+  border-radius: var(--border-radius-base);
+
+  & .workspace-card_foldable-content {
+    height: 0;
+    overflow: hidden;
+  }
+
+  &.folded .workspace-card_titlebar,
+  & .workspace-card_titlebar {
+    border-bottom: 1px solid transparent;
+    transition: border 0.2s ease-in-out 0.2s;
+    border-radius: var(--border-radius-base);
+  }
+}

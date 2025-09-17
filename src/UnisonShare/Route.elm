@@ -14,6 +14,7 @@ module UnisonShare.Route exposing
     , cloud
     , codeRoot
     , definition
+    , dependentsOf
     , finishSignup
     , fromUrl
     , navigate
@@ -26,6 +27,7 @@ module UnisonShare.Route exposing
     , privacyPolicy
     , projectBranch
     , projectBranchDefinition
+    , projectBranchDependentsOf
     , projectBranchRoot
     , projectBranches
     , projectBranchesContributor
@@ -57,10 +59,9 @@ module UnisonShare.Route exposing
 
 import Browser.Navigation as Nav
 import Code.BranchRef as BranchRef exposing (BranchRef)
-import Code.Definition.Reference exposing (Reference(..))
+import Code.Definition.Reference as Reference exposing (Reference(..))
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
-import Code.HashQualified exposing (HashQualified(..))
 import Code.Perspective as Perspective exposing (Perspective, PerspectiveParams)
 import Code.UrlParsers
     exposing
@@ -93,6 +94,7 @@ import Url.Builder exposing (relative, string)
 type CodeRoute
     = CodeRoot PerspectiveParams
     | Definition PerspectiveParams Reference
+    | DependentsOf PerspectiveParams Reference
 
 
 type UserRoute
@@ -318,6 +320,15 @@ projectBranchDefinition projectRef_ branchRef_ pers ref =
     Project projectRef_ (ProjectBranch branchRef_ (Definition pp ref))
 
 
+projectBranchDependentsOf : ProjectRef -> BranchRef -> Perspective -> Reference -> Route
+projectBranchDependentsOf projectRef_ branchRef_ pers ref =
+    let
+        pp =
+            Perspective.toParams pers
+    in
+    Project projectRef_ (ProjectBranch branchRef_ (DependentsOf pp ref))
+
+
 projectBranchRoot : ProjectRef -> BranchRef -> Perspective -> Route
 projectBranchRoot projectRef_ branchRef pers =
     let
@@ -330,6 +341,11 @@ projectBranchRoot projectRef_ branchRef pers =
 definition : Perspective -> Reference -> CodeRoute
 definition pers ref =
     Definition (Perspective.toParams pers) ref
+
+
+dependentsOf : Perspective -> Reference -> CodeRoute
+dependentsOf pers ref =
+    DependentsOf (Perspective.toParams pers) ref
 
 
 codeRoot : Perspective -> CodeRoute
@@ -728,7 +744,11 @@ projectParser queryString =
 
 codeParser : Parser CodeRoute
 codeParser =
-    oneOf [ b codeDefinitionParser, b codeRootParser ]
+    oneOf
+        [ b codeDependentsOfParser
+        , b codeDefinitionParser
+        , b codeRootParser
+        ]
 
 
 codeRootParser : Parser CodeRoute
@@ -739,6 +759,11 @@ codeRootParser =
 codeDefinitionParser : Parser CodeRoute
 codeDefinitionParser =
     succeed Definition |= perspectiveParams |. slash |= reference
+
+
+codeDependentsOfParser : Parser CodeRoute
+codeDependentsOfParser =
+    succeed DependentsOf |= perspectiveParams |. slash |. s "dependents-of" |. slash |= reference
 
 
 {-| In environments like Unison Local, the UI is served with a base path
@@ -815,6 +840,12 @@ toUrlPattern r =
 
                 Definition (Perspective.ByNamespace _ _) ref ->
                     "/latest/namespaces/:fqn/;/" ++ refPattern ref
+
+                DependentsOf (Perspective.ByRoot _) ref ->
+                    "/latest/dependents-of/" ++ refPattern ref
+
+                DependentsOf (Perspective.ByNamespace _ _) ref ->
+                    "/latest/namespaces/:fqn/;/dependents-of/" ++ refPattern ref
 
         refPattern ref =
             case ref of
@@ -952,33 +983,6 @@ toUrlString route =
         namespaceSuffix =
             ";"
 
-        hqToPath hq =
-            case hq of
-                NameOnly fqn ->
-                    fqn |> FQN.toUrlSegments |> NEL.toList
-
-                HashOnly h ->
-                    [ Hash.toUrlString h ]
-
-                HashQualified _ h ->
-                    -- TODO: Currently not supported, since we favor the hash
-                    -- because HashQualified url parsing is broken
-                    [ Hash.toUrlString h ]
-
-        refPath ref =
-            case ref of
-                TypeReference hq ->
-                    "types" :: hqToPath hq
-
-                TermReference hq ->
-                    "terms" :: hqToPath hq
-
-                AbilityConstructorReference hq ->
-                    "ability-constructors" :: hqToPath hq
-
-                DataConstructorReference hq ->
-                    "data-constructors" :: hqToPath hq
-
         perspectiveParamsToPath pp includeNamespacesSuffix =
             case pp of
                 Perspective.ByRoot Perspective.Relative ->
@@ -1012,7 +1016,10 @@ toUrlString route =
                     perspectiveParamsToPath params False
 
                 Definition params ref ->
-                    perspectiveParamsToPath params True ++ refPath ref
+                    perspectiveParamsToPath params True ++ Reference.toUrlPath ref
+
+                DependentsOf params ref ->
+                    perspectiveParamsToPath params True ++ "dependents-of" :: Reference.toUrlPath ref
 
         paginationCursorToQueryParams cursor =
             case Paginated.toQueryParam cursor of
