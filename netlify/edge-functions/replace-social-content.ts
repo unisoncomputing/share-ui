@@ -235,6 +235,15 @@ async function getContent(rawUrl: string): Promise<SocialContent> {
   });
 }
 
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 async function replaceSocialContent(
   request: Request,
   context: Context,
@@ -257,7 +266,7 @@ async function replaceSocialContent(
   const regex = /<title>Unison Share<\/title>/i;
   const newContent = template
     .replaceAll("{{TITLE}}", content.title)
-    .replaceAll("{{DESCRIPTION}}", content.description)
+    .replaceAll("{{DESCRIPTION}}", escapeHtml(content.description))
     .replaceAll("{{IMAGE_URL}}", content.imageUrl)
     .replaceAll("{{URL}}", content.url);
 

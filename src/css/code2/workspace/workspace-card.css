@@ -6,7 +6,8 @@
     100%
   );
 
-  .definition-doc {
+  & .definition-doc {
+    --color-doc-bg: var(--c-workspace-card_background);
     --color-doc-source-bg: var(--u-color_container_subdued);
   }
 
@@ -218,10 +219,6 @@
 .workspace-card:not(.focused):hover {
   --c-workspace-card_border: var(--u-color_border);
   --c-workspace-card_background: var(--u-color_container_selected);
-}
-
-.workspace-pane_focused .workspace-card.focused .definition-doc {
-  --color-doc-bg: var(--c-workspace-card_background);
 }
 
 .workspace-card .definition-doc aside {
