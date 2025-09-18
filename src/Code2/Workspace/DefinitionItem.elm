@@ -37,6 +37,24 @@ type DefinitionItem
     | AbilityConstructorItem AbilityConstructorDetail
 
 
+isLib : DefinitionItem -> Bool
+isLib defItem =
+    MaybeE.isJust (toLib defItem)
+
+
+toLibFqn : FQN -> Maybe FQN
+toLibFqn fqn =
+    case fqn |> FQN.segments |> NEL.toList of
+        "lib" :: _ :: "lib" :: _ ->
+            Nothing
+
+        "lib" :: libName :: _ ->
+            Just (FQN.fromList [ "lib", libName ])
+
+        _ ->
+            Nothing
+
+
 toLib : DefinitionItem -> Maybe ProjectDependency
 toLib defItem =
     let

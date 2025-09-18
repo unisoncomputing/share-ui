@@ -211,6 +211,14 @@ viewNamespaceDropdown cfg =
             let
                 ns =
                     FQN.toString fqn
+
+                label =
+                    case DefinitionItem.toLibFqn fqn of
+                        Just libFqn ->
+                            FQN.toString (FQN.stripPrefix libFqn fqn)
+
+                        _ ->
+                            ns
             in
             div [ class "namespace-dropdown" ]
                 [ ActionMenu.items
@@ -224,7 +232,7 @@ viewNamespaceDropdown cfg =
                         ("Change perspective to " ++ ns)
                         (Click.onClick (dropdown.changePerspective fqn))
                     ]
-                    |> ActionMenu.fromButton dropdown.toggle ns
+                    |> ActionMenu.fromButton dropdown.toggle label
                     |> ActionMenu.extendingRight
                     |> ActionMenu.withButtonColor Button.Outlined
                     |> ActionMenu.shouldBeOpen cfg.state.namespaceDropdownIsOpen
