@@ -308,7 +308,7 @@ update config paneId msg model =
 
         SetFocusedItem wsRef ->
             ( { model | workspaceItems = WorkspaceItems.focusOn model.workspaceItems wsRef }
-            , Cmd.none
+            , scrollToItem paneId wsRef
             , FocusOn wsRef
             )
 

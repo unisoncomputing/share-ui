@@ -220,24 +220,30 @@ viewNamespaceDropdown cfg =
                         _ ->
                             ns
             in
-            div [ class "namespace-dropdown" ]
-                [ ActionMenu.items
-                    (ActionMenu.optionItem
-                        Icon.browse
-                        ("Find within " ++ ns)
-                        (Click.onClick (dropdown.findWithinNamespace fqn))
-                    )
-                    [ ActionMenu.optionItem
-                        Icon.intoFolder
-                        ("Change perspective to " ++ ns)
-                        (Click.onClick (dropdown.changePerspective fqn))
+            -- When stripping lib prefix resulting an empty FQN we don't
+            -- want to render a dropdown
+            if label == "." then
+                UI.nothing
+
+            else
+                div [ class "namespace-dropdown" ]
+                    [ ActionMenu.items
+                        (ActionMenu.optionItem
+                            Icon.browse
+                            ("Find within " ++ ns)
+                            (Click.onClick (dropdown.findWithinNamespace fqn))
+                        )
+                        [ ActionMenu.optionItem
+                            Icon.intoFolder
+                            ("Change perspective to " ++ ns)
+                            (Click.onClick (dropdown.changePerspective fqn))
+                        ]
+                        |> ActionMenu.fromButton dropdown.toggle label
+                        |> ActionMenu.extendingRight
+                        |> ActionMenu.withButtonColor Button.Outlined
+                        |> ActionMenu.shouldBeOpen cfg.state.namespaceDropdownIsOpen
+                        |> ActionMenu.view
                     ]
-                    |> ActionMenu.fromButton dropdown.toggle label
-                    |> ActionMenu.extendingRight
-                    |> ActionMenu.withButtonColor Button.Outlined
-                    |> ActionMenu.shouldBeOpen cfg.state.namespaceDropdownIsOpen
-                    |> ActionMenu.view
-                ]
 
         _ ->
             UI.nothing
