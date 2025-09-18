@@ -44,7 +44,12 @@ toString ref =
 
 toDomString : WorkspaceItemRef -> String
 toDomString ref =
-    ref |> toString |> String.replace "." "__"
+    ref
+        |> toString
+        |> String.toLower
+        |> String.replace ": " "___"
+        |> String.replace " " "-"
+        |> String.replace "." "__"
 
 
 toHumanString : WorkspaceItemRef -> String
