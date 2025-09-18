@@ -306,7 +306,7 @@ titlebarRight cfg =
 
         dependentsButton =
             -- Feature flag dependents (which aren't ready in UCM yet, but exist in Share)
-            if cfg.withDependents then
+            if cfg.withDependents && not (DefinitionItem.isBuiltin cfg.item) then
                 titlebarButton cfg.showDependents Icon.dependents
                     |> TitlebarButton.withLeftOfTooltip (text "View direct dependents")
                     |> TitlebarButton.view
