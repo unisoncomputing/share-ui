@@ -12,6 +12,7 @@ const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition
 const blogEngineLib = require("./api-stubs/blog-engine-lib.json");
 const browseBlog = require("./api-stubs/browse-blog.json");
 const notifications = require("./api-stubs/notifications.json");
+const branchDiff = require("./api-stubs/branch-diff.json");
 
 // ENV
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
@@ -224,6 +225,10 @@ module.exports = (env) => {
 
               if (req.url.endsWith("/browse")) {
                 res.send(browseBlog);
+              }
+
+              if (req.url.endsWith("/diff")) {
+                res.send(branchDiff);
               }
 
               if (

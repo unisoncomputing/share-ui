@@ -373,6 +373,26 @@ viewChangeIcon item =
     let
         type_ =
             ChangeLine.toString item
+
+        icon =
+            case item of
+                ChangeLine.Added _ _ ->
+                    Icon.largePlus
+
+                ChangeLine.Removed _ _ ->
+                    Icon.dash
+
+                ChangeLine.Updated _ _ ->
+                    Icon.refreshSmallBold
+
+                ChangeLine.RenamedFrom _ _ ->
+                    Icon.tag
+
+                ChangeLine.Aliased _ _ ->
+                    Icon.tags
+
+                _ ->
+                    Icon.largeDot
     in
     Tooltip.text type_
         |> Tooltip.tooltip
@@ -382,7 +402,7 @@ viewChangeIcon item =
                 [ class "change-icon"
                 , class (String.toLower type_)
                 ]
-                [ Icon.view Icon.largeDot ]
+                [ Icon.view icon ]
             )
 
 
