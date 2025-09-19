@@ -193,13 +193,17 @@
 
       & .diff-side {
         width: 50%;
-        padding: 0.5rem 1rem;
         overflow: auto;
 
         & header {
-          background: var(--u-color_element-subdued);
+          background: var(--u-color_element_subdued);
+          padding: 0.5rem 1rem;
           line-height: 1;
           font-size: var(--font-size-extra-small);
+        }
+
+        & code {
+          padding: 0.5rem 1rem;
         }
       }
 
