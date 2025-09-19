@@ -319,4 +319,4 @@ view os wsCard =
                 html
 
             else
-                Click.view [] [ html ] click
+                Click.view [ class "clickable-workspace-card" ] [ html ] click

@@ -1,3 +1,12 @@
+.clickable-workspace-card {
+  --c-workspace-card_width: min(
+    calc(var(--readable-column-width-medium) + 2rem),
+    100%
+  );
+
+  width: var(--c-workspace-card_width);
+}
+
 .workspace-card {
   --c-workspace-card_border: var(--u-color_border_subdued);
   --c-workspace-card_background: var(--u-color_container_faded);

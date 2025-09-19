@@ -12,6 +12,11 @@
   );
 }
 
+/* this is required to enable scrollTo behavior when focusing definitions */
+.code-page .columns {
+  height: 100%;
+}
+
 .code-page .sidebar .namespace-header {
   display: flex;
   flex-direction: row;
