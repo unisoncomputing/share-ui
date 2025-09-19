@@ -200,13 +200,14 @@
           padding: 0.5rem 1rem;
           line-height: 1;
           font-size: var(--font-size-extra-small);
+          text-transform: uppercase;
 
           &.diff-old-header {
-            color: var(--color-pink-1);
+            color: var(--color-pink-2);
           }
 
           &.diff-new-header {
-            color: var(--color-green-1);
+            color: var(--color-green-2);
           }
         }
 
