@@ -201,6 +201,7 @@
           line-height: 1;
           font-size: var(--font-size-extra-small);
           text-transform: uppercase;
+          font-weight: bold;
 
           &.diff-old-header {
             color: var(--color-pink-2);
