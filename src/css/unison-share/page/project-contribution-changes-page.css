@@ -200,7 +200,14 @@
           padding: 0.5rem 1rem;
           line-height: 1;
           font-size: var(--font-size-extra-small);
-          border-bottom: 1px solid var(--u-color_border);
+
+          &.diff-old-header {
+            color: var(--color-pink-1);
+          }
+
+          &.diff-new-header {
+            color: var(--color-green-1);
+          }
         }
 
         & code {
