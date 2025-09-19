@@ -72,7 +72,7 @@
   }
 
   & .workspace-minimap {
-    position: absolute;
+    position: fixed;
     z-index: var(--layer-floating-controls);
     right: 1rem;
     max-height: 75%;
