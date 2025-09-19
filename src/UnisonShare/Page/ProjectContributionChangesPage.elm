@@ -22,7 +22,7 @@ import UI
 import UI.Button as Button
 import UI.Card as Card
 import UI.Click as Click
-import UI.Icon as Icon
+import UI.Icon as Icon exposing (Icon)
 import UI.PageContent as PageContent exposing (PageContent)
 import UI.Placeholder as Placeholder
 import UI.StatusBanner as StatusBanner
@@ -368,31 +368,33 @@ branchLink projectRef diffBranchRef ref label =
         |> Link.view_ label
 
 
+changeIcon : ChangeLine -> Icon msg
+changeIcon changeLine =
+    case changeLine of
+        ChangeLine.Added _ _ ->
+            Icon.largePlus
+
+        ChangeLine.Removed _ _ ->
+            Icon.dash
+
+        ChangeLine.Updated _ _ ->
+            Icon.refreshSmallBold
+
+        ChangeLine.RenamedFrom _ _ ->
+            Icon.tag
+
+        ChangeLine.Aliased _ _ ->
+            Icon.tags
+
+        _ ->
+            Icon.largeDot
+
+
 viewChangeIcon : ChangeLine -> Html Msg
 viewChangeIcon item =
     let
         type_ =
             ChangeLine.toString item
-
-        icon =
-            case item of
-                ChangeLine.Added _ _ ->
-                    Icon.largePlus
-
-                ChangeLine.Removed _ _ ->
-                    Icon.dash
-
-                ChangeLine.Updated _ _ ->
-                    Icon.refreshSmallBold
-
-                ChangeLine.RenamedFrom _ _ ->
-                    Icon.tag
-
-                ChangeLine.Aliased _ _ ->
-                    Icon.tags
-
-                _ ->
-                    Icon.largeDot
     in
     Tooltip.text type_
         |> Tooltip.tooltip
@@ -402,8 +404,25 @@ viewChangeIcon item =
                 [ class "change-icon"
                 , class (String.toLower type_)
                 ]
-                [ Icon.view icon ]
+                [ Icon.view (changeIcon item) ]
             )
+
+
+viewChangeBadge : ChangeLine -> Html Msg
+viewChangeBadge changeLine =
+    let
+        type_ =
+            ChangeLine.toString changeLine
+    in
+    span [ class "change-badge_wrapper" ]
+        [ span
+            [ class "change-badge"
+            , class (String.toLower type_)
+            ]
+            [ Icon.view (changeIcon changeLine)
+            , text type_
+            ]
+        ]
 
 
 viewDefinitionIcon : DefinitionType -> Html msg
@@ -448,7 +467,11 @@ viewDiffTreeNode projectRef changedDefinitions changeLine =
                 |> Click.view [ class "change-title" ] [ FQN.view fqn ]
 
         view_ type_ content =
-            div [ class "change-line" ] [ viewChangeIcon changeLine, viewDefinitionIcon type_, content ]
+            div [ class "change-line" ]
+                [ viewChangeIcon changeLine
+                , viewDefinitionIcon type_
+                , content
+                ]
     in
     case changeLine of
         ChangeLine.Added type_ { shortName } ->
@@ -638,7 +661,7 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
     Card.card
         [ div [ class "definition-change-header" ]
             [ div [ class "change-line" ]
-                [ viewChangeIcon changeLine
+                [ viewChangeBadge changeLine
                 , viewDefinitionIcon type_
                 , content
                 ]
@@ -783,7 +806,7 @@ viewLibDep dep =
                 |> Card.asContained
                 |> Card.view
 
-        changeIcon type_ =
+        changeIcon_ type_ icon =
             Tooltip.text type_
                 |> Tooltip.tooltip
                 |> Tooltip.withArrow Tooltip.Start
@@ -792,7 +815,7 @@ viewLibDep dep =
                         [ class "change-icon"
                         , class (String.toLower type_)
                         ]
-                        [ Icon.view Icon.largeDot ]
+                        [ Icon.view icon ]
                     )
 
         viewTitle name =
@@ -805,7 +828,7 @@ viewLibDep dep =
     case dep of
         LibDep.Added { name } ->
             viewCard
-                [ changeIcon "Added"
+                [ changeIcon_ "Added" Icon.largePlus
                 , div [ class "def-icon-anchor" ]
                     [ Tooltip.text "Lib dependency"
                         |> Tooltip.tooltip
@@ -817,7 +840,7 @@ viewLibDep dep =
 
         LibDep.Removed { name } ->
             viewCard
-                [ changeIcon "Removed"
+                [ changeIcon_ "Removed" Icon.dash
                 , div [ class "def-icon-anchor" ]
                     [ Tooltip.text "Lib dependency"
                         |> Tooltip.tooltip

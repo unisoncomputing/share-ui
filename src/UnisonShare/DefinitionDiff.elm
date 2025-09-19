@@ -3,7 +3,7 @@ module UnisonShare.DefinitionDiff exposing (..)
 import Code.Hash as Hash exposing (Hash)
 import Code.Syntax.SyntaxConfig exposing (SyntaxConfig)
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
-import Html exposing (Html, code, div, pre, span, text)
+import Html exposing (Html, code, div, header, pre, span, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
@@ -166,8 +166,14 @@ viewDiff toSyntaxConfig segments =
                 |> List.concatMap (viewNewDiffSegment (toSyntaxConfig True))
     in
     div [ class "diff-side-by-side" ]
-        [ pre [ class "monochrome diff-side" ] [ code [] old ]
-        , pre [ class "monochrome diff-side" ] [ code [] new ]
+        [ pre [ class "monochrome diff-side old" ]
+            [ header [ class "diff-old-header" ] [ text "Before" ]
+            , code [] old
+            ]
+        , pre [ class "monochrome diff-side new" ]
+            [ header [ class "diff-new-header" ] [ text "After" ]
+            , code [] new
+            ]
         ]
 
 

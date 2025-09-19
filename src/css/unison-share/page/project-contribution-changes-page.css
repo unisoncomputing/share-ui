@@ -195,6 +195,12 @@
         width: 50%;
         padding: 0.5rem 1rem;
         overflow: auto;
+
+        & header {
+          background: var(--u-color_element-subdued);
+          line-height: 1;
+          font-size: var(--font-size-extra-small);
+        }
       }
 
       & .diff-side:first-child {
@@ -290,6 +296,76 @@
 
     & .tooltip {
       left: -0.75rem;
+    }
+
+    & .change-badge_wrapper {
+      width: 5.5rem;
+      display: inline-flex;
+      justify-content: flex-end;
+    }
+
+    & .change-badge {
+      border-radius: 1rem;
+      line-height: 1;
+      display: inline-flex;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 0.125rem var(--u-color_container);
+      z-index: var(--layer-base);
+      font-size: var(--font-size-extra-small);
+      font-weight: bold;
+      text-transform: uppercase;
+
+      & .icon {
+        font-size: var(--font-size-extra-small);
+      }
+    }
+
+    & .change-badge.added {
+      background: var(--color-green-5);
+      color: var(--color-green-1);
+
+      & .icon {
+        color: var(--color-green-1);
+      }
+    }
+
+    & .change-badge.updated {
+      background: var(--color-orange-4);
+      color: var(--color-orange-0);
+
+      & .icon {
+        color: var(--color-orange-0);
+      }
+    }
+
+    & .change-badge.removed {
+      background: var(--color-pink-5);
+      color: var(--color-pink-1);
+
+      & .icon {
+        color: var(--color-pink-1);
+      }
+    }
+
+    & .change-badge.renamed {
+      background: var(--color-blue-5);
+      color: var(--color-blue-2);
+
+      & .icon {
+        color: var(--color-blue-2);
+      }
+    }
+
+    & .change-badge.aliased {
+      background: var(--color-purple-5);
+      color: var(--color-purple-2);
+
+      & .icon {
+        color: var(--color-purple-2);
+      }
     }
 
     & .change-icon {
