@@ -202,14 +202,7 @@
           font-size: var(--font-size-extra-small);
           text-transform: uppercase;
           font-weight: bold;
-
-          &.diff-old-header {
-            color: var(--color-pink-2);
-          }
-
-          &.diff-new-header {
-            color: var(--color-green-2);
-          }
+          color: var(--u-color_text_subdued);
         }
 
         & code {
