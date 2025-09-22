@@ -3,7 +3,6 @@ module UnisonShare.Page.UserProfilePage exposing (..)
 import Html exposing (Html, div, form, text)
 import Html.Attributes exposing (class)
 import Http
-import Json.Decode as Decode
 import Lib.Decode.Helpers as DecodeH
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.String.Helpers exposing (unicodeLength)
