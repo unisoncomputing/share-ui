@@ -106,8 +106,8 @@
   }
 
   .org-people-page
-    .member_profile-snippet
-    .profile-snippet:not(.profile-snippet_handle-only).profile-snippet_handle {
+    .profile-snippet:not(.profile-snippet_handle-only)
+    .profile-snippet_handle {
     display: none;
   }
 
