@@ -95,7 +95,7 @@
 
 @container org-people-members (max-width: 500px) {
   .org-people-page .members_list {
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .org-people-page .member {
