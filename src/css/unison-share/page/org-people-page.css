@@ -83,10 +83,6 @@
 }
 
 @container org-people-members (max-width: 968px) {
-  .org-people-page .member_profile-snippet {
-    width: auto;
-  }
-
   .org-people-page .member_role {
     width: 8rem;
   }
