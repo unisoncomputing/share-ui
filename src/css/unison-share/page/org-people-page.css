@@ -4,6 +4,7 @@
   gap: 1rem;
   width: 100%;
 
+  container-type: inline-size;
   container-name: org-people-members;
 }
 
@@ -82,9 +83,12 @@
 }
 
 @container org-people-members (max-width: 968px) {
-  .org-people-page .member,
-  .org-people-page .member_role {
+  .org-people-page .member_profile-snippet {
     width: auto;
+  }
+
+  .org-people-page .member_role {
+    width: 8rem;
   }
 
   .org-people-page .member_remove {
