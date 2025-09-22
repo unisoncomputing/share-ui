@@ -94,6 +94,10 @@
 }
 
 @container org-people-members (max-width: 500px) {
+  .org-people-page .members_list {
+    gap: 1.5rem;
+  }
+
   .org-people-page .member {
     flex-direction: column;
     gap: 0.25rem;
@@ -102,9 +106,8 @@
   }
 
   .org-people-page
-    .member_profile-snippet:not(
-      .profile-snippet_handle-only
-    ).profile-snippet_handle {
+    .member_profile-snippet
+    .profile-snippet:not(.profile-snippet_handle-only).profile-snippet_handle {
     display: none;
   }
 
