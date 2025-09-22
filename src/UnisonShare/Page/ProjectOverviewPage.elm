@@ -471,7 +471,10 @@ fetchDependencies appContext projectRef branchRef =
                 |> requiredAt [ "contents", "namespaceName" ] Decode.string
     in
     ShareApi.browseCodebase browsingContext perspective (Just namespace)
-        |> HttpApi.toRequest (Decode.field "namespaceListingChildren" (Decode.list (when (Decode.field "tag" Decode.string) ((==) "Subnamespace") decodeDependency)))
+        |> HttpApi.toRequest
+            (Decode.field "namespaceListingChildren"
+                (Decode.list (when (Decode.field "tag" Decode.string) ((==) "Subnamespace") decodeDependency))
+            )
             (RemoteData.fromResult >> FetchDependenciesFinished)
         |> HttpApi.perform appContext.api
 

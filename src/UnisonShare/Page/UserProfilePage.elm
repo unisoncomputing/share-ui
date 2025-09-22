@@ -4,6 +4,7 @@ import Html exposing (Html, div, form, text)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
+import Lib.Decode.Helpers as DecodeH
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.String.Helpers exposing (unicodeLength)
 import Lib.UserHandle as UserHandle exposing (UserHandle)
@@ -158,7 +159,7 @@ fetchProjects : AppContext -> UserHandle -> Cmd Msg
 fetchProjects appContext handle =
     ShareApi.userProjects handle
         |> HttpApi.toRequest
-            (Decode.list Project.decodeSummary)
+            (DecodeH.listWithoutFailures Project.decodeSummary)
             (RemoteData.fromResult >> FetchProjectsFinished)
         |> HttpApi.perform appContext.api
 
