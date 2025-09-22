@@ -98,6 +98,7 @@
     flex-direction: column;
     gap: 0.25rem;
     align-items: flex-start;
+    position: relative;
   }
 
   .org-people-page
@@ -109,5 +110,10 @@
 
   .org-people-page .member_role {
     text-align: left;
+  }
+
+  .org-people-page .member_remove {
+    position: absolute;
+    right: 0;
   }
 }
