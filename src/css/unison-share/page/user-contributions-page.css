@@ -99,6 +99,9 @@
   .user-contributions-page .user-contributions-page_sub-header {
     height: auto;
     width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 
   .user-contributions-page
@@ -125,5 +128,13 @@
     .text-field
     .help-text {
     margin-left: 0.5rem;
+  }
+
+  .user-contributions-page .contribution-list {
+    margin-left: 0;
+  }
+
+  .user-contributions-page .contribution .hash {
+    display: none;
   }
 }
