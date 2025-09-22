@@ -85,9 +85,29 @@
 @container org-people-members (max-width: 968px) {
   .org-people-page .member_role {
     width: 8rem;
+    text-align: right;
   }
 
   .org-people-page .member_remove {
     width: 2rem;
+  }
+}
+
+@container org-people-members (max-width: 500px) {
+  .org-people-page .member {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+
+  .org-people-page
+    .member_profile-snippet:not(
+      .profile-snippet_handle-only
+    ).profile-snippet_handle {
+    display: none;
+  }
+
+  .org-people-page .member_role {
+    text-align: left;
   }
 }
