@@ -10,7 +10,7 @@ import Code2.Workspace.DefinitionItem as DefinitionItem exposing (DefinitionItem
 import Code2.Workspace.WorkspaceItem as WorkspaceItem exposing (LoadedWorkspaceItem(..), WorkspaceItem(..))
 import Code2.Workspace.WorkspaceItemRef exposing (WorkspaceItemRef)
 import Code2.Workspace.WorkspaceItems as WorkspaceItems exposing (WorkspaceItems, focus, mapToList)
-import Html exposing (Html, div, header, text)
+import Html exposing (Html, div, header, small, span, text)
 import Html.Attributes exposing (class, classList, hidden)
 import Html.Events exposing (onClick)
 import UI
@@ -141,10 +141,10 @@ viewItem { selectItemMsg, closeItemMsg, keyboardShortcut } index ( item, focused
 
                 Success _ (DependentsWorkspaceItem _ _ defItem _) ->
                     div
-                        [ class "workspace-minimap_item_content" ]
+                        [ class "workspace-minimap_item_content dependents" ]
                         [ Icon.view Icon.dependents
-                        , text "Dependents of "
                         , FQN.view (DefinitionItem.name defItem)
+                        , small [] [ text "dependents" ]
                         ]
 
                 _ ->
