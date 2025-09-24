@@ -90,6 +90,22 @@ isPropagated cl =
             False
 
 
+shouldBeCollapsedByDefault : ChangeLine -> Bool
+shouldBeCollapsedByDefault changeLine =
+    case changeLine of
+        Aliased _ _ ->
+            True
+
+        RenamedFrom _ _ ->
+            True
+
+        Removed _ _ ->
+            True
+
+        _ ->
+            False
+
+
 byId : ChangeLineId -> ChangeLine -> Maybe ChangeLine
 byId id cl =
     case cl of

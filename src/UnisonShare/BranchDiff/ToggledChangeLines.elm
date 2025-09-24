@@ -30,10 +30,13 @@ isCollapsed (ToggledChangeLines changes) changeLine =
             let
                 key =
                     ChangeLineId.toKey changeLineId
+
+                withDefaultCollapsed =
+                    ChangeLine.shouldBeCollapsedByDefault changeLine
             in
             Dict.get key changes
                 |> Maybe.map ((==) Collapsed)
-                |> Maybe.withDefault False
+                |> Maybe.withDefault withDefaultCollapsed
 
         Nothing ->
             False
@@ -46,10 +49,13 @@ isExpanded (ToggledChangeLines changes) changeLine =
             let
                 key =
                     ChangeLineId.toKey changeLineId
+
+                withDefaultExpanded =
+                    not (ChangeLine.shouldBeCollapsedByDefault changeLine)
             in
             Dict.get key changes
                 |> Maybe.map ((==) Expanded)
-                |> Maybe.withDefault True
+                |> Maybe.withDefault withDefaultExpanded
 
         Nothing ->
             False
