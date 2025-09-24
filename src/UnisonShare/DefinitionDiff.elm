@@ -255,10 +255,10 @@ decodeDiff definitionType =
         ( oldKey, newKey, definitionKey ) =
             case definitionType of
                 Term ->
-                    ( "oldTerm", "newTerm", "termDefinition" )
+                    ( "left", "right", "termDefinition" )
 
                 Type ->
-                    ( "oldType", "newType", "typeDefinition" )
+                    ( "left", "right", "typeDefinition" )
 
         mkDiff diff oldDef newDef =
             Diff
@@ -269,7 +269,7 @@ decodeDiff definitionType =
                 diff
     in
     Decode.succeed mkDiff
-        |> requiredAt [ "diff", "contents" ] (nonEmptyList decodeSegment)
+        |> requiredAt [ "diff", "diff", "contents" ] (nonEmptyList decodeSegment)
         |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
         |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
 
@@ -280,10 +280,10 @@ decodeMismatched definitionType =
         ( oldKey, newKey, definitionKey ) =
             case definitionType of
                 Term ->
-                    ( "oldTerm", "newTerm", "termDefinition" )
+                    ( "left", "rigth", "termDefinition" )
 
                 Type ->
-                    ( "oldType", "newType", "typeDefinition" )
+                    ( "left", "rigth", "typeDefinition" )
 
         mkMismatched oldDef newDef =
             Mismatched
@@ -293,7 +293,7 @@ decodeMismatched definitionType =
                 }
     in
     Decode.succeed mkMismatched
-        -- TODO: what about builtins?defindi
+        -- TODO: what about builtins?
         |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
         |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
 
@@ -302,7 +302,7 @@ decode : DefinitionType -> Decode.Decoder DefinitionDiff
 decode definitionType =
     let
         decodeKind =
-            Decode.field "diffKind" Decode.string
+            Decode.at [ "diff", "diffKind" ] Decode.string
     in
     Decode.oneOf
         [ when decodeKind ((==) "diff") (decodeDiff definitionType)

@@ -3,6 +3,7 @@ module UnisonShare.BranchDiff.ChangeLine exposing (..)
 import Code.Definition.Reference as Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Hash as Hash exposing (Hash)
+import Code.Syntax as Syntax exposing (Syntax)
 import Json.Decode as Decode exposing (Decoder, field, oneOf)
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (requiredAt)
@@ -11,6 +12,7 @@ import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType(..))
+import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
 
 
 type alias NamespaceLineItem =
@@ -24,6 +26,7 @@ type ChangeLine
         , shortName : FQN
         , fullName : FQN
         , ref : Reference
+        , source : Syntax
         }
     | Removed
         DefinitionType
@@ -31,6 +34,7 @@ type ChangeLine
         , shortName : FQN
         , fullName : FQN
         , ref : Reference
+        , source : Syntax
         }
     | Updated
         DefinitionType
@@ -39,6 +43,7 @@ type ChangeLine
         , shortName : FQN
         , fullName : FQN
         , ref : Reference
+        , diff : DefinitionDiff
         }
     | Propagated
         DefinitionType
@@ -56,6 +61,7 @@ type ChangeLine
         , newFullName : FQN
         , newRef : Reference
         , oldRef : Reference
+        , source : Syntax
         }
     | Aliased
         DefinitionType
@@ -64,6 +70,7 @@ type ChangeLine
         , aliasFullName : FQN
         , otherNames : NEL.Nonempty FQN
         , ref : Reference
+        , source : Syntax
         }
     | Namespace NamespaceLineItem
 
@@ -153,6 +160,31 @@ fullName changeLine =
 
         Namespace d ->
             d.name
+
+
+source : ChangeLine -> Maybe Syntax
+source changeLine =
+    case changeLine of
+        Added _ d ->
+            Just d.source
+
+        Removed _ d ->
+            Just d.source
+
+        Updated _ _ ->
+            Nothing
+
+        Propagated _ _ ->
+            Nothing
+
+        RenamedFrom _ d ->
+            Just d.source
+
+        Aliased _ d ->
+            Just d.source
+
+        Namespace _ ->
+            Nothing
 
 
 shortName : ChangeLine -> FQN
@@ -285,29 +317,55 @@ decodeNamespace =
 decode_ : DefinitionType -> Decoder ChangeLine
 decode_ type_ =
     let
-        added_ hash shortName_ fullName_ =
+        diffType =
+            case type_ of
+                Term ->
+                    DefinitionDiff.Term
+
+                Type ->
+                    DefinitionDiff.Type
+
+                Ability ->
+                    DefinitionDiff.Type
+
+                Doc ->
+                    DefinitionDiff.Term
+
+                Test ->
+                    DefinitionDiff.Term
+
+                DataConstructor ->
+                    DefinitionDiff.Type
+
+                AbilityConstructor ->
+                    DefinitionDiff.Type
+
+        added_ hash shortName_ fullName_ stx =
             Added type_
                 { hash = hash
                 , shortName = shortName_
                 , fullName = fullName_
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                , source = stx
                 }
 
-        removed_ hash shortName_ fullName_ =
+        removed_ hash shortName_ fullName_ stx =
             Removed type_
                 { hash = hash
                 , shortName = shortName_
                 , fullName = fullName_
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                , source = stx
                 }
 
-        updated_ oldHash newHash shortName_ fullName_ =
+        updated_ oldHash newHash shortName_ fullName_ diff =
             Updated type_
                 { oldHash = oldHash
                 , newHash = newHash
                 , shortName = shortName_
                 , fullName = fullName_
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
+                , diff = diff
                 }
 
         propagated_ oldHash newHash shortName_ fullName_ =
@@ -319,7 +377,7 @@ decode_ type_ =
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) fullName_
                 }
 
-        renamedFrom_ hash oldNames newShortName newFullName =
+        renamedFrom_ hash oldNames newShortName newFullName stx =
             RenamedFrom type_
                 { hash = hash
                 , oldNames = oldNames
@@ -327,16 +385,26 @@ decode_ type_ =
                 , newFullName = newFullName
                 , oldRef = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) (NEL.head oldNames)
                 , newRef = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) newFullName
+                , source = stx
                 }
 
-        aliased_ hash aliasShortName aliasFullName otherNames =
+        aliased_ hash aliasShortName aliasFullName otherNames stx =
             Aliased type_
                 { hash = hash
                 , aliasShortName = aliasShortName
                 , otherNames = otherNames
                 , aliasFullName = aliasFullName
                 , ref = Reference.fromFQN (DefinitionType.toReferenceConstructor type_) aliasFullName
+                , source = stx
                 }
+
+        defSourcePrefix =
+            case type_ of
+                Type ->
+                    "typeDefinition"
+
+                _ ->
+                    "termDefinition"
     in
     oneOf
         [ when tag
@@ -345,6 +413,7 @@ decode_ type_ =
                 |> requiredAt [ "contents", "hash" ] Hash.decode
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
+                |> requiredAt [ "contents", "rendered", defSourcePrefix, "contents" ] Syntax.decode
             )
         , when tag
             ((==) "Removed")
@@ -352,6 +421,7 @@ decode_ type_ =
                 |> requiredAt [ "contents", "hash" ] Hash.decode
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
+                |> requiredAt [ "contents", "rendered", defSourcePrefix, "contents" ] Syntax.decode
             )
         , when tag
             ((==) "Updated")
@@ -360,6 +430,7 @@ decode_ type_ =
                 |> requiredAt [ "contents", "newHash" ] Hash.decode
                 |> requiredAt [ "contents", "shortName" ] FQN.decode
                 |> requiredAt [ "contents", "fullName" ] FQN.decode
+                |> requiredAt [ "contents", "diff" ] (DefinitionDiff.decode diffType)
             )
         , when tag
             ((==) "RenamedFrom")
@@ -368,6 +439,7 @@ decode_ type_ =
                 |> requiredAt [ "contents", "oldNames" ] (nonEmptyList FQN.decode)
                 |> requiredAt [ "contents", "newShortName" ] FQN.decode
                 |> requiredAt [ "contents", "newFullName" ] FQN.decode
+                |> requiredAt [ "contents", "rendered", defSourcePrefix, "contents" ] Syntax.decode
             )
         , when tag
             ((==) "Aliased")
@@ -376,6 +448,7 @@ decode_ type_ =
                 |> requiredAt [ "contents", "aliasShortName" ] FQN.decode
                 |> requiredAt [ "contents", "aliasFullName" ] FQN.decode
                 |> requiredAt [ "contents", "otherNames" ] (nonEmptyList FQN.decode)
+                |> requiredAt [ "contents", "rendered", defSourcePrefix, "contents" ] Syntax.decode
             )
         , when tag
             ((==) "Propagated")

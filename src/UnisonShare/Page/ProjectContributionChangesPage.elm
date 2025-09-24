@@ -1,6 +1,6 @@
 port module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 
-import Code.BranchRef as BranchRef exposing (BranchRef)
+import Code.BranchRef as BranchRef
 import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
@@ -10,13 +10,11 @@ import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
-import Json.Decode as Decode
-import Lib.Decode.Helpers exposing (failInvalid)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
 import List.Nonempty as NEL
-import RemoteData exposing (RemoteData(..), WebData)
+import RemoteData exposing (RemoteData(..))
 import String.Extra exposing (pluralize)
 import UI
 import UI.Button as Button
@@ -35,13 +33,13 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
-import UnisonShare.BranchDiff.ChangedDefinitions as ChangedDefinitions exposing (ChangedDefinitions)
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
 import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
+import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing (ToggledChangeLines)
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
-import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
+import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
@@ -55,7 +53,7 @@ import Url
 
 type alias Model =
     { branchDiff : BranchDiffState
-    , changedDefinitions : ChangedDefinitions
+    , toggledChangeLines : ToggledChangeLines
     , urlFocusedChangeLineId : Maybe ChangeLineId
     }
 
@@ -69,7 +67,7 @@ type alias DiffBranches =
 init : AppContext -> ProjectRef -> ContributionRef -> Maybe ChangeLineId -> ( Model, Cmd Msg )
 init appContext projectRef contribRef changeLineId =
     ( { branchDiff = BranchDiffState.Loading
-      , changedDefinitions = ChangedDefinitions.empty
+      , toggledChangeLines = ToggledChangeLines.empty
       , urlFocusedChangeLineId = changeLineId
       }
     , fetchBranchDiff appContext projectRef contribRef
@@ -82,11 +80,9 @@ init appContext projectRef contribRef changeLineId =
 
 type Msg
     = FetchBranchDiffFinished (HttpResult BranchDiffState)
-    | ExpandChangeDetails ChangeLine
     | ToggleChangeDetails ChangeLine
-    | FetchDefinitionDiffFinished ChangeLine (WebData DefinitionDiff)
-    | FetchDefinitionSyntaxFinished ChangeLine (WebData Syntax.Syntax)
     | CopyChangeLinePermalink ChangeLineId
+    | ScrollTo ChangeLineId
     | NoOp
 
 
@@ -95,94 +91,78 @@ update appContext projectRef contribRef msg model =
     case msg of
         FetchBranchDiffFinished branchDiffState ->
             let
-                ( branchDiffState_, cmd ) =
+                ( model_, cmd ) =
                     case branchDiffState of
                         Ok (BranchDiffState.Computed bd) ->
                             let
-                                expandCmd =
+                                toggledChangeLines =
                                     model.urlFocusedChangeLineId
                                         |> Maybe.andThen (\changeLineId -> BranchDiff.changeLineById changeLineId bd)
-                                        |> Maybe.map (\changeLine -> Util.delayMsg 500 (ExpandChangeDetails changeLine))
+                                        |> Maybe.map
+                                            (\changeLine ->
+                                                ToggledChangeLines.expand model.toggledChangeLines changeLine
+                                            )
+                                        |> Maybe.withDefault model.toggledChangeLines
+
+                                cmd_ =
+                                    model.urlFocusedChangeLineId
+                                        |> Maybe.map (ScrollTo >> Util.delayMsg 10)
                                         |> Maybe.withDefault Cmd.none
                             in
-                            ( BranchDiffState.Computed { bd | lines = BranchDiff.condense bd.lines }, expandCmd )
+                            ( { model
+                                | branchDiff =
+                                    BranchDiffState.Computed
+                                        { bd | lines = BranchDiff.condense bd.lines }
+                                , toggledChangeLines = toggledChangeLines
+                              }
+                            , cmd_
+                            )
 
                         Ok bds ->
-                            ( bds, Cmd.none )
+                            ( { model | branchDiff = bds }, Cmd.none )
 
                         Err e ->
-                            ( BranchDiffState.Failure e, Cmd.none )
+                            ( { model | branchDiff = BranchDiffState.Failure e }, Cmd.none )
             in
-            ( { model | branchDiff = branchDiffState_ }, cmd )
+            ( model_, cmd )
 
-        ExpandChangeDetails changeLine ->
-            case model.branchDiff of
-                BranchDiffState.Computed branchDiff ->
-                    expandAndScrollTo appContext
-                        projectRef
-                        contribRef
-                        model
-                        branchDiff
-                        changeLine
-
-                _ ->
-                    ( model, Cmd.none )
+        ScrollTo changeLineId ->
+            ( model, scrollTo changeLineId )
 
         ToggleChangeDetails changeLine ->
             case model.branchDiff of
-                BranchDiffState.Computed branchDiff ->
-                    if ChangedDefinitions.isExpanded model.changedDefinitions changeLine then
-                        ( { model
-                            | changedDefinitions =
-                                ChangedDefinitions.collapse model.changedDefinitions changeLine
-                          }
-                          -- Clear selected changeline from the URL
-                        , Route.navigate appContext.navKey (Route.projectContributionChanges projectRef contribRef)
-                        )
+                BranchDiffState.Computed _ ->
+                    let
+                        toggled =
+                            if ToggledChangeLines.isExpanded model.toggledChangeLines changeLine then
+                                ToggledChangeLines.collapse model.toggledChangeLines changeLine
 
-                    else
-                        expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine
+                            else
+                                ToggledChangeLines.expand model.toggledChangeLines changeLine
+                    in
+                    ( { model | toggledChangeLines = toggled }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
 
-        FetchDefinitionDiffFinished changeLine resp ->
-            let
-                isExpanded =
-                    ChangedDefinitions.isExpanded model.changedDefinitions changeLine
-
-                changedDefinitions =
-                    ChangedDefinitions.set model.changedDefinitions
-                        changeLine
-                        { isExpanded = isExpanded
-                        , data = ChangedDefinitions.Diff resp
-                        }
-            in
-            ( { model | changedDefinitions = changedDefinitions }, Cmd.none )
-
-        FetchDefinitionSyntaxFinished changeLine resp ->
-            let
-                isExpanded =
-                    ChangedDefinitions.isExpanded model.changedDefinitions changeLine
-
-                changedDefinitions =
-                    ChangedDefinitions.set model.changedDefinitions
-                        changeLine
-                        { isExpanded = isExpanded
-                        , data = ChangedDefinitions.DefinitionSyntax resp
-                        }
-            in
-            ( { model | changedDefinitions = changedDefinitions }, Cmd.none )
-
         CopyChangeLinePermalink changeLineId ->
             let
-                url =
+                route =
                     changeLineId
                         |> Route.projectContributionChange projectRef contribRef
+
+                url =
+                    route
                         |> Route.toUrl appContext
                         |> Url.toString
             in
-            ( model, copyToClipboard url )
+            ( model
+            , Cmd.batch
+                [ copyToClipboard url
+                , Route.navigate appContext.navKey route
+                , scrollTo changeLineId
+                ]
+            )
 
         NoOp ->
             ( model, Cmd.none )
@@ -192,99 +172,7 @@ port copyToClipboard : String -> Cmd msg
 
 
 
--- UPDATE HELPERS
-
-
-expandAndScrollTo : AppContext -> ProjectRef -> ContributionRef -> Model -> BranchDiff -> ChangeLine -> ( Model, Cmd Msg )
-expandAndScrollTo appContext projectRef contribRef model branchDiff changeLine =
-    let
-        navCmd =
-            changeLine
-                |> ChangeLine.toChangeLineId
-                |> Maybe.map (Route.projectContributionChange projectRef contribRef)
-                |> Maybe.map (Route.navigate appContext.navKey)
-                |> Maybe.withDefault Cmd.none
-    in
-    case ChangeLine.toChangeLineId changeLine of
-        Nothing ->
-            ( model, Cmd.none )
-
-        Just changeLineId ->
-            if ChangedDefinitions.isLoaded model.changedDefinitions changeLine then
-                ( { model
-                    | changedDefinitions =
-                        ChangedDefinitions.expand model.changedDefinitions changeLine
-                  }
-                , Cmd.batch [ navCmd, scrollTo changeLineId ]
-                )
-
-            else
-                let
-                    changedDefinitions =
-                        ChangedDefinitions.set model.changedDefinitions
-                            changeLine
-                            { isExpanded = True, data = ChangedDefinitions.Diff Loading }
-
-                    fetchTermSyntax_ branchRef name =
-                        fetchTermSyntax appContext projectRef branchRef changeLine name
-
-                    fetchTypeSyntax_ branchRef name =
-                        fetchTypeSyntax appContext projectRef branchRef changeLine name
-
-                    fetchTermDefinitionDiff name =
-                        fetchDefinitionDiff appContext
-                            projectRef
-                            contribRef
-                            DefinitionDiff.Term
-                            changeLine
-                            { old = name
-                            , new = name
-                            }
-
-                    fetchTypeDefinitionDiff name =
-                        fetchDefinitionDiff appContext
-                            projectRef
-                            contribRef
-                            DefinitionDiff.Type
-                            changeLine
-                            { old = name
-                            , new = name
-                            }
-
-                    fetchSyntax_ branchRef =
-                        case ChangeLine.definitionType changeLine of
-                            Just dt ->
-                                if DefinitionType.isTerm dt then
-                                    fetchTermSyntax_ branchRef (ChangeLine.fullName changeLine)
-
-                                else
-                                    fetchTypeSyntax_ branchRef (ChangeLine.fullName changeLine)
-
-                            Nothing ->
-                                Cmd.none
-
-                    cmd =
-                        case changeLine of
-                            ChangeLine.Updated dt { fullName } ->
-                                if DefinitionType.isTerm dt then
-                                    fetchTermDefinitionDiff fullName
-
-                                else
-                                    fetchTypeDefinitionDiff fullName
-
-                            ChangeLine.Removed _ _ ->
-                                fetchSyntax_ branchDiff.oldBranch.ref
-
-                            _ ->
-                                fetchSyntax_ branchDiff.newBranch.ref
-                in
-                ( { model | changedDefinitions = changedDefinitions }
-                , Cmd.batch
-                    [ cmd
-                    , navCmd
-                    , scrollTo changeLineId
-                    ]
-                )
+-- EFFECTS
 
 
 scrollTo : ChangeLineId -> Cmd Msg
@@ -292,60 +180,10 @@ scrollTo changeLineId =
     ScrollTo.scrollTo_ NoOp "page-content" (ChangeLineId.toDomId changeLineId) 16
 
 
-
--- EFFECTS
-
-
 fetchBranchDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
 fetchBranchDiff appContext projectRef contributionRef =
     ShareApi.projectContributionDiff projectRef contributionRef
         |> HttpApi.toRequest (BranchDiffState.decode 1) FetchBranchDiffFinished
-        |> HttpApi.perform appContext.api
-
-
-fetchDefinitionDiff :
-    AppContext
-    -> ProjectRef
-    -> ContributionRef
-    -> DefinitionDiff.DefinitionType
-    -> ChangeLine
-    -> { old : FQN.FQN, new : FQN.FQN }
-    -> Cmd Msg
-fetchDefinitionDiff appContext projectRef contribRef definitionType changeLine params =
-    ShareApi.projectContributionDefinitionDiff projectRef contribRef definitionType params
-        |> HttpApi.toRequest
-            (DefinitionDiff.decode definitionType)
-            (RemoteData.fromResult >> FetchDefinitionDiffFinished changeLine)
-        |> HttpApi.perform appContext.api
-
-
-fetchTermSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> FQN.FQN -> Cmd Msg
-fetchTermSyntax appContext projectRef branchRef changeLine name =
-    fetchSyntax appContext projectRef branchRef changeLine "term" name
-
-
-fetchTypeSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> FQN.FQN -> Cmd Msg
-fetchTypeSyntax appContext projectRef branchRef changeLine name =
-    fetchSyntax appContext projectRef branchRef changeLine "type" name
-
-
-fetchSyntax : AppContext -> ProjectRef -> BranchRef -> ChangeLine -> String -> FQN.FQN -> Cmd Msg
-fetchSyntax appContext projectRef branchRef changeLine fieldPrefix name =
-    let
-        decode_ : Decode.Decoder Syntax.Syntax
-        decode_ =
-            Decode.field (fieldPrefix ++ "Definitions")
-                (Decode.keyValuePairs (Decode.at [ fieldPrefix ++ "Definition", "contents" ] Syntax.decode)
-                    -- The result (after Syntax.decode above) is a (List (Hash,
-                    -- Syntax)). We just want the syntax part and only the first
-                    -- one (disregarding naming collisions)
-                    |> Decode.map (List.map Tuple.second >> List.head)
-                    |> Decode.andThen (failInvalid "No valid definitions returned")
-                )
-    in
-    ShareApi.projectBranchDefinitionByName projectRef branchRef name
-        |> HttpApi.toRequest decode_
-            (RemoteData.fromResult >> FetchDefinitionSyntaxFinished changeLine)
         |> HttpApi.perform appContext.api
 
 
@@ -459,11 +297,11 @@ viewDefinitionIcon definitionType =
         ]
 
 
-viewDiffTreeNode : ProjectRef -> ChangedDefinitions -> ChangeLine -> Html Msg
-viewDiffTreeNode projectRef changedDefinitions changeLine =
+viewDiffTreeNode : ProjectRef -> ToggledChangeLines -> ChangeLine -> Html Msg
+viewDiffTreeNode projectRef toggledChangeLines changeLine =
     let
         viewTitle fqn =
-            Click.onClick (ExpandChangeDetails changeLine)
+            Click.onClick (ToggleChangeDetails changeLine)
                 |> Click.view [ class "change-title" ] [ FQN.view fqn ]
 
         view_ type_ content =
@@ -493,16 +331,16 @@ viewDiffTreeNode projectRef changedDefinitions changeLine =
             view_ type_ (viewTitle aliasShortName)
 
         ChangeLine.Namespace ns ->
-            viewNamespaceLine projectRef changedDefinitions ns
+            viewNamespaceLine projectRef toggledChangeLines ns
 
 
-viewContributionChangesGroup : ProjectRef -> ChangedDefinitions -> List ChangeLine -> Html Msg
-viewContributionChangesGroup projectRef changedDefinitions lines =
-    div [ class "contribution-changes-group" ] (List.map (viewDiffTreeNode projectRef changedDefinitions) lines)
+viewContributionChangesGroup : ProjectRef -> ToggledChangeLines -> List ChangeLine -> Html Msg
+viewContributionChangesGroup projectRef toggledChangeLines lines =
+    div [ class "contribution-changes-group" ] (List.map (viewDiffTreeNode projectRef toggledChangeLines) lines)
 
 
-viewNamespaceLine : ProjectRef -> ChangedDefinitions -> ChangeLine.NamespaceLineItem -> Html Msg
-viewNamespaceLine projectRef changedDefinitions { name, lines } =
+viewNamespaceLine : ProjectRef -> ToggledChangeLines -> ChangeLine.NamespaceLineItem -> Html Msg
+viewNamespaceLine projectRef toggledChangeLines { name, lines } =
     let
         isDeeplyPropagated cl =
             case cl of
@@ -521,7 +359,7 @@ viewNamespaceLine projectRef changedDefinitions { name, lines } =
     else
         div [ class "change-line namespace" ]
             [ div [ class "namespace-info" ] [ Icon.view Icon.folder, FQN.view name ]
-            , viewContributionChangesGroup projectRef changedDefinitions lines
+            , viewContributionChangesGroup projectRef toggledChangeLines lines
             ]
 
 
@@ -530,7 +368,7 @@ viewFailedToLoadExpandedContent _ =
     div [ class "error-expanded-content" ]
         [ text "Error, couldn't load diff details"
 
-        -- , div [] [ text (Util.httpErrorToString e) ]
+        -- , pre [] [ text (Util.httpErrorToString e) ]
         ]
 
 
@@ -552,8 +390,8 @@ viewLoadingExpandedContent =
         ]
 
 
-viewChangedDefinitionCard : ProjectRef -> ChangedDefinitions -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
-viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine type_ content =
+viewChangedDefinitionCard : ProjectRef -> ToggledChangeLines -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
+viewChangedDefinitionCard projectRef toggledChangeLines branchDiff changeLine type_ content =
     let
         toSyntaxConfig isNew =
             let
@@ -569,31 +407,17 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                     (Link.projectBranchDefinition projectRef branchRef)
 
         ( expanded, toggleIcon ) =
-            case ChangedDefinitions.get changedDefinitions changeLine of
-                Just { isExpanded, data } ->
-                    if isExpanded then
-                        case data of
-                            ChangedDefinitions.Diff diff ->
-                                let
-                                    expandedContent =
-                                        case diff of
-                                            NotAsked ->
-                                                viewLoadingExpandedContent
+            if ToggledChangeLines.isCollapsed toggledChangeLines changeLine then
+                ( Nothing, Icon.arrowsFromLine )
 
-                                            Loading ->
-                                                viewLoadingExpandedContent
+            else
+                case changeLine of
+                    ChangeLine.Updated _ { diff } ->
+                        ( Just (DefinitionDiff.view toSyntaxConfig diff), Icon.arrowsToLine )
 
-                                            Success d ->
-                                                DefinitionDiff.view
-                                                    toSyntaxConfig
-                                                    d
-
-                                            Failure e ->
-                                                viewFailedToLoadExpandedContent e
-                                in
-                                ( Just expandedContent, Icon.arrowsToLine )
-
-                            ChangedDefinitions.DefinitionSyntax syntax ->
+                    _ ->
+                        case ChangeLine.source changeLine of
+                            Just source ->
                                 let
                                     linked =
                                         let
@@ -610,30 +434,15 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
                                                 (Link.projectBranchDefinition projectRef branchRef)
 
                                     expandedContent =
-                                        case syntax of
-                                            NotAsked ->
-                                                viewLoadingExpandedContent
-
-                                            Loading ->
-                                                viewLoadingExpandedContent
-
-                                            Success s ->
-                                                pre [ class "definition-syntax monochrome" ]
-                                                    [ code [] [ Syntax.view linked s ] ]
-
-                                            Failure e ->
-                                                viewFailedToLoadExpandedContent e
+                                        pre [ class "definition-syntax monochrome" ]
+                                            [ code [] [ Syntax.view linked source ] ]
                                 in
                                 ( Just expandedContent
                                 , Icon.arrowsToLine
                                 )
 
-                    else
-                        ( Nothing, Icon.arrowsFromLine )
-
-                Nothing ->
-                    -- Not expanded and not fetched
-                    ( Nothing, Icon.arrowsFromLine )
+                            Nothing ->
+                                ( Nothing, Icon.arrowsFromLine )
 
         domId =
             changeLine
@@ -690,11 +499,11 @@ viewChangedDefinitionCard projectRef changedDefinitions branchDiff changeLine ty
         |> Card.view
 
 
-viewChangedDefinitionsCards : ProjectRef -> ChangedDefinitions -> BranchDiff -> List (Html Msg)
-viewChangedDefinitionsCards projectRef changedDefinitions branchDiff =
+viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> BranchDiff -> List (Html Msg)
+viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
     let
         view_ =
-            viewChangedDefinitionCard projectRef changedDefinitions branchDiff
+            viewChangedDefinitionCard projectRef toggledChangeLines branchDiff
 
         f changeLine acc =
             let
@@ -856,8 +665,8 @@ viewLibDeps deps =
     List.map viewLibDep deps
 
 
-viewBranchDiff : ProjectRef -> ChangedDefinitions -> BranchDiff -> Html Msg
-viewBranchDiff projectRef changedDefinitions diff =
+viewBranchDiff : ProjectRef -> ToggledChangeLines -> BranchDiff -> Html Msg
+viewBranchDiff projectRef toggledChangeLines diff =
     let
         summary =
             BranchDiff.summary diff
@@ -866,7 +675,7 @@ viewBranchDiff projectRef changedDefinitions diff =
         tree =
             if BranchDiff.size diff > 1 then
                 Card.card
-                    [ viewContributionChangesGroup projectRef changedDefinitions diff.lines
+                    [ viewContributionChangesGroup projectRef toggledChangeLines diff.lines
                     ]
                     |> Card.withClassName "change-tree"
                     |> Card.asContained
@@ -883,7 +692,7 @@ viewBranchDiff projectRef changedDefinitions diff =
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
                 (viewLibDeps diff.libDeps
-                    ++ viewChangedDefinitionsCards projectRef changedDefinitions diff
+                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines diff
                 )
             ]
         ]
@@ -919,7 +728,7 @@ viewErrorPage appContext _ err =
             case appContext.session of
                 Session.SignedIn account ->
                     if Account.isUnisonMember account then
-                        text (Util.httpErrorToString err)
+                        pre [] [ text (Util.httpErrorToString err) ]
 
                     else
                         UI.nothing
@@ -987,7 +796,7 @@ view appContext projectRef contribution model =
                 [ tabs
                 , div
                     [ class "project-contribution-changes-page" ]
-                    [ viewBranchDiff projectRef model.changedDefinitions diff ]
+                    [ viewBranchDiff projectRef model.toggledChangeLines diff ]
                 ]
 
         BranchDiffState.Uncomputable error ->
