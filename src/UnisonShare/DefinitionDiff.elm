@@ -280,10 +280,10 @@ decodeMismatched definitionType =
         ( oldKey, newKey, definitionKey ) =
             case definitionType of
                 Term ->
-                    ( "left", "rigth", "termDefinition" )
+                    ( "left", "right", "termDefinition" )
 
                 Type ->
-                    ( "left", "rigth", "typeDefinition" )
+                    ( "left", "right", "typeDefinition" )
 
         mkMismatched oldDef newDef =
             Mismatched

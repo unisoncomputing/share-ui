@@ -3,6 +3,8 @@ module UnisonShare.BranchDiff.ChangeLineTests exposing (..)
 import Code.Definition.Reference as Reference
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
+import Code.Syntax as Syntax
+import Code.Syntax.SyntaxSegment as SyntaxSegment
 import Expect
 import List.Nonempty as NEL
 import Maybe.Extra as MaybeE
@@ -10,6 +12,7 @@ import Test exposing (..)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId
 import UnisonShare.BranchDiff.DefinitionType as DefinitionType
+import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff)
 
 
 equals : Test
@@ -31,6 +34,7 @@ equals =
                                 Reference.fromFQN
                                     Reference.TermReference
                                     fullName_
+                            , source = source
                             }
 
                     id =
@@ -58,6 +62,7 @@ equals =
                                 Reference.fromFQN
                                     Reference.TermReference
                                     fullName_
+                            , source = source
                             }
 
                     namespace =
@@ -92,6 +97,7 @@ equals =
                                 Reference.fromFQN
                                     Reference.TermReference
                                     fullName1
+                            , source = source
                             }
 
                     id =
@@ -119,6 +125,7 @@ fullName =
                             , shortName = FQN.fromString "List.added"
                             , fullName = FQN.fromString "data.List.added"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.added")
+                            , source = source
                             }
 
                     removed =
@@ -128,6 +135,7 @@ fullName =
                             , shortName = FQN.fromString "List.removed"
                             , fullName = FQN.fromString "data.List.removed"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.removed")
+                            , source = source
                             }
 
                     updated =
@@ -138,6 +146,7 @@ fullName =
                             , shortName = FQN.fromString "List.updated"
                             , fullName = FQN.fromString "data.List.updated"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.updated")
+                            , diff = diff
                             }
 
                     renamedFrom =
@@ -149,6 +158,7 @@ fullName =
                             , newFullName = FQN.fromString "data.List.renamedFrom"
                             , oldRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFromOld")
                             , newRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFrom")
+                            , source = source
                             }
 
                     aliased =
@@ -159,6 +169,7 @@ fullName =
                             , aliasFullName = FQN.fromString "data.List.aliased"
                             , otherNames = NEL.singleton (FQN.fromString "List.aliasedOther")
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.aliased")
+                            , source = source
                             }
 
                     namespace =
@@ -186,6 +197,7 @@ shortName =
                             , shortName = FQN.fromString "List.added"
                             , fullName = FQN.fromString "data.List.added"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.added")
+                            , source = source
                             }
 
                     removed =
@@ -195,6 +207,7 @@ shortName =
                             , shortName = FQN.fromString "List.removed"
                             , fullName = FQN.fromString "data.List.removed"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.removed")
+                            , source = source
                             }
 
                     updated =
@@ -205,6 +218,7 @@ shortName =
                             , shortName = FQN.fromString "List.updated"
                             , fullName = FQN.fromString "data.List.updated"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.updated")
+                            , diff = diff
                             }
 
                     renamedFrom =
@@ -216,6 +230,7 @@ shortName =
                             , newFullName = FQN.fromString "data.List.renamedFrom"
                             , oldRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFromOld")
                             , newRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFrom")
+                            , source = source
                             }
 
                     aliased =
@@ -226,6 +241,7 @@ shortName =
                             , aliasFullName = FQN.fromString "data.List.aliased"
                             , otherNames = NEL.singleton (FQN.fromString "List.aliasedOther")
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.aliased")
+                            , source = source
                             }
 
                     namespace =
@@ -253,6 +269,7 @@ reference =
                             , shortName = FQN.fromString "List.added"
                             , fullName = FQN.fromString "data.List.added"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.added")
+                            , source = source
                             }
 
                     removed =
@@ -262,6 +279,7 @@ reference =
                             , shortName = FQN.fromString "List.removed"
                             , fullName = FQN.fromString "data.List.removed"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.removed")
+                            , source = source
                             }
 
                     updated =
@@ -272,6 +290,7 @@ reference =
                             , shortName = FQN.fromString "List.updated"
                             , fullName = FQN.fromString "data.List.updated"
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.updated")
+                            , diff = diff
                             }
 
                     renamedFrom =
@@ -283,6 +302,7 @@ reference =
                             , newFullName = FQN.fromString "data.List.renamedFrom"
                             , oldRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFromOld")
                             , newRef = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.renamedFrom")
+                            , source = source
                             }
 
                     aliased =
@@ -293,6 +313,7 @@ reference =
                             , aliasFullName = FQN.fromString "data.List.aliased"
                             , otherNames = NEL.singleton (FQN.fromString "List.aliasedOther")
                             , ref = Reference.fromFQN Reference.TermReference (FQN.fromString "data.List.aliased")
+                            , source = source
                             }
 
                     namespace =
@@ -329,6 +350,7 @@ toChangeLineId =
                                 Reference.fromFQN
                                     Reference.TermReference
                                     fullName_
+                            , source = source
                             }
                 in
                 Expect.equal
@@ -370,9 +392,30 @@ isNamespace =
                                 Reference.fromFQN
                                     Reference.TermReference
                                     fullName_
+                            , source = source
                             }
                 in
                 Expect.equal
                     False
                     (ChangeLine.isNamespace cl)
         ]
+
+
+source : Syntax.Syntax
+source =
+    Syntax.fromNEL
+        (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral ""))
+
+
+diff : DefinitionDiff
+diff =
+    let
+        diffDetails =
+            { type_ = DefinitionDiff.Term
+            , newDef = NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "newDef")
+            , oldDef = NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "oldDef")
+            }
+    in
+    DefinitionDiff.Diff
+        diffDetails
+        (NEL.singleton (DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "both"))))

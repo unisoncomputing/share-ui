@@ -14,7 +14,6 @@ import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.ScrollTo as ScrollTo
 import Lib.Util as Util
 import List.Nonempty as NEL
-import RemoteData exposing (RemoteData(..))
 import String.Extra exposing (pluralize)
 import UI
 import UI.Button as Button

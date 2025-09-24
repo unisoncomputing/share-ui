@@ -31,40 +31,42 @@ diffJson =
     """
 {
   "diff": {
-    "contents": [
-      {
-        "diffTag": "old",
-        "elements": [
-          {
-            "annotation": {
-              "contents": "beforeTerm",
-              "tag": "HashQualifier"
+    "diffKind": "diff",
+    "diff": {
+      "contents": [
+        {
+          "diffTag": "old",
+          "elements": [
+            {
+              "annotation": {
+                "contents": "beforeTerm",
+                "tag": "HashQualifier"
+              },
+              "segment": "beforeTerm"
+            }
+          ]
+        },
+        {
+          "diffTag": "new",
+          "elements": [
+            {
+              "annotation": {
+                "contents": "afterTerm",
+                "tag": "HashQualifier"
+              },
+              "segment": "afterTerm"
+            }
+          ]
+        },
+        {
+          "diffTag": "both",
+          "elements": [
+            {
+              "annotation": {
+                "tag": "TypeAscriptionColon"
+              },
+              "segment": " :"
             },
-            "segment": "beforeTerm"
-          }
-        ]
-      },
-      {
-        "diffTag": "new",
-        "elements": [
-          {
-            "annotation": {
-              "contents": "afterTerm",
-              "tag": "HashQualifier"
-            },
-            "segment": "afterTerm"
-          }
-        ]
-      },
-      {
-        "diffTag": "both",
-        "elements": [
-          {
-            "annotation": {
-              "tag": "TypeAscriptionColon"
-            },
-            "segment": " :"
-          },
           {
             "annotation": null,
             "segment": " "
@@ -526,10 +528,10 @@ diffJson =
       }
     ],
     "tag": "UserObject"
+    }
   },
-  "diffKind": "diff",
   "newBranchRef": "after",
-  "newTerm": {
+  "right": {
     "bestTermName": "afterTerm",
     "defnTermTag": "Plain",
     "signature": [
@@ -1011,7 +1013,7 @@ diffJson =
     ]
   },
   "oldBranchRef": "before",
-  "oldTerm": {
+  "left": {
     "bestTermName": "beforeTerm",
     "defnTermTag": "Plain",
     "signature": [
@@ -1447,11 +1449,13 @@ diffJson =
 
 mismatchedJson : String
 mismatchedJson =
-    """ 
+    """
 {
-  "diffKind": "mismatched",
+  "diff": {
+    "diffKind": "mismatched"
+  },
   "newBranchRef": "after",
-  "newTerm": {
+  "right": {
     "bestTermName": "newBug",
     "defnTermTag": "Plain",
     "signature": [
@@ -1523,7 +1527,7 @@ mismatchedJson =
     "termNames": [ "newBug" ]
   },
   "oldBranchRef": "before",
-  "oldTerm": {
+  "left": {
     "bestTermName": "bug",
     "defnTermTag": "Plain",
     "signature": [
