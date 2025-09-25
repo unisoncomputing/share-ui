@@ -362,33 +362,6 @@ viewNamespaceLine projectRef toggledChangeLines { name, lines } =
             ]
 
 
-viewFailedToLoadExpandedContent : Http.Error -> Html msg
-viewFailedToLoadExpandedContent _ =
-    div [ class "error-expanded-content" ]
-        [ text "Error, couldn't load diff details"
-
-        -- , pre [] [ text (Util.httpErrorToString e) ]
-        ]
-
-
-viewLoadingExpandedContent : Html msg
-viewLoadingExpandedContent =
-    let
-        placeholder length =
-            Placeholder.text
-                |> Placeholder.withLength length
-                |> Placeholder.subdued
-                |> Placeholder.tiny
-                |> Placeholder.view
-    in
-    div [ class "loading-expanded-content" ]
-        [ placeholder Placeholder.Small
-        , placeholder Placeholder.Medium
-        , placeholder Placeholder.Huge
-        , placeholder Placeholder.Small
-        ]
-
-
 viewChangedDefinitionCard : ProjectRef -> ToggledChangeLines -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
 viewChangedDefinitionCard projectRef toggledChangeLines branchDiff changeLine type_ content =
     let
@@ -730,10 +703,12 @@ viewErrorPage appContext _ err =
                         pre [] [ text (Util.httpErrorToString err) ]
 
                     else
-                        UI.nothing
+                        pre
+                            []
+                            [ text (Util.httpErrorToString err) ]
 
                 _ ->
-                    UI.nothing
+                    pre [] [ text (Util.httpErrorToString err) ]
     in
     PageContent.oneColumn
         [ div [ class "project-contribution-changes-page" ]

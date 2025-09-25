@@ -245,6 +245,104 @@ function changeLine() {
         oldHash: hash(),
         oldTag: "Plain",
         shortName: "fromListWithKey",
+        diff: {
+          diff: {
+            diff: {
+              contents: [
+                {
+                  diffTag: "old",
+                  elements: [
+                    {
+                      annotation: {
+                        contents: "beforeTerm",
+                        tag: "HashQualifier",
+                      },
+                      segment: "beforeTerm",
+                    },
+                  ],
+                },
+              ],
+              tag: "BuiltinObject",
+            },
+            diffKind: "diff",
+          },
+          left: {
+            bestTermName: "Code.serialize",
+            defnTermTag: "Plain",
+            signature: [],
+            termDefinition: {
+              contents: [
+                {
+                  annotation: {
+                    tag: "Var",
+                  },
+                  segment: "a",
+                },
+                {
+                  annotation: null,
+                  segment: " ",
+                },
+                {
+                  annotation: {
+                    tag: "TypeOperator",
+                  },
+                  segment: "->",
+                },
+                {
+                  annotation: null,
+                  segment: " ",
+                },
+                {
+                  annotation: {
+                    tag: "Var",
+                  },
+                  segment: "b",
+                },
+              ],
+              tag: "BuiltinObject",
+            },
+            termDocs: [],
+            termNames: [],
+          },
+          right: {
+            bestTermName: "Code.serialize",
+            defnTermTag: "Plain",
+            signature: [],
+            termDefinition: {
+              contents: [
+                {
+                  annotation: {
+                    tag: "Var",
+                  },
+                  segment: "a",
+                },
+                {
+                  annotation: null,
+                  segment: " ",
+                },
+                {
+                  annotation: {
+                    tag: "TypeOperator",
+                  },
+                  segment: "->",
+                },
+                {
+                  annotation: null,
+                  segment: " ",
+                },
+                {
+                  annotation: {
+                    tag: "Var",
+                  },
+                  segment: "b",
+                },
+              ],
+              tag: "BuiltinObject",
+            },
+            termDocs: [],
+            termNames: [],
+          },
+        },
       },
       tag: "Updated",
     },
