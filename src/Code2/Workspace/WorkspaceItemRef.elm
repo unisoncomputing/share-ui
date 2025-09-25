@@ -16,6 +16,28 @@ type WorkspaceItemRef
     | DependentsItemRef Reference
 
 
+equals : WorkspaceItemRef -> WorkspaceItemRef -> Bool
+equals a b =
+    a == b
+
+
+{-| Like equals, but focused on hash equality, so even if one WorkspaceItemRef
+has an fqn+hash when compared to an WorkspaceItemRef that only has a hash, the
+hash comparison wins.
+-}
+same : WorkspaceItemRef -> WorkspaceItemRef -> Bool
+same a b =
+    case ( a, b ) of
+        ( DefinitionItemRef a_r, DefinitionItemRef b_r ) ->
+            Reference.same a_r b_r
+
+        ( DependentsItemRef a_r, DependentsItemRef b_r ) ->
+            Reference.same a_r b_r
+
+        _ ->
+            a == b
+
+
 definitionReference : WorkspaceItemRef -> Maybe Reference
 definitionReference ref =
     case ref of

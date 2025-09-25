@@ -23,7 +23,7 @@ import Code.FullyQualifiedName exposing (FQN)
 import Code2.Workspace.DefinitionWorkspaceItemState exposing (DefinitionWorkspaceItemState)
 import Code2.Workspace.DependentsWorkspaceItemState exposing (DependentsWorkspaceItemState)
 import Code2.Workspace.WorkspaceItem as WorkspaceItem exposing (WorkspaceItem)
-import Code2.Workspace.WorkspaceItemRef exposing (WorkspaceItemRef)
+import Code2.Workspace.WorkspaceItemRef as WorkspaceItemRef exposing (WorkspaceItemRef)
 import List
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
@@ -261,7 +261,9 @@ remove items ref =
 
 includesItem : WorkspaceItems -> WorkspaceItemRef -> Bool
 includesItem items ref =
-    items |> references |> List.member ref
+    items
+        |> references
+        |> List.any (WorkspaceItemRef.same ref)
 
 
 references : WorkspaceItems -> List WorkspaceItemRef

@@ -154,26 +154,17 @@ type Msg
 
 
 update : AppContext -> CodeBrowsingContext -> CodeRoute -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext context codeRoute msg model_ =
-    let
-        -- Always update the subPage since url/route changes often happens out
-        -- of band.
-        -- TODO: When is this ever needed outside of Route changes from App?,
-        -- like when do we need it via `update`? its supposed to be out of band
-        -- right?
-        ( model, cmd ) =
-            updateSubPage appContext context codeRoute model_
-    in
+update appContext context codeRoute msg model =
     case ( model.content, msg ) of
         ( _, ShowFinderModal ) ->
             let
                 ( fm, fCmd ) =
                     Finder.init model.config (SearchOptions.init model.config.perspective Nothing)
             in
-            ( { model | modal = FinderModal fm }, Cmd.batch [ cmd, Cmd.map FinderMsg fCmd ] )
+            ( { model | modal = FinderModal fm }, Cmd.map FinderMsg fCmd )
 
         ( _, CloseModal ) ->
-            ( { model | modal = NoModal }, cmd )
+            ( { model | modal = NoModal }, Cmd.none )
 
         ( _, FetchPerspectiveNamespaceDetailsFinished fqn details ) ->
             let
@@ -199,7 +190,7 @@ update appContext context codeRoute msg model_ =
                 nextConfig =
                     { config | perspective = perspective }
             in
-            ( { model | config = nextConfig }, cmd )
+            ( { model | config = nextConfig }, Cmd.none )
 
         ( _, UpOneLevel ) ->
             let
@@ -209,7 +200,7 @@ update appContext context codeRoute msg model_ =
                 navCmd =
                     navigateToCode appContext context (Route.replacePerspective (routeReference codeRoute) newPerspective)
             in
-            ( model, Cmd.batch [ cmd, navCmd ] )
+            ( model, navCmd )
 
         ( _, ChangePerspectiveToNamespace fqn ) ->
             let
@@ -219,10 +210,10 @@ update appContext context codeRoute msg model_ =
                 navCmd =
                     navigateToCode appContext context (Route.replacePerspective (routeReference codeRoute) perspective)
             in
-            ( model, Cmd.batch [ cmd, navCmd ] )
+            ( model, navCmd )
 
         ( _, ToggleSidebar ) ->
-            ( { model | sidebarToggled = not model.sidebarToggled }, cmd )
+            ( { model | sidebarToggled = not model.sidebarToggled }, Cmd.none )
 
         ( _, CodebaseTreeMsg codebaseTreeMsg ) ->
             let
@@ -251,7 +242,7 @@ update appContext context codeRoute msg model_ =
                             else
                                 m
                     in
-                    ( m_, Cmd.batch [ cmd, cmd_, navCmd ] )
+                    ( m_, Cmd.batch [ cmd_, navCmd ] )
 
                 CodebaseTree.ChangePerspectiveToNamespace fqn ->
                     let
@@ -269,7 +260,7 @@ update appContext context codeRoute msg model_ =
                         navCmd =
                             navigateToCode appContext context (Route.replacePerspective ref perspective)
                     in
-                    ( m, Cmd.batch [ cmd, cmd_, navCmd ] )
+                    ( m, Cmd.batch [ cmd_, navCmd ] )
 
         ( _, FinderMsg finderMsg ) ->
             case model.modal of
@@ -280,38 +271,31 @@ update appContext context codeRoute msg model_ =
                     in
                     case outMsg of
                         Finder.Remain ->
-                            ( { model | modal = FinderModal fm_ }, Cmd.batch [ cmd, Cmd.map FinderMsg fCmd ] )
+                            ( { model | modal = FinderModal fm_ }, Cmd.map FinderMsg fCmd )
 
                         Finder.Exit ->
-                            ( { model | modal = NoModal }, Cmd.batch [ cmd, Cmd.map FinderMsg fCmd ] )
+                            ( { model | modal = NoModal }, Cmd.map FinderMsg fCmd )
 
                         Finder.OpenDefinition r ->
                             ( { model | modal = NoModal }
                             , Cmd.batch
-                                [ cmd
-                                , Cmd.map FinderMsg fCmd
+                                [ Cmd.map FinderMsg fCmd
                                 , navigateToCode appContext context (Route.definition model.config.perspective r)
                                 ]
                             )
 
                 _ ->
-                    ( model, cmd )
+                    ( model, Cmd.none )
 
         ( _, Keydown event ) ->
-            -- When handling keydown, we don't want to run updateSubPage
-            -- Since this event is handled by Workspace as well, and if both are
-            -- handling it with updateSubPage in play, a closed definition (by
-            -- hitting 'x' on the keyboard) is re-opened as the next event
-            -- happens before the route change to the newly focused item and thus
-            -- the old item is re-opened.
-            keydown appContext model_ event
+            keydown appContext model event
 
         ( _, KeyboardShortcutMsg kMsg ) ->
             let
                 ( keyboardShortcut, kCmd ) =
                     KeyboardShortcut.update kMsg model.keyboardShortcut
             in
-            ( { model | keyboardShortcut = keyboardShortcut }, Cmd.batch [ cmd, Cmd.map KeyboardShortcutMsg kCmd ] )
+            ( { model | keyboardShortcut = keyboardShortcut }, Cmd.map KeyboardShortcutMsg kCmd )
 
         ( PerspectivePage rm, ReadmeCardMsg readmeCardMsg ) ->
             let
@@ -327,7 +311,7 @@ update appContext context codeRoute msg model_ =
                             Cmd.none
             in
             ( { model | content = PerspectivePage readmeCard }
-            , Cmd.batch [ cmd, navCmd, Cmd.map ReadmeCardMsg rmCmd ]
+            , Cmd.batch [ navCmd, Cmd.map ReadmeCardMsg rmCmd ]
             )
 
         ( WorkspacePage workspace, WorkspacePanesMsg workspaceMsg ) ->
@@ -338,9 +322,14 @@ update appContext context codeRoute msg model_ =
                 ( m, outCmd ) =
                     case outMsg of
                         WorkspacePanes.Focused ref ->
+                            -- Needs to skip if already focused on?
                             case ref of
                                 WorkspaceItemRef.DefinitionItemRef dRef ->
-                                    ( model, navigateToCode appContext context (Route.definition model.config.perspective dRef) )
+                                    let
+                                        route =
+                                            Route.definition model.config.perspective dRef
+                                    in
+                                    ( model, navigateToCode appContext context route )
 
                                 WorkspaceItemRef.DependentsItemRef dRef ->
                                     ( model, navigateToCode appContext context (Route.dependentsOf model.config.perspective dRef) )
@@ -379,14 +368,13 @@ update appContext context codeRoute msg model_ =
             in
             ( { m | content = WorkspacePage workspace_ }
             , Cmd.batch
-                [ cmd
-                , outCmd
+                [ outCmd
                 , Cmd.map WorkspacePanesMsg workspaceCmd
                 ]
             )
 
         _ ->
-            ( model, cmd )
+            ( model, Cmd.none )
 
 
 updateSubPage : AppContext -> CodeBrowsingContext -> CodeRoute -> Model -> ( Model, Cmd Msg )
