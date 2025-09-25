@@ -121,6 +121,10 @@
     gap: 0.75rem;
   }
 
+  & .definition-source {
+    overflow: auto;
+  }
+
   & .foldable-source {
     display: flex;
     flex-direction: row;
@@ -136,11 +140,6 @@
       right: auto;
       width: auto;
       margin: 1.5rem 1.5rem 1.5rem 1.5rem;
-    }
-
-    & .definition-source {
-      overflow: auto;
-      overflow-x: auto;
     }
 
     & .namespace-dropdown,
