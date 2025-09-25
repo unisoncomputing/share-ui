@@ -12,8 +12,10 @@
   );
 }
 
-/* this is required to enable scrollTo behavior when focusing definitions */
-.code-page .columns {
+/* this is required to enable scrollTo behavior when focusing definitions, but
+ * only browsing experience, not the default readme one (which is shown via
+ * sidebar-left-content-layout) */
+.code-page :not(sidebar-left-content-layout) .columns {
   height: 100%;
 }
 
