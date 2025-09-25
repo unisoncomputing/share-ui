@@ -123,6 +123,10 @@
 
   & .definition-source {
     overflow: auto;
+
+    & .term-signature .large-signature {
+      margin-left: 2ch;
+    }
   }
 
   & .foldable-source {
