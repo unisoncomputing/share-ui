@@ -703,12 +703,10 @@ viewErrorPage appContext _ err =
                         pre [] [ text (Util.httpErrorToString err) ]
 
                     else
-                        pre
-                            []
-                            [ text (Util.httpErrorToString err) ]
+                        UI.nothing
 
                 _ ->
-                    pre [] [ text (Util.httpErrorToString err) ]
+                    UI.nothing
     in
     PageContent.oneColumn
         [ div [ class "project-contribution-changes-page" ]
