@@ -215,6 +215,10 @@
     border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
   }
 
+  & .workspace-card_subtitlebar {
+    background: var(--u-color_container);
+  }
+
   & .tab-list {
     --c-color_tabs_border: var(--color-card-border);
     background: var(--u-color_container);

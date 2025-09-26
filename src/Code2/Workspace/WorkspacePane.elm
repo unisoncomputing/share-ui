@@ -686,6 +686,7 @@ type alias PaneConfig =
     , withDependents : Bool
     , withDependencies : Bool
     , withNamespaceDropdown : Bool
+    , withMinimap : Bool
     }
 
 
@@ -837,7 +838,7 @@ view : PaneConfig -> Model -> Html Msg
 view cfg model =
     let
         minimap =
-            if WorkspaceItems.length model.workspaceItems > 1 then
+            if cfg.withMinimap && WorkspaceItems.length model.workspaceItems > 1 then
                 WorkspaceMinimap.view
                     { keyboardShortcut = model.keyboardShortcut
                     , workspaceItems = model.workspaceItems

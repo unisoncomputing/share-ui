@@ -591,6 +591,7 @@ viewContent appContext perspective content =
                     , withDependencies = False
                     , withNamespaceDropdown = True
                     , withFocusedPaneIndicator = False
+                    , withMinimap = True
                     }
             in
             PageContent.oneColumn [ Html.map WorkspacePanesMsg (WorkspacePanes.view cfg workspace) ]
