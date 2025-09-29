@@ -123,7 +123,7 @@ update appContext projectRef contribRef msg model =
                                 ( { model | branchDiff = bds }, Cmd.none )
 
                             else
-                                ( { model | branchDiff = bds }
+                                ( { model | branchDiff = BranchDiffState.Reloading { numTries = numTries + 1 } }
                                 , Util.delayMsg 1000 (RetryBranchDiffFetch (numTries + 1))
                                 )
 
@@ -136,7 +136,7 @@ update appContext projectRef contribRef msg model =
             ( model_, cmd )
 
         RetryBranchDiffFetch numTries ->
-            ( { model | branchDiff = BranchDiffState.Reloading { numTries = numTries } }
+            ( model
             , fetchBranchDiff appContext projectRef contribRef numTries
             )
 
