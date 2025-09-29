@@ -69,7 +69,7 @@ init appContext projectRef contribRef changeLineId =
       , toggledChangeLines = ToggledChangeLines.empty
       , urlFocusedChangeLineId = changeLineId
       }
-    , fetchBranchDiff appContext projectRef contribRef
+    , fetchBranchDiff appContext projectRef contribRef 1
     )
 
 
@@ -79,6 +79,7 @@ init appContext projectRef contribRef changeLineId =
 
 type Msg
     = FetchBranchDiffFinished (HttpResult BranchDiffState)
+    | RetryBranchDiffFetch Int
     | ToggleChangeDetails ChangeLine
     | CopyChangeLinePermalink ChangeLineId
     | ScrollTo ChangeLineId
@@ -117,6 +118,15 @@ update appContext projectRef contribRef msg model =
                             , cmd_
                             )
 
+                        Ok ((BranchDiffState.Computing { numTries }) as bds) ->
+                            if numTries >= 3 then
+                                ( { model | branchDiff = bds }, Cmd.none )
+
+                            else
+                                ( { model | branchDiff = bds }
+                                , Util.delayMsg 1000 (RetryBranchDiffFetch (numTries + 1))
+                                )
+
                         Ok bds ->
                             ( { model | branchDiff = bds }, Cmd.none )
 
@@ -124,6 +134,11 @@ update appContext projectRef contribRef msg model =
                             ( { model | branchDiff = BranchDiffState.Failure e }, Cmd.none )
             in
             ( model_, cmd )
+
+        RetryBranchDiffFetch numTries ->
+            ( { model | branchDiff = BranchDiffState.Reloading { numTries = numTries } }
+            , fetchBranchDiff appContext projectRef contribRef numTries
+            )
 
         ScrollTo changeLineId ->
             ( model, scrollTo changeLineId )
@@ -179,10 +194,10 @@ scrollTo changeLineId =
     ScrollTo.scrollTo_ NoOp "page-content" (ChangeLineId.toDomId changeLineId) 16
 
 
-fetchBranchDiff : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
-fetchBranchDiff appContext projectRef contributionRef =
+fetchBranchDiff : AppContext -> ProjectRef -> ContributionRef -> Int -> Cmd Msg
+fetchBranchDiff appContext projectRef contributionRef numTries =
     ShareApi.projectContributionDiff projectRef contributionRef
-        |> HttpApi.toRequest (BranchDiffState.decode 1) FetchBranchDiffFinished
+        |> HttpApi.toRequest (BranchDiffState.decode numTries) FetchBranchDiffFinished
         |> HttpApi.perform appContext.api
 
 

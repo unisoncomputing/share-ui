@@ -34,13 +34,14 @@ type DiffError
 type BranchDiffState
     = Loading
     | Computing { numTries : Int }
-    | Reloading { numtries : Int }
+    | Reloading { numTries : Int }
     | Computed BranchDiff
     | Uncomputable DiffError
     | Failure Http.Error
 
 
 
+--
 -- DECODE
 
 
