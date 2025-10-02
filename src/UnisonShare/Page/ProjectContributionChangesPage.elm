@@ -82,6 +82,7 @@ type Msg
     | RetryBranchDiffFetch Int
     | ToggleChangeDetails ChangeLine
     | CopyChangeLinePermalink ChangeLineId
+    | SetChangeLinePermalink ChangeLineId
     | ScrollTo ChangeLineId
     | NoOp
 
@@ -158,6 +159,19 @@ update appContext projectRef contribRef msg model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        SetChangeLinePermalink changeLineId ->
+            let
+                route =
+                    changeLineId
+                        |> Route.projectContributionChange projectRef contribRef
+            in
+            ( model
+            , Cmd.batch
+                [ Route.navigate appContext.navKey route
+                , scrollTo changeLineId
+                ]
+            )
 
         CopyChangeLinePermalink changeLineId ->
             let
@@ -315,8 +329,13 @@ viewDiffTreeNode : ProjectRef -> ToggledChangeLines -> ChangeLine -> Html Msg
 viewDiffTreeNode projectRef toggledChangeLines changeLine =
     let
         viewTitle fqn =
-            Click.onClick (ToggleChangeDetails changeLine)
-                |> Click.view [ class "change-title" ] [ FQN.view fqn ]
+            case ChangeLine.toChangeLineId changeLine of
+                Just changeLineId ->
+                    Click.onClick (SetChangeLinePermalink changeLineId)
+                        |> Click.view [ class "change-title" ] [ FQN.view fqn ]
+
+                Nothing ->
+                    div [ class "change-title" ] [ FQN.view fqn ]
 
         view_ type_ content =
             div [ class "change-line" ]
