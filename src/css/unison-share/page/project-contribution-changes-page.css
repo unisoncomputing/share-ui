@@ -83,7 +83,12 @@
       gap: 0;
 
       & .definition-change-header {
-        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius-base);
+        background: var(--color-card-bg);
+        z-index: 100;
+        position: sticky;
+        top: 0;
+        padding: 0.5rem;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -129,10 +134,14 @@
         }
       }
 
+      &:has(.definition-change-details) .definition-change-header {
+        border-bottom: 1px solid var(--u-color_border_subdued);
+        border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+      }
+
       & .definition-change-details {
         position: relative;
         width: 100%;
-        border-top: 1px solid var(--u-color_border_subdued);
         padding: 0;
 
         & pre {
