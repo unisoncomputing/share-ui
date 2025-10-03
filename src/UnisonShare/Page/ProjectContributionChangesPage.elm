@@ -7,7 +7,7 @@ import Code.Hash as Hash
 import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
-import Html exposing (Html, br, code, div, h2, p, pre, span, strong, text)
+import Html exposing (Html, br, code, div, h2, label, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
@@ -286,7 +286,7 @@ viewChangeBadge changeLine =
             , class (String.toLower type_)
             ]
             [ Icon.view (changeIcon changeLine)
-            , text type_
+            , label [] [ text type_ ]
             ]
         ]
 

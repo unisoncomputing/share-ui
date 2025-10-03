@@ -16,23 +16,23 @@
 .project-contribution-changes-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 
   & .branch-diff-content {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
 
     & .branch-diff-content-cards {
       display: flex;
       flex-direction: row;
-      gap: 1.5rem;
+      gap: 1rem;
     }
   }
 
-  & .change-tree {
-    width: 18rem;
-    padding: 1rem;
+  & .card.change-tree {
+    --c-card_padding: 0.5rem;
+    width: 16rem;
     height: max-content;
     overflow-x: clip;
     position: relative;
@@ -197,6 +197,7 @@
     & .definition-change.card .diff-side-by-side {
       display: flex;
       flex-direction: row;
+      font-size: var(--font-size-small);
       width: 100%;
       gap: 0;
 
@@ -206,16 +207,17 @@
 
         & header {
           background: var(--u-color_element_subdued);
-          padding: 0.5rem 1rem;
+          padding: 0.5rem;
           line-height: 1;
           font-size: var(--font-size-extra-small);
           text-transform: uppercase;
           font-weight: bold;
           color: var(--u-color_text_subdued);
+          border-bottom: 1px solid var(--u-color_border_subdued);
         }
 
         & code {
-          padding: 0.5rem 1rem;
+          padding: 0.25rem 0.5rem;
         }
       }
 
@@ -264,36 +266,6 @@
 
     & .definition-change.card.updated .segment-change a:hover {
       background: var(--color-orange-3);
-    }
-
-    & .definition-change.card .definition-change-details::before {
-      content: " ";
-      width: 0.25rem;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      border-radius: 0 0 0 3px;
-    }
-
-    & .definition-change.card.updated .definition-change-details::before {
-      background: var(--color-orange-4);
-    }
-
-    & .definition-change.card.removed .definition-change-details::before {
-      background: var(--color-pink-4);
-    }
-
-    & .definition-change.card.added .definition-change-details::before {
-      background: var(--color-green-4);
-    }
-
-    & .definition-change.card.aliased .definition-change-details::before {
-      background: var(--color-purple-4);
-    }
-
-    & .definition-change.card.renamed .definition-change-details::before {
-      background: var(--color-blue-4);
     }
   }
 
@@ -532,6 +504,7 @@
 
 .project-contribution-changes-page .contribution-diff_uncomputable {
   padding: 1.5rem;
+
   & h2 {
     font-size: 1.25rem;
     display: flex;
@@ -548,10 +521,9 @@
   }
 }
 
-@container (max-width: 1199px) {
+@container (max-width: 400px) {
   .project-contribution-changes-page .definition-changes {
     & .definition-change.card .diff-side-by-side {
-      font-size: var(--font-size-medium);
       flex-direction: column;
     }
 
@@ -563,28 +535,6 @@
     & .definition-change.card .diff-side-by-side .diff-side:first-child {
       border-right: 0;
       border-bottom: 1px solid var(--u-color_border_subdued);
-    }
-  }
-}
-
-@container (min-width: 1200px) {
-  .diff-side-by-side {
-    font-size: var(--font-size-small);
-    flex-direction: row;
-  }
-}
-
-@container (min-width: 1260px) {
-  .diff-side-by-side {
-    font-size: var(--font-size-medium);
-    flex-direction: row;
-  }
-}
-
-@media only screen and (--u-viewport_max-xl) {
-  .project-contribution-changes-page {
-    & .change-tree {
-      width: 18rem;
     }
   }
 }
@@ -601,8 +551,20 @@
   .project-contribution-changes-page {
     & .definition-change.card {
       & .definition-change-header .change-line {
-        max-width: 20rem;
-        overflow: hidden;
+        & .change-info .hash,
+        & .change-info .extra-info,
+        & .change-info .icon.arrow-right,
+        & .change-badge label {
+          display: none;
+        }
+
+        & .change-badge_wrapper {
+          width: auto;
+        }
+
+        & .change-badge {
+          padding: 0.25rem;
+        }
       }
 
       & .definition-change-details {
@@ -610,5 +572,12 @@
         overflow: auto;
       }
     }
+  }
+}
+
+@media only screen and (--u-viewport_max-sm) {
+  :is(:is(.project-contribution-changes-page .change-line) .def-icon-anchor)
+    .def-icon {
+    display: none;
   }
 }
