@@ -540,6 +540,11 @@
 }
 
 @media only screen and (--u-viewport_max-lg) {
+  .project-contribution-page:has(.project-contribution-changes-page)
+    .page-title {
+    padding-top: 0.5rem;
+  }
+
   .project-contribution-changes-page {
     & .change-tree {
       display: none;

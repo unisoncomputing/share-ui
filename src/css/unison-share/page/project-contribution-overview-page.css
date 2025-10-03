@@ -128,3 +128,16 @@
     }
   }
 }
+
+@media only screen and (--u-viewport_max-lg) {
+  .project-contribution-page:has(.project-contribution-overview-page)
+    .page
+    .page-content {
+    padding-top: 1rem;
+  }
+
+  .project-contribution-page:has(.project-contribution-overview-page)
+    .page-title {
+    padding-top: 0.5rem;
+  }
+}
