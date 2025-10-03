@@ -143,6 +143,7 @@
         position: relative;
         width: 100%;
         padding: 0;
+        font-size: var(--font-size-small);
 
         & pre {
           max-width: var(--readable-column-width-base);
@@ -197,7 +198,6 @@
     & .definition-change.card .diff-side-by-side {
       display: flex;
       flex-direction: row;
-      font-size: var(--font-size-small);
       width: 100%;
       gap: 0;
 
