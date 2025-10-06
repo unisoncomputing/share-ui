@@ -112,13 +112,10 @@ update appContext orgHandle currentMembers msg model =
                         userHandles m =
                             case m of
                                 OrgMember.UserMember { user } ->
-                                    Just user.handle
-
-                                _ ->
-                                    Nothing
+                                    user.handle
 
                         usersToIgnore =
-                            account.handle :: List.filterMap userHandles currentMembers
+                            account.handle :: List.map userHandles currentMembers
 
                         model_ =
                             if Search.queryEquals q search then
@@ -158,7 +155,7 @@ update appContext orgHandle currentMembers msg model =
         AddMemberFinished res ->
             case ( model, res ) of
                 ( Saving member, Ok _ ) ->
-                    ( Success member, Cmd.none, AddedMember (OrgMember.UserMember { user = member.user, roles = [ member.role ] }) )
+                    ( Success member, Cmd.none, AddedMember (OrgMember.UserMember { user = member.user, role = member.role }) )
 
                 ( Saving member, Err e ) ->
                     ( Failure e member, Cmd.none, NoOutMsg )
@@ -197,7 +194,7 @@ fetchUsers appContext query =
 
 addMember : AppContext -> UserHandle -> PotentialOrgMember -> Cmd Msg
 addMember appContext orgHandle member =
-    ShareApi.createOrgRoleAssignment orgHandle [ OrgMember.UserMember { user = member.user, roles = [ member.role ] } ]
+    ShareApi.createOrgRoleMember orgHandle [ OrgMember.UserMember { user = member.user, role = member.role } ]
         |> HttpApi.toRequestWithEmptyResponse AddMemberFinished
         |> HttpApi.perform appContext.api
 

@@ -5,3 +5,14 @@
   font-size: var(--font-size-small);
   align-items: center;
 }
+
+.confirm-delete .status-banner {
+  font-size: var(--font-size-small);
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  padding-left: 0.25rem;
+}
+.confirm-delete .status-indicator.status-indicator_regular {
+  --c-size_status-indicator: 1rem;
+  --c-size_status-indicator_icon: 0.75rem;
+}

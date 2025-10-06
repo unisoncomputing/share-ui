@@ -2,37 +2,27 @@ module UnisonShare.OrgMember exposing (..)
 
 import Json.Decode as Decode exposing (string)
 import Json.Decode.Extra exposing (when)
-import Json.Decode.Pipeline exposing (required, requiredAt)
+import Json.Decode.Pipeline exposing (required)
 import Lib.Decode.Helpers exposing (failInvalid)
 import UnisonShare.OrgRole as OrgRole exposing (OrgRole)
 import UnisonShare.User as User exposing (UserSummaryWithId)
 
 
-type OrgMember
-    = UserMember { roles : List OrgRole, user : UserSummaryWithId }
-    | TeamMember { roles : List OrgRole, teamId : String }
+type
+    OrgMember
+    --    | TeamMember { role : OrgRole, teamId : String }
+    = UserMember { role : OrgRole, user : UserSummaryWithId }
 
 
 decodeOrgUserMember : Decode.Decoder OrgMember
 decodeOrgUserMember =
     let
-        make roles user =
-            UserMember { roles = roles, user = user }
+        make role user =
+            UserMember { role = role, user = user }
     in
     Decode.succeed make
-        |> required "roles" (Decode.list OrgRole.decode)
-        |> requiredAt [ "subject", "data" ] User.decodeSummaryWithId
-
-
-decodeOrgTeamMember : Decode.Decoder OrgMember
-decodeOrgTeamMember =
-    let
-        make roles teamId =
-            TeamMember { roles = roles, teamId = teamId }
-    in
-    Decode.succeed make
-        |> required "roles" (Decode.list OrgRole.decode)
-        |> requiredAt [ "subject", "data", "teamId" ] Decode.string
+        |> required "role" OrgRole.decode
+        |> required "subject" User.decodeSummaryWithId
 
 
 whenPathIs : List String -> String -> Decode.Decoder a -> Decode.Decoder a
@@ -42,13 +32,8 @@ whenPathIs path val =
 
 decodeMaybe : Decode.Decoder (Maybe OrgMember)
 decodeMaybe =
-    let
-        whenKindIs kind =
-            whenPathIs [ "subject", "kind" ] kind
-    in
     Decode.oneOf
-        [ whenKindIs "user" (Decode.map Just decodeOrgUserMember)
-        , whenKindIs "team" (Decode.map Just decodeOrgTeamMember)
+        [ Decode.map Just decodeOrgUserMember
         , Decode.succeed Nothing
         ]
 
