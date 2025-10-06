@@ -25,9 +25,9 @@
 .org-people-page .member_profile-snippet {
   width: 50%;
 }
-.org-people-page .member_role,
+
 .org-people-page .member_remove {
-  width: 25%;
+  width: 21rem;
 }
 
 .org-people-page .member_role {
@@ -87,13 +87,9 @@
     width: 8rem;
     text-align: right;
   }
-
-  .org-people-page .member_remove {
-    width: 2rem;
-  }
 }
 
-@container org-people-members (max-width: 500px) {
+@container org-people-members (max-width: 750px) {
   .org-people-page .members_list {
     gap: 2rem;
   }
