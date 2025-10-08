@@ -2,14 +2,14 @@
   --c-add-project-webhook-modal_width: 38rem;
   width: var(--c-add-project-webhook-modal_width);
 
-  & .event-selection_groups {
+  & .topic-selection_groups {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1.5rem;
   }
 
-  & .event-selection .form-field .label {
+  & .topic-selection .form-field .label {
     font-weight: normal;
   }
 

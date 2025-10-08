@@ -32,10 +32,12 @@ import UnisonShare.Project as Project exposing (ProjectVisibility)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.ProjectRole as ProjectRole
+import UnisonShare.ProjectWebhook as ProjectWebhook exposing (ProjectWebhook, ProjectWebhookForm)
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import UnisonShare.Ticket.TicketStatus as TicketStatus exposing (TicketStatus)
 import UnisonShare.Timeline.CommentId as CommentId exposing (CommentId)
 import UnisonShare.Tour as Tour exposing (Tour)
+import Url
 import Url.Builder exposing (QueryParameter, int, string)
 
 
@@ -511,6 +513,54 @@ deleteProjectRoleAssignment projectRef collaborator =
         { path = [ "users", handle, "projects", slug, "roles" ]
         , queryParams = []
         , body = Http.jsonBody body
+        }
+
+
+
+-- PROJECT WEBHOOKS
+
+
+projectWebhooks : ProjectRef -> Endpoint
+projectWebhooks projectRef =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    GET
+        { path = [ "users", handle, "projects", slug, "webhooks" ]
+        , queryParams = []
+        }
+
+
+createProjectWebhook : ProjectRef -> ProjectWebhookForm -> Endpoint
+createProjectWebhook projectRef webhook =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+
+        body =
+            Encode.object
+                [ ( "uri", Encode.string (Url.toString webhook.url) )
+                , ( "topics", ProjectWebhook.encodeTopics webhook.topics )
+                ]
+    in
+    POST
+        { path = [ "users", handle, "projects", slug, "webhooks" ]
+        , queryParams = []
+        , body = Http.jsonBody body
+        }
+
+
+deleteProjectWebhook : ProjectRef -> ProjectWebhook -> Endpoint
+deleteProjectWebhook projectRef webhook =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    DELETE
+        { path = [ "users", handle, "projects", slug, "webhooks", webhook.id ]
+        , queryParams = []
+        , body = Http.emptyBody
         }
 
 

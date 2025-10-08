@@ -28,15 +28,18 @@ import UnisonShare.AddProjectCollaboratorModal as AddProjectCollaboratorModal
 import UnisonShare.AddProjectWebhookModal as AddProjectWebhookModal
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.ErrorDetails as ErrorDetails
+import UnisonShare.NotificationTopicType as NotificationTopicType
 import UnisonShare.Org as Org exposing (OrgSummary)
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectDetails, ProjectVisibility(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.ProjectRole as ProjectRole
-import UnisonShare.ProjectWebhook exposing (ProjectWebhook)
+import UnisonShare.ProjectWebhook as ProjectWebhook exposing (ProjectWebhook)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.User as User exposing (UserSummary)
+import Url
 
 
 
@@ -111,6 +114,7 @@ init appContext projectRef =
     , Cmd.batch
         [ fetchOwner appContext (ProjectRef.handle projectRef)
         , fetchCollaborators appContext projectRef
+        , fetchWebhooks appContext projectRef
         ]
     )
 
@@ -122,6 +126,7 @@ init appContext projectRef =
 type Msg
     = FetchCollaboratorsFinished (WebData (List ProjectCollaborator))
     | FetchOwnerFinished (WebData ProjectOwner)
+    | FetchProjectWebhooksFinished (WebData (List ProjectWebhook))
     | UpdateVisibility ProjectVisibility
     | DiscardChanges
     | SaveChanges
@@ -132,7 +137,9 @@ type Msg
     | ShowAddWebhookModal
     | CloseModal
     | RemoveCollaborator ProjectCollaborator
+    | RemoveWebhook ProjectWebhook
     | RemoveCollaboratorFinished (HttpResult ())
+    | RemoveWebhookFinished (HttpResult ())
     | AddProjectCollaboratorModalMsg AddProjectCollaboratorModal.Msg
     | AddProjectWebhookModalMsg AddProjectWebhookModal.Msg
 
@@ -157,6 +164,9 @@ update appContext project msg model =
 
         ( FetchOwnerFinished owner, _ ) ->
             ( { model | owner = owner }, Cmd.none, None )
+
+        ( FetchProjectWebhooksFinished webhooks, _ ) ->
+            ( { model | webhooks = webhooks }, Cmd.none, None )
 
         ( UpdateVisibility newVisibility, WithChanges c ) ->
             if newVisibility /= project.visibility then
@@ -206,6 +216,14 @@ update appContext project msg model =
                         |> RemoteData.map (List.filter (\c -> c /= collab))
             in
             ( { model | collaborators = collaborators }, removeCollaborator appContext project.ref collab, None )
+
+        ( RemoveWebhook webhook, _ ) ->
+            let
+                webhooks =
+                    model.webhooks
+                        |> RemoteData.map (List.filter (\w -> w /= webhook))
+            in
+            ( { model | webhooks = webhooks }, removeWebhook appContext project.ref webhook, None )
 
         ( AddProjectCollaboratorModalMsg collabMsg, _ ) ->
             case ( model.modal, model.collaborators ) of
@@ -270,7 +288,7 @@ update appContext project msg model =
                                     Success (webhook :: currentWebhooks)
                             in
                             ( { model | modal = AddWebhookModal modal, webhooks = webhooks }
-                            , Cmd.batch [ Cmd.map AddProjectWebhookModalMsg cmd, Util.delayMsg 1500 CloseModal ]
+                            , Cmd.batch [ Cmd.map AddProjectWebhookModalMsg cmd, Util.delayMsg 1000 CloseModal ]
                             , None
                             )
 
@@ -281,18 +299,29 @@ update appContext project msg model =
             ( model, Cmd.none, None )
 
 
+
+-- EFFECTS
+
+
+{-| Used by parent, ProjectPage
+-}
 fetchProjectCollaborators : AppContext -> ProjectRef -> Model -> ( Model, Cmd Msg )
 fetchProjectCollaborators appContext projectRef model =
     ( { model | collaborators = Loading }, fetchCollaborators appContext projectRef )
 
 
+{-| Used by parent, ProjectPage
+-}
 fetchProjectOwner : AppContext -> ProjectRef -> Model -> ( Model, Cmd Msg )
 fetchProjectOwner appContext projectRef model =
     ( { model | owner = Loading }, fetchOwner appContext (ProjectRef.handle projectRef) )
 
 
-
--- EFFECTS
+{-| Used by parent, ProjectPage
+-}
+fetchProjectWebhooks : AppContext -> ProjectRef -> Model -> ( Model, Cmd Msg )
+fetchProjectWebhooks appContext projectRef model =
+    ( { model | webhooks = Loading }, fetchWebhooks appContext projectRef )
 
 
 fetchCollaborators : AppContext -> ProjectRef -> Cmd Msg
@@ -329,6 +358,22 @@ updateProjectSettings : AppContext -> ProjectRef -> Changes -> Cmd Msg
 updateProjectSettings appContext projectRef changes =
     ShareApi.updateProject projectRef (ShareApi.ProjectSettingsUpdate changes)
         |> HttpApi.toRequestWithEmptyResponse SaveFinished
+        |> HttpApi.perform appContext.api
+
+
+fetchWebhooks : AppContext -> ProjectRef -> Cmd Msg
+fetchWebhooks appContext projectRef =
+    ShareApi.projectWebhooks projectRef
+        |> HttpApi.toRequest
+            (Decode.field "webhooks" (Decode.list ProjectWebhook.decode))
+            (RemoteData.fromResult >> FetchProjectWebhooksFinished)
+        |> HttpApi.perform appContext.api
+
+
+removeWebhook : AppContext -> ProjectRef -> ProjectWebhook -> Cmd Msg
+removeWebhook appContext projectRef webhook =
+    ShareApi.deleteProjectWebhook projectRef webhook
+        |> HttpApi.toRequestWithEmptyResponse RemoveWebhookFinished
         |> HttpApi.perform appContext.api
 
 
@@ -441,16 +486,10 @@ viewCollaborators model =
         |> Card.view
 
 
-type alias Webhook =
-    { events : List String
-    , url : String
-    }
-
-
-viewWebhook : Webhook -> Html Msg
+viewWebhook : ProjectWebhook -> Html Msg
 viewWebhook webhook =
     let
-        eventIcon event =
+        topicIcon event =
             if String.startsWith "Branch" event then
                 Icon.branch
 
@@ -463,31 +502,40 @@ viewWebhook webhook =
             else
                 Icon.bolt
 
-        viewEventTag event =
-            Tag.tag event |> Tag.withIcon (eventIcon event) |> Tag.view
+        viewTopicTag topic =
+            Tag.tag topic |> Tag.withIcon (topicIcon topic) |> Tag.view
 
         viewAction msg icon =
             Button.icon msg icon
                 |> Button.small
                 |> Button.subdued
                 |> Button.view
+
+        viewTopics =
+            case webhook.topics of
+                ProjectWebhook.AllTopics ->
+                    [ viewTopicTag "All" ]
+
+                ProjectWebhook.SelectedTopics topics ->
+                    List.map
+                        (NotificationTopicType.toString >> viewTopicTag)
+                        topics
     in
     div [ class "webhook" ]
         [ div
             [ class "webhook_details" ]
-            [ strong [ class "webhook_url" ] [ Icon.view Icon.wireframeGlobe, text webhook.url ]
-            , div [ class "webhook_events" ] (List.map viewEventTag webhook.events)
+            [ strong [ class "webhook_url" ] [ Icon.view Icon.wireframeGlobe, text (Url.toString webhook.url) ]
+            , div [ class "webhook_events" ] viewTopics
             ]
         , div
             [ class "webhook_actions" ]
-            [ viewAction ShowAddCollaboratorModal Icon.writingPad
-            , viewAction ShowAddCollaboratorModal Icon.trash
+            [ viewAction (RemoveWebhook webhook) Icon.trash
             ]
         ]
 
 
-viewWebhooks : Model -> Html Msg
-viewWebhooks _ =
+viewWebhooks : Session -> Model -> Html Msg
+viewWebhooks session model =
     let
         divider =
             Divider.divider |> Divider.small |> Divider.view
@@ -497,22 +545,35 @@ viewWebhooks _ =
                 |> Button.small
                 |> Button.view
 
-        webhooks =
-            [ viewWebhook { events = [ "Branch updated", "Contribution created" ], url = "https://example.com" }
-            , viewWebhook { events = [ "Contribution created" ], url = "https://example.com" }
-            , viewWebhook { events = [ "Ticket updated" ], url = "https://example.com" }
-            ]
+        content =
+            case model.webhooks of
+                Success webhooks ->
+                    [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
+                    , div [ class "webhooks" ] (webhooks |> List.map viewWebhook |> List.intersperse divider)
+                    ]
+
+                Failure e ->
+                    [ StatusBanner.bad "An unexpected error occurred, please try again."
+                    , ErrorDetails.view session e
+                    ]
+
+                _ ->
+                    [ div [ class "webhooks_loading" ]
+                        [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
+                        , Placeholder.text |> Placeholder.withLength Placeholder.Large |> Placeholder.view
+                        ]
+                    ]
     in
     Card.card
-        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
-        , div [ class "webhooks" ] (List.intersperse divider webhooks)
-        ]
+        content
         |> Card.asContained
         |> Card.view
 
 
-viewPageContent : ProjectDetails -> Model -> PageContent Msg
-viewPageContent project model =
+viewPageContent : Session -> ProjectDetails -> Model -> PageContent Msg
+viewPageContent session project model =
     let
         activeVisiblityValue =
             case model.form of
@@ -659,7 +720,7 @@ viewPageContent project model =
                 UI.nothing
 
         webhooks =
-            viewWebhooks model
+            viewWebhooks session model
     in
     PageContent.oneColumn
         [ div [ class "settings-content", class stateClass ]
@@ -684,7 +745,7 @@ view session project model =
                         Nothing
         in
         ( PageLayout.centeredNarrowLayout
-            (viewPageContent project model)
+            (viewPageContent session project model)
             PageFooter.pageFooter
             |> PageLayout.withSubduedBackground
         , modal

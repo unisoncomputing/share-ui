@@ -3,7 +3,8 @@ module UnisonShare.AddProjectWebhookModal exposing (..)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Http
-import Lib.HttpApi exposing (HttpResult)
+import Json.Decode as Decode
+import Lib.HttpApi as HttpApi exposing (HttpResult)
 import List.Extra as ListE
 import List.Nonempty as NEL
 import UI
@@ -16,38 +17,31 @@ import UI.Icon as Icon
 import UI.Modal as Modal
 import UI.ProfileSnippet as ProfileSnippet
 import UI.StatusBanner as StatusBanner
+import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
-import UnisonShare.Link as Link
+import UnisonShare.NotificationTopicType exposing (NotificationTopicType(..))
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
-import UnisonShare.ProjectWebhook exposing (ProjectWebhook)
+import UnisonShare.ProjectWebhook as ProjectWebhook exposing (ProjectWebhook, ProjectWebhookForm, ProjectWebhookTopics(..))
 import UnisonShare.User exposing (UserSummaryWithId)
-
-
-type NotificationEventType
-    = ProjectContributionCreated
-    | ProjectContributionUpdated
-    | ProjectContributionComment
-    | ProjectTicketCreated
-    | ProjectTicketUpdated
-    | ProjectTicketComment
-    | ProjectBranchUpdated
-    | ProjectReleaseCreated
-
-
-type WebhookEvents
-    = AllEvents
-    | SpecificEvents (List NotificationEventType)
+import Url
 
 
 type alias Form =
     { url : String
-    , events : WebhookEvents
-    , isActive : Bool
+    , topics : ProjectWebhookTopics
     }
 
 
+type Validation
+    = NotChecked
+    | Valid
+    | InvalidUrlAndSelection
+    | InvalidUrl
+    | InvalidSelection
+
+
 type Model
-    = Edit Form
+    = Edit Validation Form
     | Saving Form
     | Failure Http.Error Form
     | Success ProjectWebhook
@@ -55,7 +49,7 @@ type Model
 
 init : Model
 init =
-    Edit { url = "", events = AllEvents, isActive = True }
+    Edit NotChecked { url = "", topics = AllTopics }
 
 
 
@@ -65,11 +59,10 @@ init =
 type Msg
     = CloseModal
     | UpdateUrl String
-    | SetWebhookEvents WebhookEvents
-    | ToggleEvent NotificationEventType
-    | ToggleIsActive
+    | SetProjectWebhookTopics ProjectWebhookTopics
+    | ToggleTopic NotificationTopicType
     | AddWebhook
-    | AddWebhookFinished (HttpResult ())
+    | AddWebhookFinished (HttpResult ProjectWebhook)
 
 
 type OutMsg
@@ -79,38 +72,60 @@ type OutMsg
 
 
 update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
-update _ _ msg model =
+update appContext projectRef msg model =
     case ( msg, model ) of
-        ( UpdateUrl url, Edit f ) ->
-            ( Edit { f | url = url }, Cmd.none, NoOutMsg )
+        ( UpdateUrl url, Edit v f ) ->
+            ( Edit v { f | url = url }, Cmd.none, NoOutMsg )
 
-        ( SetWebhookEvents events, Edit f ) ->
-            ( Edit { f | events = events }, Cmd.none, NoOutMsg )
+        ( SetProjectWebhookTopics topics, Edit v f ) ->
+            ( Edit v { f | topics = topics }, Cmd.none, NoOutMsg )
 
-        ( ToggleEvent eventType, Edit f ) ->
+        ( ToggleTopic topicType, Edit v f ) ->
             let
-                events =
-                    case f.events of
-                        AllEvents ->
-                            SpecificEvents [ eventType ]
+                topics =
+                    case f.topics of
+                        AllTopics ->
+                            SelectedTopics [ topicType ]
 
-                        SpecificEvents evts ->
-                            if List.member eventType evts then
-                                SpecificEvents (ListE.remove eventType evts)
+                        SelectedTopics evts ->
+                            if List.member topicType evts then
+                                SelectedTopics (ListE.remove topicType evts)
 
                             else
-                                SpecificEvents (evts ++ [ eventType ])
+                                SelectedTopics (evts ++ [ topicType ])
             in
-            ( Edit { f | events = events }, Cmd.none, NoOutMsg )
+            ( Edit v { f | topics = topics }, Cmd.none, NoOutMsg )
 
-        ( ToggleIsActive, Edit f ) ->
-            ( Edit { f | isActive = not f.isActive }, Cmd.none, NoOutMsg )
+        ( AddWebhook, Edit _ f ) ->
+            let
+                hasTopics =
+                    case f.topics of
+                        AllTopics ->
+                            True
 
-        ( AddWebhook, _ ) ->
-            ( model, Cmd.none, NoOutMsg )
+                        SelectedTopics topics ->
+                            not (List.isEmpty topics)
+            in
+            case ( Url.fromString f.url, hasTopics ) of
+                ( Just url, True ) ->
+                    ( Saving f, addWebhook appContext projectRef { url = url, topics = f.topics }, NoOutMsg )
 
-        ( AddWebhookFinished _, _ ) ->
-            ( model, Cmd.none, NoOutMsg )
+                ( Just _, False ) ->
+                    ( Edit InvalidSelection f, Cmd.none, NoOutMsg )
+
+                ( Nothing, True ) ->
+                    ( Edit InvalidUrl f, Cmd.none, NoOutMsg )
+
+                ( Nothing, False ) ->
+                    ( Edit InvalidUrlAndSelection f, Cmd.none, NoOutMsg )
+
+        ( AddWebhookFinished res, Saving f ) ->
+            case res of
+                Ok webhook ->
+                    ( Success webhook, Cmd.none, AddedWebhook webhook )
+
+                Err e ->
+                    ( Failure e f, Cmd.none, NoOutMsg )
 
         ( CloseModal, _ ) ->
             ( model, Cmd.none, RequestCloseModal )
@@ -121,6 +136,17 @@ update _ _ msg model =
 
 
 -- EFFECTS
+
+
+addWebhook : AppContext -> ProjectRef -> ProjectWebhookForm -> Cmd Msg
+addWebhook appContext projectRef webhook =
+    ShareApi.createProjectWebhook projectRef webhook
+        |> HttpApi.toRequest (Decode.field "webhook" ProjectWebhook.decode)
+            AddWebhookFinished
+        |> HttpApi.perform appContext.api
+
+
+
 -- VIEW
 
 
@@ -134,30 +160,30 @@ divider =
     Divider.divider |> Divider.small |> Divider.view
 
 
-viewEventSelection : List NotificationEventType -> Html Msg
-viewEventSelection selected =
+viewtopicselection : List NotificationTopicType -> Html Msg
+viewtopicselection selected =
     let
-        isSelected event =
-            List.member event selected
+        isSelected topic =
+            List.member topic selected
 
-        checkbox title event =
-            CheckboxField.field title (ToggleEvent event) (isSelected event)
+        checkbox title topic =
+            CheckboxField.field title (ToggleTopic topic) (isSelected topic)
                 |> CheckboxField.view
 
-        contributionEvents =
+        contributiontopics =
             [ checkbox "Contribution created" ProjectContributionCreated
             , checkbox "Contribution updated" ProjectContributionUpdated
             , checkbox "Contribution comment" ProjectContributionComment
             ]
 
-        ticketEvents =
+        tickettopics =
             [ checkbox "Ticket created" ProjectTicketCreated
             , checkbox "Ticket updated" ProjectTicketUpdated
             , checkbox "Ticket comment" ProjectTicketComment
             ]
 
-        eventSelectionCheckboxes =
-            div [ class "event-selection_groups" ]
+        topicselectionCheckboxes =
+            div [ class "topic-selection_groups" ]
                 [ div []
                     [ div [ class "checkboxes" ]
                         [ checkbox "Branch updated" ProjectBranchUpdated
@@ -165,14 +191,91 @@ viewEventSelection selected =
                         ]
                     ]
                 , div []
-                    [ div [ class "checkboxes" ] contributionEvents
+                    [ div [ class "checkboxes" ] contributiontopics
                     ]
                 , div []
-                    [ div [ class "checkboxes" ] ticketEvents
+                    [ div [ class "checkboxes" ] tickettopics
                     ]
                 ]
     in
-    div [ class "event-selection" ] [ divider, eventSelectionCheckboxes ]
+    div [ class "topic-selection" ] [ divider, topicselectionCheckboxes ]
+
+
+viewEditModal : Validation -> (Html Msg -> Modal.Modal Msg) -> Form -> Modal.Modal Msg
+viewEditModal validation toModal form =
+    let
+        specifictopicsOption =
+            case form.topics of
+                AllTopics ->
+                    SelectedTopics []
+
+                _ ->
+                    form.topics
+
+        options =
+            NEL.singleton (RadioField.option "Select specific topics" "The webhook is only called on selected topics" specifictopicsOption)
+                |> NEL.cons (RadioField.option "All topics" "The webhook is called on all project topics (including future additions)" AllTopics)
+
+        topicselection =
+            case form.topics of
+                AllTopics ->
+                    UI.nothing
+
+                SelectedTopics selected ->
+                    viewtopicselection selected
+
+        withInvalidIndicator t =
+            if validation == InvalidUrlAndSelection || validation == InvalidUrl then
+                TextField.markAsInvalid t
+
+            else
+                t
+
+        withInvalidBanner m =
+            if validation == InvalidUrlAndSelection then
+                Modal.withLeftSideFooter
+                    [ StatusBanner.bad "Please a URL and select topics." ]
+                    m
+
+            else if validation == InvalidSelection then
+                Modal.withLeftSideFooter
+                    [ StatusBanner.bad "Please select topics." ]
+                    m
+
+            else
+                m
+    in
+    toModal
+        (div []
+            [ TextField.field UpdateUrl "Webhook URL" form.url
+                |> TextField.withIcon Icon.wireframeGlobe
+                |> TextField.withPlaceholder "https://example.com"
+                |> TextField.withHelpText "Provide the *full* URL that will be called when the selected topics are triggered."
+                |> withInvalidIndicator
+                |> TextField.view
+            , divider
+            , RadioField.field "topics" SetProjectWebhookTopics options form.topics |> RadioField.view
+            , topicselection
+            ]
+        )
+        |> withInvalidBanner
+        |> Modal.withActions
+            [ Button.button CloseModal "Cancel"
+                |> Button.subdued
+            , Button.button AddWebhook "Add Webhook"
+                |> Button.emphasized
+            ]
+
+
+
+{-
+   |> Modal.withLeftSideFooter
+       [ Button.iconThenLabel_ Link.docs Icon.docs "Webhook request format docs"
+           |> Button.small
+           |> Button.outlined
+           |> Button.view
+       ]
+-}
 
 
 view : Model -> Html Msg
@@ -185,63 +288,25 @@ view model =
 
         modal =
             case model of
-                Edit form ->
+                Edit validation form ->
+                    viewEditModal validation modal_ form
+
+                Saving f ->
+                    viewEditModal NotChecked modal_ f
+                        |> Modal.withLeftSideFooter [ StatusBanner.working "Adding Webhook..." ]
+                        |> Modal.withDimOverlay True
+
+                Failure _ f ->
+                    viewEditModal NotChecked modal_ f
+                        |> Modal.withLeftSideFooter [ StatusBanner.bad "Failed to add Webhook" ]
+
+                Success webhook ->
                     let
-                        specificEventsOption =
-                            case form.events of
-                                AllEvents ->
-                                    SpecificEvents []
-
-                                _ ->
-                                    form.events
-
-                        options =
-                            NEL.singleton (RadioField.option "Select specific events" "The webhook is only called on selected events" specificEventsOption)
-                                |> NEL.cons (RadioField.option "All events" "The webhook is called on all project events (including future additions)" AllEvents)
-
-                        eventSelection =
-                            case form.events of
-                                AllEvents ->
-                                    UI.nothing
-
-                                SpecificEvents selected ->
-                                    viewEventSelection selected
+                        form =
+                            { url = Url.toString webhook.url, topics = webhook.topics }
                     in
-                    modal_
-                        (div []
-                            [ TextField.field UpdateUrl "Webhook URL" form.url
-                                |> TextField.withIcon Icon.wireframeGlobe
-                                |> TextField.withHelpText "This URL will be called when the selected events are triggered."
-                                |> TextField.view
-                            , divider
-                            , RadioField.field "Events" SetWebhookEvents options form.events |> RadioField.view
-                            , eventSelection
-                            , divider
-                            , CheckboxField.field "Active" ToggleIsActive form.isActive
-                                |> CheckboxField.withHelpText "Actively call the Webhook URL when selected events are triggered."
-                                |> CheckboxField.view
-                            ]
-                        )
-                        |> Modal.withActions
-                            [ Button.button CloseModal "Cancel"
-                                |> Button.subdued
-                            , Button.button AddWebhook "Add Webhook"
-                                |> Button.emphasized
-                            ]
-                        |> Modal.withLeftSideFooter
-                            [ Button.iconThenLabel_ Link.docs Icon.docs "Webhook request format docs"
-                                |> Button.small
-                                |> Button.outlined
-                                |> Button.view
-                            ]
-
-                Saving _ ->
-                    modal_ (StatusBanner.working "Adding Webhook...")
-
-                Failure _ _ ->
-                    modal_ (StatusBanner.bad "Failed to add Webhook")
-
-                Success _ ->
-                    modal_ (StatusBanner.good "Successfully added Webhook")
+                    viewEditModal NotChecked modal_ form
+                        |> Modal.withLeftSideFooter [ StatusBanner.good "Successfully added Webhook" ]
+                        |> Modal.withDimOverlay True
     in
     Modal.view modal
