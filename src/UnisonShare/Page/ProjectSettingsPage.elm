@@ -384,7 +384,7 @@ removeWebhook appContext projectRef webhook =
 pageTitle : PageTitle.PageTitle msg
 pageTitle =
     PageTitle.title "Project Settings"
-        |> PageTitle.withDescription "Manage your project visibility and settings."
+        |> PageTitle.withDescription "Manage your project. Collaborators, webhooks, and visibility."
 
 
 viewLoadingPage : PageLayout msg
@@ -413,8 +413,8 @@ viewLoadingPage =
         |> PageLayout.withSubduedBackground
 
 
-viewCollaborators : Model -> Html Msg
-viewCollaborators model =
+viewCollaborators : Session -> Model -> Html Msg
+viewCollaborators session model =
     let
         ( collabs, addButton ) =
             case model.collaborators of
@@ -461,15 +461,16 @@ viewCollaborators model =
                     in
                     content
 
-                Failure _ ->
+                Failure e ->
                     ( div [ class "collaborators_error" ]
                         [ StatusBanner.bad "Could not load collaborators"
+                        , ErrorDetails.view session e
                         ]
                     , UI.nothing
                     )
 
                 _ ->
-                    ( div [ class "collaborators_loading" ]
+                    ( div [ class "list_loading" ]
                         [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
                         , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
                         , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
@@ -479,7 +480,7 @@ viewCollaborators model =
                     )
     in
     Card.card
-        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Project Collaborators" ], addButton ]
+        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Collaborators" ], addButton ]
         , collabs
         ]
         |> Card.asContained
@@ -562,12 +563,12 @@ viewWebhooks session model =
                         ]
 
                 Failure e ->
-                    [ StatusBanner.bad "An unexpected error occurred, please try again."
+                    [ StatusBanner.bad "Could not load webhooks."
                     , ErrorDetails.view session e
                     ]
 
                 _ ->
-                    [ div [ class "webhooks_loading" ]
+                    [ div [ class "list_loading" ]
                         [ Placeholder.text |> Placeholder.withLength Placeholder.Small |> Placeholder.view
                         , Placeholder.text |> Placeholder.withLength Placeholder.Medium |> Placeholder.view
                         , Placeholder.text |> Placeholder.withLength Placeholder.Huge |> Placeholder.view
@@ -651,8 +652,13 @@ viewPageContent session project model =
                                 , StatusBanner.info "Changing visibility is not supported for public organizations."
                                 )
 
-                        Failure _ ->
-                            ( overlay_, StatusBanner.bad "An unexpected error occurred, please try again." )
+                        Failure e ->
+                            ( overlay_
+                            , div []
+                                [ StatusBanner.bad "An unexpected error occurred, please try again."
+                                , ErrorDetails.view session e
+                                ]
+                            )
             in
             Card.card
                 [ h2 [] [ text "Project Visibility" ]
@@ -723,7 +729,7 @@ viewPageContent session project model =
 
         collaborators =
             if Project.isPublic project || project.isPremiumProject then
-                viewCollaborators model
+                viewCollaborators session model
 
             else
                 UI.nothing

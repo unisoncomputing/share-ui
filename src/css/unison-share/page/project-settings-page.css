@@ -82,7 +82,7 @@
   color: var(--u-color_icon_subdued);
 }
 
-.project-settings-page .collaborators_loading {
+.project-settings-page .list_loading {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

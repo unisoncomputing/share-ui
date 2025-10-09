@@ -17,3 +17,11 @@ view session error =
 
     else
         UI.nothing
+
+
+
+{- details []
+   [ summary [] [ text "Error Details" ]
+   , pre [] [ text (Util.httpErrorToString error) ]
+   ]
+-}
