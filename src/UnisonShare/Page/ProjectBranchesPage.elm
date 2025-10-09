@@ -300,7 +300,7 @@ fetchBranches appContext projectRef kind query cursor =
         params =
             { kind = kind
             , searchQuery = query
-            , limit = 32
+            , limit = 100
             , cursor = cursor
             }
 
@@ -557,7 +557,12 @@ viewBranches appContext project branches emptyStateMessage =
                 |> List.map (viewBranchRow appContext project)
                 |> div [ class "project-branches_list" ]
                 |> (\branchList ->
-                        [ div [ class "project-branches_paginated-list" ] [ branchList, viewPaginationControls project.ref p ] ]
+                        [ div [ class "project-branches_paginated-list" ]
+                            [ branchList
+
+                            -- , viewPaginationControls project.ref p
+                            ]
+                        ]
                    )
                 |> Card.card
                 |> Card.asContained
