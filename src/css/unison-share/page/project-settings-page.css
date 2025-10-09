@@ -9,6 +9,13 @@
   position: relative;
 }
 
+.project-settings-page .settings-content .card .project-settings_card_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .project-settings-page .settings-content .disabled-overlay {
   background: var(--u-color_container);
   border-radius: var(--border-radius-base);
@@ -55,13 +62,13 @@
   color: var(--u-color_text_subdued);
 }
 
-.project-settings-page .collaborators_empty-state {
+.project-settings-page .list_empty-state {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.project-settings-page .collaborators_empty-state_text {
+.project-settings-page .list_empty-state_text {
   color: var(--u-color_text_subdued);
   display: flex;
   flex-direction: row;
@@ -70,15 +77,66 @@
   font-size: var(--font-size-base);
 }
 
-.project-settings-page .collaborators_empty-state_text .icon {
+.project-settings-page .list_empty-state_text .icon {
   font-size: var(--font-size-base);
   color: var(--u-color_icon_subdued);
 }
 
-.project-settings-page .collaborators_loading {
+.project-settings-page .list_loading {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.project-settings-page .webhooks {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: var(--font-size-medium);
+  color: var(--u-color_text);
+
+  & .webhook {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  & .webhook_url {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: 1;
+    gap: 0.25rem;
+
+    & .icon {
+      color: var(--u-color_icon_subdued);
+    }
+  }
+
+  & .webhook_details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  & .webhook_details .webhook_events {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.125rem;
+    margin-left: 1rem;
+  }
+
+  & .webhook_actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.125rem;
+  }
 }
 
 .project-settings-page .page-content .actions {

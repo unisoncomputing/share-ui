@@ -292,11 +292,15 @@ update appContext projectRef route msg model =
 
                         ( fetchingOwner, fetchingOwnerCmd ) =
                             ProjectSettingsPage.fetchProjectOwner appContext projectRef fetchingCollabs
+
+                        ( fetchingWebhooks, fetchingWebhooksCmd ) =
+                            ProjectSettingsPage.fetchProjectWebhooks appContext projectRef fetchingOwner
                     in
-                    ( { modelWithProject | subPage = Settings fetchingOwner }
+                    ( { modelWithProject | subPage = Settings fetchingWebhooks }
                     , Cmd.batch
                         [ Cmd.map ProjectSettingsPageMsg fetchingCollabsCmd
                         , Cmd.map ProjectSettingsPageMsg fetchingOwnerCmd
+                        , Cmd.map ProjectSettingsPageMsg fetchingWebhooksCmd
                         ]
                     )
 

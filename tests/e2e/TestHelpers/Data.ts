@@ -727,6 +727,26 @@ function userSearchMatch() {
   };
 }
 
+function projectRoleAssignment() {
+  return {
+    roles: ["project_contributor"],
+    subject: {
+      data: user(),
+      kind: "user",
+    },
+  };
+}
+
+function projectWebhook() {
+  return {
+    notificationSubscriptionId: faker.string.uuid(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+    uri: faker.internet.url(),
+    topics: { type: "all" },
+  };
+}
+
 export {
   projectRef,
   project,
@@ -741,6 +761,8 @@ export {
   contribution,
   contributionTimeline,
   contributionStatusChangeEvent,
+  projectRoleAssignment,
+  projectWebhook,
   contributionDiff,
   notification,
   notificationEvent,
