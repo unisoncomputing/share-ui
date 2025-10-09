@@ -1,3 +1,10 @@
+.project-branches-page .project-branches_paginated-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+}
+
 .project-branches-page .project-branches_list {
   display: flex;
   flex-direction: column;
