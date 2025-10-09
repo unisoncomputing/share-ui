@@ -440,8 +440,8 @@ viewCollaborators model =
 
                         content =
                             if List.isEmpty collaborators then
-                                ( div [ class "collaborators_empty-state" ]
-                                    [ div [ class "collaborators_empty-state_text" ]
+                                ( div [ class "list_empty-state" ]
+                                    [ div [ class "list_empty-state_text" ]
                                         [ Icon.view Icon.userGroup, text "You haven't invited any collaborators yet" ]
                                     ]
                                 , addButton_
@@ -524,7 +524,7 @@ viewWebhook webhook =
     div [ class "webhook" ]
         [ div
             [ class "webhook_details" ]
-            [ strong [ class "webhook_url" ] [ Icon.view Icon.wireframeGlobe, text (Url.toString webhook.url) ]
+            [ strong [ class "webhook_url" ] [ Icon.view Icon.chain, text (Url.toString webhook.url) ]
             , div [ class "webhook_events" ] viewTopics
             ]
         , div
@@ -548,9 +548,18 @@ viewWebhooks session model =
         content =
             case model.webhooks of
                 Success webhooks ->
-                    [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
-                    , div [ class "webhooks" ] (webhooks |> List.map viewWebhook |> List.intersperse divider)
-                    ]
+                    if List.isEmpty webhooks then
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
+                        , div [ class "list_empty-state" ]
+                            [ div [ class "list_empty-state_text" ]
+                                [ Icon.view Icon.wireframeGlobe, text "You haven't set up any webhooks yet" ]
+                            ]
+                        ]
+
+                    else
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
+                        , div [ class "webhooks" ] (webhooks |> List.map viewWebhook |> List.intersperse divider)
+                        ]
 
                 Failure e ->
                     [ StatusBanner.bad "An unexpected error occurred, please try again."

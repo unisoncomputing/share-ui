@@ -62,13 +62,13 @@
   color: var(--u-color_text_subdued);
 }
 
-.project-settings-page .collaborators_empty-state {
+.project-settings-page .list_empty-state {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.project-settings-page .collaborators_empty-state_text {
+.project-settings-page .list_empty-state_text {
   color: var(--u-color_text_subdued);
   display: flex;
   flex-direction: row;
@@ -77,7 +77,7 @@
   font-size: var(--font-size-base);
 }
 
-.project-settings-page .collaborators_empty-state_text .icon {
+.project-settings-page .list_empty-state_text .icon {
   font-size: var(--font-size-base);
   color: var(--u-color_icon_subdued);
 }
