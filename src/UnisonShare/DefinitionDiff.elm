@@ -8,7 +8,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
-import Lib.Decode.Helpers exposing (nonEmptyList)
+import Lib.Decode.Helpers exposing (nonEmptyList, whenKindIs)
 import List.Nonempty as NEL
 import UI.Tooltip as Tooltip
 
@@ -25,16 +25,29 @@ type DiffSegment
     | SegmentChange { from : SyntaxSegment, to : SyntaxSegment }
 
 
+type DiffLine
+    = ChangedLine (List DiffSegment)
+    | UnchangedLine (List DiffSegment)
+    | SpacerLine
+
+
 type alias DiffDetails =
     { type_ : DefinitionType
-    , newDef : DiffSyntaxSegments
-    , oldDef : DiffSyntaxSegments
+    , left : List DiffLine
+    , right : List DiffLine
+    }
+
+
+type alias MismatchedDetails =
+    { type_ : DefinitionType
+    , left : DiffSyntaxSegments
+    , right : DiffSyntaxSegments
     }
 
 
 type DefinitionDiff
-    = Diff DiffDetails (NEL.Nonempty DiffSegment)
-    | Mismatched DiffDetails
+    = Diff DiffDetails
+    | Mismatched MismatchedDetails
 
 
 
@@ -152,27 +165,38 @@ viewNewDiffSegment syntaxConfig segment =
             ]
 
 
-viewDiff : (Bool -> SyntaxConfig msg) -> NEL.Nonempty DiffSegment -> Html msg
-viewDiff toSyntaxConfig segments =
-    let
-        old =
-            segments
-                |> NEL.toList
-                |> List.concatMap (viewOldDiffSegment (toSyntaxConfig False))
+viewDiffLine : (DiffSegment -> List (Html msg)) -> DiffLine -> Html msg
+viewDiffLine viewSeg line =
+    case line of
+        ChangedLine segments ->
+            div [ class "diff-line changed-line" ] (List.concatMap viewSeg segments)
 
-        new =
-            segments
-                |> NEL.toList
-                |> List.concatMap (viewNewDiffSegment (toSyntaxConfig True))
+        UnchangedLine segments ->
+            div [ class "diff-line unchanged-line" ] (List.concatMap viewSeg segments)
+
+        SpacerLine ->
+            div [ class "diff-line spacer-line" ] []
+
+
+viewDiff : (Bool -> SyntaxConfig msg) -> DiffDetails -> Html msg
+viewDiff toSyntaxConfig { left, right } =
+    let
+        before =
+            left
+                |> List.map (viewDiffLine (viewOldDiffSegment (toSyntaxConfig False)))
+
+        after =
+            right
+                |> List.map (viewDiffLine (viewNewDiffSegment (toSyntaxConfig True)))
     in
     div [ class "diff-side-by-side" ]
         [ pre [ class "monochrome diff-side old" ]
             [ header [ class "diff-old-header" ] [ text "Before" ]
-            , code [] old
+            , code [] before
             ]
         , pre [ class "monochrome diff-side new" ]
             [ header [ class "diff-new-header" ] [ text "After" ]
-            , code [] new
+            , code [] after
             ]
         ]
 
@@ -180,13 +204,13 @@ viewDiff toSyntaxConfig segments =
 view : (Bool -> SyntaxConfig msg) -> DefinitionDiff -> Html msg
 view toSyntaxConfig defDiff =
     case defDiff of
-        Diff _ diff ->
-            div [] [ viewDiff toSyntaxConfig diff ]
+        Diff details ->
+            div [] [ viewDiff toSyntaxConfig details ]
 
-        Mismatched { oldDef, newDef } ->
+        Mismatched { left, right } ->
             div [ class "diff-side-by-side" ]
-                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" oldDef) ]
-                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" newDef) ]
+                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" left) ]
+                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" right) ]
                 ]
 
 
@@ -249,53 +273,60 @@ decodeSegment =
         ]
 
 
+decodeDiffLine : Decode.Decoder DiffLine
+decodeDiffLine =
+    Decode.oneOf
+        [ whenKindIs "changed" (Decode.map ChangedLine (Decode.field "value" (Decode.list decodeSegment)))
+        , whenKindIs "unchanged" (Decode.map UnchangedLine (Decode.field "value" (Decode.list decodeSegment)))
+        , whenKindIs "spacer" (Decode.succeed SpacerLine)
+        ]
+
+
 decodeDiff : DefinitionType -> Decode.Decoder DefinitionDiff
 decodeDiff definitionType =
     let
-        ( oldKey, newKey, definitionKey ) =
+        definitionKey =
             case definitionType of
                 Term ->
-                    ( "left", "right", "termDefinition" )
+                    "termDefinition"
 
                 Type ->
-                    ( "left", "right", "typeDefinition" )
+                    "typeDefinition"
 
-        mkDiff diff oldDef newDef =
+        mkDiff left right =
             Diff
                 { type_ = definitionType
-                , oldDef = oldDef
-                , newDef = newDef
+                , left = left
+                , right = right
                 }
-                diff
     in
     Decode.succeed mkDiff
-        |> requiredAt [ "diff", "diff", "contents" ] (nonEmptyList decodeSegment)
-        |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
-        |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
+        |> requiredAt [ "left", definitionKey, "contents" ] (Decode.list decodeDiffLine)
+        |> requiredAt [ "right", definitionKey, "contents" ] (Decode.list decodeDiffLine)
 
 
 decodeMismatched : DefinitionType -> Decode.Decoder DefinitionDiff
 decodeMismatched definitionType =
     let
-        ( oldKey, newKey, definitionKey ) =
+        definitionKey =
             case definitionType of
                 Term ->
-                    ( "left", "right", "termDefinition" )
+                    "termDefinition"
 
                 Type ->
-                    ( "left", "right", "typeDefinition" )
+                    "typeDefinition"
 
-        mkMismatched oldDef newDef =
+        mkMismatched left right =
             Mismatched
                 { type_ = definitionType
-                , oldDef = oldDef
-                , newDef = newDef
+                , left = left
+                , right = right
                 }
     in
     Decode.succeed mkMismatched
         -- TODO: what about builtins?
-        |> requiredAt [ oldKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
-        |> requiredAt [ newKey, definitionKey, "contents" ] decodeDiffSyntaxSegments
+        |> requiredAt [ "left", definitionKey, "contents" ] decodeDiffSyntaxSegments
+        |> requiredAt [ "right", definitionKey, "contents" ] decodeDiffSyntaxSegments
 
 
 decode : DefinitionType -> Decode.Decoder DefinitionDiff
