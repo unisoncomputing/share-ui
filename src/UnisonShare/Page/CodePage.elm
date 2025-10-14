@@ -69,6 +69,9 @@ init appContext context codeRoute =
                 DependentsOf p _ ->
                     Perspective.fromParams p
 
+                DependenciesOf p _ ->
+                    Perspective.fromParams p
+
         ( codebaseTree, codebaseTreeCmd ) =
             CodebaseTree.init config
 
@@ -103,6 +106,22 @@ init appContext context codeRoute =
 
                         ( workspace, workspaceCmd ) =
                             WorkspacePanes.openDependentsOf config workspaceInit ref
+                    in
+                    ( WorkspacePage workspace
+                    , Cmd.batch
+                        [ Cmd.map WorkspacePanesMsg workspaceCmdInit
+                        , Cmd.map WorkspacePanesMsg workspaceCmd
+                        ]
+                    )
+
+                DependenciesOf _ ref ->
+                    let
+                        ( workspaceInit, workspaceCmdInit ) =
+                            WorkspacePanes.init
+                                appContext.operatingSystem
+
+                        ( workspace, workspaceCmd ) =
+                            WorkspacePanes.openDependenciesOf config workspaceInit ref
                     in
                     ( WorkspacePage workspace
                     , Cmd.batch
@@ -334,6 +353,9 @@ update appContext context codeRoute msg model =
                                 WorkspaceItemRef.DependentsItemRef dRef ->
                                     ( model, navigateToCode appContext context (Route.dependentsOf model.config.perspective dRef) )
 
+                                WorkspaceItemRef.DependenciesItemRef dRef ->
+                                    ( model, navigateToCode appContext context (Route.dependenciesOf model.config.perspective dRef) )
+
                                 _ ->
                                     ( model, Cmd.none )
 
@@ -489,6 +511,39 @@ updateSubPage appContext codeBrowsingContext codeRoute model =
             , Cmd.batch [ Cmd.map WorkspacePanesMsg workspaceCmd, cmd ]
             )
 
+        DependenciesOf p ref ->
+            let
+                persp =
+                    p |> Perspective.fromParams
+
+                config_ =
+                    config persp
+
+                ( workspace, workspaceCmd ) =
+                    case model.content of
+                        WorkspacePage ws ->
+                            WorkspacePanes.openDependenciesOf config_ ws ref
+
+                        _ ->
+                            let
+                                ( initWs, initCmd ) =
+                                    WorkspacePanes.init appContext.operatingSystem
+
+                                ( openDef, openDefCmd ) =
+                                    WorkspacePanes.openDefinition config_ initWs ref
+                            in
+                            ( openDef, Cmd.batch [ initCmd, openDefCmd ] )
+
+                model2 =
+                    { model | config = config_, content = WorkspacePage workspace }
+
+                ( model3, cmd ) =
+                    refreshSidebar config_ model2
+            in
+            ( model3
+            , Cmd.batch [ Cmd.map WorkspacePanesMsg workspaceCmd, cmd ]
+            )
+
 
 routeReference : CodeRoute -> Maybe Reference
 routeReference route =
@@ -587,8 +642,6 @@ viewContent appContext perspective content =
             let
                 cfg =
                     { operatingSystem = appContext.operatingSystem
-                    , withDependents = True
-                    , withDependencies = False
                     , withNamespaceDropdown = True
                     , withFocusedPaneIndicator = False
                     , withMinimap = True

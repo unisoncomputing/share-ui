@@ -498,6 +498,30 @@ updateDependentsItemState f ref wItems =
     map update_ wItems
 
 
+updateDependenciesItemState :
+    (DefinitionMatchesState -> DefinitionMatchesState)
+    -> WorkspaceItemRef
+    -> WorkspaceItems
+    -> WorkspaceItems
+updateDependenciesItemState f ref wItems =
+    let
+        update_ workspaceItem =
+            case workspaceItem of
+                WorkspaceItem.Success r (WorkspaceItem.DependenciesWorkspaceItem dependenciesOfRef state defItem dependencies) ->
+                    if ref == r then
+                        WorkspaceItem.Success
+                            r
+                            (WorkspaceItem.DependenciesWorkspaceItem dependenciesOfRef (f state) defItem dependencies)
+
+                    else
+                        workspaceItem
+
+                _ ->
+                    workspaceItem
+    in
+    map update_ wItems
+
+
 map :
     (WorkspaceItem -> WorkspaceItem)
     -> WorkspaceItems

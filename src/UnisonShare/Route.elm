@@ -14,6 +14,7 @@ module UnisonShare.Route exposing
     , cloud
     , codeRoot
     , definition
+    , dependenciesOf
     , dependentsOf
     , finishSignup
     , fromUrl
@@ -27,6 +28,7 @@ module UnisonShare.Route exposing
     , privacyPolicy
     , projectBranch
     , projectBranchDefinition
+    , projectBranchDependenciesOf
     , projectBranchDependentsOf
     , projectBranchRoot
     , projectBranches
@@ -95,6 +97,7 @@ type CodeRoute
     = CodeRoot PerspectiveParams
     | Definition PerspectiveParams Reference
     | DependentsOf PerspectiveParams Reference
+    | DependenciesOf PerspectiveParams Reference
 
 
 type UserRoute
@@ -329,6 +332,15 @@ projectBranchDependentsOf projectRef_ branchRef_ pers ref =
     Project projectRef_ (ProjectBranch branchRef_ (DependentsOf pp ref))
 
 
+projectBranchDependenciesOf : ProjectRef -> BranchRef -> Perspective -> Reference -> Route
+projectBranchDependenciesOf projectRef_ branchRef_ pers ref =
+    let
+        pp =
+            Perspective.toParams pers
+    in
+    Project projectRef_ (ProjectBranch branchRef_ (DependenciesOf pp ref))
+
+
 projectBranchRoot : ProjectRef -> BranchRef -> Perspective -> Route
 projectBranchRoot projectRef_ branchRef pers =
     let
@@ -346,6 +358,11 @@ definition pers ref =
 dependentsOf : Perspective -> Reference -> CodeRoute
 dependentsOf pers ref =
     DependentsOf (Perspective.toParams pers) ref
+
+
+dependenciesOf : Perspective -> Reference -> CodeRoute
+dependenciesOf pers ref =
+    DependenciesOf (Perspective.toParams pers) ref
 
 
 codeRoot : Perspective -> CodeRoute
@@ -746,6 +763,7 @@ codeParser : Parser CodeRoute
 codeParser =
     oneOf
         [ b codeDependentsOfParser
+        , b codeDependenciesOfParser
         , b codeDefinitionParser
         , b codeRootParser
         ]
@@ -764,6 +782,11 @@ codeDefinitionParser =
 codeDependentsOfParser : Parser CodeRoute
 codeDependentsOfParser =
     succeed DependentsOf |= perspectiveParams |. slash |. s "dependents-of" |. slash |= reference
+
+
+codeDependenciesOfParser : Parser CodeRoute
+codeDependenciesOfParser =
+    succeed DependenciesOf |= perspectiveParams |. slash |. s "dependencies-of" |. slash |= reference
 
 
 {-| In environments like Unison Local, the UI is served with a base path
@@ -846,6 +869,12 @@ toUrlPattern r =
 
                 DependentsOf (Perspective.ByNamespace _ _) ref ->
                     "/latest/namespaces/:fqn/;/dependents-of/" ++ refPattern ref
+
+                DependenciesOf (Perspective.ByRoot _) ref ->
+                    "/latest/dependencies-of/" ++ refPattern ref
+
+                DependenciesOf (Perspective.ByNamespace _ _) ref ->
+                    "/latest/namespaces/:fqn/;/dependencies-of/" ++ refPattern ref
 
         refPattern ref =
             case ref of
@@ -1020,6 +1049,9 @@ toUrlString route =
 
                 DependentsOf params ref ->
                     perspectiveParamsToPath params True ++ "dependents-of" :: Reference.toUrlPath ref
+
+                DependenciesOf params ref ->
+                    perspectiveParamsToPath params True ++ "dependencies-of" :: Reference.toUrlPath ref
 
         paginationCursorToQueryParams cursor =
             case Paginated.toQueryParam cursor of
