@@ -9,8 +9,8 @@ import Code.Definition.Type exposing (Type(..))
 import Code.FullyQualifiedName exposing (FQN)
 import Code2.Workspace.DefinitionItem exposing (DefinitionItem(..))
 import Code2.Workspace.DefinitionMatch exposing (DefinitionMatch)
+import Code2.Workspace.DefinitionMatchesState exposing (DefinitionMatchesState)
 import Code2.Workspace.DefinitionWorkspaceItemState exposing (DefinitionWorkspaceItemState)
-import Code2.Workspace.DependentsWorkspaceItemState exposing (DependentsWorkspaceItemState)
 import Code2.Workspace.WorkspaceItemRef exposing (SearchResultsRef, WorkspaceItemRef(..))
 import Http
 import Maybe.Extra as MaybeE
@@ -23,7 +23,7 @@ type alias SearchResultsItem =
 type LoadedWorkspaceItem
     = DefinitionWorkspaceItem Reference DefinitionWorkspaceItemState DefinitionItem
     | SearchResultsWorkspaceItem SearchResultsItem
-    | DependentsWorkspaceItem Reference DependentsWorkspaceItemState DefinitionItem (List DefinitionMatch)
+    | DependentsWorkspaceItem Reference DefinitionMatchesState DefinitionItem (List DefinitionMatch)
 
 
 type WorkspaceItem

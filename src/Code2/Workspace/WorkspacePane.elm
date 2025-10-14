@@ -9,8 +9,8 @@ import Code.FullyQualifiedName exposing (FQN)
 import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Code2.Workspace.DefinitionItem as DefinitionItem exposing (DefinitionItem)
 import Code2.Workspace.DefinitionMatch as DefinitionMatch exposing (DefinitionMatch)
+import Code2.Workspace.DefinitionMatchesState as DefinitionMatchesState exposing (DefinitionMatchesCardTab)
 import Code2.Workspace.DefinitionWorkspaceItemState as DefinitionWorkspaceItemState exposing (DefinitionItemTab)
-import Code2.Workspace.DependentsWorkspaceItemState as DependentsWorkspaceItemState exposing (DependentsItemTab)
 import Code2.Workspace.WorkspaceCard as WorkspaceCard
 import Code2.Workspace.WorkspaceDefinitionItemCard as WorkspaceDefinitionItemCard
 import Code2.Workspace.WorkspaceDependentsItemCard as WorkspaceDependentsItemCard
@@ -80,7 +80,7 @@ type Msg
     | ToggleMinimap
     | ChangeDefinitionItemTab WorkspaceItemRef DefinitionItemTab
     | ToggleCodeFold WorkspaceItemRef
-    | ChangeDependentsItemTab WorkspaceItemRef DependentsItemTab
+    | ChangeDependentsItemTab WorkspaceItemRef DefinitionMatchesCardTab
     | OpenDefinition Reference
     | ShowDependentsOf WorkspaceItemRef
     | UpdateDependentsSearchQuery WorkspaceItemRef String
@@ -257,7 +257,7 @@ update config paneId msg model =
                             depRef
                             (WorkspaceItem.DependentsWorkspaceItem
                                 defRef
-                                (DependentsWorkspaceItemState.init DependentsWorkspaceItemState.TermsTab)
+                                (DefinitionMatchesState.init DefinitionMatchesState.TermsTab)
                                 defItem
                                 dependents
                             )

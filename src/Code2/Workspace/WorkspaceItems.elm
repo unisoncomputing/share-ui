@@ -20,8 +20,8 @@ module Code2.Workspace.WorkspaceItems exposing (..)
 
 import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName exposing (FQN)
+import Code2.Workspace.DefinitionMatchesState exposing (DefinitionMatchesState)
 import Code2.Workspace.DefinitionWorkspaceItemState exposing (DefinitionWorkspaceItemState)
-import Code2.Workspace.DependentsWorkspaceItemState exposing (DependentsWorkspaceItemState)
 import Code2.Workspace.WorkspaceItem as WorkspaceItem exposing (WorkspaceItem)
 import Code2.Workspace.WorkspaceItemRef as WorkspaceItemRef exposing (WorkspaceItemRef)
 import List
@@ -475,7 +475,7 @@ updateDefinitionItemState f ref wItems =
 
 
 updateDependentsItemState :
-    (DependentsWorkspaceItemState -> DependentsWorkspaceItemState)
+    (DefinitionMatchesState -> DefinitionMatchesState)
     -> WorkspaceItemRef
     -> WorkspaceItems
     -> WorkspaceItems
