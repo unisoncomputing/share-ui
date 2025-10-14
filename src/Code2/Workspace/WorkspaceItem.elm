@@ -24,6 +24,7 @@ type LoadedWorkspaceItem
     = DefinitionWorkspaceItem Reference DefinitionWorkspaceItemState DefinitionItem
     | SearchResultsWorkspaceItem SearchResultsItem
     | DependentsWorkspaceItem Reference DefinitionMatchesState DefinitionItem (List DefinitionMatch)
+    | DependenciesWorkspaceItem Reference DefinitionMatchesState DefinitionItem (List DefinitionMatch)
 
 
 type WorkspaceItem
@@ -59,6 +60,9 @@ definitionReference item =
             Just ref
 
         DependentsItemRef ref ->
+            Just ref
+
+        DependenciesItemRef ref ->
             Just ref
 
 
