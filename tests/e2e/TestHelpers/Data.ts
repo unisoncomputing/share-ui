@@ -248,21 +248,47 @@ function changeLine() {
         diff: {
           diff: {
             diff: {
-              contents: [
-                {
-                  diffTag: "old",
-                  elements: [
-                    {
-                      annotation: {
-                        contents: "beforeTerm",
-                        tag: "HashQualifier",
-                      },
-                      segment: "beforeTerm",
-                    },
-                  ],
-                },
-              ],
               tag: "BuiltinObject",
+              contents: {
+                left: [
+                  {
+                    kind: "changed",
+                    value: [
+                      {
+                        diffTag: "oneSided",
+                        elements: [
+                          {
+                            annotation: {
+                              contents: "beforeTerm",
+                              tag: "HashQualifier",
+                            },
+                            segment: "beforeTerm",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+                right: [
+                  {
+                    kind: "changed",
+                    value: [
+                      {
+                        diffTag: "oneSided",
+                        elements: [
+                          {
+                            annotation: {
+                              contents: "beforeTerm",
+                              tag: "HashQualifier",
+                            },
+                            segment: "afterTerm",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
             },
             diffKind: "diff",
           },

@@ -14,6 +14,7 @@
 }
 
 .project-contribution-changes-page {
+  --diff-line-height: 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -203,11 +204,14 @@
 
       & .diff-side {
         width: 50%;
-        overflow: auto;
+        overflow-x: auto;
 
         & header {
           background: var(--u-color_element_subdued);
-          padding: 0.5rem;
+          padding: 0 0.5rem;
+          height: var(--diff-line-height);
+          display: flex;
+          align-items: center;
           line-height: 1;
           font-size: var(--font-size-extra-small);
           text-transform: uppercase;
@@ -217,7 +221,7 @@
         }
 
         & code {
-          padding: 0.25rem 0.5rem;
+          width: 100%;
         }
       }
 
@@ -226,46 +230,99 @@
       }
     }
 
-    & .definition-change.card.updated .replace:not(:has(span .blank)) {
-      background: var(--color-orange-4);
+    & .definition-change.card .diff-line {
+      height: var(--diff-line-height);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    & .definition-change.card.updated .replace a:hover {
-      background: var(--color-orange-3);
+    & .definition-change.card .diff-segment {
+      display: inline-flex;
+      height: var(--diff-line-height);
+      align-items: center;
+      line-height: 1;
     }
 
-    & .definition-change.card.updated .old:not(:has(span .blank)) {
-      background: var(--color-pink-5);
+    & .definition-change.card .gutter {
+      background: var(--u-color_element_subdued);
+      color: var(--u-color_text_very-subdued);
+      border-right: 1px solid var(--u-color_border_subdued);
+      padding: 0 0.5rem;
+      height: var(--diff-line-height);
+      line-height: 1;
+      gap: 0.5rem;
+      display: flex;
+      align-items: center;
     }
 
-    & .definition-change.card.updated .old a:hover {
-      background: var(--color-pink-4);
+    & .definition-change.card a:hover {
+      background: none;
+      color: var(--u-color_interactive);
     }
 
-    & .definition-change.card.updated .new:not(:has(span .blank)) {
-      background: var(--color-green-5);
+    & .spacer-line {
+      --pattern-stripe: var(--color-gray-8);
+      --pattern-gap: var(--color-gray-11);
+      background-image: linear-gradient(
+        45deg,
+        var(--pattern-stripe) 12.5%,
+        var(--pattern-gap) 12.5%,
+        var(--pattern-gap) 50%,
+        var(--pattern-stripe) 50%,
+        var(--pattern-stripe) 62.5%,
+        var(--pattern-gap) 62.5%,
+        var(--pattern-gap) 100%
+      );
+      background-size: 8px 8px;
     }
 
-    & .definition-change.card.updated .new a:hover {
-      background: var(--color-green-3);
+    & .definition-change.card .left {
+      & .diff-line:last-child,
+      & .diff-line:last-child .gutter {
+        border-bottom-left-radius: var(--border-radius-base);
+      }
+
+      & .changed-line {
+        background: var(--color-pink-5);
+
+        & .gutter {
+          color: var(--color-pink-1);
+        }
+
+        & .one-sided {
+          background: var(--color-pink-4);
+        }
+      }
+
+      & .annotation-change:not(:has(span .blank)) a,
+      & .segment-change:not(:has(span .blank)) a {
+        text-decoration: var(--color-pink-4) wavy underline;
+      }
     }
 
-    &
-      .definition-change.card.updated
-      .annotation-change:not(:has(span .blank)) {
-      background: var(--color-orange-4);
-    }
+    & .definition-change.card .right {
+      & .diff-line:last-child {
+        border-bottom-right-radius: var(--border-radius-base);
+      }
 
-    & .definition-change.card.updated .annotation-change a:hover {
-      background: var(--color-orange-3);
-    }
+      & .changed-line {
+        background: var(--color-green-5);
 
-    & .definition-change.card.updated .segment-change:not(:has(span .blank)) {
-      background: var(--color-orange-4);
-    }
+        & .gutter {
+          color: var(--color-green-1);
+        }
 
-    & .definition-change.card.updated .segment-change a:hover {
-      background: var(--color-orange-3);
+        & .one-sided {
+          background: var(--color-green-3);
+        }
+      }
+
+      & .annotation-change:not(:has(span .blank)) a,
+      & .segment-change:not(:has(span .blank)) a {
+        text-decoration: var(--color-green-2) wavy underline;
+      }
     }
   }
 
@@ -348,7 +405,7 @@
     }
 
     & .change-badge.aliased {
-      background: var(--color-purple-5);
+      background: var(--color-purple-6);
       color: var(--color-purple-2);
 
       & .icon {
@@ -405,7 +462,7 @@
     }
 
     & .change-icon.aliased {
-      background: var(--color-purple-5);
+      background: var(--color-purple-6);
 
       & .icon {
         color: var(--color-purple-2);
