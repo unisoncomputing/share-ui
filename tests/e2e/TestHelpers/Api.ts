@@ -184,7 +184,7 @@ async function getCatalog(page: Page) {
         },
         {
           createdAt: "2023-04-03T17:05:08.873717Z",
-          isFaved: false,
+          ismembers: false,
           numFavs: 5,
           owner: {
             handle: "@systemfw",
@@ -244,37 +244,33 @@ async function getOrgProfile(page: Page, handle: string, orgData = {}) {
   });
 }
 
-async function getOrgRoleAssignments(
-  page: Page,
-  handle: string,
-  assignments = null,
-) {
-  return getOrgRoleAssignments_(page, handle, {
+async function getOrgRoleMembers(page: Page, handle: string, members = null) {
+  return getOrgRoleMembers_(page, handle, {
     status: 200,
-    data: assignments,
+    data: members,
   });
 }
 
-async function getOrgRoleAssignments_(
+async function getOrgRoleMembers_(
   page: Page,
   handle: string,
   resp: { status: number; data?: unknown[] },
 ) {
-  function roleAssignment(roles: string[]) {
+  function roleMember(role: string) {
     return {
-      roles: roles,
-      subject: { data: user(), kind: "user" },
+      role: role,
+      subject: user(),
     };
   }
 
   return get(page, {
-    url: `/orgs/${handle.replace("@", "")}/roles`,
+    url: `/orgs/${handle.replace("@", "")}/members`,
     status: resp.status,
     data: {
-      role_assignments: resp.data || [
-        roleAssignment(["org_admin"]),
-        roleAssignment(["org_viewer"]),
-        roleAssignment(["org_owner"]),
+      members: resp.data || [
+        roleMember("org_admin"),
+        roleMember("org_viewer"),
+        roleMember("org_owner"),
       ],
     },
   });
@@ -720,8 +716,8 @@ export {
   getAccount,
   getUserProfile,
   getOrgProfile,
-  getOrgRoleAssignments,
-  getOrgRoleAssignments_,
+  getOrgRoleMembers,
+  getOrgRoleMembers_,
   getProjects,
   getProject,
   getProject_,

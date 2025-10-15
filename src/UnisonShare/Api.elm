@@ -253,95 +253,60 @@ createOrg owner name orgHandle isCommercial =
         }
 
 
-orgRoleAssignments : UserHandle -> Endpoint
-orgRoleAssignments orgHandle =
+orgRoleMembers : UserHandle -> Endpoint
+orgRoleMembers orgHandle =
     let
         handle =
             UserHandle.toUnprefixedString orgHandle
     in
     GET
-        { path = [ "orgs", handle, "roles" ]
+        { path = [ "orgs", handle, "members" ]
         , queryParams = []
         }
 
 
-createOrgRoleAssignment : UserHandle -> List OrgMember -> Endpoint
-createOrgRoleAssignment orgHandle members =
+createOrgRoleMember : UserHandle -> List OrgMember -> Endpoint
+createOrgRoleMember orgHandle members =
     let
         handle =
             UserHandle.toUnprefixedString orgHandle
 
-        toAssignment member =
+        encodeMember member =
             case member of
                 OrgMember.UserMember u ->
                     Encode.object
-                        [ ( "subject"
-                          , Encode.object
-                                [ ( "kind", Encode.string "user" )
-                                , ( "id", Encode.string u.user.id )
-                                ]
-                          )
-                        , ( "roles", Encode.list OrgRole.encode u.roles )
-                        ]
-
-                OrgMember.TeamMember t ->
-                    Encode.object
-                        [ ( "subject"
-                          , Encode.object
-                                [ ( "kind", Encode.string "team" )
-                                , ( "id", Encode.string t.teamId )
-                                ]
-                          )
-                        , ( "roles", Encode.list OrgRole.encode t.roles )
+                        [ ( "subject", Encode.string (UserHandle.toUnprefixedString u.user.handle) )
+                        , ( "role", OrgRole.encode u.role )
                         ]
 
         body =
             Encode.object
-                [ ( "role_assignments", Encode.list toAssignment members ) ]
+                [ ( "members", Encode.list encodeMember members ) ]
     in
     POST
-        { path = [ "orgs", handle, "roles" ]
+        { path = [ "orgs", handle, "members" ]
         , queryParams = []
         , body = Http.jsonBody body
         }
 
 
-deleteOrgRoleAssignment : UserHandle -> OrgMember -> Endpoint
-deleteOrgRoleAssignment orgHandle member =
+deleteOrgRoleMember : UserHandle -> OrgMember -> Endpoint
+deleteOrgRoleMember orgHandle member =
     let
         handle =
             UserHandle.toUnprefixedString orgHandle
 
-        toAssignment member_ =
+        toMember member_ =
             case member_ of
                 OrgMember.UserMember u ->
-                    Encode.object
-                        [ ( "subject"
-                          , Encode.object
-                                [ ( "kind", Encode.string "user" )
-                                , ( "id", Encode.string u.user.id )
-                                ]
-                          )
-                        , ( "roles", Encode.list OrgRole.encode u.roles )
-                        ]
-
-                OrgMember.TeamMember t ->
-                    Encode.object
-                        [ ( "subject"
-                          , Encode.object
-                                [ ( "kind", Encode.string "team" )
-                                , ( "id", Encode.string t.teamId )
-                                ]
-                          )
-                        , ( "roles", Encode.list OrgRole.encode t.roles )
-                        ]
+                    Encode.string (UserHandle.toUnprefixedString u.user.handle)
 
         body =
             Encode.object
-                [ ( "role_assignments", Encode.list toAssignment [ member ] ) ]
+                [ ( "members", Encode.list toMember [ member ] ) ]
     in
     DELETE
-        { path = [ "orgs", handle, "roles" ]
+        { path = [ "orgs", handle, "members" ]
         , queryParams = []
         , body = Http.jsonBody body
         }

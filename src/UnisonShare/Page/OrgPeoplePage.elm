@@ -110,9 +110,6 @@ update appContext orgHandle msg model =
                                 OrgMember.UserMember { user } ->
                                     not (UserHandle.equals user.handle handle)
 
-                                _ ->
-                                    True
-
                         members =
                             RemoteData.map
                                 (List.filter withoutRemovedMember)
@@ -180,16 +177,16 @@ update appContext orgHandle msg model =
 
 fetchMembers : AppContext -> UserHandle -> Cmd Msg
 fetchMembers appContext orgHandle =
-    ShareApi.orgRoleAssignments orgHandle
+    ShareApi.orgRoleMembers orgHandle
         |> HttpApi.toRequest
-            (Decode.field "role_assignments" OrgMember.decodeList)
+            (Decode.field "members" OrgMember.decodeList)
             (RemoteData.fromResult >> FetchMembersFinished)
         |> HttpApi.perform appContext.api
 
 
 removeMember : AppContext -> UserHandle -> UserHandle -> OrgMember -> Cmd Msg
 removeMember appContext orgHandle memberHandle member =
-    ShareApi.deleteOrgRoleAssignment orgHandle member
+    ShareApi.deleteOrgRoleMember orgHandle member
         |> HttpApi.toRequestWithEmptyResponse (RemoveMemberFinished memberHandle)
         |> HttpApi.perform appContext.api
 
@@ -206,11 +203,11 @@ viewRole role =
         |> Tooltip.view (role |> OrgRole.toString |> text)
 
 
-viewUserMember : ConfirmDeletes -> Bool -> { user : UserSummaryWithId, roles : List OrgRole } -> Html Msg
-viewUserMember deletes isLastUser ({ user, roles } as member) =
+viewUserMember : ConfirmDeletes -> Bool -> { user : UserSummaryWithId, role : OrgRole } -> Html Msg
+viewUserMember deletes isLastUser ({ user, role } as member) =
     let
         canRemove =
-            not (List.member OrgRole.Owner roles) && not isLastUser
+            OrgRole.Owner /= role && not isLastUser
 
         remove =
             if canRemove then
@@ -236,7 +233,7 @@ viewUserMember deletes isLastUser ({ user, roles } as member) =
     div [ class "member" ]
         [ div [ class "member_profile-snippet" ]
             [ ProfileSnippet.profileSnippet user |> ProfileSnippet.view ]
-        , div [ class "member_role" ] (roles |> List.map viewRole |> List.intersperse (text ", "))
+        , div [ class "member_role" ] [ viewRole role ]
         , div [ class "member_remove" ] [ remove ]
         ]
 
@@ -246,10 +243,6 @@ viewMember deletes isLastUser member =
     case member of
         OrgMember.UserMember m ->
             viewUserMember deletes isLastUser m
-
-        OrgMember.TeamMember _ ->
-            -- TODO: Teams are not yet fully supported
-            UI.nothing
 
 
 viewContent : Model -> List (Html Msg)
