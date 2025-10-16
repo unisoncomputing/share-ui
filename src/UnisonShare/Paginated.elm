@@ -68,7 +68,7 @@ toApiQueryParam param =
 toApiQueryParams : PageCursorParam -> List QueryParameter
 toApiQueryParams param =
     param
-        |> toQueryParam
+        |> toApiQueryParam
         |> Maybe.map List.singleton
         |> Maybe.withDefault []
 
