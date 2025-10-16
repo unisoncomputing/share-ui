@@ -473,7 +473,7 @@ viewAt appContext branch =
         tooltip
 
 
-viewPaginationControls : ProjectRef -> { prev : Maybe Paginated.PageCursor, next : Maybe Paginated.PageCursor } -> Html msg
+viewPaginationControls : ProjectRef -> { a | prev : Maybe Paginated.PageCursor, next : Maybe Paginated.PageCursor } -> Html msg
 viewPaginationControls projectRef cursors =
     let
         toLink cursor =
@@ -552,11 +552,18 @@ tabList appContext projectRef tab =
 viewBranches : AppContext -> ProjectDetails -> Branches -> String -> Html Msg
 viewBranches appContext project branches emptyStateMessage =
     let
-        viewCard (Paginated { items }) =
-            items
+        viewCard (Paginated p) =
+            p.items
                 |> List.map (viewBranchRow appContext project)
                 |> div [ class "project-branches_list" ]
-                |> List.singleton
+                |> (\branchList ->
+                        [ div [ class "project-branches_paginated-list" ]
+                            [ branchList
+
+                            -- , viewPaginationControls project.ref p
+                            ]
+                        ]
+                   )
                 |> Card.card
                 |> Card.asContained
                 |> Card.view

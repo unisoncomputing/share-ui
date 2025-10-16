@@ -64,6 +64,8 @@ type APIRelease = {
   version: string;
 };
 
+const TIMEOUT = { signal: AbortSignal.timeout(5000) };
+
 async function error(url: string, resp: Response): Promise<Error> {
   const body = await resp.text();
   return Error(`GET ${url}: ${resp.statusText} | ${body}`);
@@ -85,7 +87,7 @@ const ShareAPI = {
   getProfile: async (handle: string): Promise<APIProfile> => {
     const url = `${ShareAPI.baseURL}/users/${apiHandle(handle)}`;
 
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -100,7 +102,7 @@ const ShareAPI = {
   ): Promise<APIProject> => {
     const url = ShareAPI.projectBaseUrl(handle, projectSlug);
 
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -119,7 +121,7 @@ const ShareAPI = {
       projectSlug,
       `/contributions/${contribRef}`,
     );
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -138,7 +140,7 @@ const ShareAPI = {
       projectSlug,
       `/tickets/${ticketRef}`,
     );
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -158,7 +160,7 @@ const ShareAPI = {
       `/releases/${version}`,
     );
 
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -186,7 +188,7 @@ const ShareAPI = {
       url = mkUrl(branchRef);
     }
 
-    return fetch(url).then(async (resp) => {
+    return fetch(url, TIMEOUT).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }

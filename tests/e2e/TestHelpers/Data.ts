@@ -248,21 +248,47 @@ function changeLine() {
         diff: {
           diff: {
             diff: {
-              contents: [
-                {
-                  diffTag: "old",
-                  elements: [
-                    {
-                      annotation: {
-                        contents: "beforeTerm",
-                        tag: "HashQualifier",
-                      },
-                      segment: "beforeTerm",
-                    },
-                  ],
-                },
-              ],
               tag: "BuiltinObject",
+              contents: {
+                left: [
+                  {
+                    kind: "changed",
+                    value: [
+                      {
+                        diffTag: "oneSided",
+                        elements: [
+                          {
+                            annotation: {
+                              contents: "beforeTerm",
+                              tag: "HashQualifier",
+                            },
+                            segment: "beforeTerm",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+                right: [
+                  {
+                    kind: "changed",
+                    value: [
+                      {
+                        diffTag: "oneSided",
+                        elements: [
+                          {
+                            annotation: {
+                              contents: "beforeTerm",
+                              tag: "HashQualifier",
+                            },
+                            segment: "afterTerm",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
             },
             diffKind: "diff",
           },
@@ -727,6 +753,26 @@ function userSearchMatch() {
   };
 }
 
+function projectRoleAssignment() {
+  return {
+    roles: ["project_contributor"],
+    subject: {
+      data: user(),
+      kind: "user",
+    },
+  };
+}
+
+function projectWebhook() {
+  return {
+    notificationSubscriptionId: faker.string.uuid(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+    uri: faker.internet.url(),
+    topics: { type: "all" },
+  };
+}
+
 export {
   projectRef,
   project,
@@ -741,6 +787,8 @@ export {
   contribution,
   contributionTimeline,
   contributionStatusChangeEvent,
+  projectRoleAssignment,
+  projectWebhook,
   contributionDiff,
   notification,
   notificationEvent,

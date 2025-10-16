@@ -1,0 +1,2599 @@
+{
+  "diff": {
+    "defns": {
+      "changes": [
+        {
+          "contents": {
+            "contents": {
+              "aliasFullName": "ATypeAlias",
+              "aliasShortName": "ATypeAlias",
+              "hash": "#keu02n8is0irijd65cvuos41kukj3f4ni18mmnudrbll2epo6ftd03nt9l0vqc4fvg98198tefgoupco4o0d0gvnigqgr1bmo2neo88",
+              "otherNames": ["DataAliasMe"],
+              "rendered": {
+                "bestTypeName": "ATypeAlias",
+                "defnTypeTag": "Data",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "type"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "ATypeAlias",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "ATypeAlias"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": " = "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#keu02n8is0irijd65cvuos41kukj3f4ni18mmnudrbll2epo6ftd03nt9l0vqc4fvg98198tefgoupco4o0d0gvnigqgr1bmo2neo88#d0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "B"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["ATypeAlias", "DataAliasMe"]
+              }
+            },
+            "tag": "Aliased"
+          },
+          "tag": "Data"
+        },
+        {
+          "contents": {
+            "contents": {
+              "aliasFullName": "AbilityAlias",
+              "aliasShortName": "AbilityAlias",
+              "hash": "#u9m3jehjj8mtrhh4i4fuk545k3pdged9r0egph91irldf4lc0rsmtma9eoakvv9hoeesciebuqd7kfm0vdnk48gi7q3s7edn5omb65o",
+              "otherNames": ["AbilityAliasMe"],
+              "rendered": {
+                "bestTypeName": "AbilityAlias",
+                "defnTypeTag": "Ability",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "ability"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "AbilityAlias",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "AbilityAlias"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "ControlKeyword"
+                      },
+                      "segment": " where"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#u9m3jehjj8mtrhh4i4fuk545k3pdged9r0egph91irldf4lc0rsmtma9eoakvv9hoeesciebuqd7kfm0vdnk48gi7q3s7edn5omb65o#a0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "abilityAliasMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "{"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#u9m3jehjj8mtrhh4i4fuk545k3pdged9r0egph91irldf4lc0rsmtma9eoakvv9hoeesciebuqd7kfm0vdnk48gi7q3s7edn5omb65o",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "AbilityAlias"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "}"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["AbilityAlias", "AbilityAliasMe"]
+              }
+            },
+            "tag": "Aliased"
+          },
+          "tag": "Ability"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "AbilityDeleteMe",
+              "hash": "#i201btc2422jlmnric78btv3kl1palljsgc55mvm6rb9ofdos9u8mh2jd70uev381oiun4todb8vhkvvpteieshbfsot4slo9cgrjcg",
+              "rendered": {
+                "bestTypeName": "AbilityDeleteMe",
+                "defnTypeTag": "Ability",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "ability"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "AbilityDeleteMe",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "AbilityDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "ControlKeyword"
+                      },
+                      "segment": " where"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#i201btc2422jlmnric78btv3kl1palljsgc55mvm6rb9ofdos9u8mh2jd70uev381oiun4todb8vhkvvpteieshbfsot4slo9cgrjcg#a0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "abilityDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "{"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#i201btc2422jlmnric78btv3kl1palljsgc55mvm6rb9ofdos9u8mh2jd70uev381oiun4todb8vhkvvpteieshbfsot4slo9cgrjcg",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "AbilityDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "}"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["AbilityDeleteMe"]
+              },
+              "shortName": "AbilityDeleteMe"
+            },
+            "tag": "Removed"
+          },
+          "tag": "Ability"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "AbilityNew",
+              "hash": "#n7jj1pvi6a8689nggmnlhmn8hvkjiu4j5563kojf57dcf8dribv5suliht31nbpgc4501h26geepfg5o8jiid45h6ccmf8ogqu39am0",
+              "rendered": {
+                "bestTypeName": "AbilityNew",
+                "defnTypeTag": "Ability",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "ability"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "AbilityNew",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "AbilityNew"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "ControlKeyword"
+                      },
+                      "segment": " where"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#n7jj1pvi6a8689nggmnlhmn8hvkjiu4j5563kojf57dcf8dribv5suliht31nbpgc4501h26geepfg5o8jiid45h6ccmf8ogqu39am0#a0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "abilityNew"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "{"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#n7jj1pvi6a8689nggmnlhmn8hvkjiu4j5563kojf57dcf8dribv5suliht31nbpgc4501h26geepfg5o8jiid45h6ccmf8ogqu39am0",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "AbilityNew"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "}"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Text",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Text"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["AbilityNew"]
+              },
+              "shortName": "AbilityNew"
+            },
+            "tag": "Added"
+          },
+          "tag": "Ability"
+        },
+        {
+          "contents": {
+            "contents": {
+              "hash": "#lh3ufh51cghv5sn14ckq9f2urei00i6adqj3d0vovc51c6f18bhauqfjhkm34227ediga6mc5dp58inn4j714rhenig2jsps9ima7do",
+              "newFullName": "AbilityRenamed",
+              "newShortName": "AbilityRenamed",
+              "oldNames": ["AbilityRenameMe"],
+              "rendered": {
+                "bestTypeName": "AbilityRenamed",
+                "defnTypeTag": "Ability",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "ability"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "AbilityRenamed",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "AbilityRenamed"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "ControlKeyword"
+                      },
+                      "segment": " where"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#lh3ufh51cghv5sn14ckq9f2urei00i6adqj3d0vovc51c6f18bhauqfjhkm34227ediga6mc5dp58inn4j714rhenig2jsps9ima7do#a0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "abilityRenameMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "{"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#lh3ufh51cghv5sn14ckq9f2urei00i6adqj3d0vovc51c6f18bhauqfjhkm34227ediga6mc5dp58inn4j714rhenig2jsps9ima7do",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "AbilityRenamed"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "AbilityBraces"
+                      },
+                      "segment": "}"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["AbilityRenamed"]
+              }
+            },
+            "tag": "RenamedFrom"
+          },
+          "tag": "Ability"
+        },
+        {
+          "contents": {
+            "contents": {
+              "diff": {
+                "diff": {
+                  "diff": {
+                    "contents": {
+                      "left": [
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DataTypeKeyword"
+                                  },
+                                  "segment": "ability"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "AbilityUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "AbilityUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "ControlKeyword"
+                                  },
+                                  "segment": " where"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "annotationChange",
+                              "fromAnnotation": {
+                                "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0#a0",
+                                "tag": "TermReference"
+                              },
+                              "segment": "abilityUpdateMe",
+                              "toAnnotation": {
+                                "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng#a0",
+                                "tag": "TermReference"
+                              }
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "AbilityBraces"
+                                  },
+                                  "segment": "{"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "annotationChange",
+                              "fromAnnotation": {
+                                "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "AbilityUpdateMe",
+                              "toAnnotation": {
+                                "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng",
+                                "tag": "TypeReference"
+                              }
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "AbilityBraces"
+                                  },
+                                  "segment": "}"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Nat",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Nat"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "right": [
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DataTypeKeyword"
+                                  },
+                                  "segment": "ability"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "AbilityUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "AbilityUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "ControlKeyword"
+                                  },
+                                  "segment": " where"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "annotationChange",
+                              "fromAnnotation": {
+                                "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng#a0",
+                                "tag": "TermReference"
+                              },
+                              "segment": "abilityUpdateMe",
+                              "toAnnotation": {
+                                "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0#a0",
+                                "tag": "TermReference"
+                              }
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "AbilityBraces"
+                                  },
+                                  "segment": "{"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "annotationChange",
+                              "fromAnnotation": {
+                                "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng",
+                                "tag": "TypeReference"
+                              },
+                              "segment": "AbilityUpdateMe",
+                              "toAnnotation": {
+                                "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0",
+                                "tag": "TypeReference"
+                              }
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "AbilityBraces"
+                                  },
+                                  "segment": "}"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tag": "UserObject"
+                  },
+                  "diffKind": "diff"
+                },
+                "left": {
+                  "bestTypeName": "AbilityUpdateMe",
+                  "defnTypeTag": "Ability",
+                  "typeDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "tag": "DataTypeKeyword"
+                        },
+                        "segment": "ability"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "AbilityUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "AbilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "ControlKeyword"
+                        },
+                        "segment": " where"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0#a0",
+                          "tag": "TermReference"
+                        },
+                        "segment": "abilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "AbilityBraces"
+                        },
+                        "segment": "{"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "AbilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "AbilityBraces"
+                        },
+                        "segment": "}"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Nat",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "typeDocs": [],
+                  "typeNames": ["AbilityUpdateMe"]
+                },
+                "right": {
+                  "bestTypeName": "AbilityUpdateMe",
+                  "defnTypeTag": "Ability",
+                  "typeDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "tag": "DataTypeKeyword"
+                        },
+                        "segment": "ability"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "AbilityUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "AbilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "ControlKeyword"
+                        },
+                        "segment": " where"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng#a0",
+                          "tag": "TermReference"
+                        },
+                        "segment": "abilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "AbilityBraces"
+                        },
+                        "segment": "{"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "AbilityUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "AbilityBraces"
+                        },
+                        "segment": "}"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Text"
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "typeDocs": [],
+                  "typeNames": ["AbilityUpdateMe"]
+                }
+              },
+              "fullName": "AbilityUpdateMe",
+              "newHash": "#nnulmopbjndcs4si1mop30dm01nlum2k7m6j4mmd1df2e63m09lchh2j1gkqd4gua3bl0g3j6hgn76rmc495au8cpr0t83oqoho0sng",
+              "newTag": "Ability",
+              "oldHash": "#8u70g0vaddp9jm3egoq434qialp8hdnjfh8ah8mqjau0i5lmdikt9qbe491ss53i71976fftb2o90ii6gckvs0i2lhovs1n6h0huhb0",
+              "oldTag": "Ability",
+              "shortName": "AbilityUpdateMe"
+            },
+            "tag": "Updated"
+          },
+          "tag": "Ability"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "DataDeleteMe",
+              "hash": "#fhc8jn2bhvfdnfr89dv2jf7tekuesna7gvje4ck6lfheh9rb184q4ddd29vm9mvfm6u1a98kpgditn8vb09durtel67rpof1c62535o",
+              "rendered": {
+                "bestTypeName": "DataDeleteMe",
+                "defnTypeTag": "Data",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "type"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "DataDeleteMe",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "DataDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": " = "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#fhc8jn2bhvfdnfr89dv2jf7tekuesna7gvje4ck6lfheh9rb184q4ddd29vm9mvfm6u1a98kpgditn8vb09durtel67rpof1c62535o#d0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "C"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["DataDeleteMe"]
+              },
+              "shortName": "DataDeleteMe"
+            },
+            "tag": "Removed"
+          },
+          "tag": "Data"
+        },
+        {
+          "contents": {
+            "contents": {
+              "diff": {
+                "diff": {
+                  "diff": {
+                    "contents": {
+                      "left": [
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DataTypeKeyword"
+                                  },
+                                  "segment": "type"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "DataUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "DataUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DelimiterChar"
+                                  },
+                                  "segment": " = "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "#a2bvb3g2l1mkijg24ogg0t23h51pnfepnngk6e3bqfijf4l9ms292t006e8faquo66ctn1ho35vtps13m6evbl6bos2guer5j6jcs1o#d0",
+                                    "tag": "TermReference"
+                                  },
+                                  "segment": "D"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "right": [
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DataTypeKeyword"
+                                  },
+                                  "segment": "type"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "DataUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "DataUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "DelimiterChar"
+                                  },
+                                  "segment": " = "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "#6t7t8lem3bmu3j7bsid4omn8gej2gl57ffmkp0ef6qndhndh2q3q6dd1j9akl653r3vtifsunovvbmbjh0iqc7n6rhp4imnsghhe6go#d0",
+                                    "tag": "TermReference"
+                                  },
+                                  "segment": "D2"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Nat",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Nat"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tag": "UserObject"
+                  },
+                  "diffKind": "diff"
+                },
+                "left": {
+                  "bestTypeName": "DataUpdateMe",
+                  "defnTypeTag": "Data",
+                  "typeDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "tag": "DataTypeKeyword"
+                        },
+                        "segment": "type"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "DataUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "DataUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "DelimiterChar"
+                        },
+                        "segment": " = "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#a2bvb3g2l1mkijg24ogg0t23h51pnfepnngk6e3bqfijf4l9ms292t006e8faquo66ctn1ho35vtps13m6evbl6bos2guer5j6jcs1o#d0",
+                          "tag": "TermReference"
+                        },
+                        "segment": "D"
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "typeDocs": [],
+                  "typeNames": ["DataUpdateMe"]
+                },
+                "right": {
+                  "bestTypeName": "DataUpdateMe",
+                  "defnTypeTag": "Data",
+                  "typeDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "tag": "DataTypeKeyword"
+                        },
+                        "segment": "type"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "DataUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "DataUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "DelimiterChar"
+                        },
+                        "segment": " = "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "#6t7t8lem3bmu3j7bsid4omn8gej2gl57ffmkp0ef6qndhndh2q3q6dd1j9akl653r3vtifsunovvbmbjh0iqc7n6rhp4imnsghhe6go#d0",
+                          "tag": "TermReference"
+                        },
+                        "segment": "D2"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Nat",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "typeDocs": [],
+                  "typeNames": ["DataUpdateMe"]
+                }
+              },
+              "fullName": "DataUpdateMe",
+              "newHash": "#6t7t8lem3bmu3j7bsid4omn8gej2gl57ffmkp0ef6qndhndh2q3q6dd1j9akl653r3vtifsunovvbmbjh0iqc7n6rhp4imnsghhe6go",
+              "newTag": "Data",
+              "oldHash": "#a2bvb3g2l1mkijg24ogg0t23h51pnfepnngk6e3bqfijf4l9ms292t006e8faquo66ctn1ho35vtps13m6evbl6bos2guer5j6jcs1o",
+              "oldTag": "Data",
+              "shortName": "DataUpdateMe"
+            },
+            "tag": "Updated"
+          },
+          "tag": "Data"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "NewType",
+              "hash": "#rmntisgmjlrtq6kja30at01q04aeq2p17q806li6v509bn117tq9tc3gd3m33lhdgimen1tjdn4tqiu2r11k7ie9oibng1n1i275cdg",
+              "rendered": {
+                "bestTypeName": "NewType",
+                "defnTypeTag": "Data",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "type"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "NewType",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "NewType"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": " = "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#rmntisgmjlrtq6kja30at01q04aeq2p17q806li6v509bn117tq9tc3gd3m33lhdgimen1tjdn4tqiu2r11k7ie9oibng1n1i275cdg#d0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "X"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["NewType"]
+              },
+              "shortName": "NewType"
+            },
+            "tag": "Added"
+          },
+          "tag": "Data"
+        },
+        {
+          "contents": {
+            "contents": {
+              "hash": "#hb2ubbk0c6347s5eqic78f26truhgro1ueh7r8invme3hnalmnv880tgpafpeo5kaaihonoph8o7pmhad8mr2e25m0hhor9lr34skhg",
+              "newFullName": "RenamedType",
+              "newShortName": "RenamedType",
+              "oldNames": ["DataRenameMe"],
+              "rendered": {
+                "bestTypeName": "RenamedType",
+                "defnTypeTag": "Data",
+                "typeDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "tag": "DataTypeKeyword"
+                      },
+                      "segment": "type"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "RenamedType",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "RenamedType"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": " = "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#hb2ubbk0c6347s5eqic78f26truhgro1ueh7r8invme3hnalmnv880tgpafpeo5kaaihonoph8o7pmhad8mr2e25m0hhor9lr34skhg#d0",
+                        "tag": "TermReference"
+                      },
+                      "segment": "E"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "typeDocs": [],
+                "typeNames": ["RenamedType"]
+              }
+            },
+            "tag": "RenamedFrom"
+          },
+          "tag": "Data"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "aDoc",
+              "hash": "#areni4s9liksvfs3923a4ub81qpu37f964fqhbq832artpff8vm1em45ic0k2hlkv4nn08u712ibvjo9b4fl5u19o65g9medo7645i8",
+              "rendered": {
+                "bestTermName": "aDoc",
+                "defnTermTag": "Doc",
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Doc2"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "aDoc",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aDoc"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#ej86si0ur1lsjade71dojr25phk9bbom9rdks6dltolos5tjivakujcriqe02npba53n9gd7tkh8bmv08ttjb9t35lq2ch5heshqcs0",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Doc2"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "aDoc",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aDoc"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DocDelimiter"
+                      },
+                      "segment": "{{"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "Test"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "Doc"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DocDelimiter"
+                      },
+                      "segment": "}}"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["aDoc"]
+              },
+              "shortName": "aDoc"
+            },
+            "tag": "Removed"
+          },
+          "tag": "Doc"
+        },
+        {
+          "contents": {
+            "contents": {
+              "aliasFullName": "aTermAlias",
+              "aliasShortName": "aTermAlias",
+              "hash": "#gjmq673r1vrurfotlnirv7vutdhm6sa3s02em5g22kk606mv6duvv8be402dv79312i4a0onepq5bo7citsodvq2g720nttj0ee9p0g",
+              "otherNames": ["termAliasMe"],
+              "rendered": {
+                "bestTermName": "aTermAlias",
+                "defnTermTag": "Plain",
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "##Nat",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "aTermAlias",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aTermAlias"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "aTermAlias",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aTermAlias"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "NumericLiteral"
+                      },
+                      "segment": "1"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["aTermAlias", "termAliasMe"]
+              }
+            },
+            "tag": "Aliased"
+          },
+          "tag": "Plain"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "aTest",
+              "hash": "#qak36j7cshv12m9meuc97ovllqm8k2i305sh4oq5dbo4834t7atugsdpto6mou1tch2b3q9j2hbi23gdf4jpth7m97mannv9noucgl8",
+              "rendered": {
+                "bestTermName": "aTest",
+                "defnTermTag": "Test",
+                "signature": [
+                  {
+                    "annotation": {
+                      "tag": "DelimiterChar"
+                    },
+                    "segment": "["
+                  },
+                  {
+                    "annotation": {
+                      "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Result"
+                  },
+                  {
+                    "annotation": {
+                      "tag": "DelimiterChar"
+                    },
+                    "segment": "]"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "aTest",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aTest"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": "["
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Result"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "DelimiterChar"
+                      },
+                      "segment": "]"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "aTest",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "aTest"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Sequence",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "["
+                    },
+                    {
+                      "annotation": {
+                        "contents": "#aql7qk3iud6vs4cvu43aimopoosgk0fnipibdkc3so13adencmibgfn0u5c01r0adei55nkl3ttsjhl8gbj7tr4gnpj63g64ftbq6s0#d1",
+                        "tag": "TermReference"
+                      },
+                      "segment": "Ok"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "\"Done\""
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Sequence",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "]"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["aTest"]
+              },
+              "shortName": "aTest"
+            },
+            "tag": "Removed"
+          },
+          "tag": "Test"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "newTerm",
+              "hash": "#u1qsl3nk5t2svl58ifqepem851775qca9p4hc10j3iordu1v7u8e16oodui9kvt2c0j1cbc50avado53bl2vt3pphrfj9mhbut1ipm8",
+              "rendered": {
+                "bestTermName": "newTerm",
+                "defnTermTag": "Plain",
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "##Nat",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "newTerm",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "newTerm"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "newTerm",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "newTerm"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "NumericLiteral"
+                      },
+                      "segment": "100"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["newTerm"]
+              },
+              "shortName": "newTerm"
+            },
+            "tag": "Added"
+          },
+          "tag": "Plain"
+        },
+        {
+          "contents": {
+            "contents": {
+              "hash": "#f3lgjvjqoocpt8v6kdgd2bgthh11a7md3qdp9rf5datccmo580btjd5bt5dro3irqs0is7vm7s1dphddjbtufch620te7ef7canmjj8",
+              "newFullName": "renamedTerm",
+              "newShortName": "renamedTerm",
+              "oldNames": ["termRenameMe"],
+              "rendered": {
+                "bestTermName": "renamedTerm",
+                "defnTermTag": "Plain",
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "##Nat",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "renamedTerm",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "renamedTerm"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "renamedTerm",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "renamedTerm"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "NumericLiteral"
+                      },
+                      "segment": "3"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["renamedTerm"]
+              }
+            },
+            "tag": "RenamedFrom"
+          },
+          "tag": "Plain"
+        },
+        {
+          "contents": {
+            "contents": {
+              "fullName": "termDeleteMe",
+              "hash": "#dcgdua2lj6upd1ah5v0qp09gjsej0d77d87fu6qn8e2qrssnlnmuinoio46hiu53magr7qn8vnqke8ndt0v76700o5u8gcvo7st28jg",
+              "rendered": {
+                "bestTermName": "termDeleteMe",
+                "defnTermTag": "Plain",
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "##Nat",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                  }
+                ],
+                "termDefinition": {
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "termDeleteMe",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "termDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "termDeleteMe",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "termDeleteMe"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "NumericLiteral"
+                      },
+                      "segment": "2"
+                    }
+                  ],
+                  "tag": "UserObject"
+                },
+                "termDocs": [],
+                "termNames": ["termDeleteMe"]
+              },
+              "shortName": "termDeleteMe"
+            },
+            "tag": "Removed"
+          },
+          "tag": "Plain"
+        },
+        {
+          "contents": {
+            "contents": {
+              "diff": {
+                "diff": {
+                  "diff": {
+                    "contents": {
+                      "left": [
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "termUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "termUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "termUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "termUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"original\""
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "right": [
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "termUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "termUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "termUpdateMe",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "termUpdateMe"
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"updated\""
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tag": "UserObject"
+                  },
+                  "diffKind": "diff"
+                },
+                "left": {
+                  "bestTermName": "termUpdateMe",
+                  "defnTermTag": "Plain",
+                  "signature": [
+                    {
+                      "annotation": {
+                        "contents": "##Text",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Text"
+                    }
+                  ],
+                  "termDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "termUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "termUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Text"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "termUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "termUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"original\""
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "termDocs": [],
+                  "termNames": ["termUpdateMe"]
+                },
+                "right": {
+                  "bestTermName": "termUpdateMe",
+                  "defnTermTag": "Plain",
+                  "signature": [
+                    {
+                      "annotation": {
+                        "contents": "##Text",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Text"
+                    }
+                  ],
+                  "termDefinition": {
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "termUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "termUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Text"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "termUpdateMe",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "termUpdateMe"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"updated\""
+                      }
+                    ],
+                    "tag": "UserObject"
+                  },
+                  "termDocs": [],
+                  "termNames": ["termUpdateMe"]
+                }
+              },
+              "fullName": "termUpdateMe",
+              "newHash": "#711u1t9cjso4t3rhlq2rp491n2n5n4t9o7701053kpj5ouu3kfs2e2l63i879pnsb6ob9fp0gpj18u6fpcl1qosd704h4doklfo734g",
+              "newTag": "Plain",
+              "oldHash": "#ofktbubbloi1omgpr09e0t90pg0cnf0lsuuopqese9biqvpdafsuhq0b4dfasbk6g3hp5r7crp4t486fc8bava7q7rrreg9j2volam8",
+              "oldTag": "Plain",
+              "shortName": "termUpdateMe"
+            },
+            "tag": "Updated"
+          },
+          "tag": "Plain"
+        }
+      ],
+      "children": [
+        {
+          "contents": {
+            "changes": [],
+            "children": [
+              {
+                "contents": {
+                  "changes": [
+                    {
+                      "contents": {
+                        "contents": {
+                          "fullName": "a.definition.at.path1",
+                          "hash": "#r303avnmdmja3ch96otiglq37214t43acpr1ikq4hrp5hmcibstipa69frbd6177jvbn28ioc5ii80fc54ecogm4n64dhjvkonrihso",
+                          "rendered": {
+                            "bestTermName": "path1",
+                            "defnTermTag": "Plain",
+                            "signature": [
+                              {
+                                "annotation": {
+                                  "contents": "##Text",
+                                  "tag": "TypeReference"
+                                },
+                                "segment": "Text"
+                              }
+                            ],
+                            "termDefinition": {
+                              "contents": [
+                                {
+                                  "annotation": {
+                                    "contents": "a.definition.at.path1",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.definition.at.path1"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "\n"
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "a.definition.at.path1",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.definition.at.path1"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"definition at path\""
+                                }
+                              ],
+                              "tag": "UserObject"
+                            },
+                            "termDocs": [],
+                            "termNames": ["a.definition.at.path1"]
+                          },
+                          "shortName": "path1"
+                        },
+                        "tag": "Removed"
+                      },
+                      "tag": "Plain"
+                    },
+                    {
+                      "contents": {
+                        "contents": {
+                          "fullName": "a.definition.at.path2",
+                          "hash": "#k43vb9rkd3n4i8g8bbfb31erufbmu6v1f99i587oqsje51thrm1ugdqa7gkjbdvkactuql3cmc00b7oev0glqb2rko48atkuo798mno",
+                          "rendered": {
+                            "bestTermName": "path2",
+                            "defnTermTag": "Plain",
+                            "signature": [
+                              {
+                                "annotation": {
+                                  "contents": "##Text",
+                                  "tag": "TypeReference"
+                                },
+                                "segment": "Text"
+                              }
+                            ],
+                            "termDefinition": {
+                              "contents": [
+                                {
+                                  "annotation": {
+                                    "contents": "a.definition.at.path2",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.definition.at.path2"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "\n"
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "a.definition.at.path2",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.definition.at.path2"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"definition at path2\""
+                                }
+                              ],
+                              "tag": "UserObject"
+                            },
+                            "termDocs": [],
+                            "termNames": ["a.definition.at.path2"]
+                          },
+                          "shortName": "path2"
+                        },
+                        "tag": "Removed"
+                      },
+                      "tag": "Plain"
+                    }
+                  ],
+                  "children": []
+                },
+                "path": "definition.at"
+              },
+              {
+                "contents": {
+                  "changes": [
+                    {
+                      "contents": {
+                        "contents": {
+                          "fullName": "a.different.path",
+                          "hash": "#83be375arg68mqk26bu12elka6fb6mvq6cec92un1p1t5kulhh6672qlnego952pp7h4lfl7mq3crithvtvo3col9mfc8vurbnb8hvo",
+                          "rendered": {
+                            "bestTermName": "path",
+                            "defnTermTag": "Plain",
+                            "signature": [
+                              {
+                                "annotation": {
+                                  "contents": "##Text",
+                                  "tag": "TypeReference"
+                                },
+                                "segment": "Text"
+                              }
+                            ],
+                            "termDefinition": {
+                              "contents": [
+                                {
+                                  "annotation": {
+                                    "contents": "a.different.path",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.different.path"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "\n"
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "a.different.path",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "a.different.path"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"definition at different path\""
+                                }
+                              ],
+                              "tag": "UserObject"
+                            },
+                            "termDocs": [],
+                            "termNames": ["a.different.path"]
+                          },
+                          "shortName": "path"
+                        },
+                        "tag": "Removed"
+                      },
+                      "tag": "Plain"
+                    }
+                  ],
+                  "children": []
+                },
+                "path": "different"
+              }
+            ]
+          },
+          "path": "a"
+        }
+      ]
+    },
+    "libdeps": [],
+    "tag": "ok"
+  },
+  "newRef": "diff-end",
+  "newRefHash": "#mp56hc03pe7b45crm3c68nb3qe8oima96q2kujcgmu995kp23i19eur1taej3dceiu3h4p7iihk02f4671hm72afc88eg3hc881vb40",
+  "oldRef": "diff-start",
+  "oldRefHash": "#n0i9eikbai766m5v3h8pj95ca8iocmkvk8aer6ush1eusf4tcn32ctepdr8mjr90f44gtb9vn0vf4s3ur2jf62ta92flv21rigvc4v8",
+  "project": "@transcripts/contribution-diff",
+  "tag": "done"
+}

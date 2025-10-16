@@ -412,10 +412,16 @@ diff =
     let
         diffDetails =
             { type_ = DefinitionDiff.Term
-            , newDef = NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "newDef")
-            , oldDef = NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "oldDef")
+            , left =
+                [ DefinitionDiff.ChangedLine
+                    [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "oldDef"))
+                    ]
+                ]
+            , right =
+                [ DefinitionDiff.ChangedLine
+                    [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "newDef"))
+                    ]
+                ]
             }
     in
-    DefinitionDiff.Diff
-        diffDetails
-        (NEL.singleton (DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "both"))))
+    DefinitionDiff.Diff diffDetails

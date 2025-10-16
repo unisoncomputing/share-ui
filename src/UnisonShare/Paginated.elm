@@ -52,7 +52,7 @@ toQueryParams param =
         |> Maybe.withDefault []
 
 
-view : (PageCursorParam -> Click msg) -> { prev : Maybe PageCursor, next : Maybe PageCursor } -> Html msg
+view : (PageCursorParam -> Click msg) -> { a | prev : Maybe PageCursor, next : Maybe PageCursor } -> Html msg
 view toClick cursors =
     let
         paginationButton icon click =

@@ -419,6 +419,15 @@ decode_ type_ =
                 Type ->
                     "typeDefinition"
 
+                Ability ->
+                    "typeDefinition"
+
+                AbilityConstructor ->
+                    "typeDefinition"
+
+                DataConstructor ->
+                    "typeDefinition"
+
                 _ ->
                     "termDefinition"
     in

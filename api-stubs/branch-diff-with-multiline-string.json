@@ -1,0 +1,1487 @@
+{
+  "oldRef": "main",
+  "oldRefHash": "#abc123",
+  "newRef": "new",
+  "newRefHash": "#def456",
+  "project": "scratch",
+  "tag": "done",
+  "diff": {
+    "tag": "ok",
+    "defns": {
+      "changes": [
+        {
+          "tag": "Plain",
+          "contents": {
+            "tag": "Updated",
+            "contents": {
+              "fullName": "complexMultiLineDiff",
+              "shortName": "complexMultiLineDiff",
+              "oldHash": "#oldHashForComplexMultiLineDiff",
+              "newHash": "#newHashForComplexMultiLineDiff",
+              "oldTag": "Plain",
+              "newTag": "Plain",
+              "diff": {
+                "diff": {
+                  "diffKind": "diff",
+                  "diff": {
+                    "tag": "UserObject",
+                    "contents": {
+                      "left": [
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "complexMultiLineDiff",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "complexMultiLineDiff"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Text",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Text"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "complexMultiLineDiff",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "complexMultiLineDiff"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "UseKeyword"
+                                  },
+                                  "segment": "use "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "UsePrefix"
+                                  },
+                                  "segment": "Text"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "UseSuffix"
+                                  },
+                                  "segment": "++"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "multiline",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "multiline"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"\"\""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "Lorem ipsum dolor sit amet,"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "consectetur adipisicing elit,"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "sed do eiusmod tempor incididunt"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "ut labore et dolore magna aliqua."
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "Ut enim ad minim veniam, quis nostrud"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "exercitation ullamco laboris nisi ut"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "aliquip ex ea commodo consequat."
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"\"\""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "fullString",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "fullString"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"beginning-\""
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "##Text.++",
+                                    "tag": "TermReference"
+                                  },
+                                  "segment": "++"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "Var"
+                                  },
+                                  "segment": "multiline"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "##Text.++",
+                                    "tag": "TermReference"
+                                  },
+                                  "segment": "++"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"-end\""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "Var"
+                                  },
+                                  "segment": "fullString"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "right": [
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "complexMultiLineDiff",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "complexMultiLineDiff"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TypeAscriptionColon"
+                                  },
+                                  "segment": " :"
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": " "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "##Nat",
+                                    "tag": "TypeReference"
+                                  },
+                                  "segment": "Nat"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "contents": "complexMultiLineDiff",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "complexMultiLineDiff"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": []
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "contents": "multiline",
+                                    "tag": "HashQualifier"
+                                  },
+                                  "segment": "multiline"
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "BindingEquals"
+                                  },
+                                  "segment": " ="
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"\"\""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "Lorem ipsum dolor sit amet,"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "consectetur changed elit,"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "spacer"
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "ut labore et dolore magna aliqua."
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": []
+                        },
+                        {
+                          "kind": "spacer"
+                        },
+                        {
+                          "kind": "spacer"
+                        },
+                        {
+                          "kind": "unchanged",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                },
+                                {
+                                  "annotation": {
+                                    "tag": "TextLiteral"
+                                  },
+                                  "segment": "\"\"\""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "changed",
+                          "value": [
+                            {
+                              "diffTag": "both",
+                              "elements": [
+                                {
+                                  "annotation": null,
+                                  "segment": "  "
+                                }
+                              ]
+                            },
+                            {
+                              "diffTag": "oneSided",
+                              "elements": [
+                                {
+                                  "annotation": {
+                                    "tag": "NumericLiteral"
+                                  },
+                                  "segment": "42"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "spacer"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "left": {
+                  "bestTermName": "complexMultiLineDiff",
+                  "defnTermTag": "Plain",
+                  "termNames": ["complexMultiLineDiff"],
+                  "signature": [
+                    {
+                      "annotation": {
+                        "contents": "##Text",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Text"
+                    }
+                  ],
+                  "termDefinition": {
+                    "tag": "UserObject",
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "complexMultiLineDiff",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "complexMultiLineDiff"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Text"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "complexMultiLineDiff",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "complexMultiLineDiff"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "UseKeyword"
+                        },
+                        "segment": "use "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "UsePrefix"
+                        },
+                        "segment": "Text"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "UseSuffix"
+                        },
+                        "segment": "++"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "multiline",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "multiline"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"\"\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "Lorem ipsum dolor sit amet,"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "consectetur adipisicing elit,"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "sed do eiusmod tempor incididunt"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "ut labore et dolore magna aliqua."
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "Ut enim ad minim veniam, quis nostrud"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "exercitation ullamco laboris nisi ut"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "aliquip ex ea commodo consequat."
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"\"\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "fullString",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "fullString"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"beginning-\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text.++",
+                          "tag": "TermReference"
+                        },
+                        "segment": "++"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "Var"
+                        },
+                        "segment": "multiline"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Text.++",
+                          "tag": "TermReference"
+                        },
+                        "segment": "++"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"-end\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "Var"
+                        },
+                        "segment": "fullString"
+                      }
+                    ]
+                  },
+                  "termDocs": []
+                },
+                "right": {
+                  "bestTermName": "complexMultiLineDiff",
+                  "defnTermTag": "Plain",
+                  "termNames": ["complexMultiLineDiff"],
+                  "signature": [
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    }
+                  ],
+                  "termDefinition": {
+                    "tag": "UserObject",
+                    "contents": [
+                      {
+                        "annotation": {
+                          "contents": "complexMultiLineDiff",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "complexMultiLineDiff"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TypeAscriptionColon"
+                        },
+                        "segment": " :"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": " "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "##Nat",
+                          "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": {
+                          "contents": "complexMultiLineDiff",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "complexMultiLineDiff"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "contents": "multiline",
+                          "tag": "HashQualifier"
+                        },
+                        "segment": "multiline"
+                      },
+                      {
+                        "annotation": {
+                          "tag": "BindingEquals"
+                        },
+                        "segment": " ="
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"\"\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "Lorem ipsum dolor sit amet,"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "consectetur changed elit,"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "ut labore et dolore magna aliqua."
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "TextLiteral"
+                        },
+                        "segment": "\"\"\""
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "\n"
+                      },
+                      {
+                        "annotation": null,
+                        "segment": "  "
+                      },
+                      {
+                        "annotation": {
+                          "tag": "NumericLiteral"
+                        },
+                        "segment": "42"
+                      }
+                    ]
+                  },
+                  "termDocs": []
+                }
+              },
+              "rendered": {
+                "bestTermName": "complexMultiLineDiff",
+                "defnTermTag": "Plain",
+                "termNames": ["complexMultiLineDiff"],
+                "signature": [
+                  {
+                    "annotation": {
+                      "contents": "##Nat",
+                      "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                  }
+                ],
+                "termDefinition": {
+                  "tag": "UserObject",
+                  "contents": [
+                    {
+                      "annotation": {
+                        "contents": "complexMultiLineDiff",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "complexMultiLineDiff"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TypeAscriptionColon"
+                      },
+                      "segment": " :"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": " "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                      },
+                      "segment": "Nat"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": {
+                        "contents": "complexMultiLineDiff",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "complexMultiLineDiff"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "contents": "multiline",
+                        "tag": "HashQualifier"
+                      },
+                      "segment": "multiline"
+                    },
+                    {
+                      "annotation": {
+                        "tag": "BindingEquals"
+                      },
+                      "segment": " ="
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "\"\"\""
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "Lorem ipsum dolor sit amet,"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "consectetur changed elit,"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "ut labore et dolore magna aliqua."
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "TextLiteral"
+                      },
+                      "segment": "\"\"\""
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "\n"
+                    },
+                    {
+                      "annotation": null,
+                      "segment": "  "
+                    },
+                    {
+                      "annotation": {
+                        "tag": "NumericLiteral"
+                      },
+                      "segment": "42"
+                    }
+                  ]
+                },
+                "termDocs": []
+              }
+            }
+          }
+        }
+      ],
+      "children": []
+    },
+    "libdeps": []
+  }
+}

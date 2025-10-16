@@ -5,6 +5,8 @@ import {
   project,
   type ContributionDiffConfig,
   type Notification,
+  projectRoleAssignment,
+  projectWebhook,
   contributionTimeline,
   contributionDiff,
   ticket,
@@ -533,6 +535,53 @@ async function patchProjectTicket(
   });
 }
 
+// -- /users/:handle/:project-ref/roles
+
+async function getProjectRoleAssignments(
+  page: Page,
+  projectRef: string,
+  resp?: { status: number },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    ...{
+      url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/roles`,
+      status: 200,
+      data: {
+        active: true,
+        role_assignments: [
+          projectRoleAssignment(),
+          projectRoleAssignment(),
+          projectRoleAssignment(),
+        ],
+      },
+    },
+    ...(resp || {}),
+  });
+}
+
+// -- /users/:handle/:project-ref/webhooks
+//
+async function getProjectWebhooks(
+  page: Page,
+  projectRef: string,
+  resp?: { status: number },
+) {
+  const [handle, projectSlug] = projectRef.split("/");
+
+  return get(page, {
+    ...{
+      url: `/users/${handle.replace("@", "")}/projects/${projectSlug}/webhooks`,
+      status: 200,
+      data: {
+        webhooks: [projectWebhook(), projectWebhook(), projectWebhook()],
+      },
+    },
+    ...(resp || {}),
+  });
+}
+
 // /users/:handle/notifications
 
 type NotificationsHubData = {
@@ -673,6 +722,8 @@ export {
   getProject,
   getProject_,
   getProjectReadme,
+  getProjectRoleAssignments,
+  getProjectWebhooks,
   getProjectDependencies,
   getProjectContribution,
   getProjectContribution_,
