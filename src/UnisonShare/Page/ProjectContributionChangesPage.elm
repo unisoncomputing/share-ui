@@ -8,7 +8,7 @@ import Code.Perspective as Perspective
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
 import Html exposing (Html, br, code, div, h2, label, p, pre, span, strong, text)
-import Html.Attributes exposing (class, id)
+import Html.Attributes exposing (class, id, style)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import Lib.ScrollTo as ScrollTo
@@ -274,13 +274,16 @@ viewChangeIcon item =
             )
 
 
-viewChangeBadge : ChangeLine -> Html Msg
-viewChangeBadge changeLine =
+viewChangeBadge : Int -> ChangeLine -> Html Msg
+viewChangeBadge maxBadgeLength changeLine =
     let
         type_ =
             ChangeLine.toString changeLine
+
+        width =
+            String.fromInt maxBadgeLength
     in
-    span [ class "change-badge_wrapper" ]
+    span [ class "change-badge_wrapper", style "width" (width ++ "ch") ]
         [ span
             [ class "change-badge"
             , class (String.toLower type_)
@@ -396,8 +399,8 @@ viewNamespaceLine projectRef toggledChangeLines { name, lines } =
             ]
 
 
-viewChangedDefinitionCard : ProjectRef -> ToggledChangeLines -> BranchDiff -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
-viewChangedDefinitionCard projectRef toggledChangeLines branchDiff changeLine type_ content =
+viewChangedDefinitionCard : ProjectRef -> ToggledChangeLines -> BranchDiff -> Int -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
+viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLength changeLine type_ content =
     let
         toSyntaxConfig isNew =
             let
@@ -476,7 +479,7 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff changeLine ty
     Card.card
         [ div [ class "definition-change-header" ]
             [ div [ class "change-line" ]
-                [ viewChangeBadge changeLine
+                [ viewChangeBadge maxBadgeLength changeLine
                 , viewDefinitionIcon type_
                 , content
                 ]
@@ -508,8 +511,18 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff changeLine ty
 viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> BranchDiff -> List (Html Msg)
 viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
     let
+        maxBadgeLength =
+            branchDiff.lines
+                |> List.map (ChangeLine.toString >> String.length)
+                |> List.maximum
+                |> Maybe.withDefault 0
+
         view_ =
-            viewChangedDefinitionCard projectRef toggledChangeLines branchDiff
+            viewChangedDefinitionCard
+                projectRef
+                toggledChangeLines
+                branchDiff
+                maxBadgeLength
 
         f changeLine acc =
             let

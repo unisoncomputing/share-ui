@@ -287,13 +287,13 @@
     }
 
     & .change-badge_wrapper {
-      width: 5.5rem;
       display: inline-flex;
       justify-content: flex-end;
     }
 
     & .change-badge {
       border-radius: 1rem;
+      width: 100%;
       line-height: 1;
       display: inline-flex;
       gap: 0.25rem;
