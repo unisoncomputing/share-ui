@@ -201,7 +201,7 @@ notifications account status paginationCursor =
                     [ string "status" "read,unread", string "limit" "12" ]
 
         paginationQueryParams =
-            Paginated.toQueryParams paginationCursor
+            Paginated.toApiQueryParams paginationCursor
     in
     GET
         { path =
@@ -361,7 +361,7 @@ projectBranches projectRef params =
 
         queryParams =
             [ kind, int "limit" params.limit ]
-                ++ Paginated.toQueryParams params.cursor
+                ++ Paginated.toApiQueryParams params.cursor
                 ++ (params.searchQuery
                         |> Maybe.map (string "name-prefix")
                         |> MaybeE.toList

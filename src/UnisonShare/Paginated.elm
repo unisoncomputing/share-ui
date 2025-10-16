@@ -38,14 +38,35 @@ toQueryParam param =
             Nothing
 
         PrevPage c ->
+            Just (string "prev" (cursorToString c))
+
+        NextPage c ->
+            Just (string "next" (cursorToString c))
+
+
+toQueryParams : PageCursorParam -> List QueryParameter
+toQueryParams param =
+    param
+        |> toQueryParam
+        |> Maybe.map List.singleton
+        |> Maybe.withDefault []
+
+
+toApiQueryParam : PageCursorParam -> Maybe QueryParameter
+toApiQueryParam param =
+    case param of
+        NoPageCursor ->
+            Nothing
+
+        PrevPage c ->
             Just (string "cursor" (cursorToString c))
 
         NextPage c ->
             Just (string "cursor" (cursorToString c))
 
 
-toQueryParams : PageCursorParam -> List QueryParameter
-toQueryParams param =
+toApiQueryParams : PageCursorParam -> List QueryParameter
+toApiQueryParams param =
     param
         |> toQueryParam
         |> Maybe.map List.singleton
