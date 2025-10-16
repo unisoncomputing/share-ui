@@ -404,16 +404,20 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
     let
         toSyntaxConfig isNew =
             let
-                branchRef =
+                diffBranchRef =
                     if isNew then
-                        branchDiff.newBranch.ref
+                        branchDiff.newBranch
 
                     else
-                        branchDiff.oldBranch.ref
+                        branchDiff.oldBranch
             in
             SyntaxConfig.empty
                 |> SyntaxConfig.withToClick
-                    (Link.projectBranchDefinition projectRef branchRef)
+                    (Link.projectBranchDefinition_
+                        projectRef
+                        diffBranchRef.ref
+                        (Perspective.absoluteRootPerspective diffBranchRef.hash)
+                    )
 
         ( expanded, toggleIcon ) =
             if ToggledChangeLines.isCollapsed toggledChangeLines changeLine then

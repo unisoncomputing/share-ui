@@ -200,10 +200,14 @@ viewDiff toSyntaxConfig { left, right } =
                             ( i, lines ++ [ ( Nothing, diffLine ) ] )
 
         viewLeftDiffLine =
-            viewDiffLine (toViewDiffSegment False) "-" (toGutterWidth (List.length left))
+            viewDiffLine (toViewDiffSegment False)
+                "-"
+                (toGutterWidth (List.length left))
 
         viewRightDiffLine =
-            viewDiffLine (toViewDiffSegment False) "+" (toGutterWidth (List.length right))
+            viewDiffLine (toViewDiffSegment True)
+                "+"
+                (toGutterWidth (List.length right))
 
         before =
             left
