@@ -205,6 +205,8 @@
       & .diff-side {
         width: 50%;
         overflow-x: auto;
+        /* TODO: yikes, well that seems like a hack */
+        overflow-y: hidden;
 
         & header {
           background: var(--u-color_element_subdued);
