@@ -254,13 +254,19 @@ mapTab f tab =
             ContributorBranches (f branches)
 
 
-updateSubPage : AppContext -> ProjectRef -> ProjectBranchesRoute -> Model -> ( Model, Cmd Msg )
-updateSubPage appContext projectRef subRoute model =
-    case subRoute of
+updateSubPage : AppContext -> ProjectRef -> ProjectBranchesRoute -> Paginated.PageCursorParam -> Model -> ( Model, Cmd Msg )
+updateSubPage appContext projectRef subRoute cursor model =
+    case Debug.log "howdy" subRoute of
         ProjectBranchesAll ->
             case model.tab of
                 AllBranches _ ->
-                    ( model, Cmd.none )
+                    ( model
+                    , fetchBranches appContext
+                        projectRef
+                        (ShareApi.AllBranches Nothing)
+                        Nothing
+                        cursor
+                    )
 
                 _ ->
                     init appContext projectRef subRoute Paginated.NoPageCursor
@@ -268,7 +274,13 @@ updateSubPage appContext projectRef subRoute model =
         ProjectBranchesYours ->
             case model.tab of
                 YourBranches _ ->
-                    ( model, Cmd.none )
+                    ( model
+                    , fetchBranches appContext
+                        projectRef
+                        (ShareApi.ContributorBranches (Session.handle appContext.session))
+                        Nothing
+                        cursor
+                    )
 
                 _ ->
                     init appContext projectRef subRoute Paginated.NoPageCursor
@@ -276,7 +288,13 @@ updateSubPage appContext projectRef subRoute model =
         ProjectBranchesMaintainer ->
             case model.tab of
                 MaintainerBranches _ ->
-                    ( model, Cmd.none )
+                    ( model
+                    , fetchBranches appContext
+                        projectRef
+                        ShareApi.ProjectBranches
+                        Nothing
+                        cursor
+                    )
 
                 _ ->
                     init appContext projectRef subRoute Paginated.NoPageCursor
@@ -284,7 +302,13 @@ updateSubPage appContext projectRef subRoute model =
         ProjectBranchesContributor ->
             case model.tab of
                 ContributorBranches _ ->
-                    ( model, Cmd.none )
+                    ( model
+                    , fetchBranches appContext
+                        projectRef
+                        (ShareApi.ContributorBranches Nothing)
+                        Nothing
+                        cursor
+                    )
 
                 _ ->
                     init appContext projectRef subRoute Paginated.NoPageCursor
@@ -300,7 +324,7 @@ fetchBranches appContext projectRef kind query cursor =
         params =
             { kind = kind
             , searchQuery = query
-            , limit = 100
+            , limit = 24
             , cursor = cursor
             }
 
@@ -553,20 +577,21 @@ viewBranches : AppContext -> ProjectDetails -> Branches -> String -> Html Msg
 viewBranches appContext project branches emptyStateMessage =
     let
         viewCard (Paginated p) =
-            p.items
-                |> List.map (viewBranchRow appContext project)
-                |> div [ class "project-branches_list" ]
-                |> (\branchList ->
-                        [ div [ class "project-branches_paginated-list" ]
-                            [ branchList
-
-                            -- , viewPaginationControls project.ref p
+            div []
+                [ p.items
+                    |> List.map (viewBranchRow appContext project)
+                    |> div [ class "project-branches_list" ]
+                    |> (\branchList ->
+                            [ div [ class "project-branches_paginated-list" ]
+                                [ branchList
+                                ]
                             ]
-                        ]
-                   )
-                |> Card.card
-                |> Card.asContained
-                |> Card.view
+                       )
+                    |> Card.card
+                    |> Card.asContained
+                    |> Card.view
+                , viewPaginationControls project.ref p
+                ]
     in
     case branches of
         NotAsked ->

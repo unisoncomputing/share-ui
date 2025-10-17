@@ -780,14 +780,23 @@ updateSubPage appContext projectRef model route =
                 Branches page ->
                     let
                         ( branchesPage, branchesCmd ) =
-                            ProjectBranchesPage.updateSubPage appContext projectRef branchesRoute page
+                            ProjectBranchesPage.updateSubPage
+                                appContext
+                                projectRef
+                                branchesRoute
+                                cursor
+                                page
                     in
                     ( { model | subPage = Branches branchesPage }, Cmd.map ProjectBranchesPageMsg branchesCmd )
 
                 _ ->
                     let
                         ( branchesPage, branchesCmd ) =
-                            ProjectBranchesPage.init appContext projectRef branchesRoute cursor
+                            ProjectBranchesPage.init
+                                appContext
+                                projectRef
+                                branchesRoute
+                                cursor
                     in
                     ( { model | subPage = Branches branchesPage }, Cmd.map ProjectBranchesPageMsg branchesCmd )
 
