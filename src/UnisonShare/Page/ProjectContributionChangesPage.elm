@@ -721,8 +721,8 @@ viewBranchDiff projectRef toggledChangeLines diff =
         ]
 
 
-viewLoadingPage : PageContent Msg
-viewLoadingPage =
+viewLoadingPage : Html Msg -> PageContent Msg
+viewLoadingPage tabs =
     let
         shape length =
             Placeholder.text
@@ -733,7 +733,8 @@ viewLoadingPage =
     in
     PageContent.oneColumn
         [ div [ class "project-contribution-changes-page" ]
-            [ Card.card
+            [ tabs
+            , Card.card
                 [ shape Placeholder.Large
                 , shape Placeholder.Small
                 , shape Placeholder.Medium
@@ -744,8 +745,8 @@ viewLoadingPage =
         ]
 
 
-viewErrorPage : AppContext -> ContributionRef -> Http.Error -> PageContent Msg
-viewErrorPage appContext _ err =
+viewErrorPage : AppContext -> ContributionRef -> Html Msg -> Http.Error -> PageContent Msg
+viewErrorPage appContext _ tabs err =
     let
         errorDetails =
             case appContext.session of
@@ -760,7 +761,8 @@ viewErrorPage appContext _ err =
                     UI.nothing
     in
     PageContent.oneColumn
-        [ div [ class "project-contribution-changes-page" ]
+        [ tabs
+        , div [ class "project-contribution-changes-page" ]
             [ StatusBanner.bad
                 "Something broke on our end and we couldn't show the contribution changes. Please try again."
             , errorDetails
@@ -791,7 +793,7 @@ view appContext projectRef contribution model =
     in
     case model.branchDiff of
         BranchDiffState.Loading ->
-            viewLoadingPage
+            viewLoadingPage tabs
 
         BranchDiffState.Computing _ ->
             PageContent.oneColumn
@@ -812,7 +814,7 @@ view appContext projectRef contribution model =
                 ]
 
         BranchDiffState.Reloading _ ->
-            viewLoadingPage
+            viewLoadingPage tabs
 
         BranchDiffState.Computed diff ->
             PageContent.oneColumn
@@ -897,4 +899,4 @@ view appContext projectRef contribution model =
                 ]
 
         BranchDiffState.Failure e ->
-            viewErrorPage appContext contribution.ref e
+            viewErrorPage appContext contribution.ref tabs e
