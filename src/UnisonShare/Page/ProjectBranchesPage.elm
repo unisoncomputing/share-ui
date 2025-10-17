@@ -256,7 +256,7 @@ mapTab f tab =
 
 updateSubPage : AppContext -> ProjectRef -> ProjectBranchesRoute -> Paginated.PageCursorParam -> Model -> ( Model, Cmd Msg )
 updateSubPage appContext projectRef subRoute cursor model =
-    case Debug.log "howdy" subRoute of
+    case subRoute of
         ProjectBranchesAll ->
             case model.tab of
                 AllBranches _ ->
