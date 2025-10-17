@@ -238,6 +238,13 @@
       gap: 0.5rem;
     }
 
+    & .definition-change.card .diff-line_syntax {
+      height: var(--diff-line-height);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
     & .definition-change.card .diff-segment {
       display: inline-flex;
       height: var(--diff-line-height);

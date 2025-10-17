@@ -157,13 +157,13 @@ viewDiffLine viewSeg changeIndicator gutterWidth ( ln, line ) =
         ChangedLine segments ->
             div [ class "diff-line changed-line" ]
                 [ gutter changeIndicator
-                , span [] (List.concatMap viewSeg segments)
+                , span [ class "diff-line_syntax" ] (List.concatMap viewSeg segments)
                 ]
 
         UnchangedLine segments ->
             div [ class "diff-line unchanged-line" ]
                 [ gutter " "
-                , span [] (List.concatMap viewSeg segments)
+                , span [ class "diff-line_syntax" ] (List.concatMap viewSeg segments)
                 ]
 
         Spacer { numLines } ->
