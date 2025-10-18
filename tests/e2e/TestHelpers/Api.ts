@@ -611,7 +611,7 @@ async function getNotificationsHub(
   };
 
   return get(page, {
-    url: `/users/${handle.replace("@", "")}/notifications/hub?status=read%2Cunread&limit=12`,
+    url: `/users/${handle.replace("@", "")}/notifications/hub?status=read%2Cunread&limit=24`,
     status: 200,
     data: data,
   });
