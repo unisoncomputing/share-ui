@@ -675,6 +675,10 @@ function notificationStatus(): NotificationStatus {
   return faker.helpers.arrayElement(["unread", "read", "archived"]);
 }
 
+function notificationStatusWithoutArchived(): NotificationStatus {
+  return faker.helpers.arrayElement(["unread", "read"]);
+}
+
 type Notification = {
   id: string;
   event: NotificationEvent;
@@ -688,7 +692,7 @@ function notification(notif?: {
   return {
     event: notificationEvent(notif?.kind),
     id: faker.string.uuid(),
-    status: notif?.status || notificationStatus(),
+    status: notif?.status || notificationStatusWithoutArchived(),
   };
 }
 
