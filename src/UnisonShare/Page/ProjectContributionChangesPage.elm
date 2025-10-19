@@ -567,7 +567,7 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
                         (viewInfo
                             [ viewTitle i.fullName
                             , clickableHash branchDiff.oldBranch i.ref i.oldHash
-                            , Icon.view Icon.arrowRight
+                            , span [ class "small-label" ] [ text "updated to" ]
                             , clickableHash branchDiff.newBranch i.ref i.newHash
                             ]
                         )
@@ -582,7 +582,7 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
                         (viewInfo
                             [ viewTitle i.newFullName
                             , clickableHash branchDiff.oldBranch i.newRef i.hash
-                            , span [ class "extra-info" ]
+                            , span [ class "small-label" ]
                                 [ text "(was "
                                 , branchLink projectRef
                                     branchDiff.oldBranch
@@ -606,7 +606,7 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
                         (viewInfo
                             [ viewTitle i.aliasFullName
                             , clickableHash branchDiff.newBranch i.ref i.hash
-                            , span [ class "extra-info" ]
+                            , span [ class "small-label" ]
                                 [ text "(AKA "
                                 , i.otherNames
                                     |> NEL.map FQN.toString

@@ -107,7 +107,7 @@
           align-items: center;
           gap: 0.25rem;
 
-          & .extra-info {
+          & .small-label {
             font-size: var(--font-size-small);
             color: var(--u-color_text_subdued);
             & a {
