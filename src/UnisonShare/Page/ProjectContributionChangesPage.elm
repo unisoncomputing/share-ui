@@ -567,7 +567,7 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
                         (viewInfo
                             [ viewTitle i.fullName
                             , clickableHash branchDiff.oldBranch i.ref i.oldHash
-                            , span [ class "small-label" ] [ text "updated to" ]
+                            , Icon.view Icon.arrowRight
                             , clickableHash branchDiff.newBranch i.ref i.newHash
                             ]
                         )
