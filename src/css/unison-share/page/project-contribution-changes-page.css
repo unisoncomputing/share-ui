@@ -641,6 +641,15 @@
       }
     }
   }
+
+  .project-contribution-changes-page {
+    & .change-line .change-badge_wrapper {
+      /* there's a direct, computed width set via `style` that
+       * we want to override on smaller screens hence the
+       * !important */
+      width: auto !important;
+    }
+  }
 }
 
 @media only screen and (--u-viewport_max-sm) {
