@@ -86,7 +86,7 @@
       & .definition-change-header {
         border-radius: var(--border-radius-base);
         background: var(--color-card-bg);
-        z-index: 100;
+        z-index: var(--layer-popover);
         position: sticky;
         top: 0;
         padding: 0.5rem;
