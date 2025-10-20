@@ -38,7 +38,7 @@ import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing 
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
-import UnisonShare.DefinitionDiff as DefinitionDiff
+import UnisonShare.DefinitionDiffCard as DefinitionDiffCard
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route
@@ -426,7 +426,7 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
             else
                 case changeLine of
                     ChangeLine.Updated _ { diff } ->
-                        ( Just (DefinitionDiff.view toSyntaxConfig diff), Icon.arrowsToLine )
+                        ( Just (DefinitionDiffCard.view toSyntaxConfig diff), Icon.arrowsToLine )
 
                     _ ->
                         case ChangeLine.source changeLine of
