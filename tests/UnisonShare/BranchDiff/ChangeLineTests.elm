@@ -413,13 +413,23 @@ diff =
         diffDetails =
             { type_ = DefinitionDiff.Term
             , left =
-                [ DefinitionDiff.ChangedLine
-                    [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "oldDef"))
+                [ DefinitionDiff.NotCollapsed
+                    [ DefinitionDiff.ChangedLine
+                        { lineNum = 1
+                        , segments =
+                            [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "oldDef"))
+                            ]
+                        }
                     ]
                 ]
             , right =
-                [ DefinitionDiff.ChangedLine
-                    [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "newDef"))
+                [ DefinitionDiff.NotCollapsed
+                    [ DefinitionDiff.ChangedLine
+                        { lineNum = 1
+                        , segments =
+                            [ DefinitionDiff.Both (NEL.singleton (SyntaxSegment.SyntaxSegment SyntaxSegment.TextLiteral "newDef"))
+                            ]
+                        }
                     ]
                 ]
             }

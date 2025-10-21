@@ -3,7 +3,92 @@ module UnisonShare.DefinitionDiffTests exposing (..)
 import Expect
 import Json.Decode as Decode
 import Test exposing (..)
-import UnisonShare.DefinitionDiff as DefinitionDiff
+import UnisonShare.DefinitionDiff as DefinitionDiff exposing (Collapsed(..), DiffLine(..))
+
+
+toCollapsedWithLineNums : Test
+toCollapsedWithLineNums =
+    describe "DefinitionDiff.toCollapsedWithLineNum"
+        [ describe "With ChangeLines in the middle"
+            [ test "marks collapsable lines as collapsed if 3 lines on either side of a line is an UnchangedLine and adds line numbers" <|
+                \_ ->
+                    let
+                        input =
+                            [ unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            , changed 0
+                            , unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            , unchanged 0
+                            ]
+
+                        expected =
+                            [ Collapsed [ unchanged 1, unchanged 2 ]
+                            , NotCollapsed
+                                [ unchanged 3
+                                , unchanged 4
+                                , unchanged 5
+                                , changed 6
+                                , unchanged 7
+                                , unchanged 8
+                                , unchanged 9
+                                ]
+                            , Collapsed
+                                [ unchanged 10
+                                , unchanged 11
+                                ]
+                            ]
+                    in
+                    Expect.equal expected (DefinitionDiff.toCollapsedWithLineNums input)
+            , describe "With ChangedLines in the start and end"
+                [ test "marks collapsable lines as collapsed if 3 lines on either side of a line is an UnchangedLine and adds line numbers" <|
+                    \_ ->
+                        let
+                            input =
+                                [ changed 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , unchanged 0
+                                , changed 0
+                                ]
+
+                            expected =
+                                [ NotCollapsed
+                                    [ changed 1
+                                    , unchanged 2
+                                    , unchanged 3
+                                    , unchanged 4
+                                    ]
+                                , Collapsed
+                                    [ unchanged 5
+                                    , unchanged 6
+                                    , unchanged 7
+                                    , unchanged 8
+                                    ]
+                                , NotCollapsed
+                                    [ unchanged 9
+                                    , unchanged 10
+                                    , unchanged 11
+                                    , changed 12
+                                    ]
+                                ]
+                        in
+                        Expect.equal expected (DefinitionDiff.toCollapsedWithLineNums input)
+                ]
+            ]
+        ]
 
 
 decode : Test
@@ -24,6 +109,21 @@ decode =
                         mismatchedJson
                     )
         ]
+
+
+unchanged : Int -> DiffLine
+unchanged ln =
+    UnchangedLine { lineNum = ln, segments = [] }
+
+
+changed : Int -> DiffLine
+changed ln =
+    ChangedLine { lineNum = ln, segments = [] }
+
+
+spacer : DiffLine
+spacer =
+    Spacer { numLines = 1 }
 
 
 diffJson : String

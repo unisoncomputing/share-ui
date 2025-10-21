@@ -1,17 +1,14 @@
 module UnisonShare.DefinitionDiff exposing (..)
 
+import Array
 import Code.Hash as Hash exposing (Hash)
-import Code.Syntax.SyntaxConfig exposing (SyntaxConfig)
 import Code.Syntax.SyntaxSegment as SyntaxSegment exposing (SyntaxSegment)
-import Html exposing (Html, code, div, header, pre, span, text)
-import Html.Attributes exposing (class, style)
 import Json.Decode as Decode
 import Json.Decode.Extra exposing (when)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (nonEmptyList, whenKindIs)
 import List.Extra as ListE
 import List.Nonempty as NEL
-import UI.Tooltip as Tooltip
 
 
 type alias DiffSyntaxSegments =
@@ -26,18 +23,24 @@ type DiffSegment
 
 
 type DiffLine
-    = ChangedLine (List DiffSegment)
-    | UnchangedLine (List DiffSegment)
-      -- Spacer includes numLines such that we can avoid a jagged background
-      -- pattern when it spans over multiple lines by making it 1 tall DOM
-      -- element instead of small 1 line height elements
+    = ChangedLine { lineNum : Int, segments : List DiffSegment }
+    | UnchangedLine { lineNum : Int, segments : List DiffSegment }
+      -- Spacer includes a number of lines it spans over such that we can avoid
+      -- a jagged background pattern when it spans over multiple lines by
+      -- making it 1 tall DOM element instead of a list of small 1 line height
+      -- elements
     | Spacer { numLines : Int }
+
+
+type Collapsed
+    = Collapsed (List DiffLine)
+    | NotCollapsed (List DiffLine)
 
 
 type alias DiffDetails =
     { type_ : DefinitionType
-    , left : List DiffLine
-    , right : List DiffLine
+    , left : List Collapsed
+    , right : List Collapsed
     }
 
 
@@ -72,178 +75,139 @@ definitionTypeToString type_ =
             "Type"
 
 
+isCollapsable : DiffLine -> Bool
+isCollapsable l =
+    case l of
+        ChangedLine _ ->
+            False
 
--- VIEW
+        UnchangedLine _ ->
+            True
 
-
-viewSegments : SyntaxConfig msg -> String -> NEL.Nonempty SyntaxSegment.SyntaxSegment -> List (Html msg)
-viewSegments syntaxConfig className segments =
-    segments
-        |> NEL.map (SyntaxSegment.view syntaxConfig)
-        |> NEL.map (\seg -> span [ class className ] [ seg ])
-        |> NEL.toList
-
-
-viewTooltip : Html msg -> Tooltip.Tooltip msg
-viewTooltip content =
-    Tooltip.rich content
-        |> Tooltip.tooltip
-        |> Tooltip.withArrow Tooltip.Start
+        Spacer _ ->
+            False
 
 
-viewDiffSegment : SyntaxConfig msg -> DiffSegment -> List (Html msg)
-viewDiffSegment syntaxConfig segment =
+supportsLineNum : DiffLine -> Bool
+supportsLineNum l =
+    case l of
+        ChangedLine _ ->
+            True
+
+        UnchangedLine _ ->
+            True
+
+        Spacer _ ->
+            False
+
+
+toCollapsedWithLineNums : List DiffLine -> List Collapsed
+toCollapsedWithLineNums lines =
     let
-        viewSegment =
-            SyntaxSegment.view syntaxConfig
+        arrLines =
+            Array.fromList lines
 
-        viewSegments_ className =
-            viewSegments syntaxConfig className
-    in
-    case segment of
-        Both segments ->
-            viewSegments_ "diff-segment both" segments
+        maxLineNum =
+            (lines |> List.filter supportsLineNum |> List.length) + 1
 
-        OneSided segments ->
-            viewSegments_ "diff-segment one-sided" segments
+        isCollapsable_ i =
+            arrLines
+                |> Array.get i
+                |> Maybe.map isCollapsable
 
-        AnnotationChange change ->
-            [ viewTooltip
-                (div [ class "tooltip-changes-summary" ]
-                    [ div [ class "hash-changed" ]
-                        [ text "The hash changed"
-                        , text " from "
-                        , Hash.view change.fromHash
-                        , text " to "
-                        , Hash.view change.toHash
-                        ]
-                    ]
-                )
-                |> Tooltip.view
-                    (span [ class "diff-segment annotation-change" ] [ viewSegment change.segment ])
-            ]
+        prevNeighborsCollapsable i =
+            case ( isCollapsable_ (i - 3), isCollapsable_ (i - 2), isCollapsable_ (i - 1) ) of
+                ( Just True, Just True, Just True ) ->
+                    True
 
-        SegmentChange { from, to } ->
-            [ viewTooltip
-                (div [ class "tooltip-changes-summary" ]
-                    [ text "Changed from"
-                    , code [] [ viewSegment from ]
-                    ]
-                )
-                |> Tooltip.view
-                    (span [ class "diff-segment segment-change" ] [ viewSegment to ])
-            ]
+                ( Nothing, Just True, Just True ) ->
+                    True
 
+                ( Nothing, Nothing, Just True ) ->
+                    True
 
-viewDiffLine : (DiffSegment -> List (Html msg)) -> String -> Int -> ( Maybe Int, DiffLine ) -> Html msg
-viewDiffLine viewSeg changeIndicator gutterWidth ( ln, line ) =
-    let
-        gutter indicator =
-            span [ class "gutter" ]
-                [ span [ class "line-number" ]
-                    [ text
-                        (String.padLeft
-                            gutterWidth
-                            ' '
-                            (ln |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                        )
-                    ]
-                , text " "
-                , span [ class "change-indicator" ] [ text indicator ]
-                , text " "
-                ]
-    in
-    case line of
-        ChangedLine segments ->
-            div [ class "diff-line changed-line" ]
-                [ gutter changeIndicator
-                , span [ class "diff-line_syntax" ] (List.concatMap viewSeg segments)
-                ]
+                _ ->
+                    False
 
-        UnchangedLine segments ->
-            div [ class "diff-line unchanged-line" ]
-                [ gutter " "
-                , span [ class "diff-line_syntax" ] (List.concatMap viewSeg segments)
-                ]
+        nextNeighborsCollapsable i =
+            case ( isCollapsable_ (i + 1), isCollapsable_ (i + 2), isCollapsable_ (i + 3) ) of
+                ( Just True, Just True, Just True ) ->
+                    True
 
-        Spacer { numLines } ->
-            div
-                [ class "diff-line spacer-line"
-                , style "height" ("calc(var(--diff-line-height) * " ++ String.fromInt numLines ++ ")")
-                ]
-                []
+                ( Just True, Just True, Nothing ) ->
+                    True
 
+                ( Just True, Nothing, Nothing ) ->
+                    True
 
-viewDiff : (Bool -> SyntaxConfig msg) -> DiffDetails -> Html msg
-viewDiff toSyntaxConfig { left, right } =
-    let
-        toGutterWidth len =
-            String.length (String.fromInt len)
+                _ ->
+                    False
 
-        toViewDiffSegment isNew =
-            viewDiffSegment (toSyntaxConfig isNew)
+        withLineNum ln line =
+            case line of
+                UnchangedLine unchanged ->
+                    -- Subtracking the line num because we are looping in reverse
+                    ( ln - 1, UnchangedLine { unchanged | lineNum = ln - 1 } )
 
-        withLineNumbers diffLine ( i, lines ) =
-            case diffLine of
-                ChangedLine _ ->
-                    ( i + 1, lines ++ [ ( Just (i + 1), diffLine ) ] )
+                ChangedLine changed ->
+                    ( ln - 1, ChangedLine { changed | lineNum = ln - 1 } )
 
-                UnchangedLine _ ->
-                    ( i + 1, lines ++ [ ( Just (i + 1), diffLine ) ] )
+                Spacer spacer ->
+                    ( ln, Spacer spacer )
 
-                Spacer _ ->
-                    case ListE.unconsLast lines of
-                        Just ( ( _, Spacer { numLines } ), lines_ ) ->
-                            ( i, lines_ ++ [ ( Nothing, Spacer { numLines = numLines + 1 } ) ] )
+        go i line ( ln, lines_ ) =
+            let
+                ( nextLn, l ) =
+                    withLineNum ln line
+
+                mergeIntoPreviousCollapsed =
+                    case lines_ of
+                        (Collapsed ls) :: rest ->
+                            ( nextLn, Collapsed (l :: ls) :: rest )
 
                         _ ->
-                            ( i, lines ++ [ ( Nothing, diffLine ) ] )
+                            ( nextLn, Collapsed [ l ] :: lines_ )
 
-        viewLeftDiffLine =
-            viewDiffLine (toViewDiffSegment False)
-                "-"
-                (toGutterWidth (List.length left))
+                mergeIntoPreviousNotCollapsed =
+                    case lines_ of
+                        (NotCollapsed ls) :: rest ->
+                            ( nextLn, NotCollapsed (l :: ls) :: rest )
 
-        viewRightDiffLine =
-            viewDiffLine (toViewDiffSegment True)
-                "+"
-                (toGutterWidth (List.length right))
+                        _ ->
+                            ( nextLn, NotCollapsed [ l ] :: lines_ )
+            in
+            if isCollapsable l then
+                let
+                    prevCollapsable =
+                        prevNeighborsCollapsable i
 
-        before =
-            left
-                |> List.foldl withLineNumbers ( 0, [] )
-                |> Tuple.second
-                |> List.map viewLeftDiffLine
+                    nextCollapsable =
+                        nextNeighborsCollapsable i
 
-        after =
-            right
-                |> List.foldl withLineNumbers ( 0, [] )
-                |> Tuple.second
-                |> List.map viewRightDiffLine
+                    isFirst =
+                        i == 0
+
+                    isLast =
+                        i == (Array.length arrLines - 1)
+                in
+                if isFirst && nextCollapsable then
+                    mergeIntoPreviousCollapsed
+
+                else if isLast && prevCollapsable then
+                    mergeIntoPreviousCollapsed
+
+                else if prevCollapsable && nextCollapsable then
+                    mergeIntoPreviousCollapsed
+
+                else
+                    mergeIntoPreviousNotCollapsed
+
+            else
+                mergeIntoPreviousNotCollapsed
     in
-    div [ class "diff-side-by-side" ]
-        [ pre [ class "monochrome diff-side left" ]
-            [ header [ class "diff-left-header" ] [ text "Before" ]
-            , code [] before
-            ]
-        , pre [ class "monochrome diff-side right" ]
-            [ header [ class "diff-right-header" ] [ text "After" ]
-            , code [] after
-            ]
-        ]
-
-
-view : (Bool -> SyntaxConfig msg) -> DefinitionDiff -> Html msg
-view toSyntaxConfig defDiff =
-    case defDiff of
-        Diff details ->
-            div [] [ viewDiff toSyntaxConfig details ]
-
-        Mismatched { left, right } ->
-            div [ class "diff-side-by-side" ]
-                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" left) ]
-                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" right) ]
-                ]
+    lines
+        |> ListE.indexedFoldr go ( maxLineNum, [] )
+        |> Tuple.second
 
 
 
@@ -305,14 +269,29 @@ decodeSegment =
         ]
 
 
+{-| note how `lineNum` is 0. It's fixed in a second pass via a fold
+because it can't be indexed based due to Spacer not having line numbers
+-}
 decodeDiffLine : Decode.Decoder DiffLine
 decodeDiffLine =
-    Decode.oneOf
-        [ whenKindIs "changed" (Decode.map ChangedLine (Decode.field "value" (Decode.list decodeSegment)))
-        , whenKindIs "unchanged" (Decode.map UnchangedLine (Decode.field "value" (Decode.list decodeSegment)))
+    let
+        mkChangedLine segments =
+            ChangedLine { lineNum = 0, segments = segments }
 
-        -- The spacer numLines will be flatten later on
-        -- TODO: we should probably do the flattening and add line numbers during parsing...
+        mkUnchangedLine segments =
+            UnchangedLine { lineNum = 0, segments = segments }
+    in
+    Decode.oneOf
+        [ whenKindIs "changed"
+            (Decode.map mkChangedLine
+                (Decode.field "value" (Decode.list decodeSegment))
+            )
+        , whenKindIs "unchanged"
+            (Decode.map mkUnchangedLine
+                (Decode.field "value" (Decode.list decodeSegment))
+            )
+
+        -- The spacer numLines will be flattened later on
         , whenKindIs "spacer" (Decode.succeed (Spacer { numLines = 1 }))
         ]
 
@@ -326,10 +305,29 @@ decodeDiff definitionType =
                 , left = left
                 , right = right
                 }
+
+        mergeSpacers lines =
+            let
+                go diffLine acc =
+                    case diffLine of
+                        Spacer spacer ->
+                            case ListE.unconsLast acc of
+                                Just ( Spacer prevSpacer, lines_ ) ->
+                                    lines_ ++ [ Spacer { numLines = prevSpacer.numLines + spacer.numLines } ]
+
+                                _ ->
+                                    acc ++ [ diffLine ]
+
+                        _ ->
+                            acc ++ [ diffLine ]
+            in
+            List.foldl go [] lines
     in
     Decode.succeed mkDiff
-        |> requiredAt [ "diff", "diff", "contents", "left" ] (Decode.list decodeDiffLine)
-        |> requiredAt [ "diff", "diff", "contents", "right" ] (Decode.list decodeDiffLine)
+        |> requiredAt [ "diff", "diff", "contents", "left" ]
+            (Decode.map (mergeSpacers >> toCollapsedWithLineNums) (Decode.list decodeDiffLine))
+        |> requiredAt [ "diff", "diff", "contents", "right" ]
+            (Decode.map (mergeSpacers >> toCollapsedWithLineNums) (Decode.list decodeDiffLine))
 
 
 decodeMismatched : DefinitionType -> Decode.Decoder DefinitionDiff
