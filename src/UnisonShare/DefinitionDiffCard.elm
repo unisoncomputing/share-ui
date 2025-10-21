@@ -6,6 +6,7 @@ import Code.Syntax.SyntaxSegment as SyntaxSegment
 import Html exposing (Html, code, div, header, pre, span, text)
 import Html.Attributes exposing (class, style)
 import List.Nonempty as NEL
+import String.Extra exposing (pluralize)
 import UI.Tooltip as Tooltip
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff(..), DiffDetails, DiffLine(..), DiffSegment(..))
 
@@ -116,8 +117,17 @@ viewCollapsed : (DiffLine -> Html msg) -> DefinitionDiff.Collapsed -> Html msg
 viewCollapsed viewLine collapsed =
     case collapsed of
         DefinitionDiff.Collapsed lines ->
+            let
+                numCollapsedLines =
+                    List.length lines
+            in
             div [ class "collapsed-section" ]
-                [ text ((lines |> List.length |> String.fromInt) ++ " lines hidden...") ]
+                [ text
+                    (String.fromInt numCollapsedLines
+                        ++ pluralize " line " " lines " numCollapsedLines
+                        ++ "hidden..."
+                    )
+                ]
 
         DefinitionDiff.NotCollapsed lines ->
             div [] (List.map viewLine lines)
