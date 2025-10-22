@@ -14,7 +14,7 @@ test.describe("without being signed in", () => {
     await API.getAccount(page, "NOT_SIGNED_IN");
   });
 
-  test("can view public project", async ({ page }) => {
+  test("can view public project", async ({ page, isMobile }) => {
     await API.getProject(page, "@unison/base");
 
     const response = await page.goto("http://localhost:1234/@unison/base");
@@ -25,13 +25,17 @@ test.describe("without being signed in", () => {
 
     await expect(button(page, "Browse Project Code")).toBeVisible();
     await expect(button(page, "Edit summary")).not.toBeVisible();
-    await expect(navItem(page, "Code")).toBeVisible();
-    await expect(navItem(page, "Tickets")).toBeVisible();
-    await expect(navItem(page, "Contributions")).toBeVisible();
-    await expect(navItem(page, "Settings")).not.toBeVisible();
+
+    // Nav is hidden on mobile
+    if (!isMobile) {
+      await expect(navItem(page, "Code")).toBeVisible();
+      await expect(navItem(page, "Tickets")).toBeVisible();
+      await expect(navItem(page, "Contributions")).toBeVisible();
+      await expect(navItem(page, "Settings")).not.toBeVisible();
+    }
   });
 
-  test("can *not* view a private project`", async ({ page }) => {
+  test("can *not* view a private project`", async ({ page, isMobile }) => {
     await API.getProject_(page, "@bob/private-project", { status: 404 });
 
     const response = await page.goto(
@@ -43,10 +47,14 @@ test.describe("without being signed in", () => {
     await expect(
       page.getByText("Couldn't find @bob/private-project"),
     ).toBeVisible();
-    await expect(navItem(page, "Code")).not.toBeVisible();
-    await expect(navItem(page, "Tickets")).not.toBeVisible();
-    await expect(navItem(page, "Contributions")).not.toBeVisible();
-    await expect(navItem(page, "Settings")).not.toBeVisible();
+
+    // Nav is hidden on mobile
+    if (!isMobile) {
+      await expect(navItem(page, "Code")).not.toBeVisible();
+      await expect(navItem(page, "Tickets")).not.toBeVisible();
+      await expect(navItem(page, "Contributions")).not.toBeVisible();
+      await expect(navItem(page, "Settings")).not.toBeVisible();
+    }
   });
 });
 
@@ -60,6 +68,7 @@ test.describe("while signed in", () => {
   test.describe("with an another user's private project and `project:view` permission", () => {
     test("can view, but *not* edit summary or see settings", async ({
       page,
+      isMobile,
     }) => {
       await API.getProject(page, "@bob/private-project", {
         visibility: "private",
@@ -71,17 +80,21 @@ test.describe("while signed in", () => {
       );
       expect(response?.status()).toBeLessThan(400);
 
-      await expect(button(page, "Edit summary")).not.toBeVisible();
-      await expect(navItem(page, "Code")).toBeVisible();
-      await expect(navItem(page, "Tickets")).toBeVisible();
-      await expect(navItem(page, "Contributions")).toBeVisible();
-      await expect(navItem(page, "Settings")).not.toBeVisible();
+      // Nav is hidden on mobile
+      if (!isMobile) {
+        await expect(button(page, "Edit summary")).not.toBeVisible();
+        await expect(navItem(page, "Code")).toBeVisible();
+        await expect(navItem(page, "Tickets")).toBeVisible();
+        await expect(navItem(page, "Contributions")).toBeVisible();
+        await expect(navItem(page, "Settings")).not.toBeVisible();
+      }
     });
   });
 
   test.describe("with an another user's private project and `project:maintain` permission", () => {
     test("can view and edit summary, but not see settings", async ({
       page,
+      isMobile,
     }) => {
       await API.getProject(page, "@bob/private-project", {
         visibility: "private",
@@ -93,18 +106,21 @@ test.describe("while signed in", () => {
       );
       expect(response?.status()).toBeLessThan(400);
 
-      // await expect(button(page, "Browse Project Code")).toBeVisible();
-      await expect(button(page, "Edit summary")).toBeVisible();
-      await expect(navItem(page, "Code")).toBeVisible();
-      await expect(navItem(page, "Tickets")).toBeVisible();
-      await expect(navItem(page, "Contributions")).toBeVisible();
-      await expect(navItem(page, "Settings")).not.toBeVisible();
+      // Nav is hidden on mobile
+      if (!isMobile) {
+        await expect(button(page, "Edit summary")).toBeVisible();
+        await expect(navItem(page, "Code")).toBeVisible();
+        await expect(navItem(page, "Tickets")).toBeVisible();
+        await expect(navItem(page, "Contributions")).toBeVisible();
+        await expect(navItem(page, "Settings")).not.toBeVisible();
+      }
     });
   });
 
   test.describe("with an another user's private project and `project:manage` permission", () => {
     test("can view and edit summary, but not see settings", async ({
       page,
+      isMobile,
     }) => {
       await API.getProject(page, "@bob/private-project", {
         visibility: "private",
@@ -116,12 +132,14 @@ test.describe("while signed in", () => {
       );
       expect(response?.status()).toBeLessThan(400);
 
-      // await expect(button(page, "Browse Project Code")).toBeVisible();
-      await expect(button(page, "Edit summary")).toBeVisible();
-      await expect(navItem(page, "Code")).toBeVisible();
-      await expect(navItem(page, "Tickets")).toBeVisible();
-      await expect(navItem(page, "Contributions")).toBeVisible();
-      await expect(navItem(page, "Settings")).toBeVisible();
+      // Nav is hidden on mobile
+      if (!isMobile) {
+        await expect(button(page, "Edit summary")).toBeVisible();
+        await expect(navItem(page, "Code")).toBeVisible();
+        await expect(navItem(page, "Tickets")).toBeVisible();
+        await expect(navItem(page, "Contributions")).toBeVisible();
+        await expect(navItem(page, "Settings")).toBeVisible();
+      }
     });
   });
 });
