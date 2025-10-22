@@ -75,6 +75,37 @@ definitionTypeToString type_ =
             "Type"
 
 
+
+-- Collapse
+
+
+expandCollapsedDiffSection : Int -> DefinitionDiff -> DefinitionDiff
+expandCollapsedDiffSection index diff =
+    let
+        expand i line =
+            if i == index then
+                case line of
+                    Collapsed diffLines ->
+                        NotCollapsed diffLines
+
+                    _ ->
+                        line
+
+            else
+                line
+    in
+    case diff of
+        Diff details ->
+            Diff
+                { details
+                    | left = List.indexedMap expand details.left
+                    , right = List.indexedMap expand details.right
+                }
+
+        _ ->
+            diff
+
+
 isCollapsable : DiffLine -> Bool
 isCollapsable l =
     case l of

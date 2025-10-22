@@ -7,6 +7,8 @@ import Html exposing (Html, code, div, header, pre, span, text)
 import Html.Attributes exposing (class, style)
 import List.Nonempty as NEL
 import String.Extra exposing (pluralize)
+import UI.Click as Click
+import UI.Icon as Icon
 import UI.Tooltip as Tooltip
 import UnisonShare.DefinitionDiff as DefinitionDiff exposing (DefinitionDiff(..), DiffDetails, DiffLine(..), DiffSegment(..))
 
@@ -113,21 +115,25 @@ viewDiffLine viewSeg changeIndicator gutterWidth line =
                 []
 
 
-viewCollapsed : (DiffLine -> Html msg) -> DefinitionDiff.Collapsed -> Html msg
-viewCollapsed viewLine collapsed =
+viewCollapsed : ViewConfig msg -> (DiffLine -> Html msg) -> Int -> DefinitionDiff.Collapsed -> Html msg
+viewCollapsed cfg viewLine index collapsed =
     case collapsed of
         DefinitionDiff.Collapsed lines ->
             let
                 numCollapsedLines =
                     List.length lines
             in
-            div [ class "collapsed-section" ]
-                [ text
-                    (String.fromInt numCollapsedLines
-                        ++ pluralize " line " " lines " numCollapsedLines
-                        ++ "hidden..."
-                    )
-                ]
+            Click.onClick (cfg.toExpandCollapsedDiffSectionMsg { index = index })
+                |> Click.view
+                    [ class "collapsed-section" ]
+                    [ Icon.view Icon.dots
+                    , text
+                        (String.fromInt numCollapsedLines
+                            ++ pluralize "line " "lines " numCollapsedLines
+                            ++ "hidden"
+                        )
+                    , Icon.view Icon.dots
+                    ]
 
         DefinitionDiff.NotCollapsed lines ->
             div [] (List.map viewLine lines)
@@ -149,14 +155,14 @@ diffLength collapsedLines =
         |> List.sum
 
 
-viewDiff : (Bool -> SyntaxConfig msg) -> DiffDetails -> Html msg
-viewDiff toSyntaxConfig { left, right } =
+viewDiff : ViewConfig msg -> DiffDetails -> Html msg
+viewDiff cfg { left, right } =
     let
         toGutterWidth len =
             String.length (String.fromInt len)
 
         toViewDiffSegment isNew =
-            viewDiffSegment (toSyntaxConfig isNew)
+            viewDiffSegment (cfg.toSyntaxConfig isNew)
 
         viewLeftDiffLine =
             viewDiffLine (toViewDiffSegment False)
@@ -169,10 +175,10 @@ viewDiff toSyntaxConfig { left, right } =
                 (toGutterWidth (diffLength right))
 
         before =
-            List.map (viewCollapsed viewLeftDiffLine) left
+            List.indexedMap (viewCollapsed cfg viewLeftDiffLine) left
 
         after =
-            List.map (viewCollapsed viewRightDiffLine) right
+            List.indexedMap (viewCollapsed cfg viewRightDiffLine) right
     in
     div [ class "diff-side-by-side" ]
         [ pre [ class "monochrome diff-side left" ]
@@ -186,14 +192,20 @@ viewDiff toSyntaxConfig { left, right } =
         ]
 
 
-view : (Bool -> SyntaxConfig msg) -> DefinitionDiff -> Html msg
-view toSyntaxConfig defDiff =
+type alias ViewConfig msg =
+    { toSyntaxConfig : Bool -> SyntaxConfig msg
+    , toExpandCollapsedDiffSectionMsg : { index : Int } -> msg
+    }
+
+
+view : ViewConfig msg -> DefinitionDiff -> Html msg
+view cfg defDiff =
     case defDiff of
         Diff details ->
-            div [] [ viewDiff toSyntaxConfig details ]
+            div [] [ viewDiff cfg details ]
 
         Mismatched { left, right } ->
             div [ class "diff-side-by-side" ]
-                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig False) "mismatched old" left) ]
-                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (toSyntaxConfig True) "mismatched new" right) ]
+                [ pre [ class "monochrome diff-side" ] [ code [] (viewSegments (cfg.toSyntaxConfig False) "mismatched old" left) ]
+                , pre [ class "monochrome diff-side" ] [ code [] (viewSegments (cfg.toSyntaxConfig True) "mismatched new" right) ]
                 ]
