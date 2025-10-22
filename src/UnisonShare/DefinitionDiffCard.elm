@@ -128,8 +128,7 @@ viewCollapsed cfg viewLine index collapsed =
                     [ class "collapsed-section" ]
                     [ Icon.view Icon.dots
                     , text
-                        (String.fromInt numCollapsedLines
-                            ++ pluralize "line " "lines " numCollapsedLines
+                        (pluralize "line " "lines " numCollapsedLines
                             ++ "hidden"
                         )
                     , Icon.view Icon.dots
