@@ -230,6 +230,7 @@
     }
 
     & .definition-change.card .collapsed-section {
+      border-radius: 0;
       color: var(--u-color_text_subdued);
       font-family: var(--font-monospace);
       background: var(--u-color_element_subdued);
@@ -244,6 +245,15 @@
       border-top: 1px solid var(--u-color_border_subdued);
       border-bottom: 1px solid var(--u-color_border_subdued);
       font-size: var(--font-size-extra-small);
+      overflow: hidden;
+    }
+
+    & .definition-change.card .collapsed-section .icon {
+      color: var(--u-color_icon_subdued);
+    }
+
+    & .definition-change.card .collapsed-section:hover {
+      color: var(--u-color_interactive);
     }
 
     & .definition-change.card .collapsed-section:first-child {

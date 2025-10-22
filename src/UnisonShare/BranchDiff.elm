@@ -28,6 +28,32 @@ type alias BranchDiff =
 -- HELPERS
 
 
+mapChangeLines : (ChangeLine -> ChangeLine) -> BranchDiff -> BranchDiff
+mapChangeLines f bd =
+    { bd | lines = List.map f bd.lines }
+
+
+updateChangeLineById : (ChangeLine -> ChangeLine) -> ChangeLineId -> BranchDiff -> BranchDiff
+updateChangeLineById f id bd =
+    let
+        updateIfMatched cl =
+            if ChangeLine.matchesId id cl then
+                f cl
+
+            else
+                cl
+
+        go cl =
+            case cl of
+                Namespace items ->
+                    Namespace { items | lines = List.map go items.lines }
+
+                _ ->
+                    updateIfMatched cl
+    in
+    mapChangeLines go bd
+
+
 size : BranchDiff -> Int
 size branchDiff =
     branchDiff |> summary |> .numChanges

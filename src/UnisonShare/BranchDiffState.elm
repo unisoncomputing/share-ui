@@ -5,6 +5,8 @@ import Http
 import Json.Decode as Decode exposing (Decoder)
 import Lib.Decode.Helpers exposing (whenFieldIs, whenPathIs)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
+import UnisonShare.BranchDiff.ChangeLine exposing (ChangeLine)
+import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 
 
 type DiffErrorCulprit
@@ -41,7 +43,30 @@ type BranchDiffState
 
 
 
---
+-- HELPERS
+
+
+mapChangeLines : (ChangeLine -> ChangeLine) -> BranchDiffState -> BranchDiffState
+mapChangeLines f bds =
+    case bds of
+        Computed bd ->
+            Computed (BranchDiff.mapChangeLines f bd)
+
+        _ ->
+            bds
+
+
+updateChangeLineById : (ChangeLine -> ChangeLine) -> ChangeLineId -> BranchDiffState -> BranchDiffState
+updateChangeLineById f id bds =
+    case bds of
+        Computed bd ->
+            Computed (BranchDiff.updateChangeLineById f id bd)
+
+        _ ->
+            bds
+
+
+
 -- DECODE
 
 

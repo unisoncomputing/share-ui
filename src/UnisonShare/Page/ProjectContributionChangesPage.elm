@@ -38,6 +38,7 @@ import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing 
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
+import UnisonShare.DefinitionDiff as DefinitionDiff
 import UnisonShare.DefinitionDiffCard as DefinitionDiffCard
 import UnisonShare.Link as Link
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -84,6 +85,7 @@ type Msg
     | CopyChangeLinePermalink ChangeLineId
     | SetChangeLinePermalink ChangeLineId
     | ScrollTo ChangeLineId
+    | ExpandCollapsedDiffSection ChangeLineId { index : Int }
     | NoOp
 
 
@@ -163,8 +165,10 @@ update appContext projectRef contribRef msg model =
         SetChangeLinePermalink changeLineId ->
             let
                 route =
-                    changeLineId
-                        |> Route.projectContributionChange projectRef contribRef
+                    Route.projectContributionChange
+                        projectRef
+                        contribRef
+                        changeLineId
             in
             ( model
             , Cmd.batch
@@ -176,8 +180,10 @@ update appContext projectRef contribRef msg model =
         CopyChangeLinePermalink changeLineId ->
             let
                 route =
-                    changeLineId
-                        |> Route.projectContributionChange projectRef contribRef
+                    Route.projectContributionChange
+                        projectRef
+                        contribRef
+                        changeLineId
 
                 url =
                     route
@@ -191,6 +197,26 @@ update appContext projectRef contribRef msg model =
                 , scrollTo changeLineId
                 ]
             )
+
+        ExpandCollapsedDiffSection changeLineId { index } ->
+            let
+                expandCollapsedDiffSection changeLine =
+                    case changeLine of
+                        ChangeLine.Updated type_ details ->
+                            ChangeLine.Updated
+                                type_
+                                { details | diff = DefinitionDiff.expandCollapsedDiffSection index details.diff }
+
+                        _ ->
+                            changeLine
+
+                branchDiff =
+                    BranchDiffState.updateChangeLineById
+                        expandCollapsedDiffSection
+                        changeLineId
+                        model.branchDiff
+            in
+            ( { model | branchDiff = branchDiff }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -421,12 +447,23 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
 
         ( expanded, toggleIcon ) =
             if ToggledChangeLines.isCollapsed toggledChangeLines changeLine then
-                ( Nothing, Icon.arrowsFromLine )
+                ( Nothing, Icon.expandDown )
 
             else
                 case changeLine of
                     ChangeLine.Updated _ { diff } ->
-                        ( Just (DefinitionDiffCard.view toSyntaxConfig diff), Icon.arrowsToLine )
+                        case ChangeLine.toChangeLineId changeLine of
+                            Just id ->
+                                let
+                                    viewConfig =
+                                        { toSyntaxConfig = toSyntaxConfig
+                                        , toExpandCollapsedDiffSectionMsg = ExpandCollapsedDiffSection id
+                                        }
+                                in
+                                ( Just (DefinitionDiffCard.view viewConfig diff), Icon.collapseUp )
+
+                            Nothing ->
+                                ( Nothing, Icon.dash )
 
                     _ ->
                         case ChangeLine.source changeLine of
@@ -451,11 +488,11 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
                                             [ code [] [ Syntax.view linked source ] ]
                                 in
                                 ( Just expandedContent
-                                , Icon.arrowsToLine
+                                , Icon.collapseUp
                                 )
 
                             Nothing ->
-                                ( Nothing, Icon.arrowsFromLine )
+                                ( Nothing, Icon.expandDown )
 
         domId =
             changeLine
