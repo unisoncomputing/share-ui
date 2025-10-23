@@ -5,8 +5,10 @@ import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
+import Code.ProjectDependency as ProjectDependency
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
+import Code.Version as Version
 import Html exposing (Html, br, code, div, h2, label, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id, style)
 import Http
@@ -666,58 +668,89 @@ viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength branchD
 
 
 viewLibDep : Int -> LibDep -> Html msg
-viewLibDep maxBadgeLength dep =
+viewLibDep maxBadgeLength libDep =
     let
         viewCard content =
             Card.card
-                [ div [ class "definition-change-header" ] [ div [ class "change-line" ] content ] ]
+                [ div [ class "definition-change-header" ]
+                    [ div [ class "change-line" ] content ]
+                ]
                 |> Card.withClassName "definition-change lib-dep"
                 |> Card.asContained
                 |> Card.view
 
         badge icon type_ =
-            Tooltip.text type_
-                |> Tooltip.tooltip
-                |> Tooltip.withArrow Tooltip.Start
-                |> Tooltip.view
-                    (viewChangeBadge_ maxBadgeLength icon type_)
+            viewChangeBadge_ maxBadgeLength icon type_
 
-        viewTitle name =
-            let
-                fqn =
-                    FQN.fromList [ "lib", name ]
-            in
-            div [ class "change-title" ] [ FQN.view fqn ]
+        viewDepInfoBadge dep =
+            div [ class "dep-info change-info" ]
+                [ div [ class "change-title" ]
+                    [ ProjectDependency.viewLibraryBadge_ { withVersion = True, withTooltip = False } dep.dep
+                    , span [ class "lib-namespace-info" ] [ text "(", FQN.view dep.name, text ")" ]
+                    ]
+                ]
     in
-    case dep of
-        LibDep.Added { name } ->
+    case libDep of
+        LibDep.Added dep ->
             viewCard
                 [ badge Icon.largePlus "Added"
-                , div [ class "def-icon-anchor" ]
-                    [ Tooltip.text "Lib dependency"
-                        |> Tooltip.tooltip
-                        |> Tooltip.withArrow Tooltip.Start
-                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
-                    ]
-                , div [ class "change-info" ] [ viewTitle name ]
+                , viewDepInfoBadge dep
                 ]
 
-        LibDep.Removed { name } ->
+        LibDep.Removed dep ->
             viewCard
                 [ badge Icon.dash "Removed"
-                , div [ class "def-icon-anchor" ]
-                    [ Tooltip.text "Lib dependency"
-                        |> Tooltip.tooltip
-                        |> Tooltip.withArrow Tooltip.Start
-                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
+                , viewDepInfoBadge dep
+                ]
+
+        LibDep.Updated { before, after } ->
+            let
+                toFrom =
+                    case ( before.dep.version, after.dep.version ) of
+                        ( Just beforeV, Just afterV ) ->
+                            [ ProjectDependency.viewLibraryBadge_
+                                { withVersion = False
+                                , withTooltip = False
+                                }
+                                before.dep
+                            , Version.view beforeV
+                            , Icon.view Icon.arrowRight
+                            , Version.view afterV
+                            , span [ class "lib-namespace-info" ]
+                                [ text "("
+                                , FQN.view before.name
+                                , Icon.view Icon.arrowRight
+                                , FQN.view after.name
+                                , text ")"
+                                ]
+                            ]
+
+                        _ ->
+                            [ ProjectDependency.viewLibraryBadge before.dep
+                            , Icon.view Icon.arrowRight
+                            , ProjectDependency.viewLibraryBadge after.dep
+                            , span [ class "lib-namespace-info" ]
+                                [ text "("
+                                , FQN.view before.name
+                                , Icon.view Icon.arrowRight
+                                , FQN.view after.name
+                                , text ")"
+                                ]
+                            ]
+            in
+            viewCard
+                [ badge Icon.refreshSmallBold "Updated"
+                , div [ class "dep-info change-info" ]
+                    [ div [ class "change-title" ] toFrom
                     ]
-                , div [ class "change-info" ] [ viewTitle name ]
                 ]
 
 
 viewLibDeps : Int -> List LibDep -> List (Html msg)
 viewLibDeps maxBadgeLength deps =
-    List.map (viewLibDep maxBadgeLength) deps
+    deps
+        |> LibDep.mergeUpdated
+        |> List.map (viewLibDep maxBadgeLength)
 
 
 viewBranchDiff : ProjectRef -> ToggledChangeLines -> BranchDiff -> Html Msg

@@ -1,6 +1,5 @@
 module Code2.Workspace.WorkspaceCard exposing (..)
 
-import Code.ProjectDependency as ProjectDependency exposing (ProjectDependency)
 import Code2.Workspace.WorkspaceCardTitlebarButton as TitlebarButton exposing (titlebarButton)
 import Html exposing (Html, div, header, section, span, text)
 import Html.Attributes exposing (class)
@@ -8,7 +7,6 @@ import Lib.OperatingSystem exposing (OperatingSystem)
 import UI
 import UI.Card as Card
 import UI.Click as Click exposing (Click)
-import UI.ContextualTag as ContextualTag
 import UI.Icon as Icon exposing (Icon)
 import UI.KeyboardShortcut as KeyboardShortcut exposing (KeyboardShortcut(..), single)
 import UI.KeyboardShortcut.Key as Key exposing (letter)
@@ -183,18 +181,6 @@ map f card_ =
     , toggleFold = Maybe.map f card_.toggleFold
     , className = card_.className
     }
-
-
-
--- RELATED VIEW HELPERS
-
-
-viewLibraryTag : ProjectDependency -> Html msg
-viewLibraryTag dep =
-    ContextualTag.contextualTag Icon.book (ProjectDependency.toString dep)
-        |> ContextualTag.decorativePurple
-        |> ContextualTag.withTooltipText "Library dependency"
-        |> ContextualTag.view
 
 
 
