@@ -102,6 +102,7 @@
         }
 
         & .change-info {
+          position: relative;
           display: flex;
           flex-direction: row;
           align-items: center;
@@ -126,6 +127,34 @@
           & a:hover,
           & a:hover .hash {
             color: var(--u-color_interactive);
+          }
+        }
+
+        & .change-info.dep-info {
+          margin-left: 0.5rem;
+
+          & .version {
+            font-size: var(--font-size-medium);
+            font-weight: 500;
+          }
+
+          & .lib-namespace-info {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            font-size: var(--font-size-extra-small);
+            line-height: 1;
+            color: var(--u-color_text_subdued);
+            font-family: var(--font-monospace);
+            & .fully-qualified-name_segment {
+              color: var(--u-color_text_subdued);
+            }
+
+            & .icon {
+              font-size: var(--font-size-extra-small);
+              margin: 0 0.25rem;
+            }
           }
         }
 
@@ -538,12 +567,14 @@
     & .icon.ability-constructor,
     & .icon.data-constructor,
     & .icon.doc,
-    & .icon.book,
     & .icon.test {
       color: var(--u-color_icon_subdued);
     }
 
     & .change-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       color: var(--u-color_text);
 
       & .fully-qualified-name {
@@ -659,12 +690,21 @@
 }
 
 @media only screen and (--u-viewport_max-md) {
+  .project-contribution-changes-page
+    .definition-changes
+    .definition-change.card
+    .definition-change-header
+    .change-info.dep-info
+    .lib-namespace-info {
+    display: none;
+  }
+
   .project-contribution-changes-page {
     & .definition-change.card {
       & .definition-change-header .change-line {
         & .change-info .hash,
         & .change-info .extra-info,
-        & .change-info .icon.arrow-right,
+        & .change-info:not(.dep-info) .icon.arrow-right,
         & .change-badge label {
           display: none;
         }

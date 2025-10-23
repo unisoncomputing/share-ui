@@ -5,8 +5,10 @@ import Code.Definition.Reference exposing (Reference)
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
+import Code.ProjectDependency as ProjectDependency
 import Code.Syntax as Syntax
 import Code.Syntax.SyntaxConfig as SyntaxConfig
+import Code.Version as Version
 import Html exposing (Html, br, code, div, h2, label, p, pre, span, strong, text)
 import Html.Attributes exposing (class, id, style)
 import Http
@@ -300,22 +302,28 @@ viewChangeIcon item =
             )
 
 
-viewChangeBadge : Int -> ChangeLine -> Html Msg
+viewChangeBadge : Int -> ChangeLine -> Html msg
 viewChangeBadge maxBadgeLength changeLine =
     let
         type_ =
             ChangeLine.toString changeLine
+    in
+    viewChangeBadge_ maxBadgeLength (changeIcon changeLine) type_
 
+
+viewChangeBadge_ : Int -> Icon msg -> String -> Html msg
+viewChangeBadge_ maxBadgeLength icon label_ =
+    let
         width =
             String.fromInt maxBadgeLength
     in
     span [ class "change-badge_wrapper", style "width" (width ++ "ch") ]
         [ span
             [ class "change-badge"
-            , class (String.toLower type_)
+            , class (String.toLower label_)
             ]
-            [ Icon.view (changeIcon changeLine)
-            , label [] [ text type_ ]
+            [ Icon.view icon
+            , label [] [ text label_ ]
             ]
         ]
 
@@ -549,15 +557,9 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
         |> Card.view
 
 
-viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> BranchDiff -> List (Html Msg)
-viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
+viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> Int -> BranchDiff -> List (Html Msg)
+viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength branchDiff =
     let
-        maxBadgeLength =
-            branchDiff.lines
-                |> List.map (ChangeLine.toString >> String.length)
-                |> List.maximum
-                |> Maybe.withDefault 0
-
         view_ =
             viewChangedDefinitionCard
                 projectRef
@@ -665,64 +667,90 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
     go branchDiff.lines
 
 
-viewLibDep : LibDep -> Html msg
-viewLibDep dep =
+viewLibDep : Int -> LibDep -> Html msg
+viewLibDep maxBadgeLength libDep =
     let
         viewCard content =
             Card.card
-                [ div [ class "definition-change-header" ] [ div [ class "change-line" ] content ] ]
+                [ div [ class "definition-change-header" ]
+                    [ div [ class "change-line" ] content ]
+                ]
                 |> Card.withClassName "definition-change lib-dep"
                 |> Card.asContained
                 |> Card.view
 
-        changeIcon_ type_ icon =
-            Tooltip.text type_
-                |> Tooltip.tooltip
-                |> Tooltip.withArrow Tooltip.Start
-                |> Tooltip.view
-                    (span
-                        [ class "change-icon"
-                        , class (String.toLower type_)
-                        ]
-                        [ Icon.view icon ]
-                    )
+        badge icon type_ =
+            viewChangeBadge_ maxBadgeLength icon type_
 
-        viewTitle name =
-            let
-                fqn =
-                    FQN.fromList [ "lib", name ]
-            in
-            div [ class "change-title" ] [ FQN.view fqn ]
+        viewDepInfoBadge dep =
+            div [ class "dep-info change-info" ]
+                [ div [ class "change-title" ]
+                    [ ProjectDependency.viewLibraryBadge_ { withVersion = True, withTooltip = False } dep.dep
+                    , span [ class "lib-namespace-info" ] [ text "(", FQN.view dep.name, text ")" ]
+                    ]
+                ]
     in
-    case dep of
-        LibDep.Added { name } ->
+    case libDep of
+        LibDep.Added dep ->
             viewCard
-                [ changeIcon_ "Added" Icon.largePlus
-                , div [ class "def-icon-anchor" ]
-                    [ Tooltip.text "Lib dependency"
-                        |> Tooltip.tooltip
-                        |> Tooltip.withArrow Tooltip.Start
-                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
-                    ]
-                , div [ class "change-info" ] [ viewTitle name ]
+                [ badge Icon.largePlus "Added"
+                , viewDepInfoBadge dep
                 ]
 
-        LibDep.Removed { name } ->
+        LibDep.Removed dep ->
             viewCard
-                [ changeIcon_ "Removed" Icon.dash
-                , div [ class "def-icon-anchor" ]
-                    [ Tooltip.text "Lib dependency"
-                        |> Tooltip.tooltip
-                        |> Tooltip.withArrow Tooltip.Start
-                        |> Tooltip.view (span [ class "def-icon" ] [ Icon.view Icon.book ])
+                [ badge Icon.dash "Removed"
+                , viewDepInfoBadge dep
+                ]
+
+        LibDep.Updated { before, after } ->
+            let
+                toFrom =
+                    case ( before.dep.version, after.dep.version ) of
+                        ( Just beforeV, Just afterV ) ->
+                            [ ProjectDependency.viewLibraryBadge_
+                                { withVersion = False
+                                , withTooltip = False
+                                }
+                                before.dep
+                            , Version.view beforeV
+                            , Icon.view Icon.arrowRight
+                            , Version.view afterV
+                            , span [ class "lib-namespace-info" ]
+                                [ text "("
+                                , FQN.view before.name
+                                , Icon.view Icon.arrowRight
+                                , FQN.view after.name
+                                , text ")"
+                                ]
+                            ]
+
+                        _ ->
+                            [ ProjectDependency.viewLibraryBadge before.dep
+                            , Icon.view Icon.arrowRight
+                            , ProjectDependency.viewLibraryBadge after.dep
+                            , span [ class "lib-namespace-info" ]
+                                [ text "("
+                                , FQN.view before.name
+                                , Icon.view Icon.arrowRight
+                                , FQN.view after.name
+                                , text ")"
+                                ]
+                            ]
+            in
+            viewCard
+                [ badge Icon.refreshSmallBold "Updated"
+                , div [ class "dep-info change-info" ]
+                    [ div [ class "change-title" ] toFrom
                     ]
-                , div [ class "change-info" ] [ viewTitle name ]
                 ]
 
 
-viewLibDeps : List LibDep -> List (Html msg)
-viewLibDeps deps =
-    List.map viewLibDep deps
+viewLibDeps : Int -> List LibDep -> List (Html msg)
+viewLibDeps maxBadgeLength deps =
+    deps
+        |> LibDep.mergeUpdated
+        |> List.map (viewLibDep maxBadgeLength)
 
 
 viewBranchDiff : ProjectRef -> ToggledChangeLines -> BranchDiff -> Html Msg
@@ -730,6 +758,12 @@ viewBranchDiff projectRef toggledChangeLines diff =
     let
         summary =
             BranchDiff.summary diff
+
+        maxBadgeLength =
+            diff.lines
+                |> List.map (ChangeLine.toString >> String.length)
+                |> List.maximum
+                |> Maybe.withDefault 0
 
         -- There's no reason to show a tree with a single element...
         tree =
@@ -751,8 +785,8 @@ viewBranchDiff projectRef toggledChangeLines diff =
         , div [ class "branch-diff-content-cards" ]
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
-                (viewLibDeps diff.libDeps
-                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines diff
+                (viewLibDeps maxBadgeLength diff.libDeps
+                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength diff
                 )
             ]
         ]
