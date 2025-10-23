@@ -683,14 +683,8 @@ viewPageContent session project model =
                         Success (UserOwner _) ->
                             ( UI.nothing, UI.nothing )
 
-                        Success (OrgOwner org) ->
-                            if org.isCommercial then
+                        Success (OrgOwner _) ->
                                 ( UI.nothing, UI.nothing )
-
-                            else
-                                ( overlay_
-                                , StatusBanner.info "Changing visibility is not supported for public organizations."
-                                )
 
                         Failure e ->
                             ( overlay_
