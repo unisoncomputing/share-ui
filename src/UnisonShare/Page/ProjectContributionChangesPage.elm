@@ -300,22 +300,28 @@ viewChangeIcon item =
             )
 
 
-viewChangeBadge : Int -> ChangeLine -> Html Msg
+viewChangeBadge : Int -> ChangeLine -> Html msg
 viewChangeBadge maxBadgeLength changeLine =
     let
         type_ =
             ChangeLine.toString changeLine
+    in
+    viewChangeBadge_ maxBadgeLength (changeIcon changeLine) type_
 
+
+viewChangeBadge_ : Int -> Icon msg -> String -> Html msg
+viewChangeBadge_ maxBadgeLength icon label_ =
+    let
         width =
             String.fromInt maxBadgeLength
     in
     span [ class "change-badge_wrapper", style "width" (width ++ "ch") ]
         [ span
             [ class "change-badge"
-            , class (String.toLower type_)
+            , class (String.toLower label_)
             ]
-            [ Icon.view (changeIcon changeLine)
-            , label [] [ text type_ ]
+            [ Icon.view icon
+            , label [] [ text label_ ]
             ]
         ]
 
@@ -549,15 +555,9 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
         |> Card.view
 
 
-viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> BranchDiff -> List (Html Msg)
-viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
+viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> Int -> BranchDiff -> List (Html Msg)
+viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength branchDiff =
     let
-        maxBadgeLength =
-            branchDiff.lines
-                |> List.map (ChangeLine.toString >> String.length)
-                |> List.maximum
-                |> Maybe.withDefault 0
-
         view_ =
             viewChangedDefinitionCard
                 projectRef
@@ -665,8 +665,8 @@ viewChangedDefinitionsCards projectRef toggledChangeLines branchDiff =
     go branchDiff.lines
 
 
-viewLibDep : LibDep -> Html msg
-viewLibDep dep =
+viewLibDep : Int -> LibDep -> Html msg
+viewLibDep maxBadgeLength dep =
     let
         viewCard content =
             Card.card
@@ -675,17 +675,12 @@ viewLibDep dep =
                 |> Card.asContained
                 |> Card.view
 
-        changeIcon_ type_ icon =
+        badge icon type_ =
             Tooltip.text type_
                 |> Tooltip.tooltip
                 |> Tooltip.withArrow Tooltip.Start
                 |> Tooltip.view
-                    (span
-                        [ class "change-icon"
-                        , class (String.toLower type_)
-                        ]
-                        [ Icon.view icon ]
-                    )
+                    (viewChangeBadge_ maxBadgeLength icon type_)
 
         viewTitle name =
             let
@@ -697,7 +692,7 @@ viewLibDep dep =
     case dep of
         LibDep.Added { name } ->
             viewCard
-                [ changeIcon_ "Added" Icon.largePlus
+                [ badge Icon.largePlus "Added"
                 , div [ class "def-icon-anchor" ]
                     [ Tooltip.text "Lib dependency"
                         |> Tooltip.tooltip
@@ -709,7 +704,7 @@ viewLibDep dep =
 
         LibDep.Removed { name } ->
             viewCard
-                [ changeIcon_ "Removed" Icon.dash
+                [ badge Icon.dash "Removed"
                 , div [ class "def-icon-anchor" ]
                     [ Tooltip.text "Lib dependency"
                         |> Tooltip.tooltip
@@ -720,9 +715,9 @@ viewLibDep dep =
                 ]
 
 
-viewLibDeps : List LibDep -> List (Html msg)
-viewLibDeps deps =
-    List.map viewLibDep deps
+viewLibDeps : Int -> List LibDep -> List (Html msg)
+viewLibDeps maxBadgeLength deps =
+    List.map (viewLibDep maxBadgeLength) deps
 
 
 viewBranchDiff : ProjectRef -> ToggledChangeLines -> BranchDiff -> Html Msg
@@ -730,6 +725,12 @@ viewBranchDiff projectRef toggledChangeLines diff =
     let
         summary =
             BranchDiff.summary diff
+
+        maxBadgeLength =
+            diff.lines
+                |> List.map (ChangeLine.toString >> String.length)
+                |> List.maximum
+                |> Maybe.withDefault 0
 
         -- There's no reason to show a tree with a single element...
         tree =
@@ -751,8 +752,8 @@ viewBranchDiff projectRef toggledChangeLines diff =
         , div [ class "branch-diff-content-cards" ]
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
-                (viewLibDeps diff.libDeps
-                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines diff
+                (viewLibDeps maxBadgeLength diff.libDeps
+                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength diff
                 )
             ]
         ]
