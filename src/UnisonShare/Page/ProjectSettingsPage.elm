@@ -575,13 +575,12 @@ viewWebhooks session model =
         divider =
             Divider.divider |> Divider.small |> Divider.view
 
-        {-
-           examplesButton =
-               Button.iconThenLabel ShowWebhookExamplesModal Icon.docs "Webhook example docs"
-                   |> Button.small
-                   |> Button.subdued
-                   |> Button.view
-        -}
+        examplesButton =
+            Button.iconThenLabel ShowWebhookExamplesModal Icon.docs "Webhook example docs"
+                |> Button.small
+                |> Button.subdued
+                |> Button.view
+
         addButton =
             Button.iconThenLabel ShowAddWebhookModal Icon.plus "Add a webhook"
                 |> Button.small
@@ -591,7 +590,7 @@ viewWebhooks session model =
             case model.webhooks of
                 Success webhooks ->
                     if List.isEmpty webhooks then
-                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ addButton ] ]
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ examplesButton, addButton ] ]
                         , div [ class "list_empty-state" ]
                             [ div [ class "list_empty-state_text" ]
                                 [ Icon.view Icon.wireframeGlobe, text "You haven't set up any webhooks yet" ]
@@ -599,7 +598,7 @@ viewWebhooks session model =
                         ]
 
                     else
-                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ addButton ] ]
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ examplesButton, addButton ] ]
                         , div [ class "webhooks" ] (webhooks |> List.map viewWebhook |> List.intersperse divider)
                         ]
 
