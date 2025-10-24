@@ -37,6 +37,7 @@ import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectCollaborator as ProjectCollaborator exposing (ProjectCollaborator)
 import UnisonShare.ProjectRole as ProjectRole
 import UnisonShare.ProjectWebhook as ProjectWebhook exposing (ProjectWebhook)
+import UnisonShare.ProjectWebhookExamplesModal as ProjectWebhookExamplesModal
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.User as User exposing (UserSummary)
 import Url
@@ -66,6 +67,7 @@ type Modal
     = NoModal
     | AddCollaboratorModal AddProjectCollaboratorModal.Model
     | AddWebhookModal AddProjectWebhookModal.Model
+    | WebhookExamplesModal ProjectWebhookExamplesModal.Model
 
 
 type ProjectOwner
@@ -135,6 +137,7 @@ type Msg
     | ShowDeleteProjectModal
     | ShowAddCollaboratorModal
     | ShowAddWebhookModal
+    | ShowWebhookExamplesModal
     | CloseModal
     | RemoveCollaborator ProjectCollaborator
     | RemoveWebhook ProjectWebhook
@@ -142,6 +145,7 @@ type Msg
     | RemoveWebhookFinished (HttpResult ())
     | AddProjectCollaboratorModalMsg AddProjectCollaboratorModal.Msg
     | AddProjectWebhookModalMsg AddProjectWebhookModal.Msg
+    | ProjectWebhookExamplesModalMsg ProjectWebhookExamplesModal.Msg
 
 
 type OutMsg
@@ -205,6 +209,13 @@ update appContext project msg model =
 
         ( ShowAddWebhookModal, _ ) ->
             ( { model | modal = AddWebhookModal AddProjectWebhookModal.init }, Cmd.none, None )
+
+        ( ShowWebhookExamplesModal, _ ) ->
+            let
+                ( examples, cmd ) =
+                    ProjectWebhookExamplesModal.init appContext project.ref
+            in
+            ( { model | modal = WebhookExamplesModal examples }, Cmd.map ProjectWebhookExamplesModalMsg cmd, None )
 
         ( CloseModal, _ ) ->
             ( { model | modal = NoModal }, Cmd.none, None )
@@ -289,6 +300,29 @@ update appContext project msg model =
                             in
                             ( { model | modal = AddWebhookModal modal, webhooks = webhooks }
                             , Cmd.batch [ Cmd.map AddProjectWebhookModalMsg cmd, Util.delayMsg 1000 CloseModal ]
+                            , None
+                            )
+
+                _ ->
+                    ( model, Cmd.none, None )
+
+        ( ProjectWebhookExamplesModalMsg examplesMsg, _ ) ->
+            case model.modal of
+                WebhookExamplesModal m ->
+                    let
+                        ( modal, cmd, out ) =
+                            ProjectWebhookExamplesModal.update appContext project.ref examplesMsg m
+                    in
+                    case out of
+                        ProjectWebhookExamplesModal.NoOutMsg ->
+                            ( { model | modal = WebhookExamplesModal modal }
+                            , Cmd.map ProjectWebhookExamplesModalMsg cmd
+                            , None
+                            )
+
+                        ProjectWebhookExamplesModal.RequestCloseModal ->
+                            ( { model | modal = NoModal }
+                            , Cmd.map ProjectWebhookExamplesModalMsg cmd
                             , None
                             )
 
@@ -541,6 +575,12 @@ viewWebhooks session model =
         divider =
             Divider.divider |> Divider.small |> Divider.view
 
+        examplesButton =
+            Button.iconThenLabel ShowWebhookExamplesModal Icon.docs "Webhook example docs"
+                |> Button.small
+                |> Button.subdued
+                |> Button.view
+
         addButton =
             Button.iconThenLabel ShowAddWebhookModal Icon.plus "Add a webhook"
                 |> Button.small
@@ -550,7 +590,7 @@ viewWebhooks session model =
             case model.webhooks of
                 Success webhooks ->
                     if List.isEmpty webhooks then
-                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ examplesButton, addButton ] ]
                         , div [ class "list_empty-state" ]
                             [ div [ class "list_empty-state_text" ]
                                 [ Icon.view Icon.wireframeGlobe, text "You haven't set up any webhooks yet" ]
@@ -558,7 +598,7 @@ viewWebhooks session model =
                         ]
 
                     else
-                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], addButton ]
+                        [ header [ class "project-settings_card_header" ] [ h2 [] [ text "Webhooks" ], div [ class "webhook-buttons" ] [ examplesButton, addButton ] ]
                         , div [ class "webhooks" ] (webhooks |> List.map viewWebhook |> List.intersperse divider)
                         ]
 
@@ -755,6 +795,9 @@ view session project model =
 
                     AddWebhookModal m ->
                         Just (Html.map AddProjectWebhookModalMsg (AddProjectWebhookModal.view m))
+
+                    WebhookExamplesModal m ->
+                        Just (Html.map ProjectWebhookExamplesModalMsg (ProjectWebhookExamplesModal.view session m))
 
                     _ ->
                         Nothing

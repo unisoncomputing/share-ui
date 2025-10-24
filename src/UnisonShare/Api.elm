@@ -485,6 +485,14 @@ deleteProjectRoleAssignment projectRef collaborator =
 -- PROJECT WEBHOOKS
 
 
+webhookExamples : Endpoint
+webhookExamples =
+    GET
+        { path = [ "webhooks", "examples" ]
+        , queryParams = []
+        }
+
+
 projectWebhooks : ProjectRef -> Endpoint
 projectWebhooks projectRef =
     let

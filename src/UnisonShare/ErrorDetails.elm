@@ -20,8 +20,9 @@ view session error =
 
 
 
-{- details []
-   [ summary [] [ text "Error Details" ]
-   , pre [] [ text (Util.httpErrorToString error) ]
-   ]
+{-
+   details []
+       [ summary [] [ text "Error Details" ]
+       , pre [] [ text (Util.httpErrorToString error) ]
+       ]
 -}

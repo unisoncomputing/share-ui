@@ -1,0 +1,106 @@
+#project-webhook-examples-modal {
+  --c-project-webhook-examples-modal_width: 52rem;
+  --c-project-webhook-examples-list_width: 16.25rem;
+  width: var(--c-project-webhook-examples-modal_width);
+
+  .examples {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    margin-top: 2rem;
+
+    .examples-list {
+      width: var(--c-project-webhook-examples-list_width);
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      border-right: 1px solid var(--u-color_border);
+      padding-right: calc(1.5rem + 1px);
+
+      .example-topic {
+        position: relative;
+        font-weight: bold;
+        padding: 0.5rem 0 0.5rem 0;
+        color: var(--u-color_text_subdued);
+
+        &:hover {
+          color: var(--u-color_interactive);
+        }
+
+        &.active-topic {
+          position: relative;
+          color: var(--u-color_text);
+        }
+
+        &:hover::after,
+        &.active-topic::after {
+          position: absolute;
+          content: " ";
+          top: 0;
+          bottom: 0;
+          right: calc(0px - calc(1.5rem + 2px));
+          width: 1px;
+          background: var(--u-color_border_emphasized);
+        }
+      }
+    }
+
+    .example-json-format {
+      position: relative;
+      width: min-content;
+      width: calc(
+        var(--c-project-webhook-examples-modal_width) -
+          var(--c-project-webhook-examples-list_width)
+      );
+
+      pre {
+        overflow: scroll;
+        padding: 0.5rem;
+        width: 100%;
+        max-height: 32rem;
+        background: var(--u-color_element_subdued);
+        border: 1px solid var(--u-color_border_subdued);
+        border-radius: var(--border-radius-base);
+        font-size: var(--font-size-small);
+      }
+
+      .copy-on-click {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+
+        button {
+          height: 1.5rem;
+          width: 1.5rem;
+          border: 1px solid var(--u-color_border);
+          background: var(--u-color_container);
+        }
+
+        .copy-on-click_success {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 1.5rem;
+          width: 1.5rem;
+          background: var(--u-color_positive_element);
+          border-radius: var(--border-radius-base);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+
+          .icon {
+            margin-top: 2px;
+            color: var(--u-color_positive_icon-on-element);
+          }
+        }
+      }
+    }
+  }
+
+  .examples-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
