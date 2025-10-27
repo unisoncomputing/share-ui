@@ -76,23 +76,28 @@ viewDiffSegment syntaxConfig segment =
             ]
 
 
+viewGutter : Int -> Int -> String -> Html msg
+viewGutter gutterWidth ln indicator =
+    span [ class "gutter" ]
+        [ span [ class "line-number" ]
+            [ text
+                (String.padLeft
+                    gutterWidth
+                    ' '
+                    (String.fromInt ln)
+                )
+            ]
+        , text " "
+        , span [ class "change-indicator" ] [ text indicator ]
+        , text " "
+        ]
+
+
 viewDiffLine : (DiffSegment -> List (Html msg)) -> String -> Int -> DiffLine -> Html msg
 viewDiffLine viewSeg changeIndicator gutterWidth line =
     let
         gutter ln indicator =
-            span [ class "gutter" ]
-                [ span [ class "line-number" ]
-                    [ text
-                        (String.padLeft
-                            gutterWidth
-                            ' '
-                            (String.fromInt ln)
-                        )
-                    ]
-                , text " "
-                , span [ class "change-indicator" ] [ text indicator ]
-                , text " "
-                ]
+            viewGutter gutterWidth ln indicator
     in
     case line of
         ChangedLine { lineNum, segments } ->

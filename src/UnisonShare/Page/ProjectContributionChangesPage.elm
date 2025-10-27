@@ -477,23 +477,43 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
                         case ChangeLine.source changeLine of
                             Just source ->
                                 let
-                                    linked =
-                                        let
-                                            branchRef =
-                                                case changeLine of
-                                                    ChangeLine.Removed _ _ ->
-                                                        branchDiff.oldBranch.ref
+                                    ( branchRef, gutterIndicator ) =
+                                        case changeLine of
+                                            ChangeLine.Removed _ _ ->
+                                                ( branchDiff.oldBranch.ref, "-" )
 
-                                                    _ ->
-                                                        branchDiff.newBranch.ref
-                                        in
+                                            ChangeLine.Added _ _ ->
+                                                ( branchDiff.newBranch.ref, "+" )
+
+                                            _ ->
+                                                ( branchDiff.newBranch.ref, "" )
+
+                                    linked =
                                         SyntaxConfig.empty
                                             |> SyntaxConfig.withToClick
                                                 (Link.projectBranchDefinition projectRef branchRef)
 
+                                    gutter =
+                                        let
+                                            lns =
+                                                List.range 1 (Syntax.numLines source)
+
+                                            viewLn ln =
+                                                div [ class "gutter" ]
+                                                    [ span [ class "line-number" ] [ ln |> String.fromInt |> text ]
+                                                    , text " "
+                                                    , span [ class "change-indicator" ] [ text gutterIndicator ]
+                                                    , text " "
+                                                    ]
+                                        in
+                                        div [ class "gutter-lines" ] (List.map viewLn lns)
+
                                     expandedContent =
-                                        pre [ class "definition-syntax monochrome" ]
-                                            [ code [] [ Syntax.view linked source ] ]
+                                        div [ class "definition-source", class (String.toLower (ChangeLine.toString changeLine)) ]
+                                            [ gutter
+                                            , pre [ class "definition-syntax monochrome" ]
+                                                [ code [] [ Syntax.view linked source ] ]
+                                            ]
                                 in
                                 ( Just expandedContent
                                 , Icon.collapseUp
