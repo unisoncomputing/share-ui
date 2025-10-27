@@ -217,9 +217,33 @@
       }
     }
 
-    & .definition-change.card .definition-syntax {
-      overflow-x: auto;
-      padding: 0.5rem 1rem;
+    .definition-change.card .definition-source {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+
+      .gutter:last-child {
+        border-bottom-left-radius: var(--border-radius-base);
+      }
+
+      .definition-syntax {
+        overflow-x: auto;
+        line-height: var(--diff-line-height);
+      }
+
+      &.added {
+        background: var(--color-green-5);
+        .gutter {
+          color: var(--color-green-1);
+        }
+      }
+
+      &.removed {
+        background: var(--color-pink-5);
+        .gutter {
+          color: var(--color-pink-1);
+        }
+      }
     }
 
     & .definition-change.card .diff-side-by-side {
@@ -323,7 +347,7 @@
       line-height: 1;
     }
 
-    & .definition-change.card .gutter {
+    & .gutter {
       background: var(--u-color_element_subdued);
       color: var(--u-color_text_very-subdued);
       border-right: 1px solid var(--u-color_border_subdued);

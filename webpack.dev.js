@@ -12,7 +12,7 @@ const docExamplesReadmeDef = require("./api-stubs/doc-examples-readme-definition
 const blogEngineLib = require("./api-stubs/blog-engine-lib.json");
 const browseBlog = require("./api-stubs/browse-blog.json");
 const notifications = require("./api-stubs/notifications.json");
-const branchDiff = require("./api-stubs/branch-diff-with-libs.json");
+const branchDiff = require("./api-stubs/branch-diff-weird-equals.json");
 
 // ENV
 const API_URL = process.env.API_URL || "http://127.0.0.1:5424";
