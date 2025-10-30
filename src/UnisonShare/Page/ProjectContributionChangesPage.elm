@@ -2,6 +2,7 @@ port module UnisonShare.Page.ProjectContributionChangesPage exposing (..)
 
 import Code.BranchRef as BranchRef
 import Code.Definition.Reference exposing (Reference)
+import Code.DefinitionSummaryTooltip as DefinitionSummaryTooltip
 import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
 import Code.Perspective as Perspective
@@ -30,7 +31,7 @@ import UI.TabList as TabList
 import UI.Tooltip as Tooltip
 import UnisonShare.Account as Account
 import UnisonShare.Api as ShareApi
-import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
@@ -38,6 +39,7 @@ import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (Definit
 import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
 import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing (ToggledChangeLines)
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
+import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff
@@ -57,6 +59,8 @@ type alias Model =
     { branchDiff : BranchDiffState
     , toggledChangeLines : ToggledChangeLines
     , urlFocusedChangeLineId : Maybe ChangeLineId
+    , oldDefinitionSummaryTooltip : DefinitionSummaryTooltip.Model
+    , newDefinitionSummaryTooltip : DefinitionSummaryTooltip.Model
     }
 
 
@@ -71,6 +75,8 @@ init appContext projectRef contribRef changeLineId =
     ( { branchDiff = BranchDiffState.Loading
       , toggledChangeLines = ToggledChangeLines.empty
       , urlFocusedChangeLineId = changeLineId
+      , oldDefinitionSummaryTooltip = DefinitionSummaryTooltip.init
+      , newDefinitionSummaryTooltip = DefinitionSummaryTooltip.init
       }
     , fetchBranchDiff appContext projectRef contribRef 1
     )
@@ -88,6 +94,8 @@ type Msg
     | SetChangeLinePermalink ChangeLineId
     | ScrollTo ChangeLineId
     | ExpandCollapsedDiffSection ChangeLineId { index : Int }
+    | OldDefinitionSummaryTooltipMsg DefinitionSummaryTooltip.Msg
+    | NewDefinitionSummaryTooltipMsg DefinitionSummaryTooltip.Msg
     | NoOp
 
 
@@ -219,6 +227,46 @@ update appContext projectRef contribRef msg model =
                         model.branchDiff
             in
             ( { model | branchDiff = branchDiff }, Cmd.none )
+
+        OldDefinitionSummaryTooltipMsg tMsg ->
+            case model.branchDiff of
+                BranchDiffState.Computed bd ->
+                    let
+                        config =
+                            AppContext.toCodeConfig
+                                appContext
+                                (CodeBrowsingContext.ProjectBranch projectRef bd.oldBranch.ref)
+                                (Perspective.absoluteRootPerspective bd.oldBranch.hash)
+
+                        ( definitionSummaryTooltip, tCmd ) =
+                            DefinitionSummaryTooltip.update config tMsg model.oldDefinitionSummaryTooltip
+                    in
+                    ( { model | oldDefinitionSummaryTooltip = definitionSummaryTooltip }
+                    , Cmd.map OldDefinitionSummaryTooltipMsg tCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        NewDefinitionSummaryTooltipMsg tMsg ->
+            case model.branchDiff of
+                BranchDiffState.Computed bd ->
+                    let
+                        config =
+                            AppContext.toCodeConfig
+                                appContext
+                                (CodeBrowsingContext.ProjectBranch projectRef bd.newBranch.ref)
+                                (Perspective.absoluteRootPerspective bd.newBranch.hash)
+
+                        ( definitionSummaryTooltip, tCmd ) =
+                            DefinitionSummaryTooltip.update config tMsg model.newDefinitionSummaryTooltip
+                    in
+                    ( { model | newDefinitionSummaryTooltip = definitionSummaryTooltip }
+                    , Cmd.map NewDefinitionSummaryTooltipMsg tCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -433,9 +481,16 @@ viewNamespaceLine projectRef toggledChangeLines { name, lines } =
             ]
 
 
-viewChangedDefinitionCard : ProjectRef -> ToggledChangeLines -> BranchDiff -> Int -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
-viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLength changeLine type_ content =
+viewChangedDefinitionCard : ProjectRef -> Model -> BranchDiff -> Int -> ChangeLine -> DefinitionType -> Html Msg -> Html Msg
+viewChangedDefinitionCard projectRef model branchDiff maxBadgeLength changeLine type_ content =
     let
+        toTooltipConfig isNew =
+            if isNew then
+                DefinitionSummaryTooltip.tooltipConfig NewDefinitionSummaryTooltipMsg model.newDefinitionSummaryTooltip
+
+            else
+                DefinitionSummaryTooltip.tooltipConfig OldDefinitionSummaryTooltipMsg model.oldDefinitionSummaryTooltip
+
         toSyntaxConfig isNew =
             let
                 diffBranchRef =
@@ -444,6 +499,9 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
 
                     else
                         branchDiff.oldBranch
+
+                tooltipConfig =
+                    toTooltipConfig isNew
             in
             SyntaxConfig.empty
                 |> SyntaxConfig.withToClick
@@ -452,9 +510,10 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
                         diffBranchRef.ref
                         (Perspective.absoluteRootPerspective diffBranchRef.hash)
                     )
+                |> SyntaxConfig.withDependencyTooltip tooltipConfig
 
         ( expanded, toggleIcon ) =
-            if ToggledChangeLines.isCollapsed toggledChangeLines changeLine then
+            if ToggledChangeLines.isCollapsed model.toggledChangeLines changeLine then
                 ( Nothing, Icon.expandDown )
 
             else
@@ -477,21 +536,22 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
                         case ChangeLine.source changeLine of
                             Just source ->
                                 let
-                                    ( branchRef, gutterIndicator ) =
+                                    ( branchRef, gutterIndicator, isNew ) =
                                         case changeLine of
                                             ChangeLine.Removed _ _ ->
-                                                ( branchDiff.oldBranch.ref, "-" )
+                                                ( branchDiff.oldBranch.ref, "-", False )
 
                                             ChangeLine.Added _ _ ->
-                                                ( branchDiff.newBranch.ref, "+" )
+                                                ( branchDiff.newBranch.ref, "+", True )
 
                                             _ ->
-                                                ( branchDiff.newBranch.ref, "" )
+                                                ( branchDiff.newBranch.ref, "", True )
 
                                     linked =
                                         SyntaxConfig.empty
                                             |> SyntaxConfig.withToClick
                                                 (Link.projectBranchDefinition projectRef branchRef)
+                                            |> SyntaxConfig.withDependencyTooltip (toTooltipConfig isNew)
 
                                     gutter =
                                         let
@@ -577,13 +637,13 @@ viewChangedDefinitionCard projectRef toggledChangeLines branchDiff maxBadgeLengt
         |> Card.view
 
 
-viewChangedDefinitionsCards : ProjectRef -> ToggledChangeLines -> Int -> BranchDiff -> List (Html Msg)
-viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength branchDiff =
+viewChangedDefinitionsCards : ProjectRef -> Model -> Int -> BranchDiff -> List (Html Msg)
+viewChangedDefinitionsCards projectRef model maxBadgeLength branchDiff =
     let
         view_ =
             viewChangedDefinitionCard
                 projectRef
-                toggledChangeLines
+                model
                 branchDiff
                 maxBadgeLength
 
@@ -773,8 +833,8 @@ viewLibDeps maxBadgeLength deps =
         |> List.map (viewLibDep maxBadgeLength)
 
 
-viewBranchDiff : ProjectRef -> ToggledChangeLines -> BranchDiff -> Html Msg
-viewBranchDiff projectRef toggledChangeLines diff =
+viewBranchDiff : ProjectRef -> Model -> BranchDiff -> Html Msg
+viewBranchDiff projectRef model diff =
     let
         summary =
             BranchDiff.summary diff
@@ -789,7 +849,7 @@ viewBranchDiff projectRef toggledChangeLines diff =
         tree =
             if BranchDiff.size diff > 1 then
                 Card.card
-                    [ viewContributionChangesGroup projectRef toggledChangeLines diff.lines
+                    [ viewContributionChangesGroup projectRef model.toggledChangeLines diff.lines
                     ]
                     |> Card.withClassName "change-tree"
                     |> Card.asContained
@@ -806,7 +866,7 @@ viewBranchDiff projectRef toggledChangeLines diff =
             [ tree
             , div [ id "definition-changes", class "definition-changes" ]
                 (viewLibDeps maxBadgeLength diff.libDeps
-                    ++ viewChangedDefinitionsCards projectRef toggledChangeLines maxBadgeLength diff
+                    ++ viewChangedDefinitionsCards projectRef model maxBadgeLength diff
                 )
             ]
         ]
@@ -912,7 +972,7 @@ view appContext projectRef contribution model =
                 [ tabs
                 , div
                     [ class "project-contribution-changes-page" ]
-                    [ viewBranchDiff projectRef model.toggledChangeLines diff ]
+                    [ viewBranchDiff projectRef model diff ]
                 ]
 
         BranchDiffState.Uncomputable error ->
