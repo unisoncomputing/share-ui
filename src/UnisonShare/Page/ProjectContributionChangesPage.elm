@@ -510,8 +510,8 @@ viewChangedDefinitionCard projectRef model branchDiff maxBadgeLength changeLine 
                         diffBranchRef.ref
                         (Perspective.absoluteRootPerspective diffBranchRef.hash)
                     )
-                |> SyntaxConfig.withDependencyTooltip tooltipConfig
 
+        -- |> SyntaxConfig.withDependencyTooltip tooltipConfig
         ( expanded, toggleIcon ) =
             if ToggledChangeLines.isCollapsed model.toggledChangeLines changeLine then
                 ( Nothing, Icon.expandDown )
