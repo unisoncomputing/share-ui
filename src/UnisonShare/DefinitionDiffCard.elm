@@ -1,7 +1,7 @@
 module UnisonShare.DefinitionDiffCard exposing (..)
 
 import Code.Hash as Hash
-import Code.Syntax.SyntaxConfig exposing (SyntaxConfig)
+import Code.Syntax.SyntaxConfig as SyntaxConfig exposing (SyntaxConfig)
 import Code.Syntax.SyntaxSegment as SyntaxSegment
 import Html exposing (Html, code, div, header, pre, span, text)
 import Html.Attributes exposing (class, style)
@@ -36,7 +36,7 @@ viewDiffSegment : SyntaxConfig msg -> DiffSegment -> List (Html msg)
 viewDiffSegment syntaxConfig segment =
     let
         viewSegment =
-            SyntaxSegment.view syntaxConfig
+            SyntaxSegment.view (SyntaxConfig.withoutDependencyTooltip syntaxConfig)
 
         viewSegments_ className =
             viewSegments syntaxConfig className
@@ -61,7 +61,10 @@ viewDiffSegment syntaxConfig segment =
                     ]
                 )
                 |> Tooltip.view
-                    (span [ class "diff-segment annotation-change" ] [ viewSegment change.segment ])
+                    (span [ class "diff-segment annotation-change" ]
+                        [ viewSegment change.segment
+                        ]
+                    )
             ]
 
         SegmentChange { from, to } ->
@@ -72,7 +75,9 @@ viewDiffSegment syntaxConfig segment =
                     ]
                 )
                 |> Tooltip.view
-                    (span [ class "diff-segment segment-change" ] [ viewSegment to ])
+                    (span [ class "diff-segment segment-change" ]
+                        [ viewSegment to ]
+                    )
             ]
 
 
