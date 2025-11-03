@@ -429,6 +429,18 @@ projectBranchReleaseNotes projectRef branchRef =
         }
 
 
+projectBranchHistory : ProjectRef -> BranchRef -> Endpoint
+projectBranchHistory projectRef branchRef =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    GET
+        { path = [ "users", handle, "projects", slug, "history", BranchRef.toApiUrlString branchRef ]
+        , queryParams = []
+        }
+
+
 
 -- PROJECT ROLE ASSIGNMENTS (COLLABORATORS)
 
