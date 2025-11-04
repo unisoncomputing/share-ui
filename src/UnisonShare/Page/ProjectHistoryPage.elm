@@ -9,7 +9,7 @@ import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra exposing (pluralize)
 import UI
-import UI.AnchoredOverlay as AnchoredOverlay exposing (AnchoredOverlay)
+import UI.AnchoredOverlay as AnchoredOverlay
 import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Icon as Icon exposing (Icon)
@@ -111,13 +111,14 @@ update appContext project _ msg model =
 
 
 fetchProjectBranchHistory : AppContext -> ProjectRef -> BranchRef -> Paginated.PageCursorParam -> Cmd Msg
-fetchProjectBranchHistory _ _ branchRef cursor =
+fetchProjectBranchHistory _ _ branchRef _ =
     let
-        params =
-            { limit = 64
-            , cursor = cursor
-            }
-
+        {-
+           params =
+               { limit = 64
+               , cursor = cursor
+               }
+        -}
         mkPaginated prev next items =
             Paginated.Paginated { prev = prev, next = next, items = items }
 
@@ -219,13 +220,6 @@ viewHistoryEntry_ className icon { leftTitle, rightTitle } cardContent =
 
 viewHistoryEntry : AppContext -> HistoryEntry -> Html msg
 viewHistoryEntry appContext entry =
-    let
-        card content =
-            Card.card content
-                |> Card.withClassName "project-history_entry"
-                |> Card.asContained
-                |> Card.view
-    in
     case entry of
         BranchHistory.Comment comment ->
             let
@@ -284,7 +278,7 @@ viewHistoryEntry appContext entry =
             in
             viewHistoryEntry_
                 "history-entry_changeset"
-                Icon.hash
+                Icon.historyNode
                 { leftTitle = Hash.view changeset.hash, rightTitle = text numChanges }
                 [ viewCardContent changeset ]
 

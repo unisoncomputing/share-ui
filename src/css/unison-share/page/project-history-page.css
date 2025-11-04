@@ -20,7 +20,7 @@
 
         &::before {
           position: absolute;
-          left: 0.5625rem;
+          left: calc(0.5625rem - 0.5px);
           top: 0;
           bottom: 0;
           content: " ";
@@ -44,6 +44,10 @@
 
         .icon {
           font-size: var(--font-size-extra-small);
+        }
+
+        .icon.history-node {
+          font-size: var(--font-size-small);
         }
       }
 

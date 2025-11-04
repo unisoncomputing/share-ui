@@ -316,9 +316,7 @@ update appContext projectRef route msg model =
                             ProjectHistoryPage.init appContext project_ branchRef cursor
                     in
                     ( { modelWithProject | subPage = History branchRef cursor history }
-                    , Cmd.batch
-                        [ Cmd.map ProjectHistoryPageMsg cmd
-                        ]
+                    , Cmd.map ProjectHistoryPageMsg cmd
                     )
 
                 _ ->
