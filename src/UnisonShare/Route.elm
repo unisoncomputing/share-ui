@@ -144,7 +144,7 @@ type ProjectRoute
     | ProjectContribution ContributionRef ProjectContributionRoute
     | ProjectContributions ProjectContributionsRoute
     | ProjectSettings
-    | ProjectHistory (Maybe BranchRef)
+    | ProjectHistory (Maybe BranchRef) PageCursorParam
 
 
 type NotificationsRoute
@@ -325,9 +325,9 @@ projectTickets projectRef_ =
     Project projectRef_ ProjectTickets
 
 
-projectHistory : ProjectRef -> Maybe BranchRef -> Route
-projectHistory projectRef_ branchRef_ =
-    Project projectRef_ (ProjectHistory branchRef_)
+projectHistory : ProjectRef -> Maybe BranchRef -> PageCursorParam -> Route
+projectHistory projectRef_ branchRef_ cursor =
+    Project projectRef_ (ProjectHistory branchRef_ cursor)
 
 
 projectSettings : ProjectRef -> Route
@@ -777,14 +777,14 @@ projectParser queryString =
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectHistory (Just branchRef))
+            Project ps (ProjectHistory (Just branchRef) paginationCursor)
 
         projectHistoryDefault_ handle slug =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps (ProjectHistory Nothing)
+            Project ps (ProjectHistory Nothing paginationCursor)
     in
     oneOf
         [ b (succeed projectOverview_ |. slash |= userHandle |. slash |= projectSlug |. end)
@@ -1028,10 +1028,10 @@ toUrlPattern r =
         Project _ ProjectTickets ->
             ":handle/:project-slug/tickets"
 
-        Project _ (ProjectHistory Nothing) ->
+        Project _ (ProjectHistory Nothing _) ->
             ":handle/:project-slug/history"
 
-        Project _ (ProjectHistory (Just _)) ->
+        Project _ (ProjectHistory (Just _) _) ->
             ":handle/:project-slug/history/:branch-ref"
 
         Project _ ProjectSettings ->
@@ -1219,11 +1219,11 @@ toUrlString route =
                 Project projectRef_ ProjectTickets ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets" ], [] )
 
-                Project projectRef_ (ProjectHistory (Just branchRef_)) ->
-                    ( ProjectRef.toUrlPath projectRef_ ++ "history" :: BranchRef.toUrlPath branchRef_, [] )
+                Project projectRef_ (ProjectHistory (Just branchRef_) cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ "history" :: BranchRef.toUrlPath branchRef_, paginationCursorToQueryParams cursor )
 
-                Project projectRef_ (ProjectHistory Nothing) ->
-                    ( ProjectRef.toUrlPath projectRef_ ++ [ "history" ], [] )
+                Project projectRef_ (ProjectHistory Nothing cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "history" ], paginationCursorToQueryParams cursor )
 
                 Project projectRef_ ProjectSettings ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "settings" ], [] )

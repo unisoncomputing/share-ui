@@ -17,12 +17,13 @@ import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle
 import UI.Placeholder as Placeholder
 import UI.ProfileSnippet as ProfileSnippet
-import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Link as Link
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated exposing (Paginated(..))
 import UnisonShare.Project as Project exposing (ProjectDetails)
-import UnisonShare.Project.BranchHistory as BranchHistory exposing (BranchHistory, HistoryEntry)
+import UnisonShare.Project.BranchHistory as BranchHistory exposing (HistoryEntry)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 
 
@@ -30,8 +31,12 @@ import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 -- MODEL
 
 
+type alias PaginatedBranchHistory =
+    Paginated.Paginated HistoryEntry
+
+
 type alias Model =
-    { history : WebData BranchHistory
+    { history : WebData PaginatedBranchHistory
     }
 
 
@@ -41,15 +46,15 @@ preInit =
     }
 
 
-init : AppContext -> ProjectDetails -> Maybe BranchRef -> ( Model, Cmd Msg )
-init appContext project branchRef =
+init : AppContext -> ProjectDetails -> Maybe BranchRef -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
+init appContext project branchRef cursor =
     let
         branchRef_ : BranchRef
         branchRef_ =
             Maybe.withDefault (Project.defaultBrowsingBranch project) branchRef
     in
     ( { history = Loading }
-    , fetchProjectBranchHistory appContext project.ref branchRef_
+    , fetchProjectBranchHistory appContext project.ref branchRef_ cursor
     )
 
 
@@ -58,13 +63,13 @@ init appContext project branchRef =
 
 
 type Msg
-    = FetchProjectBranchHistoryFinished BranchRef (WebData BranchHistory)
+    = FetchProjectBranchHistoryFinished BranchRef (WebData PaginatedBranchHistory)
 
 
 update : AppContext -> ProjectDetails -> Maybe BranchRef -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext project branchRef msg model =
+update _ _ _ msg model =
     case msg of
-        FetchProjectBranchHistoryFinished branchRef_ history ->
+        FetchProjectBranchHistoryFinished _ history ->
             ( { model | history = history }, Cmd.none )
 
 
@@ -72,14 +77,22 @@ update appContext project branchRef msg model =
 -- EFFECTS
 
 
-fetchProjectBranchHistory : AppContext -> ProjectRef -> BranchRef -> Cmd Msg
-fetchProjectBranchHistory appContext projectRef branchRef =
+fetchProjectBranchHistory : AppContext -> ProjectRef -> BranchRef -> Paginated.PageCursorParam -> Cmd Msg
+fetchProjectBranchHistory _ _ branchRef cursor =
     let
+        params =
+            { limit = 64
+            , cursor = cursor
+            }
+
+        mkPaginated prev next items =
+            Paginated.Paginated { prev = prev, next = next, items = items }
+
         mock =
             RemoteData.Success
-                { projectRef = projectRef
-                , branchRef = branchRef
-                , history =
+                (mkPaginated
+                    Nothing
+                    (Just (Paginated.PageCursor "asdf-1234"))
                     [ BranchHistory.Comment
                         { createdAt = DateTime.unsafeFromISO8601 "2025-11-03T13:35:33-05:00"
                         , afterCausalHash = Hash.unsafeFromString "commenthash1"
@@ -110,7 +123,7 @@ fetchProjectBranchHistory appContext projectRef branchRef =
                         , body = "And it was really cool"
                         }
                     ]
-                }
+                )
     in
     Util.delayMsg 500 (FetchProjectBranchHistoryFinished branchRef mock)
 
@@ -243,22 +256,40 @@ viewHistoryEntry appContext entry =
                 [ viewCardContent changeset ]
 
 
-viewPageContent : AppContext -> ProjectDetails -> Maybe BranchRef -> BranchHistory -> PageContent Msg
-viewPageContent appContext _ _ history =
+viewPaginationControls : ProjectRef -> Maybe BranchRef -> { a | prev : Maybe Paginated.PageCursor, next : Maybe Paginated.PageCursor } -> Html msg
+viewPaginationControls projectRef branchRef cursors =
+    let
+        toLink cursor =
+            Link.projectHistory projectRef branchRef cursor
+    in
+    Paginated.view toLink cursors
+
+
+viewPageContent : AppContext -> ProjectDetails -> Maybe BranchRef -> PaginatedBranchHistory -> PageContent Msg
+viewPageContent appContext project branchRef (Paginated history) =
     let
         entries =
-            if List.isEmpty history.history then
+            if List.isEmpty history.items then
                 [ div [] [ text "No entries" ] ]
 
             else
-                List.map (viewHistoryEntry appContext) history.history
+                List.map (viewHistoryEntry appContext) history.items
     in
-    PageContent.oneColumn [ div [ class "history-entries" ] entries ]
+    PageContent.oneColumn
+        [ div [ class "history-entries" ] entries
+        , viewPaginationControls project.ref branchRef history
+        ]
         |> PageContent.withPageTitle (PageTitle.title "History")
 
 
-view : AppContext -> ProjectDetails -> Maybe BranchRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
-view appContext project branchRef model =
+view :
+    AppContext
+    -> ProjectDetails
+    -> Maybe BranchRef
+    -> Paginated.PageCursorParam
+    -> Model
+    -> ( PageLayout Msg, Maybe (Html Msg) )
+view appContext project branchRef _ model =
     case model.history of
         NotAsked ->
             ( viewLoadingPage, Nothing )

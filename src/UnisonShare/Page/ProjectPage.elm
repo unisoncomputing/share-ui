@@ -48,6 +48,7 @@ import UnisonShare.Page.ProjectSettingsPage as ProjectSettingsPage
 import UnisonShare.Page.ProjectTicketPage as ProjectTicketPage
 import UnisonShare.Page.ProjectTicketsPage as ProjectTicketsPage
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route exposing (CodeRoute, ProjectRoute(..))
@@ -72,7 +73,7 @@ type SubPage
     | Contributions ProjectContributionsPage.Model
     | Ticket TicketRef ProjectTicketPage.Model
     | Tickets ProjectTicketsPage.Model
-    | History (Maybe BranchRef) ProjectHistoryPage.Model
+    | History (Maybe BranchRef) Paginated.PageCursorParam ProjectHistoryPage.Model
     | Settings ProjectSettingsPage.Model
 
 
@@ -182,8 +183,8 @@ init appContext projectRef route =
                     in
                     ( Releases releases_, Cmd.map ProjectReleasesPageMsg releasesCmd )
 
-                ProjectHistory branchRef ->
-                    ( History branchRef ProjectHistoryPage.preInit, Cmd.none )
+                ProjectHistory branchRef cursor ->
+                    ( History branchRef cursor ProjectHistoryPage.preInit, Cmd.none )
 
                 ProjectSettings ->
                     let
@@ -309,12 +310,12 @@ update appContext projectRef route msg model =
                         ]
                     )
 
-                ( History branchRef _, Success project_ ) ->
+                ( History branchRef cursor _, Success project_ ) ->
                     let
                         ( history, cmd ) =
-                            ProjectHistoryPage.init appContext project_ branchRef
+                            ProjectHistoryPage.init appContext project_ branchRef cursor
                     in
-                    ( { modelWithProject | subPage = History branchRef history }
+                    ( { modelWithProject | subPage = History branchRef cursor history }
                     , Cmd.batch
                         [ Cmd.map ProjectHistoryPageMsg cmd
                         ]
@@ -720,14 +721,14 @@ update appContext projectRef route msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( History _ history, ProjectHistoryPageMsg historyPageMsg ) ->
+        ( History _ _ history, ProjectHistoryPageMsg historyPageMsg ) ->
             case ( model.project, route ) of
-                ( Success project, Route.ProjectHistory branchRef_ ) ->
+                ( Success project, Route.ProjectHistory branchRef_ cursor ) ->
                     let
                         ( history_, historyCmd ) =
                             ProjectHistoryPage.update appContext project branchRef_ historyPageMsg history
                     in
-                    ( { model | subPage = History branchRef_ history_ }
+                    ( { model | subPage = History branchRef_ cursor history_ }
                     , Cmd.map ProjectHistoryPageMsg historyCmd
                     )
 
@@ -939,9 +940,9 @@ updateSubPage appContext projectRef model route =
                     in
                     ( { model | subPage = Release version releasePage_ }, Cmd.map ProjectReleasePageMsg releasePageCmd )
 
-        ProjectHistory branchRef ->
+        ProjectHistory branchRef cursor ->
             case model.subPage of
-                History _ _ ->
+                History _ _ _ ->
                     ( model, Cmd.none )
 
                 _ ->
@@ -949,9 +950,9 @@ updateSubPage appContext projectRef model route =
                         Success project ->
                             let
                                 ( history, cmd ) =
-                                    ProjectHistoryPage.init appContext project branchRef
+                                    ProjectHistoryPage.init appContext project branchRef cursor
                             in
-                            ( { model | subPage = History branchRef history }, Cmd.map ProjectHistoryPageMsg cmd )
+                            ( { model | subPage = History branchRef cursor history }, Cmd.map ProjectHistoryPageMsg cmd )
 
                         _ ->
                             ( model, Cmd.none )
@@ -1367,7 +1368,7 @@ viewErrorPage appContext subPage projectRef error =
                         PageFooter.pageFooter
                         |> PageLayout.withSubduedBackground
 
-                History _ _ ->
+                History _ _ _ ->
                     PageLayout.centeredNarrowLayout
                         (PageContent.oneColumn [ errorCard ])
                         PageFooter.pageFooter
@@ -1453,7 +1454,7 @@ viewLoadingPage appContext subPage projectRef =
                     , "project-releases-page"
                     )
 
-                History _ _ ->
+                History _ _ _ ->
                     ( ProjectHistoryPage.viewLoadingPage, "project-history-page" )
 
                 Settings _ ->
@@ -1770,10 +1771,10 @@ view appContext projectRef model =
                             , modal = modal (Maybe.map (Html.map ProjectTicketsPageMsg) modal_)
                             }
 
-                        History branchRef history ->
+                        History branchRef cursor history ->
                             let
                                 ( history_, modal_ ) =
-                                    ProjectHistoryPage.view appContext project branchRef history
+                                    ProjectHistoryPage.view appContext project branchRef cursor history
                             in
                             { pageId = "project-page project-history-page"
                             , title = title
