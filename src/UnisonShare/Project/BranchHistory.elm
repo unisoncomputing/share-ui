@@ -1,14 +1,11 @@
 module UnisonShare.Project.BranchHistory exposing (..)
 
-import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.Hash as Hash exposing (Hash)
-import Code2.Workspace.DefinitionMatch as DefinitionMatch exposing (DefinitionMatch)
 import Json.Decode as Decode
-import Json.Decode.Pipeline exposing (optionalAt, required, requiredAt)
+import Json.Decode.Pipeline exposing (required, requiredAt)
 import Lib.Decode.Helpers exposing (maybeAt, whenTagIs)
 import UI.DateTime as DateTime exposing (DateTime)
-import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.User as User exposing (UserSummary)
 
 
