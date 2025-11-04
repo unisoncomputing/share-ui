@@ -47,10 +47,7 @@ type alias ChangesetDetails =
 
 
 type alias BranchHistory =
-    { projectRef : ProjectRef
-    , branchRef : BranchRef
-    , history : List HistoryEntry
-    }
+    List HistoryEntry
 
 
 
@@ -122,7 +119,4 @@ decodeHistoryEntry =
 
 decode : Decode.Decoder BranchHistory
 decode =
-    Decode.succeed BranchHistory
-        |> required "projectRef" ProjectRef.decode
-        |> required "branchRef" BranchRef.decode
-        |> required "history" (Decode.list decodeHistoryEntry)
+    Decode.field "history" (Decode.list decodeHistoryEntry)
