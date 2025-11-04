@@ -1534,7 +1534,7 @@ view appContext projectRef model =
                 , switchBranch =
                     AnchoredOverlay.map
                         SwitchBranchMsg
-                        (SwitchBranch.toAnchoredOverlay projectRef branchRef model.switchBranch)
+                        (SwitchBranch.toAnchoredOverlay projectRef branchRef True model.switchBranch)
                 , contextClick = Click.onClick (ChangeRouteTo (Route.projectOverview projectRef))
                 }
                 project

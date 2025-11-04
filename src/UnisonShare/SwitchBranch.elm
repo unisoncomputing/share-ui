@@ -201,8 +201,8 @@ viewSuggestions data =
     MaybeE.values [ ownContributorBranches, projectBranches ]
 
 
-viewSheet : ProjectRef -> Sheet -> Html Msg
-viewSheet projectRef sheet =
+viewSheet : ProjectRef -> Bool -> Sheet -> Html Msg
+viewSheet projectRef withViewAllBranches sheet =
     let
         recentBranches =
             RemoteData.map2
@@ -222,18 +222,25 @@ viewSheet projectRef sheet =
             { data = recentBranches
             , view = viewSuggestions
             }
+
+        viewAll =
+            if withViewAllBranches then
+                Just (Link.view "View all branches" (Link.projectBranches projectRef Paginated.NoPageCursor))
+
+            else
+                Nothing
     in
     Html.map SearchBranchSheetMsg
         (SearchBranchSheet.view
             "Switch Branch"
             suggestions
-            (Just (Link.view "View all branches" (Link.projectBranches projectRef Paginated.NoPageCursor)))
+            viewAll
             sheet.sheet
         )
 
 
-toAnchoredOverlay : ProjectRef -> BranchRef -> Model -> AnchoredOverlay Msg
-toAnchoredOverlay projectRef branchRef model =
+toAnchoredOverlay : ProjectRef -> BranchRef -> Bool -> Model -> AnchoredOverlay Msg
+toAnchoredOverlay projectRef branchRef withViewAllBranches model =
     let
         button caret =
             Button.iconThenLabel ToggleSheet Icon.branch (BranchRef.toString branchRef)
@@ -252,4 +259,4 @@ toAnchoredOverlay projectRef branchRef model =
         Open sheet ->
             ao_ (button Icon.caretUp)
                 |> AnchoredOverlay.withSheetPosition AnchoredOverlay.BottomLeft
-                |> AnchoredOverlay.withSheet (AnchoredOverlay.sheet (viewSheet projectRef sheet))
+                |> AnchoredOverlay.withSheet (AnchoredOverlay.sheet (viewSheet projectRef withViewAllBranches sheet))
