@@ -297,7 +297,6 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0 0.5rem;
       font-style: italic;
       justify-content: center;
       border-top: 1px solid var(--u-color_border_subdued);
