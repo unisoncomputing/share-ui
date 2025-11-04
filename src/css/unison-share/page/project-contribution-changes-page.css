@@ -254,9 +254,6 @@
 
       & .diff-side {
         width: 50%;
-        overflow-x: auto;
-        /* TODO: yikes, well that seems like a hack */
-        overflow-y: hidden;
 
         & header {
           background: var(--u-color_element_subdued);
@@ -274,6 +271,12 @@
 
         & code {
           width: 100%;
+          display: flex;
+          overflow-x: auto;
+        }
+
+        & code > div {
+          width: max-content;
         }
       }
 
@@ -348,6 +351,8 @@
     }
 
     & .gutter {
+      position: sticky;
+      left: 0;
       background: var(--u-color_element_subdued);
       color: var(--u-color_text_very-subdued);
       border-right: 1px solid var(--u-color_border_subdued);
