@@ -277,7 +277,7 @@
         }
 
         & code > div {
-          width: max-content;
+          width: max(100%, max-content);
         }
       }
 
