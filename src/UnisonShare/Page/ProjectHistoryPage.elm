@@ -9,6 +9,7 @@ import Lib.Util as Util
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra exposing (pluralize)
 import UI
+import UI.AnchoredOverlay as AnchoredOverlay exposing (AnchoredOverlay)
 import UI.Card as Card
 import UI.DateTime as DateTime
 import UI.Icon as Icon exposing (Icon)
@@ -25,6 +26,8 @@ import UnisonShare.Paginated as Paginated exposing (Paginated(..))
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.BranchHistory as BranchHistory exposing (HistoryEntry)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
+import UnisonShare.Route as Route
+import UnisonShare.SwitchBranch as SwitchBranch
 
 
 
@@ -37,23 +40,26 @@ type alias PaginatedBranchHistory =
 
 type alias Model =
     { history : WebData PaginatedBranchHistory
+    , switchBranch : SwitchBranch.Model
     }
 
 
 preInit : Model
 preInit =
     { history = NotAsked
+    , switchBranch = SwitchBranch.init
     }
 
 
 init : AppContext -> ProjectDetails -> Maybe BranchRef -> Paginated.PageCursorParam -> ( Model, Cmd Msg )
 init appContext project branchRef cursor =
     let
-        branchRef_ : BranchRef
         branchRef_ =
             Maybe.withDefault (Project.defaultBrowsingBranch project) branchRef
     in
-    ( { history = Loading }
+    ( { history = Loading
+      , switchBranch = SwitchBranch.init
+      }
     , fetchProjectBranchHistory appContext project.ref branchRef_ cursor
     )
 
@@ -64,13 +70,40 @@ init appContext project branchRef cursor =
 
 type Msg
     = FetchProjectBranchHistoryFinished BranchRef (WebData PaginatedBranchHistory)
+    | SwitchBranchMsg SwitchBranch.Msg
 
 
 update : AppContext -> ProjectDetails -> Maybe BranchRef -> Msg -> Model -> ( Model, Cmd Msg )
-update _ _ _ msg model =
+update appContext project _ msg model =
     case msg of
         FetchProjectBranchHistoryFinished _ history ->
             ( { model | history = history }, Cmd.none )
+
+        SwitchBranchMsg sbMsg ->
+            let
+                ( switchBranch, switchBranchCmd, out ) =
+                    SwitchBranch.update appContext project.ref sbMsg model.switchBranch
+
+                navCmd =
+                    case out of
+                        SwitchBranch.SwitchToBranchRequest branchRef ->
+                            Route.navigate
+                                appContext.navKey
+                                (Route.projectHistory
+                                    project.ref
+                                    (Just branchRef)
+                                    Paginated.NoPageCursor
+                                )
+
+                        _ ->
+                            Cmd.none
+            in
+            ( { model | switchBranch = switchBranch }
+            , Cmd.batch
+                [ Cmd.map SwitchBranchMsg switchBranchCmd
+                , navCmd
+                ]
+            )
 
 
 
@@ -265,9 +298,12 @@ viewPaginationControls projectRef branchRef cursors =
     Paginated.view toLink cursors
 
 
-viewPageContent : AppContext -> ProjectDetails -> Maybe BranchRef -> PaginatedBranchHistory -> PageContent Msg
-viewPageContent appContext project branchRef (Paginated history) =
+viewPageContent : AppContext -> ProjectDetails -> Maybe BranchRef -> SwitchBranch.Model -> PaginatedBranchHistory -> PageContent Msg
+viewPageContent appContext project branchRef switchBranch (Paginated history) =
     let
+        branchRef_ =
+            Maybe.withDefault (Project.defaultBrowsingBranch project) branchRef
+
         entries =
             if List.isEmpty history.items then
                 [ div [] [ text "No entries" ] ]
@@ -279,7 +315,17 @@ viewPageContent appContext project branchRef (Paginated history) =
         [ div [ class "history-entries" ] entries
         , viewPaginationControls project.ref branchRef history
         ]
-        |> PageContent.withPageTitle (PageTitle.title "History")
+        |> PageContent.withPageTitle
+            (PageTitle.title "History"
+                |> PageTitle.withRightSide
+                    [ SwitchBranch.toAnchoredOverlay project.ref
+                        branchRef_
+                        False
+                        switchBranch
+                        |> AnchoredOverlay.map SwitchBranchMsg
+                        |> AnchoredOverlay.view
+                    ]
+            )
 
 
 view :
@@ -299,7 +345,7 @@ view appContext project branchRef _ model =
 
         Success history ->
             ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext project branchRef history)
+                (viewPageContent appContext project branchRef model.switchBranch history)
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
             , Nothing
