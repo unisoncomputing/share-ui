@@ -351,8 +351,6 @@
     }
 
     & .gutter {
-      position: sticky;
-      left: 0;
       background: var(--u-color_element_subdued);
       color: var(--u-color_text_very-subdued);
       border-right: 1px solid var(--u-color_border_subdued);
