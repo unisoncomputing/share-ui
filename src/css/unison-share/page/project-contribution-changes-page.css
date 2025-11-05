@@ -303,6 +303,8 @@
       border-bottom: 1px solid var(--u-color_border_subdued);
       font-size: var(--font-size-extra-small);
       overflow: hidden;
+      position: sticky: left;
+      left: 0;
     }
 
     & .definition-change.card .collapsed-section .icon {
@@ -362,6 +364,8 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
+      position: sticky: left;
+      left: 0;
     }
 
     & .definition-change.card a:hover {
