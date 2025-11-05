@@ -303,7 +303,7 @@
       border-bottom: 1px solid var(--u-color_border_subdued);
       font-size: var(--font-size-extra-small);
       overflow: hidden;
-      position: sticky: left;
+      position: sticky;
       left: 0;
     }
 
