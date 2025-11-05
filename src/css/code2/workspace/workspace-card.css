@@ -69,19 +69,19 @@
       color: var(--u-color_text_subdued);
     }
 
-    & .workspace-card_titlebar_left {
+    .workspace-card_titlebar_left {
       display: flex;
       flex-direction: row;
       gap: 0.5rem;
       align-items: center;
 
-      & .copy-on-click {
+      .copy-on-click {
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 0.25rem;
 
-        & .copy-on-click_success {
+        .copy-on-click_success {
           position: absolute;
           background: var(--u-color_positive_element_subdued);
           width: 1.5rem;
@@ -92,18 +92,18 @@
           align-items: center;
           justify-content: center;
 
-          & .icon {
+          .icon {
             color: var(--u-color_positive_icon-on-element_subdued);
             font-size: var(--font-size-base);
           }
         }
       }
 
-      & .tooltip {
+      .tooltip {
         margin-top: 0.5rem;
         margin-left: -0.5rem;
 
-        & .tooltip-bubble {
+        .tooltip-bubble {
           height: 2.25rem;
           display: flex;
           align-items: center;
@@ -111,7 +111,7 @@
       }
     }
 
-    & .workspace-card_titlebar_right {
+    .workspace-card_titlebar_right {
       position: absolute;
       right: 0.325rem;
       display: flex;

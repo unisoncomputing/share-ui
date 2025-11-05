@@ -7,7 +7,7 @@ import Code.Finder as Finder
 import Code.Finder.SearchOptions as SearchOptions
 import Code.FullyQualifiedName as FQN exposing (FQN)
 import Code.FullyQualifiedNameSet as FQNSet
-import Code.Namespace exposing (NamespaceDetails)
+import Code.Namespace as Namespace exposing (NamespaceDetails)
 import Code.Perspective as Perspective exposing (Perspective)
 import Code.ReadmeCard as ReadmeCard
 import Code2.Workspace.WorkspaceItemRef as WorkspaceItemRef
@@ -385,6 +385,23 @@ update appContext context codeRoute msg model =
                             in
                             ( { model | modal = FinderModal fm }, Cmd.map FinderMsg fCmd )
 
+                        WorkspacePanes.RequestPermalink ref ->
+                            let
+                                perspective =
+                                    case model.config.perspective of
+                                        Perspective.Root { details } ->
+                                            case details of
+                                                RemoteData.Success (Namespace.Namespace _ hash _) ->
+                                                    Perspective.absoluteRootPerspective hash
+
+                                                _ ->
+                                                    model.config.perspective
+
+                                        _ ->
+                                            model.config.perspective
+                            in
+                            ( model, navigateToCode appContext context (Route.replacePerspective (Just ref) perspective) )
+
                         _ ->
                             ( model, Cmd.none )
             in
@@ -645,6 +662,11 @@ viewContent appContext perspective content =
                     , withNamespaceDropdown = True
                     , withFocusedPaneIndicator = False
                     , withMinimap = True
+
+                    -- Can't find the root hash without the root perspective
+                    -- and as such we can't create a permalink
+                    , withPermalink =
+                        Perspective.isRootPerspective perspective
                     }
             in
             PageContent.oneColumn [ Html.map WorkspacePanesMsg (WorkspacePanes.view cfg workspace) ]

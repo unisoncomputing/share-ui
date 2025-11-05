@@ -69,6 +69,7 @@ type OutMsg
     | Emptied
     | ChangePerspectiveToSubNamespace Reference FQN
     | ShowFinderRequest FQN
+    | RequestPermalink Reference
 
 
 update : Config -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
@@ -101,6 +102,9 @@ update config msg model =
                         WorkspacePane.RequestChangePerspective ref fqn ->
                             ( model, ChangePerspectiveToSubNamespace ref fqn )
 
+                        WorkspacePane.RequestPermalink ref ->
+                            ( model, RequestPermalink ref )
+
                         _ ->
                             ( model, NoOut )
             in
@@ -132,6 +136,9 @@ update config msg model =
 
                         WorkspacePane.Emptied ->
                             ( model, Emptied )
+
+                        WorkspacePane.RequestPermalink ref ->
+                            ( model, RequestPermalink ref )
 
                         _ ->
                             ( model, NoOut )
@@ -298,6 +305,7 @@ type alias PanesConfig =
     , withFocusedPaneIndicator : Bool
     , withNamespaceDropdown : Bool
     , withMinimap : Bool
+    , withPermalink : Bool
     }
 
 
@@ -311,6 +319,7 @@ view cfg model =
             , withFocusedPaneIndicator = cfg.withFocusedPaneIndicator
             , withNamespaceDropdown = cfg.withNamespaceDropdown
             , withMinimap = cfg.withMinimap
+            , withPermalink = cfg.withPermalink
             }
 
         left isFocused =

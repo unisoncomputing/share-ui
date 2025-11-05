@@ -55,6 +55,7 @@ type alias WorkspaceDefinitionItemCardConfig msg =
     , syntaxConfig : SyntaxConfig.SyntaxConfig msg
     , showDependents : msg
     , showDependencies : msg
+    , toPermalink : Maybe msg
     , namespaceDropdown : Maybe (NamespaceDropdown msg)
     }
 
@@ -336,6 +337,16 @@ titlebarRight cfg =
             else
                 UI.nothing
 
+        permalinkButton =
+            case cfg.toPermalink of
+                Just toPermalink ->
+                    titlebarButton toPermalink Icon.chain
+                        |> TitlebarButton.withLeftOfTooltip (text "View as permalink")
+                        |> TitlebarButton.view
+
+                _ ->
+                    UI.nothing
+
         otherNames_ =
             DefinitionItem.otherNames cfg.item
 
@@ -365,6 +376,7 @@ titlebarRight cfg =
                 UI.nothing
     in
     [ defHash
+    , permalinkButton
     , otherNames
     , dependenciesButton
     , dependentsButton

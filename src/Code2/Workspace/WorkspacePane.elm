@@ -97,6 +97,7 @@ type Msg
     | ToggleFold WorkspaceItemRef
     | Keydown KeyboardEvent.KeyboardEvent
     | SetFocusedItem WorkspaceItemRef
+    | ToPermalink Reference
     | DefinitionSummaryTooltipMsg DefinitionSummaryTooltip.Msg
     | KeyboardShortcutMsg KeyboardShortcut.Msg
 
@@ -107,6 +108,7 @@ type OutMsg
     | FocusOn WorkspaceItemRef
     | RequestFindInNamespace FQN
     | RequestChangePerspective Reference FQN
+    | RequestPermalink Reference
     | Emptied
 
 
@@ -366,6 +368,12 @@ update config paneId msg model =
             ( { model | workspaceItems = WorkspaceItems.focusOn model.workspaceItems wsRef }
             , scrollToItem paneId wsRef
             , FocusOn wsRef
+            )
+
+        ToPermalink ref ->
+            ( model
+            , Cmd.none
+            , RequestPermalink ref
             )
 
         FindWithinNamespace wsRef fqn ->
@@ -804,6 +812,7 @@ type alias PaneConfig =
     , withFocusedPaneIndicator : Bool
     , withNamespaceDropdown : Bool
     , withMinimap : Bool
+    , withPermalink : Bool
     }
 
 
@@ -857,6 +866,13 @@ viewItem cfg collapsedItems definitionSummaryTooltip item isFocused =
                             else
                                 Nothing
 
+                        toPermalink =
+                            if cfg.withPermalink then
+                                Just (ToPermalink definitionRef)
+
+                            else
+                                Nothing
+
                         config =
                             { wsRef = wsRef
                             , definitionRef = definitionRef
@@ -874,6 +890,7 @@ viewItem cfg collapsedItems definitionSummaryTooltip item isFocused =
                             , toggleFold = ToggleFold wsRef
                             , showDependents = ShowDependentsOf wsRef
                             , showDependencies = ShowDependenciesOf wsRef
+                            , toPermalink = toPermalink
                             , namespaceDropdown = namespaceDropdown
                             }
                     in
