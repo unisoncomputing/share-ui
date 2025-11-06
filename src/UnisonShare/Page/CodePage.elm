@@ -414,13 +414,13 @@ update appContext context codeRoute msg model =
                                 ( model
                                 , Cmd.batch
                                     [ Route.navigate appContext.navKey (nextRoute perspective)
-                                    , copyToClipboard (Route.toUrlString (nextRoute perspective))
+                                    , copyUrlToClipboard (Route.toUrlString (nextRoute perspective))
                                     ]
                                 )
 
                             else if BranchRef.isReleaseBranchRef context.branchRef then
                                 -- We do want to copy the release url though
-                                ( model, copyToClipboard (Route.toUrlString (nextRoute model.config.perspective)) )
+                                ( model, copyUrlToClipboard (Route.toUrlString (nextRoute model.config.perspective)) )
 
                             else
                                 -- Skip completely if within a perspective
@@ -672,7 +672,7 @@ keydown appContext context model keyboardEvent =
 -- EFFECTS
 
 
-port copyToClipboard : String -> Cmd msg
+port copyUrlToClipboard : String -> Cmd msg
 
 
 navigateToCode : AppContext -> CodeBrowsingContext -> CodeRoute -> Cmd Msg

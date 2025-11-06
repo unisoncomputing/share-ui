@@ -123,6 +123,10 @@ if (app.ports) {
     navigator.clipboard.writeText(text);
   });
 
+  app.ports.copyUrlToClipboard?.subscribe((text) => {
+    navigator.clipboard.writeText(text);
+  });
+
   app.ports.debugLog?.subscribe((text) => {
     console.debug(text);
   });
