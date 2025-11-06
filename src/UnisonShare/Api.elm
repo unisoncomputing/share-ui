@@ -19,7 +19,7 @@ import Maybe.Extra as MaybeE
 import Regex
 import Set exposing (Set)
 import UnisonShare.Account exposing (Account)
-import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
+import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext)
 import UnisonShare.Contribution exposing (ContributionStateToken(..))
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
@@ -1308,19 +1308,17 @@ catalog =
 
 
 baseCodePathFromContext : CodeBrowsingContext -> List String
-baseCodePathFromContext context =
-    case context of
-        ProjectBranch pr br ->
-            let
-                ( handle, slug ) =
-                    ProjectRef.toApiStringParts pr
-            in
-            case br of
-                BranchRef.ReleaseBranchRef v ->
-                    [ "users", handle, "projects", slug, "releases", Version.toString v ]
+baseCodePathFromContext { projectRef, branchRef } =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    case branchRef of
+        BranchRef.ReleaseBranchRef v ->
+            [ "users", handle, "projects", slug, "releases", Version.toString v ]
 
-                _ ->
-                    [ "users", handle, "projects", slug, "branches", BranchRef.toApiUrlString br ]
+        _ ->
+            [ "users", handle, "projects", slug, "branches", BranchRef.toApiUrlString branchRef ]
 
 
 namespace : CodeBrowsingContext -> Perspective -> FQN -> Endpoint

@@ -1,5 +1,6 @@
-module UnisonShare.Page.CodePage exposing (..)
+port module UnisonShare.Page.CodePage exposing (..)
 
+import Code.BranchRef as BranchRef
 import Code.CodebaseTree as CodebaseTree
 import Code.Config exposing (Config)
 import Code.Definition.Reference exposing (Reference)
@@ -22,7 +23,7 @@ import UI.PageContent as PageContent exposing (PageContent)
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.Sidebar as Sidebar exposing (Sidebar)
 import UnisonShare.AppContext as AppContext exposing (AppContext)
-import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext(..))
+import UnisonShare.CodeBrowsingContext exposing (CodeBrowsingContext)
 import UnisonShare.Page.CodePageContent as CodePageContent
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Route as Route exposing (CodeRoute(..))
@@ -307,7 +308,7 @@ update appContext context codeRoute msg model =
                     ( model, Cmd.none )
 
         ( _, Keydown event ) ->
-            keydown appContext model event
+            keydown appContext context model event
 
         ( _, KeyboardShortcutMsg kMsg ) ->
             let
@@ -387,20 +388,43 @@ update appContext context codeRoute msg model =
 
                         WorkspacePanes.RequestPermalink ref ->
                             let
-                                perspective =
-                                    case model.config.perspective of
-                                        Perspective.Root { details } ->
-                                            case details of
-                                                RemoteData.Success (Namespace.Namespace _ hash _) ->
-                                                    Perspective.absoluteRootPerspective hash
-
-                                                _ ->
-                                                    model.config.perspective
-
-                                        _ ->
-                                            model.config.perspective
+                                nextRoute p =
+                                    Route.projectBranch
+                                        context.projectRef
+                                        context.branchRef
+                                        (Route.replacePerspective (Just ref) p)
                             in
-                            ( model, navigateToCode appContext context (Route.replacePerspective (Just ref) perspective) )
+                            if not (BranchRef.isReleaseBranchRef context.branchRef) && Perspective.isRootPerspective model.config.perspective then
+                                -- releases are already permalinks, so no need for
+                                -- permalinks when we are viewing a release
+                                let
+                                    perspective =
+                                        case model.config.perspective of
+                                            Perspective.Root { details } ->
+                                                case details of
+                                                    RemoteData.Success (Namespace.Namespace _ hash _) ->
+                                                        Perspective.absoluteRootPerspective hash
+
+                                                    _ ->
+                                                        model.config.perspective
+
+                                            _ ->
+                                                model.config.perspective
+                                in
+                                ( model
+                                , Cmd.batch
+                                    [ Route.navigate appContext.navKey (nextRoute perspective)
+                                    , copyToClipboard (Route.toUrlString (nextRoute perspective))
+                                    ]
+                                )
+
+                            else if BranchRef.isReleaseBranchRef context.branchRef then
+                                -- We do want to copy the release url though
+                                ( model, copyToClipboard (Route.toUrlString (nextRoute model.config.perspective)) )
+
+                            else
+                                -- Skip completely if within a perspective
+                                ( model, Cmd.none )
 
                         _ ->
                             ( model, Cmd.none )
@@ -572,8 +596,8 @@ routeReference route =
             Nothing
 
 
-keydown : AppContext -> Model -> KeyboardEvent -> ( Model, Cmd Msg )
-keydown appContext model keyboardEvent =
+keydown : AppContext -> CodeBrowsingContext -> Model -> KeyboardEvent -> ( Model, Cmd Msg )
+keydown appContext context model keyboardEvent =
     let
         shortcut =
             KeyboardShortcut.fromKeyboardEvent model.keyboardShortcut keyboardEvent
@@ -594,6 +618,43 @@ keydown appContext model keyboardEvent =
         KeyboardShortcut.Sequence _ Escape ->
             ( { model | modal = NoModal }, Cmd.none )
 
+        KeyboardShortcut.Sequence _ (Y _) ->
+            -- Releases are already permalinks, so no need for
+            -- permalinks when we are viewing a release
+            -- We also don't have the root hash from within a perspective
+            if not (BranchRef.isReleaseBranchRef context.branchRef) && Perspective.isRootPerspective model.config.perspective then
+                case model.content of
+                    WorkspacePage panes ->
+                        let
+                            perspective =
+                                case model.config.perspective of
+                                    Perspective.Root { details } ->
+                                        case details of
+                                            RemoteData.Success (Namespace.Namespace _ hash _) ->
+                                                Perspective.absoluteRootPerspective hash
+
+                                            _ ->
+                                                model.config.perspective
+
+                                    _ ->
+                                        model.config.perspective
+
+                            ref =
+                                case WorkspacePanes.currentlyFocusedReference panes of
+                                    Just (WorkspaceItemRef.DefinitionItemRef r) ->
+                                        Just r
+
+                                    _ ->
+                                        Nothing
+                        in
+                        ( model, navigateToCode appContext context (Route.replacePerspective ref perspective) )
+
+                    _ ->
+                        ( model, Cmd.none )
+
+            else
+                ( model, Cmd.none )
+
         _ ->
             if Finder.isShowFinderKeyboardShortcut appContext.operatingSystem shortcut then
                 let
@@ -611,15 +672,14 @@ keydown appContext model keyboardEvent =
 -- EFFECTS
 
 
+port copyToClipboard : String -> Cmd msg
+
+
 navigateToCode : AppContext -> CodeBrowsingContext -> CodeRoute -> Cmd Msg
-navigateToCode appContext context codeRoute =
-    let
-        route_ =
-            case context of
-                ProjectBranch ps bs ->
-                    Route.projectBranch ps bs codeRoute
-    in
-    Route.navigate appContext.navKey route_
+navigateToCode appContext { projectRef, branchRef } codeRoute =
+    Route.navigate
+        appContext.navKey
+        (Route.projectBranch projectRef branchRef codeRoute)
 
 
 

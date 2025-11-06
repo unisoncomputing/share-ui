@@ -38,7 +38,6 @@ import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
@@ -275,7 +274,7 @@ update appContext projectRef msg model =
                                 config =
                                     AppContext.toCodeConfig
                                         appContext
-                                        (CodeBrowsingContext.project projectRef (Release.branchRef latest))
+                                        { projectRef = projectRef, branchRef = Release.branchRef latest }
                                         Perspective.relativeRootPerspective
 
                                 ( interactiveDoc, cmd, iOutMsg ) =

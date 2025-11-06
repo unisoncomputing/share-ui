@@ -263,6 +263,16 @@ openDependenciesOf config model ref =
             ( { model | right = rightPane }, Cmd.map RightPaneMsg rightPaneCmd )
 
 
+currentlyFocusedReference : Model -> Maybe WorkspaceItemRef
+currentlyFocusedReference model =
+    case model.focusedPane of
+        LeftPaneFocus _ ->
+            WorkspacePane.currentlyFocusedReference model.left
+
+        RightPaneFocus ->
+            WorkspacePane.currentlyFocusedReference model.right
+
+
 currentlyOpenReferences : Model -> List Reference
 currentlyOpenReferences model =
     WorkspacePane.currentlyOpenReferences model.left

@@ -4,15 +4,10 @@ import Code.BranchRef as BranchRef exposing (BranchRef)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 
 
-type CodeBrowsingContext
-    = ProjectBranch ProjectRef BranchRef
-
-
-project : ProjectRef -> BranchRef -> CodeBrowsingContext
-project =
-    ProjectBranch
+type alias CodeBrowsingContext =
+    { projectRef : ProjectRef, branchRef : BranchRef }
 
 
 equals : CodeBrowsingContext -> CodeBrowsingContext -> Bool
-equals (ProjectBranch projectRefA branchRefA) (ProjectBranch projectRefB branchRefB) =
-    ProjectRef.equals projectRefA projectRefB && BranchRef.equals branchRefA branchRefB
+equals contextA contextB =
+    ProjectRef.equals contextA.projectRef contextB.projectRef && BranchRef.equals contextA.branchRef contextB.branchRef

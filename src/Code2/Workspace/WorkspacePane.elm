@@ -567,6 +567,11 @@ openDependencies config paneId ({ workspaceItems } as model) dependenciesOfRef =
         )
 
 
+currentlyFocusedReference : Model -> Maybe WorkspaceItemRef
+currentlyFocusedReference model =
+    WorkspaceItems.focusedReference model.workspaceItems
+
+
 currentlyOpenReferences : Model -> List Reference
 currentlyOpenReferences model =
     WorkspaceItems.definitionReferences model.workspaceItems

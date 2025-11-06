@@ -23,7 +23,6 @@ import UI.StatusBanner as StatusBanner
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext as AppContext exposing (AppContext)
 import UnisonShare.BranchSummary as BranchSummary exposing (BranchSummary)
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
 import UnisonShare.Paginated as Paginated
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -271,7 +270,7 @@ update appContext projectRef msg model =
                         config =
                             AppContext.toCodeConfig
                                 appContext
-                                (CodeBrowsingContext.project projectRef model.sourceBranch.branchRef)
+                                { projectRef = projectRef, branchRef = model.sourceBranch.branchRef }
                                 Perspective.relativeRootPerspective
 
                         -- TODO: Should we allow navigation from release notes?

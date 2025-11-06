@@ -46,7 +46,6 @@ import UI.Tag as Tag
 import UI.Tooltip as Tooltip
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext as AppContext exposing (AppContext)
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext exposing (CodeBrowsingContext(..))
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project as Project exposing (ProjectDetails)
@@ -171,12 +170,12 @@ update appContext projectRef project msg model =
             case project of
                 Success p ->
                     AppContext.toCodeConfig appContext
-                        (CodeBrowsingContext.project projectRef (Project.defaultBrowsingBranch p))
+                        { projectRef = projectRef, branchRef = Project.defaultBrowsingBranch p }
                         Perspective.relativeRootPerspective
 
                 _ ->
                     AppContext.toCodeConfig appContext
-                        (CodeBrowsingContext.project projectRef BranchRef.main_)
+                        { projectRef = projectRef, branchRef = BranchRef.main_ }
                         Perspective.relativeRootPerspective
     in
     case msg of
@@ -458,7 +457,7 @@ fetchDependencies : AppContext -> ProjectRef -> BranchRef -> Cmd Msg
 fetchDependencies appContext projectRef branchRef =
     let
         browsingContext =
-            ProjectBranch projectRef branchRef
+            { projectRef = projectRef, branchRef = branchRef }
 
         perspective =
             Perspective.relativeRootPerspective

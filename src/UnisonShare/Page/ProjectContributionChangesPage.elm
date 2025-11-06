@@ -39,7 +39,6 @@ import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (Definit
 import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
 import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing (ToggledChangeLines)
 import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.DefinitionDiff as DefinitionDiff
@@ -235,7 +234,7 @@ update appContext projectRef contribRef msg model =
                         config =
                             AppContext.toCodeConfig
                                 appContext
-                                (CodeBrowsingContext.ProjectBranch projectRef bd.oldBranch.ref)
+                                { projectRef = projectRef, branchRef = bd.oldBranch.ref }
                                 (Perspective.absoluteRootPerspective bd.oldBranch.hash)
 
                         ( definitionSummaryTooltip, tCmd ) =
@@ -255,7 +254,7 @@ update appContext projectRef contribRef msg model =
                         config =
                             AppContext.toCodeConfig
                                 appContext
-                                (CodeBrowsingContext.ProjectBranch projectRef bd.newBranch.ref)
+                                { projectRef = projectRef, branchRef = bd.newBranch.ref }
                                 (Perspective.absoluteRootPerspective bd.newBranch.hash)
 
                         ( definitionSummaryTooltip, tCmd ) =

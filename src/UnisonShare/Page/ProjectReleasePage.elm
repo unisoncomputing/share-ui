@@ -28,7 +28,6 @@ import UI.Placeholder as Placeholder
 import UI.StatusBanner as StatusBanner
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext as AppContext exposing (AppContext)
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.InteractiveDoc as InteractiveDoc
 import UnisonShare.Link as Link
 import UnisonShare.PageFooter as PageFooter
@@ -124,7 +123,7 @@ update appContext projectRef msg model =
                         config =
                             AppContext.toCodeConfig
                                 appContext
-                                (CodeBrowsingContext.project projectRef (Release.branchRef release))
+                                { projectRef = projectRef, branchRef = Release.branchRef release }
                                 Perspective.relativeRootPerspective
 
                         ( interactiveDoc, cmd, iOutMsg ) =

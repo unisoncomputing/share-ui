@@ -33,7 +33,6 @@ import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
-import UnisonShare.CodeBrowsingContext as CodeBrowsingContext
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus
 import UnisonShare.Page.CodePage as CodePage
@@ -116,7 +115,7 @@ init appContext projectRef route =
                 ProjectBranch branchRef codeRoute ->
                     let
                         codeBrowsingContext =
-                            CodeBrowsingContext.project projectRef branchRef
+                            { projectRef = projectRef, branchRef = branchRef }
 
                         ( codePage, codePageCmd ) =
                             CodePage.init appContext codeBrowsingContext codeRoute
@@ -233,8 +232,8 @@ type Msg
 update : AppContext -> ProjectRef -> ProjectRoute -> Msg -> Model -> ( Model, Cmd Msg )
 update appContext projectRef route msg model =
     let
-        codeBrowsingContext bs =
-            CodeBrowsingContext.project projectRef bs
+        codeBrowsingContext br =
+            { projectRef = projectRef, branchRef = br }
     in
     case ( model.subPage, msg ) of
         ( _, ChangeRouteTo r ) ->
@@ -746,7 +745,7 @@ updateSubPage : AppContext -> ProjectRef -> Model -> ProjectRoute -> ( Model, Cm
 updateSubPage appContext projectRef model route =
     let
         codeBrowsingContext br =
-            CodeBrowsingContext.project projectRef br
+            { projectRef = projectRef, branchRef = br }
 
         newCodePage branchRef codeRoute =
             let
