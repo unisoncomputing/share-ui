@@ -3,58 +3,73 @@
   flex-direction: column;
   gap: 1.5rem;
 
-  & pre {
+  pre {
     overflow: auto;
   }
 
-  & .contribution-description {
+  .contribution-overview_main-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contribution-description {
     z-index: 1;
     container-name: doc-container;
     container-type: inline-size;
     width: 100%;
 
-    & .no-description {
+    .no-description {
       font-size: var(--font-size-medium);
       color: var(--u-color_text_subdued);
     }
+  }
 
-    & .actions {
-      border-top: 1px solid var(--u-color_border_subdued);
-      padding: 1.5rem 1.5rem 0;
-      margin: 0.5rem -1.5rem 0;
+  .contribution-actions {
+    z-index: 1;
+    container-name: doc-container;
+    container-type: inline-size;
+    width: 100%;
+
+    &.contribution-actions_updating {
+      background: var(--u-color_working_element_subdued);
+      border: 1px solid var(--u-color_working_border_subdued);
+    }
+
+    .actions {
       display: flex;
       flex: 1;
-      width: calc(100% + 3rem);
+      width: 100%;
       flex-direction: row;
       flex-wrap: wrap;
       gap: 0.5rem;
       justify-content: space-between;
 
-      & .left-actions {
+      .left-actions {
         position: relative;
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 0.5rem;
 
-        & .tooltip {
+        .tooltip {
           left: 0;
         }
       }
 
-      & .right-actions {
+      .right-actions {
         position: relative;
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
 
-        & .tooltip {
+        .tooltip {
           right: 0;
         }
       }
 
-      & .tooltip {
-        & .tooltip-bubble {
+      .tooltip {
+        .tooltip-bubble {
           top: 2.5rem;
           white-space: pre-wrap;
           min-width: 16rem;
@@ -64,7 +79,7 @@
     }
   }
 
-  & .new-comment_form {
+  .new-comment_form {
     position: relative;
     margin-top: 1rem;
     display: flex;
@@ -72,18 +87,18 @@
     gap: 0.5rem;
     padding: 0 1.5rem;
 
-    & .divider {
+    .divider {
       background: var(--u-color_border_subdued);
       margin-bottom: 1rem;
     }
 
-    & .comment-actions {
+    .comment-actions {
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
       position: relative;
 
-      & .status-banner {
+      .status-banner {
         position: absolute;
         left: 0;
         z-index: 1;

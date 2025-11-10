@@ -250,13 +250,6 @@ viewContribution session project updateStatus contribution mergeStatus =
         canMaintain =
             Project.canMaintain project
 
-        className =
-            if updateStatus == UpdatingStatus then
-                "contribution-description contribution-description_updating"
-
-            else
-                "contribution-description"
-
         description =
             contribution.description
                 |> Maybe.map Markdown.view
@@ -372,12 +365,24 @@ viewContribution session project updateStatus contribution mergeStatus =
 
             else
                 div [ class "actions" ] actions
+
+        actionsClassName =
+            if updateStatus == UpdatingStatus then
+                "contribution-actions contribution-actions_updating"
+
+            else
+                "contribution-actions contribution-actions_updating"
     in
-    Card.card
-        [ description, actions_ ]
-        |> Card.asContained
-        |> Card.withClassName className
-        |> Card.view
+    div [ class "contribution-overview_main-cards" ]
+        [ Card.card [ description ]
+            |> Card.withClassName "contribution-description"
+            |> Card.asContained
+            |> Card.view
+        , Card.card [ actions_ ]
+            |> Card.withClassName actionsClassName
+            |> Card.asContained
+            |> Card.view
+        ]
 
 
 viewStatusChangeEvent : DateTimeContext a -> ContributionEvent.StatusChangeDetails -> List (Html Msg)
