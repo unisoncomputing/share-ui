@@ -371,7 +371,7 @@ viewContribution session project updateStatus contribution mergeStatus =
                 "contribution-actions contribution-actions_updating"
 
             else
-                "contribution-actions contribution-actions_updating"
+                "contribution-actions"
     in
     div [ class "contribution-overview_main-cards" ]
         [ Card.card [ description ]
