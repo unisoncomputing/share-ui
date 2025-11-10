@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: 1.5rem;
 
+  .card {
+    padding: 1rem;
+  }
+
   pre {
     overflow: auto;
   }
@@ -30,11 +34,6 @@
     container-name: doc-container;
     container-type: inline-size;
     width: 100%;
-
-    &.contribution-actions_updating {
-      background: var(--u-color_working_element_subdued);
-      border: 1px solid var(--u-color_working_border_subdued);
-    }
 
     .actions {
       display: flex;
