@@ -10,6 +10,13 @@
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
+
+    .contribution-page-title_actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 
   & .page-title_pre-title {
@@ -26,16 +33,14 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     & .contribution-ref {
       font-size: 0.875rem;
       font-weight: bold;
-      background: var(--u-color_element);
-      padding: 0.125rem 0.5rem;
-      border: 1px solid var(--u-color_border_subdued);
-      border-radius: 1.5rem;
+      padding-right: 0.75rem;
+      border-right: 1px solid var(--u-color_border);
     }
   }
 

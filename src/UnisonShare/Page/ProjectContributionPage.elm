@@ -1,36 +1,38 @@
 module UnisonShare.Page.ProjectContributionPage exposing (..)
 
 import Code.BranchRef as BranchRef
-import Html exposing (Html, div, h1, span, text)
+import Html exposing (Html, div, h1, h3, p, span, text)
 import Html.Attributes exposing (class)
 import Http
 import Lib.HttpApi as HttpApi exposing (HttpResult)
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
+import UI.ButtonGroup as ButtonGroup
 import UI.ByAt as ByAt
 import UI.Card as Card
-import UI.CopyOnClick as CopyOnClick
+import UI.CopyField as CopyField
 import UI.DateTime as DateTime exposing (DateTime)
+import UI.Divider as Divider
 import UI.Icon as Icon
+import UI.Modal as Modal
 import UI.PageContent as PageContent
 import UI.PageLayout as PageLayout exposing (PageLayout)
 import UI.PageTitle as PageTitle exposing (PageTitle)
 import UI.Placeholder as Placeholder
 import UI.StatusBanner as StatusBanner
-import UI.Tag as Tag
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Contribution as Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
-import UnisonShare.Contribution.ContributionStatus exposing (ContributionStatus)
+import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
 import UnisonShare.Page.ProjectContributionChangesPage as ProjectContributionChangesPage
 import UnisonShare.Page.ProjectContributionOverviewPage as ProjectContributionOverviewPage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project exposing (ProjectDetails)
-import UnisonShare.Project.ProjectRef exposing (ProjectRef)
+import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectContributionFormModal as ProjectContributionFormModal
 import UnisonShare.Route exposing (ProjectContributionRoute(..))
 import UnisonShare.Session as Session
@@ -43,6 +45,7 @@ import UnisonShare.Session as Session
 type ContributionModal
     = NoModal
     | EditModal ProjectContributionFormModal.Model
+    | ViewLocallyInstructionsModal
 
 
 type ProjectContributionSubPage
@@ -100,6 +103,7 @@ type Msg
     | CloseModal
     | ProjectContributionOverviewPageMsg ProjectContributionOverviewPage.Msg
     | ProjectContributionChangesPageMsg ProjectContributionChangesPage.Msg
+    | ShowViewLocallyInstructionsModal
 
 
 type OutMsg
@@ -138,6 +142,9 @@ update appContext projectRef contribRef _ project msg model =
 
                 _ ->
                     ( model, Cmd.none, NoOut )
+
+        ( _, ShowViewLocallyInstructionsModal ) ->
+            ( { model | modal = ViewLocallyInstructionsModal }, Cmd.none, NoOut )
 
         ( _, ProjectContributionFormModalMsg formMsg ) ->
             case ( appContext.session, model.contribution ) of
@@ -324,11 +331,16 @@ detailedPageTitle appContext contribution =
                 |> Maybe.map (\h -> Session.isHandle h appContext.session)
                 |> Maybe.withDefault False
 
+        buttons =
+            ButtonGroup.buttonGroup
+                [ Button.iconThenLabel_ (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef) Icon.browse "Browse code" |> Button.small
+                , Button.iconThenLabel ShowViewLocallyInstructionsModal Icon.download "View locally" |> Button.small
+                ]
+
         editButton =
             if isContributor then
                 Button.iconThenLabel ShowEditModal Icon.writingPad "Edit"
                     |> Button.small
-                    |> Button.outlined
                     |> Button.view
 
             else
@@ -348,27 +360,36 @@ detailedPageTitle appContext contribution =
                     [ span [ class "contribution-ref" ] [ text (ContributionRef.toString contribution.ref) ]
                     , byAt
                     ]
-                , editButton
+                , div [ class "contribution-page-title_actions" ]
+                    [ editButton
+                    , ButtonGroup.view buttons
+                    ]
                 ]
             , h1 [] [ text contribution.title ]
             , div [ class "page-title_description" ]
                 [ span
                     [ class "from-to" ]
                     [ span [ class "branch" ]
-                        [ text "from"
-                        , BranchRef.toTag contribution.sourceBranchRef
-                            |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef)
-                            |> Tag.large
-                            |> Tag.view
-                        , CopyOnClick.copyButton (BranchRef.toString contribution.sourceBranchRef)
+                        [ text "Merge from"
+                        , ButtonGroup.buttonGroup
+                            [ Button.iconThenLabel_ (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef)
+                                Icon.branch
+                                (BranchRef.toString contribution.sourceBranchRef)
+                                |> Button.small
+                            ]
+                            |> ButtonGroup.withCopyButton (BranchRef.toString contribution.sourceBranchRef)
+                            |> ButtonGroup.view
                         ]
                     , span [ class "branch" ]
                         [ text "to"
-                        , BranchRef.toTag contribution.targetBranchRef
-                            |> Tag.withClick (Link.projectBranchRoot contribution.projectRef contribution.targetBranchRef)
-                            |> Tag.large
-                            |> Tag.view
-                        , CopyOnClick.copyButton (BranchRef.toString contribution.targetBranchRef)
+                        , ButtonGroup.buttonGroup
+                            [ Button.iconThenLabel_ (Link.projectBranchRoot contribution.projectRef contribution.targetBranchRef)
+                                Icon.branch
+                                (BranchRef.toString contribution.targetBranchRef)
+                                |> Button.small
+                            ]
+                            |> ButtonGroup.withCopyButton (BranchRef.toString contribution.targetBranchRef)
+                            |> ButtonGroup.view
                         ]
                     ]
                 ]
@@ -421,6 +442,77 @@ viewErrorPage _ _ =
         |> PageLayout.withSubduedBackground
 
 
+viewViewLocallyInstructionsModal : ContributionDetails -> Html Msg
+viewViewLocallyInstructionsModal contribution =
+    let
+        projectRef =
+            ProjectRef.toString contribution.projectRef
+
+        source =
+            "/" ++ BranchRef.toString contribution.sourceBranchRef
+
+        target =
+            "/" ++ BranchRef.toString contribution.targetBranchRef
+
+        mergeInstructions_ =
+            [ Divider.divider |> Divider.small |> Divider.view
+            , h3 [] [ text "Merge (and resolve conflicts) locally:" ]
+            , div [ class "instructions" ]
+                [ p [] [ text "Clone the contribution branch:" ]
+                , CopyField.copyField (always NoOp) ("clone " ++ source)
+                    |> CopyField.withPrefix (projectRef ++ "/main>")
+                    |> CopyField.view
+                , p [] [ text "Next, switch to the target branch (usually /main):" ]
+                , CopyField.copyField (always NoOp) ("switch " ++ target)
+                    |> CopyField.withPrefix (projectRef ++ source ++ ">")
+                    |> CopyField.view
+                , p [] [ text "Make sure the target branch is up to date:" ]
+                , CopyField.copyField (always NoOp) "pull"
+                    |> CopyField.withPrefix (projectRef ++ "/main>")
+                    |> CopyField.view
+                , p [] [ text "Merge the changes:" ]
+                , CopyField.copyField (always NoOp) ("merge " ++ source)
+                    |> CopyField.withPrefix (projectRef ++ target ++ ">")
+                    |> CopyField.view
+                , p [] [ text "Finally, push the project to share and mark the contribution as merged." ]
+                ]
+            ]
+
+        mergeInstructions =
+            case contribution.status of
+                ContributionStatus.Draft ->
+                    mergeInstructions_
+
+                ContributionStatus.InReview ->
+                    mergeInstructions_
+
+                _ ->
+                    []
+
+        content =
+            div []
+                ([ h3 [] [ text "View the contribution locally:" ]
+                 , div [ class "instructions" ]
+                    [ p [] [ text "Clone the contribution branch:" ]
+                    , CopyField.copyField (always NoOp) ("clone " ++ source)
+                        |> CopyField.withPrefix (projectRef ++ "/main>")
+                        |> CopyField.view
+                    ]
+                 ]
+                    ++ mergeInstructions
+                )
+    in
+    content
+        |> Modal.content
+        |> Modal.modal "project-contribution-view-locally-instructions-modal" CloseModal
+        |> Modal.withActions
+            [ Button.button CloseModal "Got it"
+                |> Button.medium
+                |> Button.emphasized
+            ]
+        |> Modal.view
+
+
 view : AppContext -> ProjectDetails -> ContributionRef -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project contribRef model =
     case model.contribution of
@@ -450,6 +542,9 @@ view appContext project contribRef model =
                                         form
                                     )
                                 )
+
+                        ViewLocallyInstructionsModal ->
+                            Just (viewViewLocallyInstructionsModal contribution)
 
                         _ ->
                             modal_
