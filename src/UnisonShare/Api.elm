@@ -325,6 +325,26 @@ project projectRef =
     GET { path = [ "users", handle, "projects", slug ], queryParams = [] }
 
 
+projectContributionChecks : ProjectRef -> ContributionRef -> Endpoint
+projectContributionChecks projectRef contrib =
+    let
+        ( handle, slug ) =
+            ProjectRef.toApiStringParts projectRef
+    in
+    GET
+        { path =
+            [ "users"
+            , handle
+            , "projects"
+            , slug
+            , "contributions"
+            , ContributionRef.toApiString contrib
+            , "checks"
+            ]
+        , queryParams = []
+        }
+
+
 type ProjectBranchesKindFilter
     = AllBranches (Maybe UserHandle)
     | ContributorBranches (Maybe UserHandle)

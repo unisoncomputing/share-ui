@@ -11,6 +11,7 @@ import Lib.UserHandle as UserHandle exposing (UserHandle)
 import UI.Click as Click exposing (Click)
 import UnisonShare.AppContext exposing (AppContext, LastActiveNotificationsTab(..))
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
+import UnisonShare.Check exposing (CheckId)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
 import UnisonShare.Paginated as Paginated exposing (PageCursorParam)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -326,6 +327,16 @@ projectContributionChanges projectRef_ contribRef =
 projectContributionChange : ProjectRef -> ContributionRef -> ChangeLineId -> Click msg
 projectContributionChange projectRef_ contribRef changeLineId =
     toClick (Route.projectContributionChange projectRef_ contribRef changeLineId)
+
+
+projectContributionChecks : ProjectRef -> ContributionRef -> Click msg
+projectContributionChecks projectRef_ contribRef =
+    toClick (Route.projectContributionChecks projectRef_ contribRef)
+
+
+projectContributionCheck : ProjectRef -> ContributionRef -> CheckId -> Click msg
+projectContributionCheck projectRef_ contribRef checkId =
+    toClick (Route.projectContributionCheck projectRef_ contribRef checkId)
 
 
 projectContributions : ProjectRef -> Click msg

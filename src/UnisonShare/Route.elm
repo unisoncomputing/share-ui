@@ -38,6 +38,8 @@ module UnisonShare.Route exposing
     , projectContribution
     , projectContributionChange
     , projectContributionChanges
+    , projectContributionCheck
+    , projectContributionChecks
     , projectContributions
     , projectContributionsArchived
     , projectContributionsMerged
@@ -85,6 +87,7 @@ import Parser exposing ((|.), (|=), Parser, oneOf, succeed, symbol)
 import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppError as AppError exposing (AppError)
 import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
+import UnisonShare.Check as Check
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Paginated as Paginated exposing (PageCursorParam(..))
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
@@ -112,6 +115,7 @@ type OrgRoute
 
 type ProjectContributionRoute
     = ProjectContributionOverview
+    | ProjectContributionChecks (Maybe Check.CheckId)
     | ProjectContributionChanges (Maybe ChangeLineId)
 
 
@@ -272,6 +276,16 @@ projectReleases projectRef_ =
 projectContribution : ProjectRef -> ContributionRef -> Route
 projectContribution projectRef_ contribRef =
     Project projectRef_ (ProjectContribution contribRef ProjectContributionOverview)
+
+
+projectContributionChecks : ProjectRef -> ContributionRef -> Route
+projectContributionChecks projectRef_ contribRef =
+    Project projectRef_ (ProjectContribution contribRef (ProjectContributionChecks Nothing))
+
+
+projectContributionCheck : ProjectRef -> ContributionRef -> Check.CheckId -> Route
+projectContributionCheck projectRef_ contribRef checkId =
+    Project projectRef_ (ProjectContribution contribRef (ProjectContributionChecks (Just checkId)))
 
 
 projectContributionChanges : ProjectRef -> ContributionRef -> Route
@@ -716,6 +730,20 @@ projectParser queryString =
             in
             Project ps (ProjectContribution ref (ProjectContributionChanges Nothing))
 
+        projectContributionCheck_ handle slug ref checkId =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectContribution ref (ProjectContributionChecks (Just checkId)))
+
+        projectContributionChecks_ handle slug ref =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectContribution ref (ProjectContributionChecks Nothing))
+
         projectContributions_ subRoute handle slug =
             let
                 ps =
@@ -749,6 +777,8 @@ projectParser queryString =
         , b (succeed projectReleases_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "releases" |. end)
         , b (succeed projectContributionChange_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. slash |= ChangeLineId.fromUrl |. end)
         , b (succeed projectContributionChanges_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "changes" |. end)
+        , b (succeed projectContributionCheck_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "checks" |. slash |= Check.checkIdFromUrl |. end)
+        , b (succeed projectContributionChecks_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. slash |. s "checks" |. end)
         , b (succeed projectContribution_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |= ContributionRef.fromUrl |. end)
         , b (succeed (projectContributions_ ProjectContributionsInReview) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. end)
         , b (succeed (projectContributions_ ProjectContributionsMerged) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "merged" |. end)
@@ -954,6 +984,12 @@ toUrlPattern r =
         Project _ (ProjectContribution _ (ProjectContributionChanges (Just _))) ->
             ":handle/:project-slug/contributions/:contribution-ref/changes/:definition-name"
 
+        Project _ (ProjectContribution _ (ProjectContributionChecks Nothing)) ->
+            ":handle/:project-slug/contributions/:contribution-ref/checks"
+
+        Project _ (ProjectContribution _ (ProjectContributionChecks (Just _))) ->
+            ":handle/:project-slug/contributions/:contribution-ref/checks/:check-id"
+
         Project _ (ProjectContributions ProjectContributionsInReview) ->
             ":handle/:project-slug/contributions"
 
@@ -1132,6 +1168,12 @@ toUrlString route =
 
                 Project projectRef_ (ProjectContribution r (ProjectContributionChanges (Just changeLineId))) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "changes", ChangeLineId.toString changeLineId ], [] )
+
+                Project projectRef_ (ProjectContribution r (ProjectContributionChecks Nothing)) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "checks" ], [] )
+
+                Project projectRef_ (ProjectContribution r (ProjectContributionChecks (Just checkId))) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions", ContributionRef.toUrlString r, "checks", Check.checkIdToString checkId ], [] )
 
                 Project projectRef_ (ProjectContributions ProjectContributionsInReview) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "contributions" ], [] )

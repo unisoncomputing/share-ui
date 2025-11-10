@@ -463,7 +463,8 @@ viewPageContent appContext project updateStatus contribution mergeStatus timelin
                 TabList.tabList
                     []
                     (TabList.tab "Overview" (Link.projectContribution project.ref contribution.ref))
-                    [ TabList.tab "Changes" (Link.projectContributionChanges project.ref contribution.ref) ]
+                    [ TabList.tab "Changes" (Link.projectContributionChanges project.ref contribution.ref)
+                    ]
                     |> TabList.view
 
             else
