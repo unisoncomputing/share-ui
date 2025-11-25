@@ -18,9 +18,14 @@ body:has(#modal-overlay) {
 }
 
 #announcement {
-  --c-color_announcement_background: var(--color-green-4);
-  --c-color_announcement_text: var(--color-green-1);
-  --u-color_interactive: var(--color-green-0);
+  --c-color_announcement_background: linear-gradient(
+    -45deg,
+    var(--color-orange-4),
+    var(--color-purple-5)
+  );
+  --c-color_announcement_text: var(--color-purple-2);
+  --u-color_interactive: var(--color-blue-1);
+  border-bottom: 2px solid var(--color-purple-4);
 
   display: flex;
   grid-area: announcement;
@@ -41,7 +46,7 @@ body:has(#modal-overlay) {
     gap: 0.75rem;
 
     & a:not(.button):hover {
-      color: var(--color-pink-0);
+      color: var(--color-blue-2);
     }
   }
 }
