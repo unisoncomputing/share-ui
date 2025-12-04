@@ -29,6 +29,7 @@ import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposin
 import UnisonShare.DateTimeContext exposing (DateTimeContext)
 import UnisonShare.Link as Link
 import UnisonShare.Page.ProjectContributionChangesPage as ProjectContributionChangesPage
+import UnisonShare.Page.ProjectContributionChecksPage as ProjectContributionChecksPage
 import UnisonShare.Page.ProjectContributionOverviewPage as ProjectContributionOverviewPage
 import UnisonShare.PageFooter as PageFooter
 import UnisonShare.Project exposing (ProjectDetails)
@@ -51,6 +52,7 @@ type ContributionModal
 type ProjectContributionSubPage
     = Overview ProjectContributionOverviewPage.Model
     | Changes ProjectContributionChangesPage.Model
+    | Checks ProjectContributionChecksPage.Model
 
 
 type alias Model =
@@ -78,6 +80,13 @@ init appContext projectRef contribRef route =
                             ProjectContributionChangesPage.init appContext projectRef contribRef focus
                     in
                     ( Changes changesPage, Cmd.map ProjectContributionChangesPageMsg changesPageCmd )
+
+                ProjectContributionChecks checkId ->
+                    let
+                        ( checksPage, checksPageCmd ) =
+                            ProjectContributionChecksPage.init appContext projectRef contribRef checkId
+                    in
+                    ( Checks checksPage, Cmd.map ProjectContributionChecksPageMsg checksPageCmd )
     in
     ( { contribution = Loading
       , modal = NoModal
@@ -103,6 +112,7 @@ type Msg
     | CloseModal
     | ProjectContributionOverviewPageMsg ProjectContributionOverviewPage.Msg
     | ProjectContributionChangesPageMsg ProjectContributionChangesPage.Msg
+    | ProjectContributionChecksPageMsg ProjectContributionChecksPage.Msg
     | ShowViewLocallyInstructionsModal
 
 
@@ -225,6 +235,20 @@ update appContext projectRef contribRef _ project msg model =
             , NoOut
             )
 
+        ( Checks checksPage, ProjectContributionChecksPageMsg checksPageMsg ) ->
+            let
+                ( checksPage_, checksPageCmd ) =
+                    ProjectContributionChecksPage.update appContext
+                        projectRef
+                        contribRef
+                        checksPageMsg
+                        checksPage
+            in
+            ( { model | subPage = Checks checksPage_ }
+            , Cmd.map ProjectContributionChecksPageMsg checksPageCmd
+            , NoOut
+            )
+
         _ ->
             ( model, Cmd.none, NoOut )
 
@@ -255,6 +279,18 @@ updateSubPage appContext projectRef contribRef contribRoute model =
                             ProjectContributionChangesPage.init appContext projectRef contribRef focus
                     in
                     ( { model | subPage = Changes changesPage }, Cmd.map ProjectContributionChangesPageMsg changesPageCmd )
+
+        ProjectContributionChecks checkId ->
+            case model.subPage of
+                Checks _ ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    let
+                        ( checksPage, checksPageCmd ) =
+                            ProjectContributionChecksPage.init appContext projectRef contribRef checkId
+                    in
+                    ( { model | subPage = Checks checksPage }, Cmd.map ProjectContributionChecksPageMsg checksPageCmd )
 
 
 
@@ -310,6 +346,22 @@ viewPageContent appContext project contribution subPage =
                         |> PageContent.withPageTitle pageTitle_
             in
             ( PageLayout.edgeToEdgeLayout
+                pageContent
+                PageFooter.pageFooter
+                |> PageLayout.withSubduedBackground
+            , Nothing
+            )
+
+        Checks checks ->
+            let
+                checksPage =
+                    ProjectContributionChecksPage.view appContext project contribution checks
+
+                pageContent =
+                    PageContent.map ProjectContributionChecksPageMsg checksPage
+                        |> PageContent.withPageTitle pageTitle_
+            in
+            ( PageLayout.centeredNarrowLayout
                 pageContent
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
