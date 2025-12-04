@@ -32,8 +32,13 @@ viewTooltip content =
         |> Tooltip.withArrow Tooltip.Start
 
 
-viewDiffSegment : SyntaxConfig msg -> DiffSegment -> List (Html msg)
-viewDiffSegment syntaxConfig segment =
+type DiffSide
+    = Left
+    | Right
+
+
+viewDiffSegment : DiffSide -> SyntaxConfig msg -> DiffSegment -> List (Html msg)
+viewDiffSegment diffSide syntaxConfig segment =
     let
         viewSegment =
             SyntaxSegment.view (SyntaxConfig.withoutDependencyTooltip syntaxConfig)
@@ -49,14 +54,24 @@ viewDiffSegment syntaxConfig segment =
             viewSegments_ "diff-segment one-sided" segments
 
         AnnotationChange change ->
+            let
+                -- from and to are flipped depending on the side (direction) of the change
+                ( fromHash, toHash ) =
+                    case diffSide of
+                        Left ->
+                            ( change.fromHash, change.toHash )
+
+                        Right ->
+                            ( change.toHash, change.fromHash )
+            in
             [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ div [ class "hash-changed" ]
                         [ text "The hash changed"
                         , text " from "
-                        , Hash.view change.fromHash
+                        , Hash.view fromHash
                         , text " to "
-                        , Hash.view change.toHash
+                        , Hash.view toHash
                         ]
                     ]
                 )
@@ -67,11 +82,23 @@ viewDiffSegment syntaxConfig segment =
                     )
             ]
 
-        SegmentChange { from, to } ->
+        SegmentChange change ->
+            let
+                -- from and to are flipped depending on the side (direction) of the change
+                ( from, to ) =
+                    case diffSide of
+                        Left ->
+                            ( change.from, change.to )
+
+                        Right ->
+                            ( change.to, change.from )
+            in
             [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ text "Changed from"
                     , code [] [ viewSegment from ]
+                    , text "to "
+                    , code [] [ viewSegment to ]
                     ]
                 )
                 |> Tooltip.view
@@ -170,16 +197,16 @@ viewDiff cfg { left, right } =
         toGutterWidth len =
             String.length (String.fromInt len)
 
-        toViewDiffSegment isNew =
-            viewDiffSegment (cfg.toSyntaxConfig isNew)
+        toViewDiffSegment side =
+            viewDiffSegment side (cfg.toSyntaxConfig (side == Right))
 
         viewLeftDiffLine =
-            viewDiffLine (toViewDiffSegment False)
+            viewDiffLine (toViewDiffSegment Left)
                 "-"
                 (toGutterWidth (diffLength left))
 
         viewRightDiffLine =
-            viewDiffLine (toViewDiffSegment True)
+            viewDiffLine (toViewDiffSegment Right)
                 "+"
                 (toGutterWidth (diffLength right))
 
