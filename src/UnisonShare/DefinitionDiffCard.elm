@@ -67,8 +67,7 @@ viewDiffSegment diffSide syntaxConfig segment =
             [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
                     [ div [ class "hash-changed" ]
-                        [ text "The hash changed"
-                        , text " from "
+                        [ text "The hash changed from "
                         , Hash.view fromHash
                         , text " to "
                         , Hash.view toHash
@@ -85,25 +84,25 @@ viewDiffSegment diffSide syntaxConfig segment =
         SegmentChange change ->
             let
                 -- from and to are flipped depending on the side (direction) of the change
-                ( from, to ) =
+                ( from, to, seg ) =
                     case diffSide of
                         Left ->
-                            ( change.from, change.to )
+                            ( change.from, change.to, change.from )
 
                         Right ->
-                            ( change.to, change.from )
+                            ( change.to, change.from, change.to )
             in
             [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
-                    [ text "Changed from"
+                    [ text "Changed from "
                     , code [] [ viewSegment from ]
-                    , text "to "
+                    , text " to "
                     , code [] [ viewSegment to ]
                     ]
                 )
                 |> Tooltip.view
                     (span [ class "diff-segment segment-change" ]
-                        [ viewSegment to ]
+                        [ viewSegment seg ]
                     )
             ]
 
