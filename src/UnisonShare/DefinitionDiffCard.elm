@@ -90,7 +90,7 @@ viewDiffSegment diffSide syntaxConfig segment =
                             ( change.from, change.to, change.from )
 
                         Right ->
-                            ( change.to, change.from, change.to )
+                            ( change.to, change.from, change.from )
             in
             [ viewTooltip
                 (div [ class "tooltip-changes-summary" ]
