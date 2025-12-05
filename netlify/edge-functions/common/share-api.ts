@@ -1,5 +1,5 @@
 import { APIDefinitions } from "./definition.ts";
-import * as Http from "./http";
+import * as Http from "./http.ts";
 
 type APIProject = {
   owner: { handle: string };
