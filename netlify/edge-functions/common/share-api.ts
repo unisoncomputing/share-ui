@@ -1,4 +1,5 @@
 import { APIDefinitions } from "./definition.ts";
+import * as Http from "./http";
 
 type APIProject = {
   owner: { handle: string };
@@ -85,7 +86,7 @@ const ShareAPI = {
   getProfile: async (handle: string): Promise<APIProfile> => {
     const url = `${ShareAPI.baseURL}/users/${apiHandle(handle)}`;
 
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -100,7 +101,7 @@ const ShareAPI = {
   ): Promise<APIProject> => {
     const url = ShareAPI.projectBaseUrl(handle, projectSlug);
 
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -119,7 +120,7 @@ const ShareAPI = {
       projectSlug,
       `/contributions/${contribRef}`,
     );
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -138,7 +139,7 @@ const ShareAPI = {
       projectSlug,
       `/tickets/${ticketRef}`,
     );
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -158,7 +159,7 @@ const ShareAPI = {
       `/releases/${version}`,
     );
 
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
@@ -186,7 +187,7 @@ const ShareAPI = {
       url = mkUrl(branchRef);
     }
 
-    return fetch(url).then(async (resp) => {
+    return Http.get(url).then(async (resp) => {
       if (!resp.ok) {
         throw await error(url, resp);
       }
