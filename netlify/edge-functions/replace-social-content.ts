@@ -261,6 +261,7 @@ async function replaceSocialContent(
   try {
     content = await getContent(request.url);
   } catch (ex) {
+    console.error("SIMON DEBUG", request.url);
     console.error(ex);
     content = DefaultSocialContent;
   }

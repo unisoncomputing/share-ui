@@ -1,7 +1,6 @@
 module UnisonShare.Page.ProjectContributionPageHelpers exposing (..)
 
 import Html exposing (..)
-import UI
 import UI.DateTime as DateTime
 import UI.TabList as TabList
 import UnisonShare.Contribution as Contribution exposing (ContributionDetails)

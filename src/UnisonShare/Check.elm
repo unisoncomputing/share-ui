@@ -87,12 +87,6 @@ checkIdFromUrl =
         |> Parser.andThen parseMaybe
 
 
-title : Check -> String
-title check =
-    ""
-
-
-
 -- DECODE
 
 

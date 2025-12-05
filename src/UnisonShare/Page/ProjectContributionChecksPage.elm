@@ -1,63 +1,29 @@
 module UnisonShare.Page.ProjectContributionChecksPage exposing (..)
 
 import Code.BranchRef as BranchRef
-import Code.Definition.Reference exposing (Reference)
-import Code.DefinitionSummaryTooltip as DefinitionSummaryTooltip
-import Code.FullyQualifiedName as FQN
 import Code.Hash as Hash
-import Code.Perspective as Perspective
-import Code.ProjectDependency as ProjectDependency
-import Code.Syntax as Syntax
-import Code.Syntax.SyntaxConfig as SyntaxConfig
-import Code.Version as Version
-import Html exposing (Html, br, code, div, h2, header, label, p, pre, span, strong, text)
-import Html.Attributes exposing (class, id, style)
-import Http
-import Json.Decode as Decode
-import Lib.HttpApi as HttpApi exposing (HttpResult)
+import Html exposing (Html, div, header, pre, text)
+import Html.Attributes exposing (class)
 import Lib.UserHandle as UserHandle
 import Lib.Util as Util
-import List.Nonempty as NEL
 import RemoteData exposing (RemoteData(..), WebData)
 import Set exposing (Set)
 import Set.Extra as SetE
-import String.Extra exposing (pluralize)
 import Time
 import UI
-import UI.Button as Button
 import UI.Card as Card
-import UI.Click as Click
 import UI.DateTime as DateTime exposing (DateTime)
 import UI.Divider as Divider
 import UI.FoldToggle as FoldToggle
-import UI.Icon as Icon exposing (Icon)
 import UI.PageContent as PageContent exposing (PageContent)
-import UI.Placeholder as Placeholder
-import UI.StatusBanner as StatusBanner
 import UI.StatusIndicator as StatusIndicator
-import UI.TabList as TabList
-import UI.Tooltip as Tooltip
-import UnisonShare.Account as Account
-import UnisonShare.Api as ShareApi
-import UnisonShare.AppContext as AppContext exposing (AppContext)
-import UnisonShare.BranchDiff as BranchDiff exposing (BranchDiff)
-import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine)
-import UnisonShare.BranchDiff.ChangeLineId as ChangeLineId exposing (ChangeLineId)
-import UnisonShare.BranchDiff.DefinitionType as DefinitionType exposing (DefinitionType)
-import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
-import UnisonShare.BranchDiff.ToggledChangeLines as ToggledChangeLines exposing (ToggledChangeLines)
-import UnisonShare.BranchDiffState as BranchDiffState exposing (BranchDiffState)
-import UnisonShare.Check as Check exposing (Check, CheckId, CheckStatus)
+import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Check as Check exposing (Check, CheckId)
 import UnisonShare.Contribution exposing (ContributionDetails)
 import UnisonShare.Contribution.ContributionRef exposing (ContributionRef)
-import UnisonShare.DefinitionDiff as DefinitionDiff
-import UnisonShare.DefinitionDiffCard as DefinitionDiffCard
-import UnisonShare.Link as Link
 import UnisonShare.Page.ProjectContributionPageHelpers as ProjectContributionPageHelpers exposing (tabs)
 import UnisonShare.Project exposing (ProjectDetails)
-import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
-import UnisonShare.Route as Route
-import UnisonShare.Session as Session
+import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import Url
 
 
@@ -77,7 +43,7 @@ type alias Model =
 
 
 init : AppContext -> ProjectRef -> ContributionRef -> Maybe CheckId -> ( Model, Cmd Msg )
-init appContext projectRef contribRef checkId =
+init appContext projectRef contribRef _ =
     ( { checks = Loading
       , folds = Set.empty
       }
@@ -96,7 +62,7 @@ type Msg
 
 
 update : AppContext -> ProjectRef -> ContributionRef -> Msg -> Model -> ( Model, Cmd Msg )
-update appContext projectRef contribRef msg model =
+update _ _ _ msg model =
     case msg of
         FetchChecksFinished checks ->
             ( { model | checks = checks }, Cmd.none )
@@ -117,7 +83,7 @@ update appContext projectRef contribRef msg model =
 
 
 fetchChecks : AppContext -> ProjectRef -> ContributionRef -> Cmd Msg
-fetchChecks appContext projectRef contribRef =
+fetchChecks _ projectRef _ =
     let
         baseTime =
             Time.millisToPosix 1701619200000
