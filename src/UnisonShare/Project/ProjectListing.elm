@@ -1,7 +1,7 @@
 module UnisonShare.Project.ProjectListing exposing (..)
 
 import Code.ProjectNameListing as ProjectNameListing exposing (ProjectNameListing)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Lib.UserHandle exposing (UserHandle)
 import UI
@@ -125,7 +125,10 @@ view pl =
                     UI.nothing
 
                 Project.Private ->
-                    div [ class "private-icon" ] [ Icon.view Icon.eyeSlash ]
+                    div [ class "private-icon" ]
+                        [ Icon.view Icon.eyeSlash
+                        , text "Private"
+                        ]
     in
     div [ class "project-listing", class colorClass ]
         [ ProjectNameListing.view pl.listing, visibilityIcon ]
