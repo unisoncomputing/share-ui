@@ -10,7 +10,8 @@ import Code.Namespace.NamespaceRef as NamespaceRef
 import Code.Perspective as Perspective
 import Code.ProjectDependency as ProjectDependency exposing (ProjectDependency)
 import Code.ReadmeCard as ReadmeCard
-import Html exposing (Html, div, footer, form, p, span, strong, text)
+import Code.Version as Version exposing (Version)
+import Html exposing (Html, div, footer, form, header, p, span, strong, text)
 import Html.Attributes exposing (class)
 import Http exposing (Error)
 import Json.Decode as Decode
@@ -706,6 +707,26 @@ viewReadmeCard project readme =
             ReadmeCard.viewError RetryFetchReadme
 
 
+viewLatestVersion : ProjectRef -> Version -> Html msg
+viewLatestVersion projectRef version =
+    div [ class "project-releases" ]
+        [ header []
+            [ strong [] [ text "Latest release" ]
+            , span [ class "view-all" ]
+                [ text " ("
+                , Link.view "View all"
+                    (Link.projectReleases projectRef)
+                , text ")"
+                ]
+            ]
+        , Tag.tag (Version.toString version)
+            |> Tag.withClick (Link.projectRelease projectRef version)
+            |> Tag.withIcon Icon.rocket
+            |> Tag.extraLarge
+            |> Tag.view
+        ]
+
+
 viewDependencies : List ProjectDependency -> Html msg
 viewDependencies deps =
     let
@@ -732,7 +753,7 @@ viewDependencies deps =
         ]
 
 
-view_ : Session -> ProjectDetails -> Model -> ( Maybe (List (Html Msg)), PageContent Msg )
+view_ : Session -> ProjectDetails -> Model -> ( List (Html Msg), PageContent Msg )
 view_ session project model =
     let
         viewKpi icon num labelSingular labelPlural kpiDescription =
@@ -843,17 +864,18 @@ view_ session project model =
             case ( project.summary, Set.toList project.tags ) of
                 ( Just s, [] ) ->
                     Just
-                        [ div [ class "project-description" ]
+                        (div [ class "project-description" ]
                             [ div [ class "project-summary" ] [ text s ]
                             , edit Icon.writingPad "Edit summary"
                                 |> Maybe.map Button.view
                                 |> Maybe.withDefault UI.nothing
                             ]
-                        ]
+                        )
 
                 ( Just s, tags ) ->
                     Just
-                        [ div [ class "project-description" ]
+                        (div
+                            [ class "project-description" ]
                             [ div [ class "project-summary" ] [ text s ]
                             , tags |> List.map Tag.tag |> Tag.viewTags
                             , Button.icon ShowEditDescriptionModal Icon.writingPad
@@ -862,17 +884,18 @@ view_ session project model =
                                 |> showIfCanMaintain
                                 |> MaybeE.unwrap UI.nothing Button.view
                             ]
-                        ]
+                        )
 
                 ( Nothing, [] ) ->
                     if canMaintain then
                         Just
-                            [ div [ class "project-description-empty-state" ]
+                            (div
+                                [ class "project-description-empty-state" ]
                                 [ text "Add a bit of detail with a summary."
                                 , edit Icon.writingPad "Add now "
                                     |> MaybeE.unwrap UI.nothing Button.view
                                 ]
-                            ]
+                            )
 
                     else
                         Nothing
@@ -880,7 +903,8 @@ view_ session project model =
                 ( Nothing, tags ) ->
                     if canMaintain then
                         Just
-                            [ div []
+                            (div
+                                []
                                 [ div
                                     [ class "project-description-empty-state" ]
                                     [ text "Add a bit of detail with a summary."
@@ -889,31 +913,26 @@ view_ session project model =
                                     ]
                                 , tags |> List.map Tag.tag |> Tag.viewTags
                                 ]
-                            ]
+                            )
 
                     else
                         Just
-                            [ div [] [ tags |> List.map Tag.tag |> Tag.viewTags ]
-                            ]
+                            (div
+                                []
+                                [ tags |> List.map Tag.tag |> Tag.viewTags ]
+                            )
 
         dependencies =
             model.dependencies
                 |> RemoteData.toMaybe
                 |> Maybe.map viewDependencies
 
+        version =
+            project.latestVersion
+                |> Maybe.map (viewLatestVersion project.ref)
+
         aside =
-            case ( summaryAndTags, dependencies ) of
-                ( Just sumAndTags, Just deps ) ->
-                    Just (sumAndTags ++ [ deps ])
-
-                ( Nothing, Just deps ) ->
-                    Just [ deps ]
-
-                ( Just sumAndTags, Nothing ) ->
-                    Just sumAndTags
-
-                _ ->
-                    Nothing
+            MaybeE.values [ summaryAndTags, dependencies, version ]
 
         content =
             PageContent.oneColumn
@@ -949,17 +968,16 @@ view session projectRef project model =
         ( aside, content ) =
             view_ session project model
     in
-    case aside of
-        Just aside_ ->
-            ( PageLayout.centeredLayout (PageContent.withLeftAside aside_ content)
-                PageFooter.pageFooter
-                |> PageLayout.withSubduedBackground
-            , modal
-            )
+    if List.isEmpty aside then
+        ( PageLayout.centeredNarrowLayout content
+            PageFooter.pageFooter
+            |> PageLayout.withSubduedBackground
+        , modal
+        )
 
-        Nothing ->
-            ( PageLayout.centeredNarrowLayout content
-                PageFooter.pageFooter
-                |> PageLayout.withSubduedBackground
-            , modal
-            )
+    else
+        ( PageLayout.centeredLayout (PageContent.withLeftAside aside content)
+            PageFooter.pageFooter
+            |> PageLayout.withSubduedBackground
+        , modal
+        )

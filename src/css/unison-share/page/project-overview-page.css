@@ -163,6 +163,33 @@
   border: 1px solid var(--u-color_border);
 }
 
+.project-overview-page .project-releases {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .view-all {
+    font-size: var(--font-size-small);
+  }
+
+  .tag {
+    background: var(--c-color_tag_bg);
+    font-weight: bold;
+    font-family: var(--font-monospace);
+    border: 1px solid var(--u-color_border_subdued);
+  }
+
+  a.tag {
+    background: var(--u-color_element);
+    border: 1px solid var(--u-color_border);
+  }
+
+  a.tag:hover {
+    background: var(--c-color_tag_bg_hovered);
+    border: 1px solid var(--u-color_border);
+  }
+}
+
 #project-readme-instructions-modal {
   width: 34.5rem;
 }
@@ -205,5 +232,18 @@
   .project-overview-page .page-content .page-title,
   .project-overview-page .project-dependencies {
     display: none;
+  }
+
+  .project-overview-page .project-releases {
+    flex-direction: row;
+    line-height: 1;
+    align-items: center;
+
+    .tag {
+      margin-top: 2px;
+      font-size: var(--font-size-small);
+      height: 1.5rem;
+      padding: 0 0.5rem;
+    }
   }
 }
