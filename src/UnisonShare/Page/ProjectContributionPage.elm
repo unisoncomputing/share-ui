@@ -171,7 +171,7 @@ update appContext projectRef contribRef _ project msg model =
 
                                 ( modal, contribution ) =
                                     case out of
-                                        ProjectContributionFormModal.None ->
+                                        ProjectContributionFormModal.NoOut ->
                                             ( EditModal projectContributionFormModal, model.contribution )
 
                                         ProjectContributionFormModal.RequestToCloseModal ->

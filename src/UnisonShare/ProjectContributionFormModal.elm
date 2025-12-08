@@ -125,7 +125,7 @@ type Msg
 
 
 type OutMsg
-    = None
+    = NoOut
     | RequestToCloseModal
     | Saved ContributionSummary
 
@@ -151,10 +151,10 @@ update appContext project account msg model =
                             , validity = NotChecked
                             }
                     in
-                    ( { model | form = Success form }, Cmd.none, None )
+                    ( { model | form = Success form }, Cmd.none, NoOut )
 
                 Err e ->
-                    ( { model | form = Failure e }, Cmd.none, None )
+                    ( { model | form = Failure e }, Cmd.none, NoOut )
 
         ( FetchRecentBranchesFinished recentBranches, _, Create ) ->
             case recentBranches of
@@ -176,10 +176,10 @@ update appContext project account msg model =
                             , validity = NotChecked
                             }
                     in
-                    ( { model | form = Success form }, Cmd.none, None )
+                    ( { model | form = Success form }, Cmd.none, NoOut )
 
                 Err e ->
-                    ( { model | form = Failure e }, Cmd.none, None )
+                    ( { model | form = Failure e }, Cmd.none, NoOut )
 
         ( ToggleSelectSourceBranchSheet, Success form, _ ) ->
             let
@@ -205,7 +205,7 @@ update appContext project account msg model =
                     in
                     { form | selectBranchSheet = selectBranchSheet }
             in
-            ( { model | form = Success form_ }, Cmd.none, None )
+            ( { model | form = Success form_ }, Cmd.none, NoOut )
 
         ( ToggleSelectTargetBranchSheet, Success form, _ ) ->
             let
@@ -224,7 +224,7 @@ update appContext project account msg model =
                     in
                     { form | selectBranchSheet = selectBranchSheet }
             in
-            ( { model | form = Success form_ }, Cmd.none, None )
+            ( { model | form = Success form_ }, Cmd.none, NoOut )
 
         ( SearchBranchSheetMsg sbsMsg, Success form, _ ) ->
             case form.selectBranchSheet of
@@ -246,7 +246,7 @@ update appContext project account msg model =
                     in
                     ( { model | form = Success newForm }
                     , Cmd.map SearchBranchSheetMsg cmd
-                    , None
+                    , NoOut
                     )
 
                 OpenForTarget t ->
@@ -264,25 +264,25 @@ update appContext project account msg model =
                     in
                     ( { model | form = Success newForm }
                     , Cmd.map SearchBranchSheetMsg cmd
-                    , None
+                    , NoOut
                     )
 
                 Closed ->
-                    ( model, Cmd.none, None )
+                    ( model, Cmd.none, NoOut )
 
         ( UpdateSubmissionTitle t, Success form, _ ) ->
             let
                 newForm =
                     { form | title = t }
             in
-            ( { model | form = Success newForm }, Cmd.none, None )
+            ( { model | form = Success newForm }, Cmd.none, NoOut )
 
         ( UpdateSubmissionDescription d, Success form, _ ) ->
             let
                 newForm =
                     { form | description = d }
             in
-            ( { model | form = Success newForm }, Cmd.none, None )
+            ( { model | form = Success newForm }, Cmd.none, NoOut )
 
         ( SaveContribution, Success form, Create ) ->
             let
@@ -325,14 +325,14 @@ update appContext project account msg model =
                         in
                         ( { model | form = Success newForm }
                         , createProjectContribution appContext project.ref newContribution
-                        , None
+                        , NoOut
                         )
 
                     else
-                        ( model, Cmd.none, None )
+                        ( model, Cmd.none, NoOut )
 
                 _ ->
-                    ( { model | form = Success { form | validity = validity } }, Cmd.none, None )
+                    ( { model | form = Success { form | validity = validity } }, Cmd.none, NoOut )
 
         ( SaveContribution, Success form, Edit c ) ->
             case form.sourceBranchRef of
@@ -354,29 +354,26 @@ update appContext project account msg model =
                         project.ref
                         c.ref
                         updatedContribution
-                    , None
+                    , NoOut
                     )
 
                 _ ->
-                    ( model, Cmd.none, None )
+                    ( model, Cmd.none, NoOut )
 
         ( SaveContributionFinished contribution, Success form, _ ) ->
             let
-                cmd =
+                out =
                     case contribution of
                         Success c ->
-                            Util.delayMsg 1500 (SuccessfullySaved c)
+                            Saved c
 
                         _ ->
-                            Cmd.none
+                            NoOut
             in
-            ( { model | form = Success { form | save = contribution } }, cmd, None )
-
-        ( SuccessfullySaved contrib, _, _ ) ->
-            ( model, Cmd.none, Saved contrib )
+            ( { model | form = Success { form | save = contribution } }, Cmd.none, out )
 
         _ ->
-            ( model, Cmd.none, None )
+            ( model, Cmd.none, NoOut )
 
 
 

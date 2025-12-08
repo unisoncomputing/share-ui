@@ -203,7 +203,7 @@ update appContext projectRef _ project msg model =
 
                         ( modal, tab, out_ ) =
                             case ( out, model.tab ) of
-                                ( ProjectContributionFormModal.None, _ ) ->
+                                ( ProjectContributionFormModal.NoOut, _ ) ->
                                     ( SubmitContributionModal projectContributionFormModal, model.tab, NoOut )
 
                                 ( ProjectContributionFormModal.RequestToCloseModal, _ ) ->
