@@ -43,6 +43,7 @@ module UnisonShare.Route exposing
     , projectContributions
     , projectContributionsArchived
     , projectContributionsMerged
+    , projectHistory
     , projectOverview
     , projectRelease
     , projectReleases
@@ -143,6 +144,7 @@ type ProjectRoute
     | ProjectContribution ContributionRef ProjectContributionRoute
     | ProjectContributions ProjectContributionsRoute
     | ProjectSettings
+    | ProjectHistory (Maybe BranchRef) PageCursorParam
 
 
 type NotificationsRoute
@@ -321,6 +323,11 @@ projectTicket projectRef_ ticketRef =
 projectTickets : ProjectRef -> Route
 projectTickets projectRef_ =
     Project projectRef_ ProjectTickets
+
+
+projectHistory : ProjectRef -> Maybe BranchRef -> PageCursorParam -> Route
+projectHistory projectRef_ branchRef_ cursor =
+    Project projectRef_ (ProjectHistory branchRef_ cursor)
 
 
 projectSettings : ProjectRef -> Route
@@ -764,6 +771,20 @@ projectParser queryString =
                     ProjectRef.projectRef handle slug
             in
             Project ps ProjectTickets
+
+        projectHistory_ handle slug branchRef =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectHistory (Just branchRef) paginationCursor)
+
+        projectHistoryDefault_ handle slug =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectHistory Nothing paginationCursor)
     in
     oneOf
         [ b (succeed projectOverview_ |. slash |= userHandle |. slash |= projectSlug |. end)
@@ -785,6 +806,8 @@ projectParser queryString =
         , b (succeed (projectContributions_ ProjectContributionsArchived) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "archived" |. end)
         , b (succeed projectTicket_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. slash |= TicketRef.fromUrl |. end)
         , b (succeed projectTickets_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. end)
+        , b (succeed projectHistory_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "history" |. slash |= branchRef |. end)
+        , b (succeed projectHistoryDefault_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "history" |. end)
         , b (succeed projectSettings_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "settings" |. end)
         ]
 
@@ -1005,6 +1028,12 @@ toUrlPattern r =
         Project _ ProjectTickets ->
             ":handle/:project-slug/tickets"
 
+        Project _ (ProjectHistory Nothing _) ->
+            ":handle/:project-slug/history"
+
+        Project _ (ProjectHistory (Just _) _) ->
+            ":handle/:project-slug/history/:branch-ref"
+
         Project _ ProjectSettings ->
             ":handle/:project-slug/settings"
 
@@ -1189,6 +1218,12 @@ toUrlString route =
 
                 Project projectRef_ ProjectTickets ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets" ], [] )
+
+                Project projectRef_ (ProjectHistory (Just branchRef_) cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ "history" :: BranchRef.toUrlPath branchRef_, paginationCursorToQueryParams cursor )
+
+                Project projectRef_ (ProjectHistory Nothing cursor) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "history" ], paginationCursorToQueryParams cursor )
 
                 Project projectRef_ ProjectSettings ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "settings" ], [] )

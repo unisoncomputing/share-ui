@@ -251,6 +251,11 @@ projectOverview projectRef_ =
     toClick (Route.projectOverview projectRef_)
 
 
+projectHistory : ProjectRef -> Maybe BranchRef -> PageCursorParam -> Click msg
+projectHistory projectRef_ branchRef_ cursor =
+    toClick (Route.projectHistory projectRef_ branchRef_ cursor)
+
+
 projectBranches : ProjectRef -> PageCursorParam -> Click msg
 projectBranches projectRef_ cursor =
     toClick (Route.projectBranches projectRef_ cursor)

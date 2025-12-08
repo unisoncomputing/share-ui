@@ -14,7 +14,6 @@ import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.Util as Util
 import Maybe.Extra as MaybeE
 import RemoteData exposing (RemoteData(..), WebData)
 import String.Extra as StringE
