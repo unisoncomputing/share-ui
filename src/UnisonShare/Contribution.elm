@@ -15,6 +15,7 @@ import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (optional, required)
 import Lib.UserHandle as UserHandle
 import UI.DateTime as DateTime exposing (DateTime)
+import UnisonShare.Check as Check exposing (Check)
 import UnisonShare.Contribution.ContributionRef as ContributionRef exposing (ContributionRef)
 import UnisonShare.Contribution.ContributionStatus as ContributionStatus exposing (ContributionStatus)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
@@ -51,7 +52,10 @@ type alias ContributionSummary =
 
 
 type alias ContributionDetails =
-    Contribution { contributionStateToken : ContributionStateToken }
+    Contribution
+        { contributionStateToken : ContributionStateToken
+        , latestCheckOnSourceBranch : Maybe Check
+        }
 
 
 
@@ -74,8 +78,8 @@ toSummary contrib =
     }
 
 
-toDetails : ContributionStateToken -> ContributionSummary -> ContributionDetails
-toDetails token contrib =
+toDetails : ContributionStateToken -> Maybe Check -> ContributionSummary -> ContributionDetails
+toDetails token check contrib =
     { ref = contrib.ref
     , author = contrib.author
     , sourceBranchRef = contrib.sourceBranchRef
@@ -88,6 +92,7 @@ toDetails token contrib =
     , title = contrib.title
     , description = contrib.description
     , contributionStateToken = token
+    , latestCheckOnSourceBranch = check
     }
 
 
@@ -116,7 +121,7 @@ decodeDetails =
                 , User.decodeSummary
                 ]
 
-        makeContributionDetails ref author sourceBranchRef targetBranchRef projectRef createdAt updatedAt status numComments title description contributionStateToken =
+        makeContributionDetails ref author sourceBranchRef targetBranchRef projectRef createdAt updatedAt status numComments title description contributionStateToken check =
             { ref = ref
             , author = author
             , sourceBranchRef = sourceBranchRef
@@ -129,6 +134,7 @@ decodeDetails =
             , title = title
             , description = description
             , contributionStateToken = contributionStateToken
+            , latestCheckOnSourceBranch = check
             }
     in
     Decode.succeed makeContributionDetails
@@ -145,6 +151,7 @@ decodeDetails =
         |> optional "description" (Decode.map Just Decode.string) Nothing
         |> required "contributionStateToken"
             (Decode.map ContributionStateToken Decode.string)
+        |> optional "latestCheckOnSourceBranch" (Decode.map Just Check.decode) Nothing
 
 
 decodeSummary : Decode.Decoder ContributionSummary

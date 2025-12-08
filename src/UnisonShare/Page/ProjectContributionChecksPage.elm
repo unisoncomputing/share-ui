@@ -218,7 +218,7 @@ viewTitle appContext folds check =
                     , foldToggle = FoldToggle.view FoldToggle.disabled
                     }
 
-                Check.TimeOut { startedAt, endedAt } ->
+                Check.Timeout { startedAt, endedAt } ->
                     { result = StatusIndicator.view StatusIndicator.bad
                     , date = DateTime.view (DateTime.DistanceFrom appContext.now) appContext.timeZone check.createdAt
                     , timing = viewTiming startedAt endedAt

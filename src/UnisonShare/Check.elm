@@ -15,7 +15,7 @@ import Url exposing (Url)
 type CheckStatus
     = NotStarted
     | Waiting { startedAt : DateTime }
-    | TimeOut
+    | Timeout
         { startedAt : DateTime
         , endedAt : DateTime
         }
@@ -87,6 +87,7 @@ checkIdFromUrl =
         |> Parser.andThen parseMaybe
 
 
+
 -- DECODE
 
 
@@ -105,8 +106,8 @@ decodeStatus =
             Decode.succeed (\s -> Waiting { startedAt = s })
                 |> required "startedAt" DateTime.decode
 
-        decodeTimeOut =
-            Decode.succeed (\s e -> TimeOut { startedAt = s, endedAt = e })
+        decodeTimeout =
+            Decode.succeed (\s e -> Timeout { startedAt = s, endedAt = e })
                 |> required "startedAt" DateTime.decode
                 |> required "endedAt" DateTime.decode
 
@@ -137,7 +138,7 @@ decodeStatus =
     Decode.oneOf
         [ whenTagIs "NotStarted" (Decode.succeed NotStarted)
         , whenTagIs "Waiting" decodeWaiting
-        , whenTagIs "TimeOut" decodeTimeOut
+        , whenTagIs "Timeout" decodeTimeout
         , whenTagIs "Failure" decodeFailure
         , whenTagIs "Success" decodeSuccess
         ]

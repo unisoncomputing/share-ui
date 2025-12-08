@@ -179,7 +179,14 @@ update appContext projectRef contribRef _ project msg model =
 
                                         ProjectContributionFormModal.Saved newContrib ->
                                             -- TODO: also add a ContributionEvent
-                                            ( NoModal, Success (Contribution.toDetails contrib.contributionStateToken newContrib) )
+                                            ( NoModal
+                                            , Success
+                                                (Contribution.toDetails
+                                                    contrib.contributionStateToken
+                                                    Nothing
+                                                    newContrib
+                                                )
+                                            )
                             in
                             ( { model | modal = modal, contribution = contribution }
                             , Cmd.map ProjectContributionFormModalMsg cmd

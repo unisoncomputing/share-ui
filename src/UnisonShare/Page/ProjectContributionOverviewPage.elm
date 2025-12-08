@@ -10,6 +10,7 @@ import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
 import UI.Card as Card
+import UI.Click as Click
 import UI.DateTime as DateTime
 import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
@@ -19,6 +20,7 @@ import UI.Tooltip as Tooltip
 import UnisonShare.Account as Account
 import UnisonShare.Api as ShareApi
 import UnisonShare.AppContext exposing (AppContext)
+import UnisonShare.Check as Check
 import UnisonShare.Contribution as Contribution exposing (ContributionDetails, ContributionStateToken)
 import UnisonShare.Contribution.ContributionEvent as ContributionEvent
 import UnisonShare.Contribution.ContributionMergeability as ContributionMergeability exposing (ContributionMergeability)
@@ -333,10 +335,42 @@ viewContribution session project updateStatus contribution mergeStatus =
             else
                 UI.nothing
 
+        leftAction =
+            let
+                checkLink c html =
+                    Link.view_ html
+                        (Link.projectContributionCheck
+                            c.projectRef
+                            contribution.ref
+                            c.id
+                        )
+            in
+            -- TODO: verify causal hash somehow
+            case contribution.latestCheckOnSourceBranch of
+                Just c ->
+                    case c.status of
+                        Check.NotStarted ->
+                            UI.nothing
+
+                        Check.Waiting _ ->
+                            checkLink c (StatusBanner.working "Check in progress..")
+
+                        Check.Timeout _ ->
+                            checkLink c (StatusBanner.bad "Check failed with timeout")
+
+                        Check.Failure _ ->
+                            checkLink c (StatusBanner.bad "Check failed")
+
+                        Check.Success _ ->
+                            checkLink c (StatusBanner.good "Check succeeded")
+
+                Nothing ->
+                    UI.nothing
+
         actions =
             case contribution.status of
                 ContributionStatus.Draft ->
-                    [ div [ class "left-actions" ] []
+                    [ div [ class "left-actions" ] [ leftAction ]
                     , div [ class "right-actions" ]
                         [ Button.iconThenLabel (UpdateStatus ContributionStatus.InReview) Icon.conversation "Submit for review"
                             |> Button.emphasized
@@ -345,7 +379,7 @@ viewContribution session project updateStatus contribution mergeStatus =
                     ]
 
                 ContributionStatus.InReview ->
-                    [ div [ class "left-actions" ] []
+                    [ div [ class "left-actions" ] [ leftAction ]
                     , div [ class "right-actions" ] [ archiveButton, mergeButton ]
                     ]
 
