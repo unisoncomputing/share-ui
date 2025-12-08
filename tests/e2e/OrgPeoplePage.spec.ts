@@ -57,7 +57,7 @@ test.describe("with org:manage permission", () => {
     await API.getAccount(page, "@alice");
   });
 
-  test("can view the org people page", async ({ page }) => {
+  test("can view the org people page", async ({ page, isMobile }) => {
     const orgHandle = "@unison";
     await API.getOrgProfile(page, orgHandle, { permissions: ["org:manage"] });
     await API.getOrgRoleMembers(page, orgHandle);
@@ -73,7 +73,11 @@ test.describe("with org:manage permission", () => {
     const projects = page.locator(".page-content .profile-snippet");
     await expect(projects).toHaveCount(3);
 
-    await expect(navItem(page, "People")).toBeVisible();
+    // The nav is hidden on mobile
+    if (!isMobile) {
+      await expect(navItem(page, "People")).toBeVisible();
+    }
+
     await expect(button(page, "Add an organization member")).toBeVisible();
   });
 });
