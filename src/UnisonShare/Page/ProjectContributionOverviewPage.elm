@@ -10,7 +10,6 @@ import UI
 import UI.Button as Button
 import UI.ByAt as ByAt
 import UI.Card as Card
-import UI.Click as Click
 import UI.DateTime as DateTime
 import UI.Icon as Icon
 import UI.PageContent as PageContent exposing (PageContent)
