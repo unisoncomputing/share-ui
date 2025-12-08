@@ -2,7 +2,7 @@
   --c-color_project-name-listing_private-icon: var(
     --u-color_info_icon-on-element_subdued
   );
-  --c-color_project-name-listing_private-icon_background: var(--color-blue-3);
+  --c-color_project-name-listing_private-icon_background: var(--color-blue-4);
 
   display: flex;
   flex-direction: row;
