@@ -35,7 +35,7 @@ type alias CommentDetails =
 
 
 type alias ChangesetDetails =
-    { hash : Hash
+    { causalHash : Hash
     , updates : List Change
     , removes : List Change
     , aliases : List Change
@@ -81,29 +81,37 @@ decodeComment =
         |> requiredAt [ "comment", "body" ] Decode.string
 
 
+decodeChange : Decode.Decoder Change
+decodeChange =
+    Decode.succeed Change
+        |> required "hash" Hash.decode
+        |> required "fqn" FQN.decode
+
+
 decodeChangeset : Decode.Decoder HistoryEntry
 decodeChangeset =
     let
-        decodeChange =
-            Decode.succeed Change
-                |> required "hash" Hash.decode
-                |> required "fqn" FQN.decode
-
-        toChangeset hash updates removes aliases renames =
+        toChangeset hash =
+            -- updates removes aliases renames =
             Changeset
-                { hash = hash
-                , updates = updates
-                , removes = removes
-                , aliases = aliases
-                , renames = renames
+                { causalHash = hash
+                , updates = [] --updates
+                , removes = [] --removes
+                , aliases = [] --aliases
+                , renames = [] --renames
                 }
     in
     Decode.succeed toChangeset
-        |> required "hash" Hash.decode
-        |> required "updates" (Decode.list decodeChange)
-        |> required "removes" (Decode.list decodeChange)
-        |> required "aliases" (Decode.list decodeChange)
-        |> required "renames" (Decode.list decodeChange)
+        |> required "causalHash" Hash.decode
+
+
+
+{-
+   |> required "updates" (Decode.list decodeChange)
+   |> required "removes" (Decode.list decodeChange)
+   |> required "aliases" (Decode.list decodeChange)
+   |> required "renames" (Decode.list decodeChange)
+-}
 
 
 decodeHistoryEntry : Decode.Decoder HistoryEntry

@@ -135,7 +135,7 @@ fetchProjectBranchHistory _ _ branchRef _ =
                         , body = "And it was really cool"
                         }
                     , BranchHistory.Changeset
-                        { hash = Hash.unsafeFromString "namespacehash3"
+                        { causalHash = Hash.unsafeFromString "namespacehash3"
                         , updates =
                             [ { hash = Hash.unsafeFromString "definitionhash1"
                               , fqn = FQN.fromString "List.map"
@@ -279,7 +279,7 @@ viewHistoryEntry appContext entry =
             viewHistoryEntry_
                 "history-entry_changeset"
                 Icon.historyNode
-                { leftTitle = Hash.view changeset.hash, rightTitle = text numChanges }
+                { leftTitle = Hash.view changeset.causalHash, rightTitle = text numChanges }
                 [ viewCardContent changeset ]
 
 
