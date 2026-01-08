@@ -52,7 +52,7 @@ import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef as ProjectRef exposing (ProjectRef)
 import UnisonShare.Route as Route exposing (CodeRoute, ProjectRoute(..))
-import UnisonShare.Session as Session exposing (Session)
+import UnisonShare.Session as Session
 import UnisonShare.SwitchBranch as SwitchBranch
 import UnisonShare.Ticket.TicketRef as TicketRef exposing (TicketRef)
 import UnisonShare.Ticket.TicketStatus as TicketStatus
