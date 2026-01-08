@@ -1467,11 +1467,11 @@ viewLoadingPage appContext subPage projectRef =
     }
 
 
-viewProjectEmptyState : Session -> ProjectDetails -> Maybe (Html Msg) -> AppDocument Msg
-viewProjectEmptyState session project modal =
+viewProjectEmptyState : ProjectDetails -> Maybe (Html Msg) -> AppDocument Msg
+viewProjectEmptyState project modal =
     let
         content =
-            if Session.isProjectOwner project.ref session then
+            if Project.canManage project then
                 [ EmptyState.iconCloud (EmptyState.IconCenterPiece Icon.branch)
                     |> EmptyState.withContent
                         [ h1 [] [ text "No default branch" ]
@@ -1572,7 +1572,7 @@ view appContext projectRef model =
         Success project ->
             case project.defaultBranch of
                 Nothing ->
-                    viewProjectEmptyState appContext.session project (modal Nothing)
+                    viewProjectEmptyState project (modal Nothing)
 
                 Just _ ->
                     case model.subPage of
