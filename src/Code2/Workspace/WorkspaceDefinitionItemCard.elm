@@ -280,17 +280,19 @@ titlebarLeft cfg =
 
         builtin =
             if DefinitionItem.isBuiltin cfg.item then
-                Tooltip.tooltip
-                    (Tooltip.text
-                        (FQN.toString (DefinitionItem.name cfg.item) ++ " is a built-in definition provided by the Unison runtime.")
-                    )
-                    |> Tooltip.below
-                    |> Tooltip.withArrow Tooltip.Start
-                    |> Tooltip.view
-                        (Tag.tag "Built-in"
-                            |> Tag.withIcon Icon.unisonMark
-                            |> Tag.view
+                div [ class "builtin-item" ]
+                    [ Tooltip.tooltip
+                        (Tooltip.text
+                            (FQN.toString (DefinitionItem.name cfg.item) ++ " is a built-in definition provided by the Unison runtime.")
                         )
+                        |> Tooltip.below
+                        |> Tooltip.withArrow Tooltip.Start
+                        |> Tooltip.view
+                            (Tag.tag "Built-in"
+                                |> Tag.withIcon Icon.unisonMark
+                                |> Tag.view
+                            )
+                    ]
 
             else
                 UI.nothing
