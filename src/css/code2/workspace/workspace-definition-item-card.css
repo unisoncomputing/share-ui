@@ -159,9 +159,23 @@
     & .permalink,
     & .copy-code,
     & .contextual-tag .icon,
+    & .contextual-tag .secondary-label,
     & .builtin-item .tag_text,
     & .definition-hash {
       display: none;
+    }
+  }
+}
+
+@container workspace-pane (max-width: 399px) {
+  .workspace-card.workspace-definition-item-card {
+    & .contextual-tag .label,
+    & .contextual-tag .secondary-label {
+      display: none;
+    }
+
+    & .contextual-tag .icon {
+      display: inline-flex;
     }
   }
 }
