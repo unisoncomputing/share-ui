@@ -154,6 +154,10 @@
     & .namespace-dropdown,
     & .category-icon,
     & .workspace-definition-item-card_other-names_list,
+    & .direct-dependents,
+    & .dependencies,
+    & .permalink,
+    & .copy-code,
     & .definition-hash {
       display: none;
     }

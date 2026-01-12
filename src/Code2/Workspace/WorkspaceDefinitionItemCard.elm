@@ -321,18 +321,22 @@ titlebarRight cfg =
 
         dependentsButton =
             if not (DefinitionItem.isBuiltin cfg.item) then
-                titlebarButton cfg.showDependents Icon.dependents
-                    |> TitlebarButton.withLeftOfTooltip (text "View direct dependents")
-                    |> TitlebarButton.view
+                div [ class "direct-dependents" ]
+                    [ titlebarButton cfg.showDependents Icon.dependents
+                        |> TitlebarButton.withLeftOfTooltip (text "View direct dependents")
+                        |> TitlebarButton.view
+                    ]
 
             else
                 UI.nothing
 
         dependenciesButton =
             if not (DefinitionItem.isBuiltin cfg.item) then
-                titlebarButton cfg.showDependencies Icon.dependencies
-                    |> TitlebarButton.withLeftOfTooltip (text "View dependencies")
-                    |> TitlebarButton.view
+                div [ class "dependencies" ]
+                    [ titlebarButton cfg.showDependencies Icon.dependencies
+                        |> TitlebarButton.withLeftOfTooltip (text "View dependencies")
+                        |> TitlebarButton.view
+                    ]
 
             else
                 UI.nothing
@@ -340,9 +344,11 @@ titlebarRight cfg =
         permalinkButton =
             case cfg.toPermalink of
                 Just toPermalink ->
-                    titlebarButton toPermalink Icon.chain
-                        |> TitlebarButton.withLeftOfTooltip (text "View as permalink")
-                        |> TitlebarButton.view
+                    div [ class "permalink" ]
+                        [ titlebarButton toPermalink Icon.chain
+                            |> TitlebarButton.withLeftOfTooltip (text "View as permalink")
+                            |> TitlebarButton.view
+                        ]
 
                 _ ->
                     UI.nothing
