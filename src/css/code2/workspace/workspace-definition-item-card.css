@@ -159,6 +159,7 @@
     & .permalink,
     & .copy-code,
     & .contextual-tag .icon,
+    & .builtin-item .tag_text,
     & .definition-hash {
       display: none;
     }
