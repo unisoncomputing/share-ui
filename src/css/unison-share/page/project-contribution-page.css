@@ -1,11 +1,11 @@
 .project-contribution-page {
-  & .page-content .page-title .page-title_custom-title {
+  .page-content .page-title .page-title_custom-title {
     display: flex;
     width: 100%;
     flex: 1;
   }
 
-  & .contribution-page-title {
+  .contribution-page-title {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -19,7 +19,7 @@
     }
   }
 
-  & .page-title_pre-title {
+  .page-title_pre-title {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -29,14 +29,14 @@
     font-size: var(--font-size-medium);
     width: 100%;
 
-    & .contribution-ref_by-at {
+    .contribution-ref_by-at {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 0.75rem;
     }
 
-    & .contribution-ref {
+    .contribution-ref {
       font-size: 0.875rem;
       font-weight: bold;
       padding-right: 0.75rem;
@@ -44,7 +44,7 @@
     }
   }
 
-  & .page-title_description {
+  .page-title_description {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -52,7 +52,7 @@
     color: var(--u-color_text_subdued);
     font-size: var(--font-size-medium);
 
-    & .from-to {
+    .from-to {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -60,40 +60,30 @@
       line-height: 1;
     }
 
-    & .time-ago {
+    .time-ago {
       text-transform: capitalize;
     }
 
-    & .branch {
+    .branch {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 0.75ch;
       line-height: 1;
 
-      & .tag {
-        /* @todo @color-todo */
-        background: var(--u-color_container);
-        border: 1px solid var(--u-color_border);
-      }
-      & .tag:hover {
-        border-color: var(--u-color_border_hovered);
-        background: var(--u-color_container_hovered);
-      }
-
-      & .copy-on-click {
+      .copy-on-click {
         display: flex;
         flex-direction: row;
         align-items: center;
         width: 1.5rem;
 
-        & .button {
+        .button {
           height: 1.5rem;
           width: 1.5rem;
           flex-grow: 0;
         }
 
-        & .copy-on-click_success {
+        .copy-on-click_success {
           position: absolute;
           width: 1.5rem;
           height: 1.5rem;
@@ -110,11 +100,20 @@
 
 @media only screen and (--u-viewport_max-sm) {
   .project-contribution-page {
-    & .page-title {
+    .page-title {
       flex: 1;
 
-      & h1 {
+      h1 {
         font-size: 1.25rem;
+      }
+    }
+
+    .page-title_pre-title {
+      align-items: flex-start;
+
+      .contribution-ref_by-at {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
@@ -122,25 +121,25 @@
       display: none;
     }
 
-    & .page-title_description .from-to {
+    .page-title_description .from-to {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.25rem;
 
-      & .branch {
+      .branch {
         gap: 0.25rem;
 
-        & .button {
+        .button {
           border-radius: var(--border-radius-base);
         }
 
-        & .copy-on-click {
+        .copy-on-click {
           display: none;
         }
       }
     }
 
-    & .page-title_right-side {
+    .page-title_right-side {
       align-self: flex-end;
     }
   }
