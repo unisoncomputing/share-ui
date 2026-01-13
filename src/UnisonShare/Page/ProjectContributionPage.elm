@@ -392,8 +392,11 @@ detailedPageTitle appContext contribution =
 
         buttons =
             ButtonGroup.buttonGroup
-                [ Button.iconThenLabel_ (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef) Icon.browse "Browse code" |> Button.small
-                , Button.iconThenLabel ShowViewLocallyInstructionsModal Icon.download "View locally" |> Button.small
+                [ Button.iconThenLabel_ (Link.projectBranchRoot contribution.projectRef contribution.sourceBranchRef) Icon.browse "Browse code"
+                    |> Button.small
+                , Button.iconThenLabel ShowViewLocallyInstructionsModal Icon.download "View locally"
+                    |> Button.withDomId "view-locally"
+                    |> Button.small
                 ]
 
         editButton =

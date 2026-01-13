@@ -118,6 +118,10 @@
       }
     }
 
+    #view-locally {
+      display: none;
+    }
+
     & .page-title_description .from-to {
       flex-direction: column;
       align-items: flex-start;
@@ -125,6 +129,10 @@
 
       & .branch {
         gap: 0.25rem;
+
+        & .button {
+          border-radius: var(--border-radius-base);
+        }
 
         & .copy-on-click {
           display: none;
