@@ -95,6 +95,13 @@
   height: initial;
 }
 
+.code-page .sidebar .sidebar-section_header .tooltip.below .tooltip-bubble {
+  min-width: auto;
+  width: max-content;
+  top: 2.25rem;
+  right: -4.5rem;
+}
+
 .code-page .perspective-tree-divider {
   display: flex;
   flex-grow: 1;

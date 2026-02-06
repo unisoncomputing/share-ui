@@ -18,6 +18,7 @@ import Html exposing (Html, div, h3, text)
 import Html.Attributes exposing (class, classList)
 import Http
 import Lib.HttpApi as HttpApi
+import Lib.OperatingSystem exposing (OperatingSystem(..))
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
 import UI.Button as Button
@@ -25,6 +26,8 @@ import UI.Card as Card
 import UI.Click as Click
 import UI.ErrorCard as ErrorCard
 import UI.Icon as Icon
+import UI.KeyboardShortcut as KeyboardShortcut
+import UI.KeyboardShortcut.Key as Key exposing (Key(..))
 import UI.Placeholder as Placeholder
 import UI.Sidebar as Sidebar exposing (Sidebar)
 import UI.Tooltip as Tooltip
@@ -182,7 +185,8 @@ viewPerspectiveHeader changePerspectiveToNamespaceMsg upOneLevelMsg perspective 
 
 
 viewSidebar :
-    Perspective
+    OperatingSystem
+    -> Perspective
     ->
         { upOneLevelMsg : msg
         , showFinderModalMsg : msg
@@ -191,13 +195,32 @@ viewSidebar :
     -> FQNSet
     -> Maybe { codebaseTree : CodebaseTree.Model, codebaseTreeMsg : CodebaseTree.Msg -> msg }
     -> Sidebar msg
-viewSidebar perspective cfg openDefinitions codebaseTree =
+viewSidebar os perspective cfg openDefinitions codebaseTree =
     let
         perspectiveHeader =
             viewPerspectiveHeader
                 cfg.changePerspectiveToNamespaceMsg
                 cfg.upOneLevelMsg
                 perspective
+
+        searchShortcuts =
+            case os of
+                MacOS ->
+                    [ KeyboardShortcut.Chord Meta (K Key.Lower)
+                    , KeyboardShortcut.single ForwardSlash
+                    ]
+
+                _ ->
+                    [ KeyboardShortcut.Chord Ctrl (K Key.Lower)
+                    , KeyboardShortcut.single ForwardSlash
+                    ]
+
+        searchButtonTooltip =
+            div [ class "sidebar-search_tooltip" ]
+                [ KeyboardShortcut.viewShortcuts
+                    (KeyboardShortcut.init os)
+                    searchShortcuts
+                ]
 
         codeSection =
             Maybe.map
@@ -211,6 +234,11 @@ viewSidebar perspective cfg openDefinitions codebaseTree =
                             )
                         ]
                         |> Sidebar.sectionWithTitleButton (Button.iconThenLabel cfg.showFinderModalMsg Icon.browse "Search" |> Button.small)
+                        |> Sidebar.sectionWithTitleButtonTooltip
+                            (Tooltip.tooltip (Tooltip.rich searchButtonTooltip)
+                                |> Tooltip.withPosition Tooltip.Below
+                                |> Tooltip.withArrow Tooltip.End
+                            )
                         |> Sidebar.sectionWithScrollable
                         |> Sidebar.sectionWithStickyHeader
                 )

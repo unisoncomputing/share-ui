@@ -732,8 +732,8 @@ viewContent appContext perspective content =
             PageContent.oneColumn [ Html.map WorkspacePanesMsg (WorkspacePanes.view cfg workspace) ]
 
 
-viewSidebar : Model -> Sidebar Msg
-viewSidebar model =
+viewSidebar : AppContext -> Model -> Sidebar Msg
+viewSidebar appContext model =
     let
         codebaseTree =
             Just { codebaseTree = model.codebaseTree, codebaseTreeMsg = CodebaseTreeMsg }
@@ -749,6 +749,7 @@ viewSidebar model =
                     FQNSet.empty
     in
     CodePageContent.viewSidebar
+        appContext.operatingSystem
         model.config.perspective
         { upOneLevelMsg = UpOneLevel
         , showFinderModalMsg = ShowFinderModal
@@ -783,7 +784,7 @@ view appContext toMsg model =
         PerspectivePage _ ->
             ( PageLayout.sidebarLeftContentLayout
                 appContext.operatingSystem
-                (Sidebar.map toMsg (viewSidebar model))
+                (Sidebar.map toMsg (viewSidebar appContext model))
                 content
                 PageFooter.pageFooter
                 |> PageLayout.withSidebarToggle model.sidebarToggled
@@ -793,7 +794,7 @@ view appContext toMsg model =
         WorkspacePage _ ->
             ( PageLayout.sidebarEdgeToEdgeLayout
                 appContext.operatingSystem
-                (Sidebar.map toMsg (viewSidebar model))
+                (Sidebar.map toMsg (viewSidebar appContext model))
                 content
                 PageFooter.pageFooter
                 |> PageLayout.withSidebarToggle model.sidebarToggled
