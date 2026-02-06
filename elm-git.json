@@ -1,7 +1,7 @@
 {
     "git-dependencies": {
         "direct": {
-            "https://github.com/unisonweb/ui-core": "d7da320eeec137411438689a6b9dcfe9d91b6ba5"
+            "https://github.com/unisonweb/ui-core": "7312db2df048f55cc118b9a7d9268ae76aa5da8a"
         },
         "indirect": {}
     }

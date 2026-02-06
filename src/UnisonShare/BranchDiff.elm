@@ -2,13 +2,13 @@ module UnisonShare.BranchDiff exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN
+import Code.FullyQualifiedNameSet as FQNSet exposing (FQNSet)
 import Code.Hash as Hash exposing (Hash)
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import List.Extra as ListE
 import Maybe.Extra as MaybeE
-import Set exposing (Set)
 import UnisonShare.BranchDiff.ChangeLine as ChangeLine exposing (ChangeLine(..))
 import UnisonShare.BranchDiff.ChangeLineId exposing (ChangeLineId)
 import UnisonShare.BranchDiff.LibDep as LibDep exposing (LibDep)
@@ -166,7 +166,8 @@ type alias DocDefPairings =
         }
 
 
-{-| all doc/definition pairs that exist in the list (shallow)
+{-| all doc/definition pairs that exist in the list (shallow), indexed by the
+doc fqn
 -}
 toDocDefPairings : List ChangeLine -> DocDefPairings
 toDocDefPairings lines =
@@ -222,20 +223,12 @@ sortWithDocs lines =
         pairings =
             toDocDefPairings lines
 
-        -- Look up pairing by either doc or def FQN
+        -- Look up pairing by the doc
         findPairing : FQN.FQN -> Maybe { doc : ChangeLine, def : ChangeLine, docFqn : FQN.FQN, defFqn : FQN.FQN }
-        findPairing fqn =
-            let
-                key =
-                    if FQN.endsWith "doc" fqn then
-                        FQN.toString fqn
+        findPairing docFqn =
+            Dict.get (FQN.toString docFqn) pairings
 
-                    else
-                        FQN.toString (FQN.snoc fqn "doc")
-            in
-            Dict.get key pairings
-
-        go : List ChangeLine -> Set String -> List ChangeLine
+        go : List ChangeLine -> FQNSet -> List ChangeLine
         go remaining processed =
             case remaining of
                 [] ->
@@ -248,33 +241,27 @@ sortWithDocs lines =
 
                         _ ->
                             let
-                                headFqn =
-                                    ChangeLine.fullName head
-
-                                -- Always use the doc name for tracking
-                                docName =
-                                    if ChangeLine.isDefinitionDoc head then
-                                        FQN.toString headFqn
-
-                                    else
-                                        FQN.toString (FQN.snoc headFqn "doc")
+                                docFqn =
+                                    head
+                                        |> ChangeLine.fullName
+                                        |> FQN.toDefinitionDoc
                             in
-                            if Set.member docName processed then
+                            if FQNSet.member docFqn processed then
                                 go tail processed
 
                             else
-                                case findPairing headFqn of
+                                case findPairing docFqn of
                                     Just pairing ->
                                         -- This item is part of a pair, output both and mark doc as processed
                                         pairing.doc
                                             :: pairing.def
-                                            :: go tail (Set.insert (FQN.toString pairing.docFqn) processed)
+                                            :: go tail (FQNSet.insert pairing.docFqn processed)
 
                                     Nothing ->
                                         -- Standalone item
                                         head :: go tail processed
     in
-    go lines Set.empty
+    go lines FQNSet.empty
 
 
 changeLineById : ChangeLineId -> BranchDiff -> Maybe ChangeLine
