@@ -268,7 +268,13 @@ update appContext projectRef route msg model =
                             )
 
                         Nothing ->
-                            ( modelWithProject, Cmd.none )
+                            let
+                                releases =
+                                    ProjectReleasesPage.updateWithNoLatestReleaseNotes rm
+                            in
+                            ( { modelWithProject | subPage = Releases releases }
+                            , Cmd.none
+                            )
 
                 ( Releases rm, _ ) ->
                     let
