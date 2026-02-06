@@ -90,6 +90,21 @@ isPropagated cl =
             False
 
 
+isDoc : ChangeLine -> Bool
+isDoc cl =
+    case definitionType cl of
+        Just DefinitionType.Doc ->
+            True
+
+        _ ->
+            False
+
+
+isDefinitionDoc : ChangeLine -> Bool
+isDefinitionDoc cl =
+    isDoc cl && FQN.isDefinitionDoc (fullName cl)
+
+
 shouldBeCollapsedByDefault : ChangeLine -> Bool
 shouldBeCollapsedByDefault changeLine =
     case changeLine of

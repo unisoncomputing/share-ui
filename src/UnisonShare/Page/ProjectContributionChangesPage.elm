@@ -124,7 +124,12 @@ update appContext projectRef contribRef msg model =
                             ( { model
                                 | branchDiff =
                                     BranchDiffState.Computed
-                                        { bd | lines = BranchDiff.condense bd.lines }
+                                        { bd
+                                            | lines =
+                                                bd.lines
+                                                    |> BranchDiff.condense
+                                                    |> BranchDiff.sortWithDocs
+                                        }
                                 , toggledChangeLines = toggledChangeLines
                               }
                             , cmd_
