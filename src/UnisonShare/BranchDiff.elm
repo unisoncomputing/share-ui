@@ -2,7 +2,9 @@ module UnisonShare.BranchDiff exposing (..)
 
 import Code.BranchRef as BranchRef exposing (BranchRef)
 import Code.FullyQualifiedName as FQN
+import Code.FullyQualifiedNameSet as FQNSet exposing (FQNSet)
 import Code.Hash as Hash exposing (Hash)
+import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (required, requiredAt)
 import List.Extra as ListE
@@ -152,6 +154,114 @@ condense changeLines =
                     acc ++ [ changeLine ]
     in
     List.foldl f [] changeLines
+
+
+type alias DocDefPairings =
+    Dict
+        String
+        { doc : ChangeLine
+        , def : ChangeLine
+        , docFqn : FQN.FQN
+        , defFqn : FQN.FQN
+        }
+
+
+{-| all doc/definition pairs that exist in the list (shallow), indexed by the
+doc fqn
+-}
+toDocDefPairings : List ChangeLine -> DocDefPairings
+toDocDefPairings lines =
+    let
+        ( docs, defs ) =
+            List.foldr
+                (\cl ( docAcc, defAcc ) ->
+                    case cl of
+                        Namespace _ ->
+                            ( docAcc, defAcc )
+
+                        _ ->
+                            if ChangeLine.isDefinitionDoc cl then
+                                ( cl :: docAcc, defAcc )
+
+                            else
+                                ( docAcc, cl :: defAcc )
+                )
+                ( [], [] )
+                lines
+
+        pair doc =
+            let
+                docFqn =
+                    ChangeLine.fullName doc
+            in
+            defs
+                |> ListE.find (ChangeLine.fullName >> FQN.isDefinitionDocOf docFqn)
+                |> Maybe.map
+                    (\def ->
+                        ( FQN.toString docFqn
+                        , { doc = doc
+                          , def = def
+                          , docFqn = docFqn
+                          , defFqn = ChangeLine.fullName def
+                          }
+                        )
+                    )
+    in
+    docs
+        |> List.filterMap pair
+        |> Dict.fromList
+
+
+{-| Sort change lines so that definitions and their corresponding .doc changes
+appear next to each other, with the doc appearing before the definition.
+For example, if both MyType and MyType.doc changed, they will be adjacent
+in the sorted list with MyType.doc appearing first.
+-}
+sortWithDocs : List ChangeLine -> List ChangeLine
+sortWithDocs lines =
+    let
+        pairings =
+            toDocDefPairings lines
+
+        -- Look up pairing by the doc
+        findPairing : FQN.FQN -> Maybe { doc : ChangeLine, def : ChangeLine, docFqn : FQN.FQN, defFqn : FQN.FQN }
+        findPairing docFqn =
+            Dict.get (FQN.toString docFqn) pairings
+
+        go : List ChangeLine -> FQNSet -> List ChangeLine
+        go remaining processed =
+            case remaining of
+                [] ->
+                    []
+
+                head :: tail ->
+                    case head of
+                        Namespace ns ->
+                            Namespace { ns | lines = sortWithDocs ns.lines } :: go tail processed
+
+                        _ ->
+                            let
+                                docFqn =
+                                    head
+                                        |> ChangeLine.fullName
+                                        |> FQN.toDefinitionDoc
+                            in
+                            if FQNSet.member docFqn processed then
+                                go tail processed
+
+                            else
+                                case findPairing docFqn of
+                                    Just pairing ->
+                                        -- This item is part of a pair, output both and mark doc as processed
+                                        pairing.doc
+                                            :: pairing.def
+                                            :: go tail (FQNSet.insert pairing.docFqn processed)
+
+                                    Nothing ->
+                                        -- Standalone item
+                                        head :: go tail processed
+    in
+    go lines FQNSet.empty
 
 
 changeLineById : ChangeLineId -> BranchDiff -> Maybe ChangeLine
