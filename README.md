@@ -19,6 +19,34 @@ Share API.
 
 4. Visit `http://localhost:1234` in a browser.
 
+### Development with API Stubs
+
+To develop without a running Share API backend, you can use API stubs:
+
+```bash
+npm run start:with-api-stubs
+```
+
+### Building for Production
+
+Build the production bundle:
+
+```bash
+npm run build
+```
+
+This creates an optimized build in `dist/unisonShare/`.
+
+### Preview Production Build
+
+To test the production build locally:
+
+```bash
+npm run preview
+```
+
+Then visit `http://localhost:1234/static/` in a browser.
+
 ## Dependencies
 
 This depends on the [ui-core package](https://github.com/unisonweb/ui-core) via
