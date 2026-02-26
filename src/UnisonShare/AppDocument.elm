@@ -93,8 +93,8 @@ viewAnnouncement =
     Just
         (div [ id "announcement" ]
             [ div [ class "announcement_content" ]
-                [ text "We're thrilled to announce that"
-                , Link.view "🎉  Unison 1.0 is here!" (Link.link "https://unison-lang.org/unison-1-0")
+                [ text "Unison Computing now has a consulting group."
+                , Link.view "Read more" (Link.link "https://www.unison-lang.org/blog/consulting/")
                 ]
             ]
         )
