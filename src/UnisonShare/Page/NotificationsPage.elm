@@ -712,8 +712,8 @@ view appContext model =
                 All state ->
                     ( TabList.tabList [] tabs.all [ tabs.unread, tabs.archive ]
                     , viewSelectionControls state.selection
-                        [ Button.button (UpdateSelection Notification.Unread) "Mark as unread"
-                        , Button.button (UpdateSelection Notification.Read) "Mark as read"
+                        [ Button.button (UpdateSelection Notification.Read) "Mark as read"
+                        , Button.button (UpdateSelection Notification.Unread) "Mark as unread"
                         , Button.button (UpdateSelection Notification.Archived) "Archive"
                         ]
                     , view_ appContext model state.selection state.notifications
