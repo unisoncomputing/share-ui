@@ -11,3 +11,8 @@
   function = "replace-social-content"
   path = "/*"
   excludedPath = "/static/*"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
