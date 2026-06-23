@@ -1,5 +1,8 @@
 import { faker } from "@faker-js/faker";
 
+// Ensures test data is the same between runs (especially useful for screenshot comparisons)
+faker.seed(42);
+
 function account(handle: string) {
   return {
     ...user(),
@@ -35,7 +38,7 @@ function user(handle?: string): User {
   const handle_ = handle ? handle : userHandle();
 
   return {
-    avatarUrl: faker.image.avatar(),
+    avatarUrl: faker.image.personPortrait(),
     handle: handle_.replace("@", ""),
     name: `${firstName} ${lastName}`,
     userId: faker.string.uuid(),
