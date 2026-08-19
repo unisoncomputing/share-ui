@@ -133,7 +133,7 @@ view ctx appHeader_ =
                                     ActionMenu.optionItem_
                                         Nothing
                                         p.title
-                                        (ActionMenu.DateTimeSubtext DateTime.ShortDate
+                                        (ActionMenu.DateTimeSubtext (DateTime.shortDate ctx.appContext.now)
                                             ctx.appContext.timeZone
                                             p.publishedAt
                                         )
