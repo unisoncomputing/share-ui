@@ -90,14 +90,7 @@ map toMsgB { pageId, title, appHeader, pageHeader, page, modal } =
 
 viewAnnouncement : Maybe (Html msg)
 viewAnnouncement =
-    Just
-        (div [ id "announcement" ]
-            [ div [ class "announcement_content" ]
-                [ text "Unison Computing now has a consulting group."
-                , Link.view "Read more" (Link.link "https://www.unison-lang.org/blog/consulting/")
-                ]
-            ]
-        )
+    Nothing
 
 
 view : AppHeaderContext msg -> AppDocument msg -> Document msg
