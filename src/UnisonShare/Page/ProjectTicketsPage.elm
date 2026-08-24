@@ -70,7 +70,7 @@ init appContext projectRef subRoute =
                     ( Open Loading, TicketStatus.Open, c )
 
                 Route.ProjectTicketsClosed c ->
-                    ( Open Loading, TicketStatus.Closed, c )
+                    ( Closed Loading, TicketStatus.Closed, c )
     in
     ( { modal = NoModal, tab = tab }
     , fetchProjectTickets appContext projectRef status cursor
