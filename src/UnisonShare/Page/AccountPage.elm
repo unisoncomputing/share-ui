@@ -9,7 +9,7 @@ module UnisonShare.Page.AccountPage exposing
 import Html exposing (Html, div, em, p, section, strong, text)
 import Html.Attributes exposing (class)
 import Lib.HttpApi as HttpApi exposing (HttpResult)
-import Lib.UserHandle as UserHandle
+import Lib.UserHandle as UserHandle exposing (UserHandle)
 import RemoteData exposing (RemoteData(..), WebData)
 import UI.Button as Button
 import UI.Card as Card
@@ -28,6 +28,7 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.AppDocument exposing (AppDocument)
 import UnisonShare.AppHeader as AppHeader
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Session as Session
 
 
 
@@ -42,7 +43,7 @@ type Confirm
 type Model
     = NoModal
     | ExportDataModal String Confirm
-    | DeleteAccountModal String Confirm
+    | DeleteAccountModal Confirm
 
 
 init : Model
@@ -60,7 +61,6 @@ type Msg
     | UpdateExportDataMessage String
     | ExportDataRequestFinished (HttpResult ())
     | ShowDeleteAccountModal
-    | UpdateDeleteAccountMessage String
     | DeleteAccountConfirm
     | DeleteAccountRequestFinished (HttpResult ())
     | CloseModal
@@ -105,36 +105,30 @@ update appContext _ msg model =
                     ( model, Cmd.none )
 
         ShowDeleteAccountModal ->
-            ( DeleteAccountModal "" NotConfirmed, Cmd.none )
-
-        UpdateDeleteAccountMessage val ->
-            case model of
-                DeleteAccountModal _ confirm ->
-                    ( DeleteAccountModal val confirm, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( DeleteAccountModal NotConfirmed, Cmd.none )
 
         DeleteAccountConfirm ->
-            case model of
-                DeleteAccountModal val _ ->
-                    ( DeleteAccountModal val (Confirmed Loading), deleteAccountRequest appContext val )
+            case ( appContext.session, model ) of
+                ( Session.SignedIn { handle }, DeleteAccountModal _ ) ->
+                    ( DeleteAccountModal (Confirmed Loading)
+                    , deleteAccountRequest appContext handle
+                    )
 
                 _ ->
                     ( model, Cmd.none )
 
         DeleteAccountRequestFinished (Ok r) ->
             case model of
-                DeleteAccountModal val _ ->
-                    ( DeleteAccountModal val (Confirmed (Success r)), Cmd.none )
+                DeleteAccountModal _ ->
+                    ( DeleteAccountModal (Confirmed (Success r)), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
 
         DeleteAccountRequestFinished (Err e) ->
             case model of
-                DeleteAccountModal val _ ->
-                    ( DeleteAccountModal val (Confirmed (Failure e)), Cmd.none )
+                DeleteAccountModal _ ->
+                    ( DeleteAccountModal (Confirmed (Failure e)), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -168,23 +162,9 @@ exportDataRequest appContext details =
         |> HttpApi.perform appContext.api
 
 
-deleteAccountRequest : AppContext -> String -> Cmd Msg
-deleteAccountRequest appContext reason =
-    let
-        body =
-            if String.isEmpty reason then
-                "Automated support request to delete my Unison Share account"
-
-            else
-                reason
-
-        data =
-            { subject = "Delete my Unison Share account"
-            , body = body
-            , tags = [ "delete-account" ]
-            }
-    in
-    ShareApi.createSupportTicket data
+deleteAccountRequest : AppContext -> UserHandle -> Cmd Msg
+deleteAccountRequest appContext handle =
+    ShareApi.deleteAccount handle
         |> HttpApi.toRequestWithEmptyResponse DeleteAccountRequestFinished
         |> HttpApi.perform appContext.api
 
@@ -248,8 +228,8 @@ viewExportDataModal message confirm =
         |> Modal.view
 
 
-viewDeleteAccountModal : Account a -> String -> Confirm -> Html Msg
-viewDeleteAccountModal a message confirm =
+viewDeleteAccountModal : Account a -> Confirm -> Html Msg
+viewDeleteAccountModal a confirm =
     let
         viewContent action =
             Modal.Content
@@ -261,12 +241,7 @@ viewDeleteAccountModal a message confirm =
                         , strong [] [ text (UserHandle.toString a.handle) ]
                         , text " account."
                         ]
-                    , div [] [ text "We don't yet have an automatic deletion system in place, and are handling it via our support system." ]
-                    , Divider.divider |> Divider.small |> Divider.view
-                    , TextField.field UpdateDeleteAccountMessage "Delete reason (optional)" message
-                        |> TextField.withPlaceholder "Say a few words about why you're looking to delete your account"
-                        |> TextField.withRows 4
-                        |> TextField.view
+                    , StatusBanner.info "Deleting your account is permanent and can not be undone."
                     , action
                     ]
                 )
@@ -317,8 +292,8 @@ view account model =
                 ExportDataModal val confirm ->
                     Just (viewExportDataModal val confirm)
 
-                DeleteAccountModal val confirm ->
-                    Just (viewDeleteAccountModal account val confirm)
+                DeleteAccountModal confirm ->
+                    Just (viewDeleteAccountModal account confirm)
 
                 _ ->
                     Nothing

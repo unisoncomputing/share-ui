@@ -51,6 +51,20 @@ user handle =
     GET { path = [ "users", UserHandle.toUnprefixedString handle ], queryParams = [] }
 
 
+deleteAccount : UserHandle -> Endpoint
+deleteAccount handle =
+    let
+        body =
+            Encode.object [ ( "userHandle", Encode.string (UserHandle.toUnprefixedString handle) ) ]
+                |> Http.jsonBody
+    in
+    DELETE
+        { path = [ "account" ]
+        , body = body
+        , queryParams = []
+        }
+
+
 org : UserHandle -> Endpoint
 org handle =
     GET { path = [ "users", UserHandle.toUnprefixedString handle ], queryParams = [] }
