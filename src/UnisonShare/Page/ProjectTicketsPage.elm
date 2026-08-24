@@ -2,7 +2,8 @@ module UnisonShare.Page.ProjectTicketsPage exposing (..)
 
 import Html exposing (Html, div, h2, header, span, text)
 import Html.Attributes exposing (class)
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (string)
+import Json.Decode.Pipeline exposing (optional, required)
 import Lib.HttpApi as HttpApi
 import RemoteData exposing (RemoteData(..), WebData)
 import UI
@@ -25,13 +26,15 @@ import UnisonShare.AppContext exposing (AppContext)
 import UnisonShare.Link as Link
 import UnisonShare.Page.ErrorPage as ErrorPage
 import UnisonShare.PageFooter as PageFooter
+import UnisonShare.Paginated as Paginated exposing (PageCursor(..), PageCursorParam, Paginated(..))
 import UnisonShare.Project as Project exposing (ProjectDetails)
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
 import UnisonShare.ProjectTicketFormModal as ProjectTicketFormModal
+import UnisonShare.Route as Route exposing (..)
 import UnisonShare.Session as Session exposing (Session)
 import UnisonShare.Ticket as Ticket exposing (Ticket)
 import UnisonShare.Ticket.TicketRef as TicketRef
-import UnisonShare.Ticket.TicketStatus as TicketStatus
+import UnisonShare.Ticket.TicketStatus as TicketStatus exposing (TicketStatus)
 
 
 
@@ -43,25 +46,34 @@ type ContribitionsModal
     | SubmitTicketModal ProjectTicketFormModal.Model
 
 
+type alias PaginatedTickets =
+    Paginated Ticket
+
+
 type Tab
-    = Open
-    | Closed
+    = Open (WebData PaginatedTickets)
+    | Closed (WebData PaginatedTickets)
 
 
 type alias Model =
-    { tickets : WebData (List Ticket)
-    , modal : ContribitionsModal
+    { modal : ContribitionsModal
     , tab : Tab
     }
 
 
-init : AppContext -> ProjectRef -> ( Model, Cmd Msg )
-init appContext projectRef =
-    ( { tickets = Loading
-      , modal = NoModal
-      , tab = Open
-      }
-    , fetchProjectTickets appContext projectRef
+init : AppContext -> ProjectRef -> ProjectTicketsRoute -> ( Model, Cmd Msg )
+init appContext projectRef subRoute =
+    let
+        ( tab, status, cursor ) =
+            case subRoute of
+                Route.ProjectTicketsOpen c ->
+                    ( Open Loading, TicketStatus.Open, c )
+
+                Route.ProjectTicketsClosed c ->
+                    ( Open Loading, TicketStatus.Open, c )
+    in
+    ( { modal = NoModal, tab = tab }
+    , fetchProjectTickets appContext projectRef status cursor
     )
 
 
@@ -70,7 +82,7 @@ init appContext projectRef =
 
 
 type Msg
-    = FetchTicketsFinished (WebData (List Ticket))
+    = FetchTicketsFinished TicketStatus (WebData PaginatedTickets)
     | ShowSubmitTicketModal
     | ProjectTicketFormModalMsg ProjectTicketFormModal.Msg
     | CloseModal
@@ -85,8 +97,16 @@ type OutMsg
 update : AppContext -> ProjectRef -> Msg -> Model -> ( Model, Cmd Msg, OutMsg )
 update appContext projectRef msg model =
     case msg of
-        FetchTicketsFinished tickets ->
-            ( { model | tickets = tickets }, Cmd.none, NoOut )
+        FetchTicketsFinished status res ->
+            case ( model.tab, status ) of
+                ( Open _, TicketStatus.Open ) ->
+                    ( { model | tab = Open res }, Cmd.none, NoOut )
+
+                ( Closed _, TicketStatus.Closed ) ->
+                    ( { model | tab = Closed res }, Cmd.none, NoOut )
+
+                _ ->
+                    ( model, Cmd.none, NoOut )
 
         ShowSubmitTicketModal ->
             case appContext.session of
@@ -111,18 +131,29 @@ update appContext projectRef msg model =
                         ( projectTicketFormModal, cmd, out ) =
                             ProjectTicketFormModal.update appContext projectRef formMsg formModel
 
-                        ( modal, tickets, out_ ) =
+                        ( modal, tab, out_ ) =
                             case out of
                                 ProjectTicketFormModal.None ->
-                                    ( SubmitTicketModal projectTicketFormModal, model.tickets, NoOut )
+                                    ( SubmitTicketModal projectTicketFormModal, model.tab, NoOut )
 
                                 ProjectTicketFormModal.RequestToCloseModal ->
-                                    ( NoModal, model.tickets, NoOut )
+                                    ( NoModal, model.tab, NoOut )
 
                                 ProjectTicketFormModal.Saved c ->
-                                    ( NoModal, RemoteData.map (\cs -> c :: cs) model.tickets, AddedTicket )
+                                    let
+                                        tab_ =
+                                            case model.tab of
+                                                Open tix ->
+                                                    Open
+                                                        (RemoteData.map (\(Paginated p) -> Paginated { p | items = c :: p.items }) tix)
+
+                                                Closed tix ->
+                                                    Closed
+                                                        (RemoteData.map (\(Paginated p) -> Paginated { p | items = c :: p.items }) tix)
+                                    in
+                                    ( NoModal, tab_, AddedTicket )
                     in
-                    ( { model | modal = modal, tickets = tickets }
+                    ( { model | modal = modal, tab = tab }
                     , Cmd.map ProjectTicketFormModalMsg cmd
                     , out_
                     )
@@ -141,12 +172,21 @@ update appContext projectRef msg model =
 -- EFFECTS
 
 
-fetchProjectTickets : AppContext -> ProjectRef -> Cmd Msg
-fetchProjectTickets appContext projectRef =
-    ShareApi.projectTickets projectRef
-        |> HttpApi.toRequest
-            (Decode.field "items" (Decode.list Ticket.decode))
-            (RemoteData.fromResult >> FetchTicketsFinished)
+fetchProjectTickets : AppContext -> ProjectRef -> TicketStatus -> PageCursorParam -> Cmd Msg
+fetchProjectTickets appContext projectRef status cursor =
+    let
+        mkPaginated prev next items =
+            Paginated { prev = prev, next = next, items = items }
+
+        decode =
+            Decode.succeed mkPaginated
+                |> optional "prevCursor" (Decode.map (PageCursor >> Just) string) Nothing
+                |> optional "nextCursor" (Decode.map (PageCursor >> Just) string) Nothing
+                |> required "items" (Decode.list Ticket.decode)
+    in
+    ShareApi.projectTickets projectRef status cursor
+        |> HttpApi.toRequest decode
+            (RemoteData.fromResult >> FetchTicketsFinished status)
         |> HttpApi.perform appContext.api
 
 
@@ -253,8 +293,8 @@ viewTicketRow appContext projectRef ticket =
         ]
 
 
-viewPageContent : AppContext -> ProjectDetails -> Tab -> List Ticket -> PageContent Msg
-viewPageContent appContext project tab tickets =
+viewPageContent : AppContext -> ProjectDetails -> Tab -> PageContent Msg
+viewPageContent appContext project tab =
     let
         viewEmptyState icon text_ =
             EmptyState.iconCloud
@@ -264,22 +304,22 @@ viewPageContent appContext project tab tickets =
                 |> EmptyState.withContent [ h2 [] [ text text_ ] ]
                 |> EmptyStateCard.view
 
-        ( tabList, status, emptyState ) =
+        ( tabList, tickets, emptyState ) =
             case tab of
-                Open ->
+                Open tix ->
                     ( TabList.tabList []
-                        (TabList.tab "Open" (Click.onClick (ChangeTab Open)))
-                        [ TabList.tab "Closed" (Click.onClick (ChangeTab Closed)) ]
-                    , TicketStatus.Open
+                        (TabList.tab "Open" (Link.projectTicketsOpen project.ref Paginated.NoPageCursor))
+                        [ TabList.tab "Closed" (Link.projectTicketsClosed project.ref Paginated.NoPageCursor) ]
+                    , tix
                     , viewEmptyState Icon.conversation "There are currently no open tickets."
                     )
 
-                Closed ->
+                Closed tix ->
                     ( TabList.tabList
-                        [ TabList.tab "Open" (Click.onClick (ChangeTab Open)) ]
-                        (TabList.tab "Closed" (Click.onClick (ChangeTab Closed)))
+                        [ TabList.tab "Open" (Link.projectTicketsOpen project.ref Paginated.NoPageCursor) ]
+                        (TabList.tab "Closed" (Link.projectTicketsClosed project.ref Paginated.NoPageCursor))
                         []
-                    , TicketStatus.Closed
+                    , tix
                     , viewEmptyState Icon.merge "There are currently no merged tickets."
                     )
 
@@ -289,35 +329,61 @@ viewPageContent appContext project tab tickets =
                 |> Divider.withoutMargin
 
         content =
-            tickets
-                |> List.filter (\c -> c.status == status)
-                |> List.map (viewTicketRow appContext project.ref)
-                |> List.intersperse (Divider.view divider)
+            case tickets of
+                Success (Paginated p) ->
+                    let
+                        toLink =
+                            case tab of
+                                Open _ ->
+                                    Link.projectTicketsOpen project.ref
 
-        card =
-            if List.isEmpty content then
-                emptyState
+                                Closed _ ->
+                                    Link.projectTicketsClosed project.ref
 
-            else
-                Card.card content
-                    |> Card.withClassName "project-tickets"
-                    |> Card.asContained
-                    |> Card.view
+                        items =
+                            p.items
+                                |> List.map (viewTicketRow appContext project.ref)
+                                |> List.intersperse (Divider.view divider)
+                    in
+                    if List.isEmpty items then
+                        emptyState
+
+                    else
+                        div []
+                            [ Card.card items
+                                |> Card.withClassName "project-tickets"
+                                |> Card.asContained
+                                |> Card.view
+                            , Paginated.view toLink p
+                            ]
+
+                _ ->
+                    -- The remaining RemoteData variants are handled by `view`
+                    UI.nothing
     in
-    PageContent.oneColumn [ TabList.view tabList, card ]
+    PageContent.oneColumn [ TabList.view tabList, content ]
         |> PageContent.withPageTitle (viewPageTitle appContext.session project)
 
 
 view : AppContext -> ProjectDetails -> Model -> ( PageLayout Msg, Maybe (Html Msg) )
 view appContext project model =
-    case model.tickets of
+    let
+        paginatedTickets =
+            case model.tab of
+                Open tix ->
+                    tix
+
+                Closed tix ->
+                    tix
+    in
+    case paginatedTickets of
         NotAsked ->
             ( viewLoadingPage, Nothing )
 
         Loading ->
             ( viewLoadingPage, Nothing )
 
-        Success tickets ->
+        Success _ ->
             let
                 modal =
                     case model.modal of
@@ -331,7 +397,7 @@ view appContext project model =
                             Nothing
             in
             ( PageLayout.centeredNarrowLayout
-                (viewPageContent appContext project model.tab tickets)
+                (viewPageContent appContext project model.tab)
                 PageFooter.pageFooter
                 |> PageLayout.withSubduedBackground
             , modal

@@ -6,6 +6,7 @@ module UnisonShare.Route exposing
     , ProjectContributionRoute(..)
     , ProjectContributionsRoute(..)
     , ProjectRoute(..)
+    , ProjectTicketsRoute(..)
     , Route(..)
     , UserRoute(..)
     , acceptTerms
@@ -50,6 +51,8 @@ module UnisonShare.Route exposing
     , projectSettings
     , projectTicket
     , projectTickets
+    , projectTicketsClosed
+    , projectTicketsOpen
     , replacePerspective
     , termsOfService
     , toRoute
@@ -126,6 +129,11 @@ type ProjectContributionsRoute
     | ProjectContributionsArchived
 
 
+type ProjectTicketsRoute
+    = ProjectTicketsOpen PageCursorParam
+    | ProjectTicketsClosed PageCursorParam
+
+
 type ProjectBranchesRoute
     = ProjectBranchesAll
     | ProjectBranchesYours
@@ -140,7 +148,7 @@ type ProjectRoute
     | ProjectRelease Version
     | ProjectReleases
     | ProjectTicket TicketRef
-    | ProjectTickets
+    | ProjectTickets ProjectTicketsRoute
     | ProjectContribution ContributionRef ProjectContributionRoute
     | ProjectContributions ProjectContributionsRoute
     | ProjectSettings
@@ -320,9 +328,19 @@ projectTicket projectRef_ ticketRef =
     Project projectRef_ (ProjectTicket ticketRef)
 
 
-projectTickets : ProjectRef -> Route
-projectTickets projectRef_ =
-    Project projectRef_ ProjectTickets
+projectTickets : ProjectRef -> PageCursorParam -> Route
+projectTickets projectRef_ cursorParam =
+    Project projectRef_ (ProjectTickets (ProjectTicketsOpen cursorParam))
+
+
+projectTicketsOpen : ProjectRef -> PageCursorParam -> Route
+projectTicketsOpen projectRef_ cursorParam =
+    Project projectRef_ (ProjectTickets (ProjectTicketsOpen cursorParam))
+
+
+projectTicketsClosed : ProjectRef -> PageCursorParam -> Route
+projectTicketsClosed projectRef_ cursorParam =
+    Project projectRef_ (ProjectTickets (ProjectTicketsClosed cursorParam))
 
 
 projectHistory : ProjectRef -> Maybe BranchRef -> PageCursorParam -> Route
@@ -765,12 +783,19 @@ projectParser queryString =
             in
             Project ps (ProjectTicket ref)
 
-        projectTickets_ handle slug =
+        projectTicketsOpen_ handle slug =
             let
                 ps =
                     ProjectRef.projectRef handle slug
             in
-            Project ps ProjectTickets
+            Project ps (ProjectTickets (ProjectTicketsOpen paginationCursor))
+
+        projectTicketsClosed_ handle slug =
+            let
+                ps =
+                    ProjectRef.projectRef handle slug
+            in
+            Project ps (ProjectTickets (ProjectTicketsClosed paginationCursor))
 
         projectHistory_ handle slug branchRef =
             let
@@ -805,7 +830,8 @@ projectParser queryString =
         , b (succeed (projectContributions_ ProjectContributionsMerged) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "merged" |. end)
         , b (succeed (projectContributions_ ProjectContributionsArchived) |. slash |= userHandle |. slash |= projectSlug |. slash |. s "contributions" |. slash |. s "archived" |. end)
         , b (succeed projectTicket_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. slash |= TicketRef.fromUrl |. end)
-        , b (succeed projectTickets_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. end)
+        , b (succeed projectTicketsOpen_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. end)
+        , b (succeed projectTicketsClosed_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "tickets" |. slash |. s "closed" |. end)
         , b (succeed projectHistory_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "history" |. slash |= branchRef |. end)
         , b (succeed projectHistoryDefault_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "history" |. end)
         , b (succeed projectSettings_ |. slash |= userHandle |. slash |= projectSlug |. slash |. s "settings" |. end)
@@ -1025,8 +1051,11 @@ toUrlPattern r =
         Project _ (ProjectTicket _) ->
             ":handle/:project-slug/tickets/:ticket-ref"
 
-        Project _ ProjectTickets ->
+        Project _ (ProjectTickets (ProjectTicketsOpen _)) ->
             ":handle/:project-slug/tickets"
+
+        Project _ (ProjectTickets (ProjectTicketsClosed _)) ->
+            ":handle/:project-slug/tickets/closed"
 
         Project _ (ProjectHistory Nothing _) ->
             ":handle/:project-slug/history"
@@ -1216,8 +1245,11 @@ toUrlString route =
                 Project projectRef_ (ProjectTicket r) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets", TicketRef.toUrlString r ], [] )
 
-                Project projectRef_ ProjectTickets ->
-                    ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets" ], [] )
+                Project projectRef_ (ProjectTickets (ProjectTicketsOpen cursor)) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets" ], paginationCursorToQueryParams cursor )
+
+                Project projectRef_ (ProjectTickets (ProjectTicketsClosed cursor)) ->
+                    ( ProjectRef.toUrlPath projectRef_ ++ [ "tickets", "closed" ], paginationCursorToQueryParams cursor )
 
                 Project projectRef_ (ProjectHistory (Just branchRef_) cursor) ->
                     ( ProjectRef.toUrlPath projectRef_ ++ "history" :: BranchRef.toUrlPath branchRef_, paginationCursorToQueryParams cursor )

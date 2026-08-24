@@ -156,10 +156,10 @@ init appContext projectRef route =
                     in
                     ( Ticket ticketRef ticket_, Cmd.map ProjectTicketPageMsg ticketCmd )
 
-                ProjectTickets ->
+                ProjectTickets subRoute ->
                     let
                         ( tickets_, ticketsCmd ) =
-                            ProjectTicketsPage.init appContext projectRef
+                            ProjectTicketsPage.init appContext projectRef subRoute
                     in
                     ( Tickets tickets_, Cmd.map ProjectTicketsPageMsg ticketsCmd )
 
@@ -674,7 +674,8 @@ update appContext projectRef route msg model =
 
         ( Tickets ticketsPage, ProjectTicketsPageMsg ticketsMsg ) ->
             case route of
-                Route.ProjectTickets ->
+                -- TODO??
+                Route.ProjectTickets _ ->
                     let
                         ( ticketsPage_, ticketsPageCmd, out ) =
                             ProjectTicketsPage.update appContext projectRef ticketsMsg ticketsPage
@@ -905,7 +906,7 @@ updateSubPage appContext projectRef model route =
                     in
                     ( { model | subPage = Ticket ticketRef ticket_ }, Cmd.map ProjectTicketPageMsg ticketCmd )
 
-        ProjectTickets ->
+        ProjectTickets subRoute ->
             case model.subPage of
                 Tickets _ ->
                     ( model, Cmd.none )
@@ -913,7 +914,7 @@ updateSubPage appContext projectRef model route =
                 _ ->
                     let
                         ( tickets_, ticketsCmd ) =
-                            ProjectTicketsPage.init appContext projectRef
+                            ProjectTicketsPage.init appContext projectRef subRoute
                     in
                     ( { model | subPage = Tickets tickets_ }, Cmd.map ProjectTicketsPageMsg ticketsCmd )
 
