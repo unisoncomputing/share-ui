@@ -16,7 +16,6 @@ import "ui-core/Lib/EmbedSvg";
 import "ui-core/Lib/ProdDebug";
 import detectOs from "ui-core/Lib/detectOs";
 import preventDefaultGlobalKeyboardEvents from "ui-core/Lib/preventDefaultGlobalKeyboardEvents";
-import * as Sentry from "@sentry/browser";
 
 import "./UnisonShare/SupportChatWidget";
 import { getCookie } from "./util";
@@ -36,15 +35,6 @@ console.log(`
 // ----------------------------------------------------------------------------
 
 preventDefaultGlobalKeyboardEvents();
-
-if (APP_ENV === "production") {
-  Sentry.init({
-    dsn: "https://8eb2ee6bb78d4131bdbb1b6a70f6b0c0@o4503934538547200.ingest.sentry.io/4504458036903936",
-    integrations: [Sentry.browserTracingIntegration()],
-    sampleRate: 0.25,
-    environment: APP_ENV,
-  });
-}
 
 // ----------------------------------------------------------------------------
 
