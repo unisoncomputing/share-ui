@@ -908,8 +908,16 @@ updateSubPage appContext projectRef model route =
 
         ProjectTickets subRoute ->
             case model.subPage of
-                Tickets _ ->
-                    ( model, Cmd.none )
+                Tickets page ->
+                    let
+                        ( ticketsPage, ticketsCmd ) =
+                            ProjectTicketsPage.updateSubPage
+                                appContext
+                                projectRef
+                                subRoute
+                                page
+                    in
+                    ( { model | subPage = Tickets ticketsPage }, Cmd.map ProjectTicketsPageMsg ticketsCmd )
 
                 _ ->
                     let

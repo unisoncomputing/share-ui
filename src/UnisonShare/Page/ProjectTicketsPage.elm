@@ -86,7 +86,6 @@ type Msg
     | ShowSubmitTicketModal
     | ProjectTicketFormModalMsg ProjectTicketFormModal.Msg
     | CloseModal
-    | ChangeTab Tab
 
 
 type OutMsg
@@ -164,8 +163,29 @@ update appContext projectRef msg model =
         CloseModal ->
             ( { model | modal = NoModal }, Cmd.none, NoOut )
 
-        ChangeTab t ->
-            ( { model | tab = t }, Cmd.none, NoOut )
+
+updateSubPage : AppContext -> ProjectRef -> ProjectTicketsRoute -> Model -> ( Model, Cmd Msg )
+updateSubPage appContext projectRef subRoute model =
+    case subRoute of
+        ProjectTicketsOpen cursor ->
+            case model.tab of
+                Open _ ->
+                    ( model
+                    , fetchProjectTickets appContext projectRef TicketStatus.Open cursor
+                    )
+
+                _ ->
+                    init appContext projectRef (ProjectTicketsOpen Paginated.NoPageCursor)
+
+        ProjectTicketsClosed cursor ->
+            case model.tab of
+                Closed _ ->
+                    ( model
+                    , fetchProjectTickets appContext projectRef TicketStatus.Closed cursor
+                    )
+
+                _ ->
+                    init appContext projectRef (ProjectTicketsClosed Paginated.NoPageCursor)
 
 
 
