@@ -364,9 +364,19 @@ projectTicket projectRef_ ticketRef =
     toClick (Route.projectTicket projectRef_ ticketRef)
 
 
-projectTickets : ProjectRef -> Click msg
-projectTickets projectRef_ =
-    toClick (Route.projectTickets projectRef_)
+projectTickets : ProjectRef -> PageCursorParam -> Click msg
+projectTickets projectRef_ cursor =
+    toClick (Route.projectTickets projectRef_ cursor)
+
+
+projectTicketsOpen : ProjectRef -> PageCursorParam -> Click msg
+projectTicketsOpen projectRef_ cursor =
+    toClick (Route.projectTicketsOpen projectRef_ cursor)
+
+
+projectTicketsClosed : ProjectRef -> PageCursorParam -> Click msg
+projectTicketsClosed projectRef_ cursor =
+    toClick (Route.projectTicketsClosed projectRef_ cursor)
 
 
 projectSettings : ProjectRef -> Click msg

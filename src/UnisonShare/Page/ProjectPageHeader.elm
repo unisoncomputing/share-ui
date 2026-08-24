@@ -12,6 +12,7 @@ import UI.PageHeader as PageHeader exposing (PageHeader)
 import UI.Tag as Tag
 import UI.Tooltip as Tooltip
 import UnisonShare.Link as Link
+import UnisonShare.Paginated as Paginated
 import UnisonShare.Project as Project exposing (Project, ProjectDetails)
 import UnisonShare.Project.ProjectListing as ProjectListing
 import UnisonShare.Project.ProjectRef exposing (ProjectRef)
@@ -105,7 +106,7 @@ allNavItems project switchBranch =
             |> Nav.navItemWithIcon Icon.documentCode
             |> Nav.navItemWithAnchoredOverlay switchBranch
     , tickets =
-        Nav.navItem "Tickets" (Link.projectTickets project.ref)
+        Nav.navItem "Tickets" (Link.projectTickets project.ref Paginated.NoPageCursor)
             |> Nav.navItemWithIcon Icon.bug
             |> withTicketsCount
     , contributions =

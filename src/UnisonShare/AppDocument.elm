@@ -1,13 +1,12 @@
 module UnisonShare.AppDocument exposing (AppDocument, appDocument, map, view, withModal)
 
 import Browser exposing (Document)
-import Html exposing (Html, div, text)
+import Html exposing (Html, div)
 import Html.Attributes exposing (class, id)
 import Maybe.Extra as MaybeE
 import UI
 import UI.PageHeader as PageHeader exposing (PageHeader)
 import UnisonShare.AppHeader as AppHeader exposing (AppHeader, AppHeaderContext)
-import UnisonShare.Link as Link
 
 
 

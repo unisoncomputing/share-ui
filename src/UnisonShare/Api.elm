@@ -1135,15 +1135,21 @@ projectTicketTimeline projectRef ticketRef =
         }
 
 
-projectTickets : ProjectRef -> Endpoint
-projectTickets projectRef =
+projectTickets : ProjectRef -> TicketStatus -> PageCursorParam -> Endpoint
+projectTickets projectRef status cursor =
     let
         ( handle, slug ) =
             ProjectRef.toApiStringParts projectRef
+
+        statusQueryParams =
+            [ string "status" (TicketStatus.toApiString status), string "limit" "24" ]
+
+        paginationQueryParams =
+            Paginated.toApiQueryParams cursor
     in
     GET
         { path = [ "users", handle, "projects", slug, "tickets" ]
-        , queryParams = []
+        , queryParams = statusQueryParams ++ paginationQueryParams
         }
 
 
